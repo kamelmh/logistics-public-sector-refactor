@@ -17,7 +17,7 @@
 | Chapter_4_14-04_2026_second_draft.md | 15,936 | ✅ مُحوَّل | JSON Pipeline → Local Data Flow |
 | Final_Chapter_4_14-04_2026.md | 3,615 | ✅ مُحوَّل | Python Engine → VBA Engine |
 | General_Conclusion_14-04_2026.md | 11,440 | ✅ مُحوَّل | Hybrid → Integrated Architecture |
-| Memoire_Academix_v13_1_Final.docx | 182,525 | 📋 مُحتفظ | الملف الأصلي للمراجعة |
+| Memoire_نظام دعم القرار لتسيير المخزون_Final.docx | 182,525 | 📋 مُحتفظ | الملف الأصلي للمراجعة |
 
 ---
 

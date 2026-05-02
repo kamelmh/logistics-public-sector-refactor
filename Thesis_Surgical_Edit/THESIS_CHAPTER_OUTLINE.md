@@ -1,5 +1,5 @@
 # مخطط الأطروحة المصغرة - BTS تسيير المخازن
-## النظام: Academix v13.2 (Traditional VBA-Only)
+## النظام: نظام دعم القرار لتسيير المخزون v13.2 (Traditional VBA-Only)
 
 ---
 
