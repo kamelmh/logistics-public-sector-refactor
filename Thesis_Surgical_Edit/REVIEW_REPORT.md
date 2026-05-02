@@ -10,12 +10,12 @@
 
 | الملف | الحجم | الحالة | التغييرات الرئيسية |
 |---|---|---|---|
-| Chapter_2_and_3_Top_gemini_release.md | 11,958 | ✅ مُحوَّل | Python → VBA، Bridge → بنية متكاملة |
-| Chapter_3_14-04-2026.md | 27,107 | ✅ مُحوَّل | Flask/Jason → VBA Processing Units |
-| Chapter_3_summarized.md | 7,298 | ✅ مُحوَّل | Backend → Central Processing |
-| Chapter_4_04-14-2026.md | 17,985 | ✅ مُحوَّل | HTTP Bridge → Internal Units |
-| Chapter_4_14-04_2026_second_draft.md | 15,936 | ✅ مُحوَّل | JSON Pipeline → Local Data Flow |
-| Final_Chapter_4_14-04_2026.md | 3,615 | ✅ مُحوَّل | Python Engine → VBA Engine |
+| Chapter_2_and_3_Top_gemini_release.md | 11,958 | ✅ مُحوَّل | وحدات المعالجة → وحدات VBA، الرابط → البنية المتكاملة |
+| Chapter_3_14-04-2026.md | 27,107 | ✅ مُحوَّل | الخادم → وحدات معالجة VBA |
+| Chapter_3_summarized.md | 7,298 | ✅ مُحوَّل | الخادم الخلفي → وحدات المعالجة المركزية |
+| Chapter_4_04-14-2026.md | 17,985 | ✅ مُحوَّل | جسر HTTP → الوحدات الداخلية |
+| Chapter_4_14-04_2026_second_draft.md | 15,936 | ✅ مُحوَّل | مسار بيانات JSON → تدفق البيانات المحلي |
+| Final_Chapter_4_14-04_2026.md | 3,615 | ✅ مُحوَّل | محرك Python → محرك VBA |
 | General_Conclusion_14-04_2026.md | 11,440 | ✅ مُحوَّل | Hybrid → Integrated Architecture |
 | Memoire_نظام دعم القرار لتسيير المخزون_Final.docx | 182,525 | 📋 مُحتفظ | الملف الأصلي للمراجعة |
 
@@ -52,8 +52,8 @@
 - **بعد:** "رفض الحركة"، "الحفظ الآمن"
 
 ### 4. الخاتمة العامة
-- **قبل:** "Python/VBA Bridge Architecture"
-- **بعد:** "Integrated Excel/VBA Architecture"
+- **قبل:** "البنية المتكاملة Excel/VBA"
+- **بعد:** "البنية المتكاملة Excel/VBA"
 
 ---
 
