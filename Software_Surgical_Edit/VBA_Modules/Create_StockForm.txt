@@ -1,0 +1,41 @@
+INSTRUCTIONS: Create frmStockEntry as a real UserForm
+=====================================================
+
+1. IN VBA EDITOR:
+   - Delete current frmStockEntry (right-click → Remove → No to export)
+   - Insert → UserForm → Name it "frmStockEntry"
+   
+2. ADD CONTROLS to the form (use View → Toolbox):
+   - 1x Frame (Name: fraDocTypeBanner)
+   - 1x Label (Name: lblBannerText) - inside the frame
+   - 1x ComboBox (Name: cmbTypeDoc)
+   - 1x ComboBox (Name: cmbService)
+   - 1x ComboBox (Name: cmbCategorie)
+   - 1x ComboBox (Name: cmbArticle)
+   - 1x TextBox (Name: txtDate)
+   - 1x TextBox (Name: txtRefDoc)
+   - 1x TextBox (Name: txtQuantite)
+   - 1x TextBox (Name: txtPrixUnitaire)
+   - 1x Label (Name: lblPU)
+   - 1x Label (Name: lblStockInfo)
+   - 1x Label (Name: lblWilsonAlert)
+   - 1x Label (Name: lblGridHeader)
+   - 1x ListBox (Name: lstGrid)
+   - 1x Label (Name: lblTotalGeneral)
+   - 1x CheckBox (Name: chkSyncPython)
+   - 1x CommandButton (Name: btnAjouterLigne)
+   - 1x CommandButton (Name: btnSupprimerLigne)
+   - 1x CommandButton (Name: btnEnregistrer)
+   - 1x CommandButton (Name: btnAutoRef)
+   - 1x CommandButton (Name: btnAnnuler)
+   - 1x CommandButton (Name: btnImprimerBon)
+
+3. COPY CODE:
+   - Open frmStockEntry.bas in Notepad
+   - Copy ALL code (Ctrl+A, Ctrl+C)
+   - In VBA editor, double-click frmStockEntry
+   - Paste the code (or use: Tools → Macros → Edit → Paste)
+
+4. TEST:
+   - Run: frmStockEntry.Show
+   - Articles should now load in cmbArticle

@@ -1,0 +1,104 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-mono); }
+  .wrap { padding: 12px 0; }
+  h2 { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; padding: 4px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 20px; }
+  th { background: var(--color-background-secondary); color: var(--color-text-secondary); font-weight: 500; font-size: 10px; text-align: left; padding: 5px 8px; border: 0.5px solid var(--color-border-tertiary); letter-spacing: .05em; }
+  td { padding: 4px 8px; border: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); vertical-align: top; line-height: 1.5; }
+  tr:nth-child(even) td { background: var(--color-background-secondary); }
+  .mono { font-family: var(--font-mono); font-size: 10px; }
+  .badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 500; }
+  .g1 { background: #E6F1FB; color: #0C447C; }
+  .g2 { background: #EAF3DE; color: #27500A; }
+  .g3 { background: #FAEEDA; color: #633806; }
+  .g4 { background: #FAECE7; color: #712B13; }
+  .g5 { background: #EEEDFE; color: #3C3489; }
+</style>
+<div class="wrap">
+
+<h2>§1 — Property Table: frmStockEntry Controls</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Control Name</th><th>Type</th><th>Top</th><th>Left</th><th>Width</th><th>Height</th><th>Key Properties</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td class="mono">fraDocTypeBanner</td><td>Frame</td><td>0</td><td>0</td><td>855</td><td>28</td><td>BorderStyle=0, SpecialEffect=0</td></tr>
+    <tr><td class="mono">lblBannerText</td><td>Label</td><td>4</td><td>8</td><td>840</td><td>18</td><td>Font.Size=10, Font.Bold=True, TextAlign=2</td></tr>
+    <tr><td class="mono">lblTitle</td><td>Label</td><td>34</td><td>200</td><td>450</td><td>18</td><td>Caption="LISTE DES ARTICLES À ENREGISTRER", Font.Bold=True, Font.Size=11, TextAlign=2</td></tr>
+    <tr><td class="mono">lblDate</td><td>Label</td><td>60</td><td>14</td><td>200</td><td>14</td><td>Caption="La date de l'opération (JJ/MM/AAAA)"</td></tr>
+    <tr><td class="mono">txtDate</td><td>TextBox</td><td>75</td><td>14</td><td>200</td><td>22</td><td>MaxLength=10</td></tr>
+    <tr><td class="mono">lblRefDoc</td><td>Label</td><td>60</td><td>564</td><td>220</td><td>14</td><td>Caption="N° Référence - Saisie du numéro de bon officiel"</td></tr>
+    <tr><td class="mono">txtRefDoc</td><td>TextBox</td><td>75</td><td>564</td><td>200</td><td>22</td><td></td></tr>
+    <tr><td class="mono">btnAutoRef</td><td>CommandButton</td><td>75</td><td>768</td><td>60</td><td>22</td><td>Caption="AUTO", Font.Size=8</td></tr>
+    <tr><td class="mono">lblService</td><td>Label</td><td>106</td><td>14</td><td>150</td><td>14</td><td>Caption="SERVICE / FOURNISSEUR"</td></tr>
+    <tr><td class="mono">cmbService</td><td>ComboBox</td><td>121</td><td>14</td><td>220</td><td>22</td><td>Style=2 (fmStyleDropDownList)</td></tr>
+    <tr><td class="mono">lblCategorie</td><td>Label</td><td>106</td><td>564</td><td>200</td><td>14</td><td>Caption="Filtrer la liste par catégorie"</td></tr>
+    <tr><td class="mono">cmbCategorie</td><td>ComboBox</td><td>121</td><td>564</td><td>264</td><td>22</td><td>Style=2</td></tr>
+    <tr><td class="mono">lblTypeDoc</td><td>Label</td><td>152</td><td>14</td><td>130</td><td>14</td><td>Caption="Type de Document", ForeColor=RGB(37,99,235)</td></tr>
+    <tr><td class="mono">cmbTypeDoc</td><td>ComboBox</td><td>167</td><td>14</td><td>220</td><td>22</td><td>Style=2, Value="Bon de Sortie"</td></tr>
+    <tr><td class="mono">lblQte</td><td>Label</td><td>152</td><td>564</td><td>60</td><td>14</td><td>Caption="Quantité"</td></tr>
+    <tr><td class="mono">txtQuantite</td><td>TextBox</td><td>167</td><td>564</td><td>60</td><td>22</td><td>TextAlign=3 (right)</td></tr>
+    <tr><td class="mono">lblPU</td><td>Label</td><td>152</td><td>634</td><td>100</td><td>14</td><td>Caption="Prix Unitaire"</td></tr>
+    <tr><td class="mono">txtPrixUnitaire</td><td>TextBox</td><td>167</td><td>634</td><td>100</td><td>22</td><td>TextAlign=3</td></tr>
+    <tr><td class="mono">btnSupprimerLigne</td><td>CommandButton</td><td>192</td><td>744</td><td>90</td><td>22</td><td>Caption="Supprimer Ligne", Font.Size=8</td></tr>
+    <tr><td class="mono">lblArticleHeader</td><td>Label</td><td>198</td><td>14</td><td>60</td><td>14</td><td>Caption="ARTICLE :", Font.Bold=True</td></tr>
+    <tr><td class="mono">cmbArticle</td><td>ComboBox</td><td>213</td><td>14</td><td>810</td><td>22</td><td>Style=0 (fmStyleDropDownCombo — searchable)</td></tr>
+    <tr><td class="mono">lblStockInfo</td><td>Label</td><td>238</td><td>14</td><td>810</td><td>16</td><td>Font.Size=9, ForeColor=RGB(100,100,100)</td></tr>
+    <tr><td class="mono">lblWilsonAlert</td><td>Label</td><td>256</td><td>14</td><td>540</td><td>14</td><td>Font.Size=9, Visible=False, ForeColor=RGB(5,100,60)</td></tr>
+    <tr><td class="mono">lblGridHeader</td><td>Label</td><td>272</td><td>14</td><td>690</td><td>14</td><td>Font.Name="Courier New", Font.Size=8, ForeColor dim</td></tr>
+    <tr><td class="mono">lstGrid</td><td>ListBox</td><td>287</td><td>14</td><td>690</td><td>160</td><td>ColumnCount=6, ColumnWidths="80;220;90;50;80;90", MultiSelect=0</td></tr>
+    <tr><td class="mono">chkAuditTrail</td><td>CheckBox</td><td>454</td><td>14</td><td>240</td><td>18</td><td>Caption="☑ تسجيل في سجل المراجعة (Audit Log)", Value=True</td></tr>
+    <tr><td class="mono">lblTotalGeneral</td><td>Label</td><td>454</td><td>460</td><td>370</td><td>18</td><td>Caption="TOTAL GÉNÉRAL :  0.00 DZD", Font.Bold=True, ForeColor=RGB(5,100,60), TextAlign=3</td></tr>
+    <tr><td class="mono">btnEnregistrer</td><td>CommandButton</td><td>480</td><td>14</td><td>200</td><td>30</td><td>Caption="Enregistrer le Mouvement", Default=False</td></tr>
+    <tr><td class="mono">btnAjouterLigne</td><td>CommandButton</td><td>480</td><td>320</td><td>200</td><td>30</td><td>Caption="AJOUTER LIGNE"</td></tr>
+    <tr><td class="mono">btnAnnuler</td><td>CommandButton</td><td>480</td><td>620</td><td>110</td><td>30</td><td>Caption="ANNULER", Cancel=True</td></tr>
+    <tr><td class="mono">btnImprimer</td><td>CommandButton</td><td>516</td><td>620</td><td>110</td><td>22</td><td>Caption="IMPRIMER BON", Font.Size=8</td></tr>
+  </tbody>
+</table>
+
+<h2>§2 — Element Mapping: UI → VBA Variable → Data Lake Column</h2>
+<table>
+  <thead>
+    <tr><th>UI Element</th><th>VBA Name</th><th>MOUVEMENTS Col</th><th>ARTICLES Col</th><th>Digital Ledger (السجل الرقمي)</th><th>Guard</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Date de l'opération</td><td class="mono">txtDate</td><td>A (DATE)</td><td>—</td><td><span class="mono">سجل_الحركات[].التاريخ</span></td><td><span class="badge g4">IsValidDate()</span></td></tr>
+    <tr><td>N° Référence</td><td class="mono">txtRefDoc</td><td>F (REF_DOCUMENT)</td><td>—</td><td><span class="mono">سجل_الحركات[].المرجع</span></td><td><span class="badge g4">Len > 0 mandatory</span></td></tr>
+    <tr><td>Service/Fournisseur</td><td class="mono">cmbService</td><td>— (notes field)</td><td>—</td><td><span class="mono">سجل_الحركات[].ملاحظات</span></td><td><span class="badge g4">Len > 0</span></td></tr>
+    <tr><td>Filtrer par catégorie</td><td class="mono">cmbCategorie</td><td>—</td><td>E (CATEGORIE)</td><td><span class="mono">المخزون.الصنف</span></td><td><span class="badge g2">UI filter only</span></td></tr>
+    <tr><td>Type de Document</td><td class="mono">cmbTypeDoc</td><td>D (TYPE_MVT: IN/OUT)</td><td>—</td><td><span class="mono">سجل_الحركات[].النوع</span></td><td><span class="badge g3">Mode toggle</span></td></tr>
+    <tr><td>Article (ComboBox)</td><td class="mono">cmbArticle → m_CurrentArticle</td><td>B (CODE_ARTICLE)</td><td>A (CODE_ARTICLE)</td><td><span class="mono">المخزون.{رمز}</span></td><td><span class="badge g4">Application.Match()</span></td></tr>
+    <tr><td>Quantité</td><td class="mono">txtQuantite</td><td>E (QTE)</td><td>C (QTE_STOCK ±=)</td><td><span class="mono">سجل_الحركات[].الكمية</span></td><td><span class="badge g4">Negative stock guard</span></td></tr>
+    <tr><td>Prix Unitaire</td><td class="mono">txtPrixUnitaire</td><td>— (lineValue)</td><td>D (PRIX_UNITAIRE)</td><td><span class="mono">سجل_الحركات[].سعر_الوحدة</span></td><td><span class="badge g3">Auto-CMUP for BS / editable for BR</span></td></tr>
+    <tr><td>lstGrid Col 0</td><td class="mono">COL_CODE = 0</td><td>B (CODE_ARTICLE)</td><td>—</td><td><span class="mono">رمز_المادة</span></td><td>—</td></tr>
+    <tr><td>lstGrid Col 1</td><td class="mono">COL_DESIG = 1</td><td>C (DESIGNATION)</td><td>B (DESIGNATION_AR)</td><td><span class="mono">التسمية</span></td><td>—</td></tr>
+    <tr><td>lstGrid Col 2</td><td class="mono">COL_CAT = 2</td><td>—</td><td>E (CATEGORIE)</td><td><span class="mono">الصنف</span></td><td>—</td></tr>
+    <tr><td>lstGrid Col 3</td><td class="mono">COL_QTE = 3</td><td>E (QTE)</td><td>—</td><td><span class="mono">الكمية</span></td><td>—</td></tr>
+    <tr><td>lstGrid Col 4</td><td class="mono">COL_PU = 4</td><td>—</td><td>D (PRIX_UNITAIRE)</td><td><span class="mono">متوسط_التكلفة</span></td><td>—</td></tr>
+    <tr><td>lstGrid Col 5</td><td class="mono">COL_VALEUR = 5</td><td>— (computed)</td><td>—</td><td><span class="mono">الكمية × سعر_الوحدة</span></td><td>—</td></tr>
+    <tr><td>TOTAL GÉNÉRAL</td><td class="mono">m_TotalGeneral → lblTotalGeneral</td><td>—</td><td>—</td><td>—</td><td><span class="badge g2">Recomputed from grid</span></td></tr>
+    <tr><td>☑ Audit Log</td><td class="mono">chkAuditTrail</td><td>—</td><td>—</td><td><span class="mono">سجل_المراجعة[].عملية</span></td><td><span class="badge g5">Gates LogAuditEntry()</span></td></tr>
+    <tr><td>lblStockInfo</td><td class="mono">m_StockActuel / lblStockInfo</td><td>—</td><td>C (QTE_STOCK)</td><td><span class="mono">المخزون.الكمية + حاسبة.نقطة_إعادة_الطلب</span></td><td><span class="badge g3">ROP/SS color logic</span></td></tr>
+  </tbody>
+</table>
+
+<h2>§3 — Guard Chain (execution order on AJOUTER LIGNE)</h2>
+<table>
+  <thead><tr><th>#</th><th>Guard Name</th><th>Condition Checked</th><th>Action on Fail</th><th>Maps to Thesis Finding</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Date format</td><td>IsValidDate(txtDate)</td><td>Stop + focus</td><td>—</td></tr>
+    <tr><td>2</td><td>Ref mandatory</td><td>Len(txtRefDoc) &gt; 0</td><td>Stop + focus</td><td><span class="badge g4">Phantom stock root cause</span></td></tr>
+    <tr><td>3</td><td>Article selected</td><td>m_CurrentArticle ≠ ""</td><td>Stop</td><td>—</td></tr>
+    <tr><td>4</td><td>Article in master</td><td>m_StockActuel ≠ -1</td><td>Stop</td><td>—</td></tr>
+    <tr><td>5</td><td>Qty &gt; 0</td><td>IsNumeric + CLng &gt; 0</td><td>Stop + focus</td><td>—</td></tr>
+    <tr><td>6</td><td>PU for BR</td><td>m_IsBRMode → PU &gt; 0</td><td>Stop + focus</td><td>CMUP accuracy</td></tr>
+    <tr><td>7</td><td>Negative stock</td><td>stock - gridQty - qty ≥ 0</td><td>Stop + MsgBox detail</td><td><span class="badge g4">Core ERP guard</span></td></tr>
+    <tr><td>8</td><td>ROP breach warning</td><td>projected ≤ ROP=205.6</td><td>YesNo confirm → continue or abort</td><td><span class="badge g3">Canonical ROP alert</span></td></tr>
+  </tbody>
+</table>
+
+</div>
