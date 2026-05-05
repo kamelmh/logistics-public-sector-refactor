@@ -48,7 +48,13 @@ Key VBA Modules Generated:
 4. frmStockEntry_Enhanced.frm - UserForm interface
 
 --------------------------------------------------------------------------------
-CNEPD COMPLIANCE | الامتثال لتوجيهات CNEPD
+EVOLUTION LOGIC | منطق تطوير النظام
+--------------------------------------------------------------------------------
+Q: Why was the system initially developed as a hybrid, and then refactored to pure VBA?
+A: The project followed a two-stage evolution:
+   1. Innovation Stage: Explored high-performance data processing using Python to prove the mathematical validity of the ROP/EOQ models.
+   2. Adaptation Stage: Refactored the entire core into pure VBA to meet CNEPD's "Institutional Sustainability" criteria.
+   Result: The system now combines high-level mathematical precision with zero-cost deployment and total administrative autonomy.
 --------------------------------------------------------------------------------
 ✅ Zero external dependencies (Python/Flask/JSON removed)
 ✅ Formal Academic Arabic (اللغة العربية الفصحى)

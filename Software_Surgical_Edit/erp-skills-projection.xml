@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ERP Academie v13.2 - Skills Projection Map
+  Generated: 2026-05-04
+  Purpose: Map AI capabilities to specific code regions for future agents
+-->
+<skills-projection>
+
+  <!-- SECURITY AUDIT SKILLS -->
+  <skill name="security-audit" priority="high">
+    <description>Audit workbook security: password handling, approval bypass, sheet protection, access control</description>
+    <targets>
+      <target type="module" name="mod_Config" reason="MASTER_PWD stored as plaintext constant - all sheets use same password" />
+      <target type="module" name="mod_ApprovalWorkflow" reason="Approval status written directly to sheet - no role verification, no audit of approval action" />
+      <target type="module" name="mod_Database" reason="Sheet unprotect/protect cycle - vulnerable if error occurs between unprotect and re-protect" />
+      <target type="module" name="mod_StockEntry_Logic" reason="Transaction posting without user authentication - any user can post movements" />
+      <target type="module" name="mod_AuditTrail" reason="Audit log can be cleared via ClearAuditLogs - no admin-only restriction" />
+      <target type="module" name="mod_SheetSetup" reason="Local MASTER_PWD constant - if diverged from mod_Config, protection breaks silently" />
+      <target type="sheet" name="ARTICLES" reason="Contains pricing data (CMUP) - should be restricted" />
+      <target type="sheet" name="MOUVEMENTS" reason="Transaction ledger - should be append-only" />
+    </targets>
+    <actions>
+      <action>Verify all unprotect/protect cycles have matching pairs (no orphaned unprotect on error)</action>
+      <action>Check if approval workflow can be bypassed by direct sheet editing</action>
+      <action>Assess MASTER_PWD exposure risk (visible in VBA code, exportable)</action>
+      <action>Verify ClearAuditLogs requires confirmation or admin role</action>
+    </actions>
+  </skill>
+
+  <!-- REFACTORING SKILLS -->
+  <skill name="refactoring" priority="medium">
+    <description>Improve code quality: remove duplicates, extract common patterns, fix naming inconsistencies</description>
+    <targets>
+      <target type="module" name="Module1" reason="Duplicate of mod_Config - DELETE" />
+      <target type="module" name="Module2" reason="Duplicate of mod_Config - DELETE" />
+      <target type="module" name="mod_Config_Test" reason="Test stub - DELETE from production" />
+      <target type="module" name="mod_SheetSetup" reason="Local MASTER_PWD constant duplicates mod_Config.MASTER_PWD" />
+      <target type="module" name="mod_StockEntry_Logic" reason="831 lines monolithic - extract validation logic, grid management, and posting logic into separate modules" />
+      <target type="module" name="mod_ExportEngine" reason="622 lines - template population could be extracted to mod_TemplateEngine" />
+      <target type="module" name="mod_Utilities" reason="Mixed concerns: data utilities + UI utilities + export utilities" />
+    </targets>
+    <actions>
+      <action>Delete Module1, Module2, mod_Config_Test (verified dead code)</action>
+      <action>Replace mod_SheetSetup local MASTER_PWD with mod_Config.MASTER_PWD reference</action>
+      <action>Extract validation logic from mod_StockEntry_Logic to mod_Validation</action>
+      <action>Standardize Public keyword usage across all modules</action>
+      <action>Add XML docstrings to all public procedures</action>
+    </actions>
+  </skill>
+
+  <!-- TESTING SKILLS -->
+  <skill name="testing" priority="high">
+    <description>Generate test harness for all public procedures with edge cases</description>
+    <targets>
+      <target type="module" name="mod_StockEngine" reason="Core calculation engine - test ROP, EOQ, CMUP with known inputs" />
+      <target type="module" name="mod_StockCalculations" reason="Standalone formulas - easy to unit test" />
+      <target type="module" name="mod_Utilities" reason="SafeVal, GetArticleField, IsValidDate - pure functions" />
+      <target type="module" name="mod_SyncBridge" reason="Transaction sync - test with mock data" />
+      <target type="module" name="mod_Localization" reason="String lookup - test with missing IDs, empty sheet" />
+      <target type="entry-points" name="all" reason="Test each entry point with valid, invalid, and boundary inputs" />
+    </targets>
+    <actions>
+      <action>Create mod_TestHarness module with Test_ prefixed procedures</action>
+      <action>Test CalculateROP with D=1546, LT=2, SS=200 -> expect 205.6</action>
+      <action>Test CalculateEOQ with D=1546, S=500, H=0.2*unitPrice -> expect ~176</action>
+      <action>Test SafeVal with Null, Empty, "", "abc", 123 -> expect correct doubles</action>
+      <action>Test GetArticleField with non-existent SKU -> expect empty string</action>
+      <action>Test SyncTransactionInternal with invalid SKU -> expect graceful error</action>
+    </actions>
+  </skill>
+
+  <!-- DATA VALIDATION SKILLS -->
+  <skill name="data-validation" priority="high">
+    <description>Add validation layers to data entry and processing paths</description>
+    <targets>
+      <target type="module" name="mod_StockEntry_Logic" reason="Main data entry point - validate date range, quantity bounds, price ranges, duplicate references" />
+      <target type="module" name="mod_Database" reason="SecureWriteTransaction should validate data types before writing" />
+      <target type="module" name="mod_SyncBridge" reason="SyncTransactionInternal should validate artCode exists before updating" />
+      <target type="sheet" name="ARTICLES" reason="Add data validation rules: stock >= 0, ROP > 0, CMUP > 0" />
+      <target type="sheet" name="MOUVEMENTS" reason="Add data validation: date <= today, quantity > 0, valid type codes" />
+    </targets>
+    <actions>
+      <action>Add quantity validation: must be > 0, integer for physical items</action>
+      <action>Add date validation: must not be in future, must be within fiscal year</action>
+      <action>Add duplicate reference check before posting</action>
+      <action>Add negative stock prevention (block sortie if insufficient stock)</action>
+      <action>Add CMUP validation: must be > 0, flag anomalies</action>
+    </actions>
+  </skill>
+
+  <!-- DOCUMENTATION SKILLS -->
+  <skill name="documentation" priority="medium">
+    <description>Generate inline docstrings and external reference documentation</description>
+    <targets>
+      <target type="module" name="project-wide" reason="All modules need XML docstrings for public procedures" />
+      <target type="sheet" name="all" reason="Document sheet purpose, columns, data types, and relationships" />
+      <target type="config" name="mod_Config" reason="Document each constant with thesis reference and business meaning" />
+    </targets>
+    <actions>
+      <action>Add XML docstring header to each module (purpose, author, date, dependencies)</action>
+      <action>Add XML docstring to each public procedure (summary, params, returns, errors, example)</action>
+      <action>Generate sheet dictionary: name, purpose, columns with types, relationships</action>
+      <action>Generate config parameter reference with thesis citations</action>
+      <action>Create user manual: how to use each entry point</action>
+    </actions>
+  </skill>
+
+  <!-- DATABASE SCHEMA DESIGN SKILLS -->
+  <skill name="database-schema-design" priority="low">
+    <description>Normalize sheet structure, add constraints, plan indexing strategy</description>
+    <targets>
+      <target type="sheet" name="ARTICLES" reason="Article catalog - primary key: Code Article, indexes on Category, ABC classification" />
+      <target type="sheet" name="MOUVEMENTS" reason="Transaction ledger - composite key: Date + Ref + Code Article, index on Type for filtering" />
+      <target type="sheet" name="AUDIT_LOG" reason="Append-only log - index on timestamp for time-range queries" />
+    </targets>
+    <actions>
+      <action>Verify ARTICLES has unique Code Article values</action>
+      <action>Verify MOUVEMENTS has consistent data types per column</action>
+      <action>Plan Table/ListObject conversion for structured references</action>
+      <action>Add named ranges for key columns (enables formula-based validation)</action>
+    </actions>
+  </skill>
+
+  <!-- CI/CD SKILLS -->
+  <skill name="ci-cd" priority="low">
+    <description>Automate VBA export, testing, and version management</description>
+    <targets>
+      <target type="module" name="mod_Backup" reason="Existing export functionality - can be enhanced for CI pipeline" />
+      <target type="process" name="build" reason="Export all modules to VBA_Modules directory on each save" />
+      <target type="process" name="version" reason="Auto-increment mod_Config.VERSION on each release" />
+    </targets>
+    <actions>
+      <action>Enhance mod_Backup to export to versioned folders (v13.2.1, v13.2.2, etc.)</action>
+      <action>Create pre-save hook that exports all modules to source control directory</action>
+      <action>Add version validation test (VERSION constant matches workbook metadata)</action>
+      <action>Create changelog template for each version</action>
+    </actions>
+  </skill>
+
+  <!-- CONTEXT INJECTION SKILLS -->
+  <skill name="context-injection" priority="high">
+    <description>Inject project context into AI agent sessions for accurate code generation</description>
+    <targets>
+      <target type="file" name="erp-project-context.xml" reason="Primary context file - read first in every session" />
+      <target type="module" name="mod_Config" reason="Contains all constants agents need to reference" />
+      <target type="file" name="erp-agent-handoff.xml" reason="Session handoff instructions for next agent" />
+    </targets>
+    <actions>
+      <action>On session start: read erp-project-context.xml before any code changes</action>
+      <action>Before code change: verify target module in dependency graph</action>
+      <action>After code change: update affected XML sections</action>
+      <action>On session end: regenerate erp-agent-handoff.xml with current state</action>
+    </actions>
+  </skill>
+
+  <!-- PERFORMANCE SKILLS -->
+  <skill name="performance-optimization" priority="medium">
+    <description>Optimize slow operations: ScreenUpdating, Calculation, Events management</description>
+    <targets>
+      <target type="module" name="mod_Database" reason="Already manages ScreenUpdating/Calculation/Events - verify all paths restore settings" />
+      <target type="module" name="mod_SyncBridge" reason="Batch operations on large datasets could be slow" />
+      <target type="module" name="mod_StockEngine" reason="CalculateCMUP loops through MOUVEMENTS - O(n) per article, O(n*m) total" />
+      <target type="module" name="mod_Reports" reason="GenerateMonthlyReport aggregates entire MOUVEMENTS sheet" />
+    </targets>
+    <actions>
+      <action>Verify all error paths restore Application.ScreenUpdating, Calculation, EnableEvents</action>
+      <action>Consider dictionary-based caching for repeated article lookups</action>
+      <action>Batch CMUP calculation: single pass through MOUVEMENTS instead of per-article passes</action>
+      <action>Add progress indicators for long-running operations (> 5 seconds)</action>
+    </actions>
+  </skill>
+
+</skills-projection>
