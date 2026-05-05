@@ -12,7 +12,7 @@ Option Explicit
 '=======================================================================================
 Public Sub RestoreMouvementsHeaders()
     Dim wsMouv As Worksheet
-    Set wsMouv = ThisWorkbook.Sheets("MOUVEMENTS")
+    Set wsMouv = ThisWorkbook.Sheets(mod_Config.SHEET_MOUVEMENTS)
     
     wsMouv.Unprotect Password:=mod_Config.MASTER_PWD
     
@@ -24,7 +24,7 @@ Public Sub RestoreMouvementsHeaders()
     wsMouv.Range("A1:J1").Interior.Color = RGB(200, 200, 200)
     
     wsMouv.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
-    MsgBox "Headers for MOUVEMENTS have been restored!", vbInformation, mod_Config.SYS_TITLE
+    MsgBox "Headers restored!", vbInformation, mod_Config.SYS_TITLE
 End Sub
 
 '=======================================================================================
@@ -39,43 +39,42 @@ Public Function SafeVal(ByVal v As Variant) As Double
     End If
 End Function
 
-'--------------------------------------------------------------------------------------
-' FUNCTION: GetArticleField
-' Retrieves a specific field (e.g., "DESIG", "CAT") for a given SKU from the ARTICLES sheet
+'-------------------------------------------------------------------------------------' FUNCTION: GetArticleField
+' Retrieves a specific field (CODE, DESIG, QTE, PU, CAT) for a given SKU from the ARTICLES sheet
 '--------------------------------------------------------------------------------------
 Public Function GetArticleField(ByVal sku As String, ByVal fieldType As String) As String
-    Dim wsArt As Worksheet
+    Dim wsArt    As Worksheet
     Dim foundRow As Variant
-    Dim colIdx As Integer
+    Dim colIdx   As Integer
     
     On Error Resume Next
     Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
     On Error GoTo 0
     
     If wsArt Is Nothing Then
-        GetArticleField = "Error: Sheet Missing"
+        GetArticleField = ""
         Exit Function
     End If
     
     ' Determine column based on fieldType
     Select Case UCase(fieldType)
-        Case "DESIG": colIdx = 2 ' Column B: Designation
-        Case "CAT":   colIdx = 5 ' Column E: Category
-        Case Else:    colIdx = 2 ' Default to Designation
+        Case "CODE":  colIdx = 1  ' Column A: Article Code
+        Case "DESIG": colIdx = 2  ' Column B: Designation
+        Case "QTE":   GetArticleField = "0": Exit Function  ' No stock column in ARTICLES
+        Case "PU":    colIdx = 8  ' Column H: Prix Unitaire
+        Case "CAT":   colIdx = 5  ' Column E: Categorie
+        Case Else:    colIdx = 2  ' Default to Designation
     End Select
     
     foundRow = Application.Match(sku, wsArt.Range("A:A"), 0)
     
     If IsError(foundRow) Then
-        GetArticleField = "Not Found"
+        GetArticleField = ""
     Else
         GetArticleField = Trim(CStr(wsArt.Cells(foundRow, colIdx).Value))
     End If
-End Function
-
-'--------------------------------------------------------------------------------------
-' FUNCTION: IsValidDate
-' Validates if a string is a valid date in DD/MM/YYYY format
+End Function------------------------------------------------------------------------------' FUNCTION: IsValidDate
+' Validates if a string is a valid date in strict DD/MM/YYYY format
 '--------------------------------------------------------------------------------------
 Public Function IsValidDate(ByVal dateStr As String) As Boolean
     If Len(Trim(dateStr)) <> 10 Then
@@ -83,15 +82,24 @@ Public Function IsValidDate(ByVal dateStr As String) As Boolean
         Exit Function
     End If
     
-    If Not IsDate(dateStr) Then
+    ' Check slash positions (DD/MM/YYYY)
+    If Mid(dateStr, 3, 1) <> "/" Or Mid(dateStr, 6, 1) <> "/" Then
         IsValidDate = False
         Exit Function
     End If
     
-    IsValidDate = True
-End Function
-
-'=======================================================================================
+    ' Validate actual date components
+    On Error Resume Next
+    Dim dayPart As Integer, monthPart As Integer, yearPart As Integer
+    dayPart = CInt(Mid(dateStr, 1, 2))
+    monthPart = CInt(Mid(dateStr, 4, 2))
+    yearPart = CInt(Right(dateStr, 4))
+    
+    Dim testDate As Date
+    testDate = DateSerial(yearPart, monthPart, dayPart)
+    IsValidDate = (Err.Number = 0)
+    On Error GoTo 0
+End Function================================================================================
 ' SUB: SetupLocationDropdown
 ' Creates a dynamic dropdown list for EMPLACEMENT column (Col H)
 '=======================================================================================

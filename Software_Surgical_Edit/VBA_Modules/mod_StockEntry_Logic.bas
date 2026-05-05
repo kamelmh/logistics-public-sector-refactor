@@ -1,3 +1,4 @@
+Attribute VB_Name = "mod_StockEntry_Logic"
 '==============================================================================
 ' mod_StockEntry_Logic.bas  �  ERP Acad" & Chr(233) & "mie v13.2
 ' Author   : Mahi Kamel Abdelghani � TAG1801 GSL � CNEPD 2026
@@ -36,9 +37,6 @@ Private Const COL_PU     As Integer = 4
 Private Const COL_VALEUR As Integer = 5
 
 '? Document type string constants
-Public Const DOC_BS As String = "Bon de Sortie"
-Public DOC_BR As String
-Public Const DOC_DA As String = "Demande d'Achat"
 
 '? Form state (module-level � persists across event calls)
 Private m_TotalGeneral   As Double
@@ -51,7 +49,6 @@ Private m_IsBRMode       As Boolean
 ' SECTION 1 � FORM INITIALIZE (called from form's UserForm_Initialize)
 '==============================================================================
 Public Sub InitializeForm()
-    DOC_BR = "Bon de R" & Chr(201) & "ception"
     
     Call SetupFormAppearance
     Call PopulateDropdowns
@@ -96,15 +93,15 @@ End Sub
 
 Private Sub PopulateDropdowns()
     frmStockEntry.cmbTypeDoc.Clear
-    frmStockEntry.cmbTypeDoc.AddItem DOC_BS
-    frmStockEntry.cmbTypeDoc.AddItem DOC_BR
-    frmStockEntry.cmbTypeDoc.AddItem DOC_DA
+    frmStockEntry.cmbTypeDoc.AddItem mod_Config.DOC_TYPE_BS
+    frmStockEntry.cmbTypeDoc.AddItem mod_Config.DOC_TYPE_BR
+    frmStockEntry.cmbTypeDoc.AddItem mod_Config.DOC_TYPE_DA
     frmStockEntry.cmbTypeDoc.ListIndex = 0
  
     frmStockEntry.cmbService.Clear
     Dim wsStr As Worksheet
     On Error Resume Next
-    Set wsStr = ThisWorkbook.Sheets("SYS_STRINGS")
+    Set wsStr = ThisWorkbook.Sheets(mod_Config.SHEET_SYS_STRINGS)
     On Error GoTo 0
  
     If Not wsStr Is Nothing Then
@@ -122,7 +119,7 @@ Private Sub PopulateDropdowns()
         frmStockEntry.cmbService.AddItem "Service 2"
         frmStockEntry.cmbService.AddItem "Fournisseur Externe"
     End If
-    frmStockEntry.cmbService.ListIndex = 0
+    If frmStockEntry.cmbService.ListCount > 0 Then frmStockEntry.cmbService.ListIndex = 0
  
     frmStockEntry.cmbCategorie.Clear
     frmStockEntry.cmbCategorie.AddItem "(Toutes)"
@@ -161,10 +158,10 @@ Private Sub LoadArticleComboBox(ByVal filterCat As String)
 
     lastRow = wsArt.Cells(wsArt.Rows.Count, 1).End(xlUp).Row
 
-    For i = 2 To lastRow
+    For i = 3 To lastRow
         code  = Trim(CStr(wsArt.Cells(i, 1).Value))
         desig = Trim(CStr(wsArt.Cells(i, 2).Value))
-        cat   = Trim(CStr(wsArt.Cells(i, 11).Value))
+        cat   = Trim(CStr(wsArt.Cells(i, 5).Value))
 
         If code = "" Then GoTo NextRow
 
@@ -221,7 +218,7 @@ Public Sub cmbTypeDoc_Change()
     Select Case frmStockEntry.cmbTypeDoc.Value
 
 
-        Case DOC_BS
+        Case mod_Config.DOC_TYPE_BS
             frmStockEntry.fraDocTypeBanner.BackColor = RGB(160, 70, 0)
             frmStockEntry.lblBannerText.Caption = "  MODE SORTIE  --  Bon de Sortie"
             m_IsBRMode = False
@@ -229,7 +226,7 @@ Public Sub cmbTypeDoc_Change()
             frmStockEntry.txtPrixUnitaire.BackColor = RGB(235, 235, 235)
             frmStockEntry.lblPU.Caption = "PU -- CMUP auto"
 
-        Case DOC_BR
+        Case mod_Config.DOC_TYPE_BR
             frmStockEntry.fraDocTypeBanner.BackColor = RGB(4, 90, 55)
             frmStockEntry.lblBannerText.Caption = "  MODE ENTREE  --  Bon de R" & Chr(201) & "ception"
             m_IsBRMode = True
@@ -237,7 +234,7 @@ Public Sub cmbTypeDoc_Change()
             frmStockEntry.txtPrixUnitaire.BackColor = RGB(255, 252, 196)
             frmStockEntry.lblPU.Caption = "Prix Unitaire (saisir)"
 
-        Case DOC_DA
+        Case mod_Config.DOC_TYPE_DA
             frmStockEntry.fraDocTypeBanner.BackColor = RGB(30, 80, 180)
             frmStockEntry.lblBannerText.Caption = "  Demande d'Achat"
             m_IsBRMode = False
@@ -256,9 +253,9 @@ End Sub
 
 Private Function GetDocPrefix() As String
     Select Case frmStockEntry.cmbTypeDoc.Value
-        Case DOC_BS:  GetDocPrefix = "BS"
-        Case DOC_BR:  GetDocPrefix = "BR"
-        Case DOC_DA:  GetDocPrefix = "DA"
+        Case mod_Config.DOC_TYPE_BS:  GetDocPrefix = "BS"
+        Case mod_Config.DOC_TYPE_BR:  GetDocPrefix = "BR"
+        Case mod_Config.DOC_TYPE_DA:  GetDocPrefix = "DA"
         Case Else:    GetDocPrefix = "TXN"
     End Select
 End Function
@@ -312,7 +309,7 @@ Private Sub EvaluateStockStatus(ByVal artCode As String)
         Exit Sub
     End If
 
-    pu    = CDbl(SafeVal(wsArt.Cells(foundRow, 8).Value))
+    pu    = CDbl(mod_Utilities.SafeVal(wsArt.Cells(foundRow, 8).Value))
     cat   = Trim(CStr(wsArt.Cells(foundRow, 11).Value))
 
     Dim wsMouv As Worksheet
@@ -449,7 +446,7 @@ Private Function GetNextSequence(ByVal prefix As String) As Long
     maxSeq = 0
 
     On Error Resume Next
-    Set wsMouv = ThisWorkbook.Sheets("MOUVEMENTS")
+    Set wsMouv = ThisWorkbook.Sheets(mod_Config.SHEET_MOUVEMENTS)
     On Error GoTo 0
 
     If wsMouv Is Nothing Then
@@ -459,7 +456,7 @@ Private Function GetNextSequence(ByVal prefix As String) As Long
 
     lastRow = wsMouv.Cells(wsMouv.Rows.Count, 7).End(xlUp).Row
     
-    For i = 2 To lastRow
+    For i = 3 To lastRow
         refStr = CStr(wsMouv.Cells(i, 7).Value)
         If Left(refStr, Len(prefix)) = prefix Then
             Dim parts() As String
@@ -492,7 +489,7 @@ Public Sub btnAjouterLigne_Click()
     Dim ropSeuil   As Double
     Dim rowIdx     As Integer
 
-    If Not IsValidDate(frmStockEntry.txtDate.Value) Then
+    If Not mod_Utilities.IsValidDate(frmStockEntry.txtDate.Value) Then
         MsgBox "Format de date requis : JJ/MM/AAAA", vbExclamation
         frmStockEntry.txtDate.SetFocus
         Exit Sub
@@ -531,14 +528,14 @@ Public Sub btnAjouterLigne_Click()
 
     If m_IsBRMode Then
         If Not IsNumeric(frmStockEntry.txtPrixUnitaire.Value) Or _
-           CDbl(SafeVal(frmStockEntry.txtPrixUnitaire.Value)) <= 0 Then
+           CDbl(mod_Utilities.SafeVal(frmStockEntry.txtPrixUnitaire.Value)) <= 0 Then
             MsgBox "Le Prix Unitaire est requis pour un Bon de R" & Chr(201) & "ception.", vbCritical
             frmStockEntry.txtPrixUnitaire.SetFocus
             Exit Sub
         End If
     End If
 
-    pu = CDbl(SafeVal(frmStockEntry.txtPrixUnitaire.Value))
+    pu = CDbl(mod_Utilities.SafeVal(frmStockEntry.txtPrixUnitaire.Value))
 
     If Not m_IsBRMode Then
         Dim netProjected As Long
@@ -560,8 +557,8 @@ Public Sub btnAjouterLigne_Click()
     End If
 
     valLigne = qty * pu
-    desig    = GetArticleField(m_CurrentArticle, "DESIG")
-    cat      = GetArticleField(m_CurrentArticle, "CAT")
+    desig    = mod_Utilities.GetArticleField(m_CurrentArticle, "DESIG")
+    cat      = mod_Utilities.GetArticleField(m_CurrentArticle, "CAT")
 
     frmStockEntry.lstGrid.AddItem ""
     rowIdx = frmStockEntry.lstGrid.ListCount - 1
@@ -703,7 +700,7 @@ Public Sub btnEnregistrer_Click()
     Application.Calculation    = xlCalculationManual
     Application.EnableEvents   = False
 
-    Dim wsMouv As Worksheet: Set wsMouv = ThisWorkbook.Sheets("MOUVEMENTS")
+    Dim wsMouv As Worksheet: Set wsMouv = ThisWorkbook.Sheets(mod_Config.SHEET_MOUVEMENTS)
     Dim startRow As Long: startRow = wsMouv.Cells(wsMouv.Rows.Count, 1).End(xlUp).Row + 1
     
     For i = 0 To frmStockEntry.lstGrid.ListCount - 1
@@ -756,7 +753,7 @@ Public Sub btnEnregistrer_Click()
     
     Call mod_AuditTrail.LogTransaction(frmStockEntry.cmbTypeDoc.Value, Trim(frmStockEntry.txtRefDoc.Value))
     
-    MsgBox "Enregistrement successful !" & vbCrLf & _
+    MsgBox "Enregistrement r" & Chr(233) & "ussi !" & vbCrLf & _
             "Reference :  " & frmStockEntry.txtRefDoc.Value & vbCrLf & _
             nLines & " ligne(s) enregistr" & Chr(233) & "e(s)", vbInformation
     
@@ -772,10 +769,16 @@ Public Sub btnEnregistrer_Click()
     Exit Sub
     
 SaveError:
+    ' Rollback: Delete any rows written in this session
+    Dim rollbackRow As Long
+    rollbackRow = wsMouv.Cells(wsMouv.Rows.Count, 1).End(xlUp).Row
+    If rollbackRow >= startRow Then
+        wsMouv.Rows(startRow & ":" & rollbackRow).Delete
+    End If
     Application.EnableEvents   = True
     Application.Calculation    = xlCalculationAutomatic
     Application.ScreenUpdating = True
-    MsgBox "Une erreur s'est produite lors de l'enregistrement.", vbCritical
+    MsgBox "Une erreur s'est produite lors de l'enregistrement. Transaction annul" & Chr(233) & "e.", vbCritical
 End Sub
 
 Private Function FireInternalBridge(ByVal artCode As String, _
@@ -792,47 +795,8 @@ End Function
 
 
 '==============================================================================
-' SECTION 8 � UTILITY FUNCTIONS
 '==============================================================================
-
-Private Function GetArticleField(ByVal artCode As String, _
-                                  ByVal field   As String) As String
-    Dim wsArt    As Worksheet
-    Dim foundRow As Variant
-
-    On Error Resume Next
-    Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
-    On Error GoTo 0
-    If wsArt Is Nothing Then GetArticleField = artCode: Exit Function
-
-    foundRow = Application.Match(artCode, wsArt.Range("A:A"), 0)
-    If IsError(foundRow) Then GetArticleField = "": Exit Function
-
-    Select Case UCase(field)
-        Case "CODE":  GetArticleField = Trim(CStr(wsArt.Cells(foundRow, 1).Value))
-        Case "DESIG": GetArticleField = Trim(CStr(wsArt.Cells(foundRow, 2).Value))
-        Case "QTE":   GetArticleField = "0"
-        Case "PU":   GetArticleField = CStr(CDbl(SafeVal(wsArt.Cells(foundRow, 8).Value)))
-        Case "CAT":  GetArticleField = Trim(CStr(wsArt.Cells(foundRow, 11).Value))
-        Case Else:   GetArticleField = ""
-    End Select
-End Function
-
-Private Function IsValidDate(ByVal s As String) As Boolean
-    If Len(s) <> 10 Then IsValidDate = False: Exit Function
-    If Mid(s, 3, 1) <> "/" Or Mid(s, 6, 1) <> "/" Then
-        IsValidDate = False: Exit Function
-    End If
-    On Error Resume Next
-    Dim testDate As Date
-    testDate = CDate(Mid(s, 4, 2) & "/" & Left(s, 2) & "/" & Right(s, 4))
-    IsValidDate = (Err.Number = 0)
-    On Error GoTo 0
-End Function
-
-
-'==============================================================================
-' SECTION 9  CANCEL
+' SECTION 8  CANCEL
 '==============================================================================
 Public Sub btnAnnuler_Click()
     If frmStockEntry.lstGrid.ListCount > 0 Then
@@ -845,7 +809,7 @@ Public Sub btnAnnuler_Click()
     Unload frmStockEntry
 End Sub
 
-Private Sub UserForm_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, _
+Private Sub UserForm_KeyDown(ByVal KeyCode As Integer, _
                               ByVal Shift As Integer)
     Select Case KeyCode
         Case 27: Call btnAnnuler_Click

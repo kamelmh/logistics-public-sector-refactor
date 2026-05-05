@@ -26,7 +26,7 @@ Sub GenerateReceiptTagPDF()
     Dim pic        As Picture
 
     ' 1. Define sheets
-    Set wsData = ThisWorkbook.Sheets("MOUVEMENTS")
+    Set wsData = ThisWorkbook.Sheets(mod_Config.SHEET_MOUVEMENTS)
     Set wsTemplate = ThisWorkbook.Sheets("RECEIPT_TAG")
 
     ' 2. Get data from the last active movement row

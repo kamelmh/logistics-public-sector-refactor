@@ -13,7 +13,7 @@ Public Sub RestoreInventoryAdvanced()
     Dim restoredCount As Long
     
     startTime = Timer
-    Set wsMaster = ThisWorkbook.Sheets("ARTICLES")
+    Set wsMaster = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
     
     backupPath = ThisWorkbook.Path & "\..\Z_ARCHIVE\01_ERP_Backups\ERP_Academie_v13_Backup_2026-04-19_16-06-24.xlsm"
     
@@ -32,7 +32,7 @@ Public Sub RestoreInventoryAdvanced()
     wsMaster.Range("G1:H1").Font.Color = RGB(255, 255, 255)
     
     Set wbBackup = Workbooks.Open(backupPath, ReadOnly:=True, UpdateLinks:=False)
-    Set wsBackup = wbBackup.Sheets("ARTICLES")
+    Set wsBackup = wbBackup.Sheets(mod_Config.SHEET_ARTICLES)
     
     Dim backupCodes As Range
     Set backupCodes = wsBackup.Range("A1:A" & wsBackup.Cells(wsBackup.Rows.Count, "A").End(xlUp).Row)

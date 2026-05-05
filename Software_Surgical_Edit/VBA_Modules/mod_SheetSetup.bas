@@ -1,7 +1,8 @@
 Attribute VB_Name = "mod_SheetSetup"
 Option Explicit
 
-Const MASTER_PWD As String = "erp_secure_pwd_2026"
+' Sheet protection password delegated to mod_Config.MASTER_PWD
+' W003 FIX: Eliminated local duplicate to prevent password drift
 
 Public Sub CreateAllSheets()
     Dim confirmation As VbMsgBoxResult
@@ -63,7 +64,7 @@ Private Sub CreateArticlesSheet()
         .Columns("D").ColumnWidth = 15
         .Columns("E").ColumnWidth = 18
         .Columns("F").ColumnWidth = 12
-        .Protect MASTER_PWD, UserInterfaceOnly:=True
+        .Protect mod_Config.MASTER_PWD, UserInterfaceOnly:=True
     End With
 End Sub
 
@@ -101,7 +102,7 @@ Private Sub CreateMouvementsSheet()
     
     With ws
         .Tab.Color = RGB(52, 152, 219)
-        .Protect MASTER_PWD, UserInterfaceOnly:=True
+        .Protect mod_Config.MASTER_PWD, UserInterfaceOnly:=True
     End With
 End Sub
 
@@ -141,7 +142,7 @@ Private Sub CreateFormInputSheet()
     
     With ws
         .Tab.Color = RGB(155, 89, 182)
-        .Protect MASTER_PWD, UserInterfaceOnly:=True
+        .Protect mod_Config.MASTER_PWD, UserInterfaceOnly:=True
     End With
 End Sub
 
@@ -171,7 +172,7 @@ Private Sub CreateStagingBufferSheet()
         .Range("F1").Value = "STATUS"
         .Range("A1:F1").Font.Bold = True
         .Tab.Color = RGB(230, 126, 34)
-        .Protect MASTER_PWD, UserInterfaceOnly:=True
+        .Protect mod_Config.MASTER_PWD, UserInterfaceOnly:=True
     End With
 End Sub
 
@@ -478,7 +479,7 @@ Private Sub CreateSysStringsSheet()
         .Columns("A").ColumnWidth = 20
         .Columns("B").ColumnWidth = 35
         .Tab.Color = RGB(149, 165, 166)
-        .Protect MASTER_PWD, UserInterfaceOnly:=True
+        .Protect mod_Config.MASTER_PWD, UserInterfaceOnly:=True
     End With
 End Sub
 
@@ -507,7 +508,7 @@ Private Sub CreateReceiptTagSheet()
         
         .Range("A1").Value = "RECEIPT TAG"
         .Range("A1").Font.Bold = True
-        .Protect MASTER_PWD, UserInterfaceOnly:=True
+        .Protect mod_Config.MASTER_PWD, UserInterfaceOnly:=True
     End With
 End Sub
 
@@ -531,6 +532,6 @@ Private Sub CreateTemplateBonSheet()
     With ws
         .Range("A1").Value = "DOCUMENT OFFICIEL"
         .Range("A1").Font.Bold = True
-        .Protect MASTER_PWD, UserInterfaceOnly:=True
+        .Protect mod_Config.MASTER_PWD, UserInterfaceOnly:=True
     End With
 End Sub

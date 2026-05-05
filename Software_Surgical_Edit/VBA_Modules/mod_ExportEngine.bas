@@ -49,7 +49,7 @@ Public Sub ExportTransactionToPDF(ByVal docRef As String)
         MsgBox "ERREUR: Feuille TEMPLATE_BON introuvable.", vbCritical, "ACADEMIX v13"
         Exit Sub
     End If
-    If Not SheetExists("MOUVEMENTS") Then
+    If Not SheetExists(mod_Config.SHEET_MOUVEMENTS) Then
         Debug.Print "FAIL: MOUVEMENTS sheet missing"
         MsgBox "ERREUR: Feuille MOUVEMENTS introuvable.", vbCritical, "ACADEMIX v13"
         Exit Sub
@@ -60,7 +60,7 @@ Public Sub ExportTransactionToPDF(ByVal docRef As String)
     Call mod_Utilities.RestoreMouvementsHeaders
     
     Set wsTemplate = ThisWorkbook.Sheets("TEMPLATE_BON")
-    Set wsMouv     = ThisWorkbook.Sheets("MOUVEMENTS")
+    Set wsMouv     = ThisWorkbook.Sheets(mod_Config.SHEET_MOUVEMENTS)
     
     ' 2. Populate template from transaction data
     Debug.Print "Step: Populating template for Ref: " & docRef

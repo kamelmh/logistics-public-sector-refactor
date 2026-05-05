@@ -1,0 +1,77 @@
+# Repomix Output — Thesis_Surgical_Edit Context
+
+**Generated:** 27 Avril 2026
+**Project:** Logistics.Public.Sector.Refactor
+**Context Type:** Thesis (Traditional Public Administration)
+
+---
+
+## File Manifest
+
+### Thesis Drafts (Markdown)
+1. Chapter_2_and_3_Top_gemini_release.md
+2. Chapter_3_14-04_2026.md
+3. Chapter_3_summarized.md
+4. Chapter_4_04-14-2026.md
+5. Chapter_4_14-04_2026_second_draft.md
+6. Final_Chapter_4_14-04_2026.md
+7. General_Conclusion_14-04_2026.md
+
+### Reference Files
+- Memoire_Academix_v13_1_Final.docx (Original)
+- THESIS_Chapter1_Literature_Review_AR.md
+- Thesis_Defense_Summary.txt
+
+---
+
+## Key Variables Locked
+
+| Variable | Value | Source | Notes |
+|---|---|---|---
+| D (Annual Demand) | 1,546 | Field Data | A4 Paper |
+| SS (Safety Stock) | 200 | Fixed | Constant |
+| PU (Unit Price) | 400 DZD | Field Data | Standard |
+| ROP Range | 212-250 | Calculated | LT=2-3 days |
+| EOQ (Toner G030) | 10 | Wilson Formula | Optimal |
+| ROP (Toner G030) | 17 | Wilson Formula | Strategic |
+
+---
+
+## Language Profile
+
+### Terminology Shift (Tech → Admin)
+- "Python Backend" → "VBA Processing Units"
+- "Bridge Architecture" → "Integrated Architecture"
+- "Data Pipeline" → "Local Data Flow"
+- "Engineering" → "Methodology"
+- "System Architecture" → "Administrative Framework"
+
+### Tone
+- **Before:** Technical, AI-startup style
+- **After:** Academic, Algerian Public Administration
+
+---
+
+## Target Audience
+Traditional Algerian TS (Technicien Spécialisé) Jury in Stock Management
+Focus: Documentary cycle, Fiche de Stock, Bon de Réception/Sortie
+
+---
+
+## Non-Included (Critical Exclusions)
+- Python source code
+- Flask server configurations
+- JSON/HTTP pipelines
+- Technical architecture diagrams showing backend
+
+---
+
+## Repomix Instructions for AI
+> "You are reviewing a traditional Algerian public administration thesis on stock management. 
+> Use ONLY public sector terminology: 'Magasinier', 'Fiche de Stock', 'Bon de Réception', 
+> 'CMUP calculation', 'ROP monitoring'. Avoid any technical programming references."
+
+---
+
+*End of Repomix Manifest*
+*This file serves as context header for AI prompting*

@@ -1,6 +1,6 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmStockEntry 
-   Caption         =   "Saisie des Mouvements de Stock"
+    Caption         =   "نموذج إدخال بيانات المخزون - Directorate of Education El Bayadh"
    ClientHeight    =   12210
    ClientLeft      =   120
    ClientTop       =   465
@@ -14,20 +14,18 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 '==============================================================================
-' Me.bas  " & Chr(183) & "  ERP Acad?mie v13.2
-' Author   : Mahi Kamel Abdelghani " & Chr(183) & " TAG1801 GSL " & Chr(183) & " CNEPD 2026
-' Depends  : mod_SyncBridge.bas | mod_StockEngine.bas
-'            mod_Database.bas   | mod_AuditTrail.bas
-'            mod_ExportEngine.bas
-'
+' نظام الدعم القرار v13.2
+' Author   : ماحي كمال عبد الغني " & Chr(183) & " TAG1801 " & Chr(183) & " CNEPD 2026
+' Depends  : mod_StockEntry_Logic_Enhanced.bas | mod_ExportEngine_Enhanced.bas
+'            mod_StockCalculations.bas
+''
 ' Architecture:
 '   UI Layer       " & Chr(183) & " this form (frmStockEntry)
-'   Data Layer     " & Chr(183) & " mod_Database.SecureWriteTransaction()
-'   Sync Local     → mod_SyncBridge.CommitStaging() + STAGING_BUFFER sheet
-'   Ledger         " & Chr(183) & " Sجل رقمي (écriture atomique via Unité de traitement VBA)
-'
+'   Data Layer     " & Chr(183) & " ProcessTransaction() via VBA Processing Units
+'   Ledger         " & Chr(183) & " السجل الرقمي (Digital Ledger via VBA)
+''
 ' Canonical constants (locked " & Chr(183) & " never change without updating CLAUDE.md):
-'   D=1,546  |  ROP=205.6  |  Q*=176  |  Ss=200  |  LT=2 days
+'   D=1,546  |  ROP=205.6  |  Q*=176  |  SS=200  |  LT=2 days
 '==============================================================================
 
 Option Explicit

@@ -132,7 +132,7 @@ End Function
 
 ' ?????????????????????????????????????????????????????????????????????????????
 ' FUNCTION: CalculateCMUP
-' Formula: CMUP = (Total IN Value + Total Current Stock Value) / (Total IN Qty + Current Stock Qty)
+' Formula: CMUP = Total IN Value / Total IN Quantity
 ' ?????????????????????????????????????????????????????????????????????????????
 Public Function CalculateCMUP(ByVal SKU As String) As Double
     On Error Resume Next
@@ -145,17 +145,17 @@ Public Function CalculateCMUP(ByVal SKU As String) As Double
     totalInQty = WorksheetFunction.SumIfs(wsMouv.Range("E:E"), wsMouv.Range("B:B"), SKU, wsMouv.Range("D:D"), "IN")
     totalInValue = WorksheetFunction.SumIfs(wsMouv.Range("G:G"), wsMouv.Range("B:B"), SKU, wsMouv.Range("D:D"), "IN")
 
-    ' Calculate current stock from MOUVEMENTS (IN - OUT)
-    Dim totalOutQty As Double
-    totalOutQty = WorksheetFunction.SumIfs(wsMouv.Range("E:E"), wsMouv.Range("B:B"), SKU, wsMouv.Range("D:D"), "OUT")
-    Dim currentStock As Double: currentStock = totalInQty - totalOutQty
-
-    Dim totalQty As Double: totalQty = totalInQty + currentStock
-    If totalQty > 0 Then
-        CalculateCMUP = (totalInValue + (currentStock * (totalInValue / IIf(totalInQty > 0, totalInQty, 1)))) / totalQty
+    ' CMUP = Total IN Value / Total IN Quantity (standard weighted average cost)
+    If totalInQty > 0 Then
+        CalculateCMUP = totalInValue / totalInQty
     Else
         CalculateCMUP = 0
     End If
+
+
+
+
+
     wsMouv.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
     On Error GoTo 0
 End Function

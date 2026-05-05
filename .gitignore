@@ -1,42 +1,23 @@
-# Node/JS
-node_modules/
-package-lock.json
-npm-debug.log
-
-# Python
-__pycache__/
-*.pyc
-.venv/
-venv/
-
-# OS
-Thumbs.db
-Desktop.ini
-.DS_Store
-
-# Large files / binaries
-*.gsheet
+*.xlsm
+*.xlsb
 *.xlsx
-*.docx
-*.pdf
-*.png
-*.jpg
-*.jpeg
-*.gif
-
-# Temp
-.tmp/
+*.bak_phase*
+*.archived
+ARCHIVED/
+.dropbox/
+.dropbox.cache/
+desktop.ini
 .tmp.driveupload/
-*~
-*.swp
-
-# Build
-dist/
-build/
-*.egg-info/
-
-# IDE
-.vscode/
-.idea/
-*.suo
-*.user
+*.AutoRecovered*
+LLM_WIKI_AND_DISPATCH/
+Repomix_Outputs/
+Academic_References/
+Final_Delivery_Layout/
+Claude_Desktop/
+Defense_Support/
+SYSTEM_INSTRUCTIONS.md
+*.bak
+*.frx
+*.log
+Create_StockForm.txt
+frmStockEntry_spec_table.html

@@ -1,4 +1,3 @@
-
 Attribute VB_Name = "mod_LogViewer"
 '=======================================================================================
 ' MODULE: mod_LogViewer.bas
