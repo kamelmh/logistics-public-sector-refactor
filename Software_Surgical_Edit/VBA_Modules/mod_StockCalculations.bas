@@ -1,4 +1,4 @@
-Attribute VB_Name = "mod_StockCalculations"
+﻿Attribute VB_Name = "mod_StockCalculations"
 ' VBA Module: mod_StockCalculations.bas
 ' Purpose: Calculer le Point de Recommandation (ROP) pour la gestion de stock
 ' Institution: Direction de l'Éducation, El Bayadh

@@ -1,4 +1,4 @@
-Attribute VB_Name = "mod_Budget"
+﻿Attribute VB_Name = "mod_Budget"
 Option Explicit
 ' CNEPD PUBLIC SECTOR FIX: Budget Management Module
 ' STATUS: DISABLED — BUDGET sheet does not exist in current workbook (W004)

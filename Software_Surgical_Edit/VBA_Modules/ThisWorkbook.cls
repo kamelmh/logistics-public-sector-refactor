@@ -1,10 +1,10 @@
-Attribute VB_Name = "ThisWorkbook"
+﻿Attribute VB_Name = "ThisWorkbook"
 '==============================================================================
 ' ThisWorkbook.cls — ERP Académie v13.2
 ' Workbook-level event handlers
 ' Created: 2026-05-06 (W010: Add Workbook_Open event handler)
-' NOTE: No Option Explicit — module references are resolved at runtime
 '==============================================================================
+Option Explicit
 
 Private Sub Workbook_Open()
     On Error GoTo InitError

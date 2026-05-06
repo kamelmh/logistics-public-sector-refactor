@@ -1,4 +1,4 @@
-Attribute VB_Name = "mod_LogViewer"
+﻿Attribute VB_Name = "mod_LogViewer"
 '=======================================================================================
 ' MODULE: mod_LogViewer.bas
 ' PROJECT: ERP Academie v13.2

@@ -1,4 +1,4 @@
-Attribute VB_Name = "mod_TestHarness"
+﻿Attribute VB_Name = "mod_TestHarness"
 '==============================================================================
 ' mod_TestHarness.bas — ERP Académie v13.2
 ' Unit & Integration Test Procedures

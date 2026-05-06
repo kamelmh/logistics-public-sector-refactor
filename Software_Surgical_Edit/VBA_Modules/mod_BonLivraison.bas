@@ -1,4 +1,4 @@
-Attribute VB_Name = "mod_BonLivraison"
+﻿Attribute VB_Name = "mod_BonLivraison"
 Option Explicit
 
 ' Persistent named ranges for BL numbering

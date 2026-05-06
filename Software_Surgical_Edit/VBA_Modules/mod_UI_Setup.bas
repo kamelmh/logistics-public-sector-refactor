@@ -1,4 +1,4 @@
-Attribute VB_Name = "mod_UI_Setup"
+﻿Attribute VB_Name = "mod_UI_Setup"
 '=======================================================================================
 ' MODULE: mod_UI_Setup.bas
 ' PROJECT: ERP Academie v13.2

@@ -1,4 +1,4 @@
-Attribute VB_Name = "mod_Facture"
+﻿Attribute VB_Name = "mod_Facture"
 Option Explicit
 
 Const FACT_COUNTER_RANGE As String = "FACT_CurrentCounter"

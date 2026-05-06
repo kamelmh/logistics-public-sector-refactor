@@ -1,4 +1,4 @@
-Attribute VB_Name = "mod_SheetSetup"
+﻿Attribute VB_Name = "mod_SheetSetup"
 Option Explicit
 
 ' Sheet protection password delegated to mod_Config.MASTER_PWD
@@ -204,7 +204,7 @@ Private Sub CreateSysStringsSheet()
         .Range("A1:B1").Font.Bold = True
         
         .Range("A2").Value = "SYS_TITLE"
-        .Range("B2").Value = "???? ??????????? - ????? ???????"
+        .Range("B2").Value = "???? ================================================================================ - ????? ???????"
         
         .Range("A3").Value = "ERR_SYNC_ABSENT"
         .Range("B3").Value = "??? Python ??? ?????"

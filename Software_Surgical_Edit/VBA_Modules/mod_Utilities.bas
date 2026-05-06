@@ -1,4 +1,4 @@
-Attribute VB_Name = "mod_Utilities"
+﻿Attribute VB_Name = "mod_Utilities"
 '=======================================================================================
 ' MODULE: mod_Utilities.bas
 ' PROJECT: ERP Acad�mie v13
@@ -73,7 +73,10 @@ Public Function GetArticleField(ByVal sku As String, ByVal fieldType As String) 
     Else
         GetArticleField = Trim(CStr(wsArt.Cells(foundRow, colIdx).Value))
     End If
-End Function------------------------------------------------------------------------------' FUNCTION: IsValidDate
+End Function
+
+'--------------------------------------------------------------------------------------
+' FUNCTION: IsValidDate
 ' Validates if a string is a valid date in strict DD/MM/YYYY format
 '--------------------------------------------------------------------------------------
 Public Function IsValidDate(ByVal dateStr As String) As Boolean

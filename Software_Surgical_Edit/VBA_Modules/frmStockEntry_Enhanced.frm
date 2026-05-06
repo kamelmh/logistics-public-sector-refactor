@@ -1,4 +1,4 @@
-VERSION 5.00
+﻿VERSION 5.00
 Begin VB.Form frmStockEntry 
    BackColor       =   &H8000000F&
    BorderColor     =   &H80000012&
