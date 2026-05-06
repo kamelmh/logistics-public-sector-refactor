@@ -1,215 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ERP Academie v13.2 - Administrative Paths Map
-  Generated: 2026-05-04
-  Purpose: Map every administrative workflow with security checkpoints
+  ERP Academie v13.2 - Admin Paths Configuration
+  Generated: 2026-05-06
+  Purpose: All file paths, directories, and deployment targets for v13.2
 -->
-<admin-paths>
+<admin-paths version="13.2" date="2026-05-06">
+  <project-root>C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor</project-root>
 
-  <!-- ============================================================ -->
-  <!-- PATH 1: STOCK ENTRY WORKFLOW (Primary User Path)             -->
-  <!-- ============================================================ -->
-  <path id="AP001" name="Stock Entry Workflow" role="user" priority="critical">
-    <description>User enters a stock movement (Bon de Sortie, Bon de Reception, or Demande d'Achat)</description>
-    <trigger type="macro" location="MAIN_MACROS.AjouterMouvement" />
-    <chain>
-      <step n="1" module="mod_StockEntry_Logic" procedure="InitializeForm" action="Setup form appearance, populate dropdowns from ARTICLES, load SYS_STRINGS" />
-      <step n="2" module="mod_StockEntry_Logic" procedure="PopulateDropdowns" action="Load document types (BS/BR/DA), articles filtered by category, localization strings" />
-      <step n="3" module="mod_Localization" procedure="SafeGetTxt" action="Retrieve localized UI strings from SYS_STRINGS sheet" />
-      <step n="4" module="mod_StockEntry_Logic" procedure="GenerateAutoRef" action="Generate auto-reference (BS-YYMM-NNN format) by scanning MOUVEMENTS for next sequence" />
-      <step n="5" module="mod_StockEntry_Logic" procedure="cmbArticle_Change" action="On article select, evaluate stock status (ROP, current stock, alert level)" />
-      <step n="6" module="mod_StockEntry_Logic" procedure="btnEnregistrer_Click" action="Validate all inputs, write transaction, update stock, log audit, generate PDF" />
-      <step n="6a" module="mod_Database" procedure="SecureWriteTransaction" action="Unprotect MOUVEMENTS, write row, protect MOUVEMENTS" />
-      <step n="6b" module="mod_SyncBridge" procedure="SyncTransactionInternal" action="Update stock balance in ARTICLES, recalculate CMUP, validate levels" />
-      <step n="6c" module="mod_StockEngine" procedure="UpdateArticleStockBalance" action="Increment/decrement stock quantity in ARTICLES sheet" />
-      <step n="6d" module="mod_StockEngine" procedure="CalculateCMUP" action="Recalculate weighted average unit cost" />
-      <step n="6e" module="mod_StockEngine" procedure="ValidateStockLevel" action="Compare stock vs ROP, display alert if below threshold" />
-      <step n="6f" module="mod_AuditTrail" procedure="LogTransaction" action="Write audit entry to AUDIT_LOG sheet" />
-      <step n="6g" module="mod_ExportEngine" procedure="ExportTransactionToPDF" action="Populate TEMPLATE_BON, export as PDF" />
-    </chain>
-    <sheets-modified>MOUVEMENTS, ARTICLES, AUDIT_LOG</sheets-modified>
-    <security-checks>
-      <check n="1" type="input-validation" location="mod_StockEntry_Logic:btnEnregistrer_Click" description="Validates date, article, quantity, unit price before posting" />
-      <check n="2" type="sheet-protection" location="mod_Database:SecureWriteTransaction" description="Unprotects with MASTER_PWD, writes, re-protects" />
-      <check n="3" type="stock-validation" location="mod_StockEngine:ValidateStockLevel" description="Alerts if stock falls below ROP after transaction" />
-      <check n="4" type="audit-logging" location="mod_AuditTrail:LogTransaction" description="All transactions logged with timestamp and reference" />
-    </security-checks>
-    <rollback-if-fail>mod_StockEntry_Logic:btnEnregistrer_Click contains rollback logic - deletes rows written in session if any step fails (line 694-795)</rollback-if-fail>
-  </path>
+  <source-directories>
+    <dir key="vba-modules">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\VBA_Modules\</dir>
+    <dir key="thesis">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\</dir>
+    <dir key="scripts">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\</dir>
+  </source-directories>
 
-  <!-- ============================================================ -->
-  <!-- PATH 2: SHEET SETUP (Admin Initialization)                   -->
-  <!-- ============================================================ -->
-  <path id="AP002" name="Sheet Setup Workflow" role="admin" priority="high">
-    <description>Creates/verifies all ERP sheets with headers, formatting, and protection</description>
-    <trigger type="macro" location="mod_SheetSetup.CreateAllSheets" />
-    <chain>
-      <step n="1" module="mod_SheetSetup" procedure="CreateAllSheets" action="Display confirmation dialog, call all sheet creation subs" />
-      <step n="2" module="mod_SheetSetup" procedure="CreateArticlesSheet" action="Create ARTICLES sheet with column headers (Code, Designation, Category, Demand, ROP, Stock, CMUP), format, protect" />
-      <step n="3" module="mod_SheetSetup" procedure="CreateMouvementsSheet" action="Create MOUVEMENTS sheet with transaction columns (Date, Code, Type, Qty, Value, Ref), format, protect" />
-      <step n="4" module="mod_SheetSetup" procedure="CreateFormInputSheet" action="Create FORM_INPUT sheet for data entry buffer" />
-      <step n="5" module="mod_SheetSetup" procedure="CreateStagingBufferSheet" action="Create STAGING_BUFFER sheet (delete if exists, recreate)" />
-      <step n="6" module="mod_SheetSetup" procedure="CreateSysStringsSheet" action="Create SYS_STRINGS sheet for localization strings" />
-      <step n="7" module="mod_SheetSetup" procedure="CreateReceiptTagSheet" action="Create RECEIPT_TAG sheet with named ranges and QR code area" />
-      <step n="8" module="mod_SheetSetup" procedure="CreateTemplateBonSheet" action="Create TEMPLATE_BON sheet for document PDF generation" />
-    </chain>
-    <sheets-modified>ARTICLES, MOUVEMENTS, FORM_INPUT, STAGING_BUFFER, SYS_STRINGS, RECEIPT_TAG, TEMPLATE_BON</sheets-modified>
-    <security-checks>
-      <check n="1" type="confirmation" location="mod_SheetSetup:CreateAllSheets" description="Requires user confirmation before proceeding" />
-      <check n="2" type="sheet-protection" location="mod_SheetSetup (all subs)" description="All created sheets protected with MASTER_PWD" />
-      <check n="3" type="existing-data" location="mod_SheetSetup (all subs)" description="Preserves existing sheets - only creates if missing" />
-    </security-checks>
-    <rollback-if-fail>No rollback - sheet creation is idempotent and non-destructive</rollback-if-fail>
-  </path>
+  <workbooks>
+    <file key="master">C:\Users\Administrator\Dropbox\ERP_v13.2.xlsm</file>
+    <file key="dss">C:\Users\Administrator\Dropbox\Decision_Support_System.xlsm</file>
+    <file key="fixed-edition">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\ERP_Academie_v13.2_FIXED.xlsm</file>
+  </workbooks>
 
-  <!-- ============================================================ -->
-  <!-- PATH 3: DASHBOARD REFRESH                                    -->
-  <!-- ============================================================ -->
-  <path id="AP003" name="Dashboard Refresh" role="user" priority="medium">
-    <description>Updates dashboard KPIs, critical stock table, and ABC/XYZ summary</description>
-    <trigger type="macro" location="mod_Dashboard.RefreshDashboard" />
-    <chain>
-      <step n="1" module="mod_Dashboard" procedure="RefreshDashboard" action="Get/create DASHBOARD sheet, call UpdateKPIs, UpdateCriticalTable, UpdateABCXYZSummary" />
-      <step n="2" module="mod_Dashboard" procedure="UpdateKPIs" action="Read ARTICLES, calculate total articles, total stock value, articles below ROP, critical count" />
-      <step n="3" module="mod_StockEngine" procedure="GetSafetyStock" action="Retrieve safety stock for each article" />
-      <step n="4" module="mod_StockEngine" procedure="GetAnnualDemandFromHistory" action="Calculate annual demand from MOUVEMENTS history" />
-      <step n="5" module="mod_StockEngine" procedure="ComputeROP" action="Calculate ROP for each article" />
-      <step n="6" module="mod_Dashboard" procedure="UpdateCriticalTable" action="List articles below ROP with stock level, ROP, gap" />
-      <step n="7" module="mod_Dashboard" procedure="UpdateABCXYZSummary" action="Count articles by ABC category and XYZ classification" />
-    </chain>
-    <sheets-modified>DASHBOARD</sheets-modified>
-    <sheets-read>ARTICLES, MOUVEMENTS</sheets-read>
-    <security-checks>
-      <check n="1" type="read-only" description="Dashboard refresh is read-only for source sheets, only writes to DASHBOARD" />
-    </security-checks>
-    <rollback-if-fail>No rollback needed - DASHBOARD is regenerated each time</rollback-if-fail>
-  </path>
+  <config-files>
+    <file key="project-context">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\erp-project-context.xml</file>
+    <file key="admin-paths">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\erp-admin-paths.xml</file>
+    <file key="agent-handoff">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\erp-agent-handoff.xml</file>
+    <file key="agents-md">C:\Users\Administrator\.config\opencode\AGENTS.md</file>
+    <file key="instructions-md">C:\Users\Administrator\.config\opencode\instructions.md</file>
+    <file key="opencode-json">C:\Users\Administrator\.config\opencode\opencode.json</file>
+  </config-files>
 
-  <!-- ============================================================ -->
-  <!-- PATH 4: APPROVAL WORKFLOW                                    -->
-  <!-- ============================================================ -->
-  <path id="AP004" name="Transaction Approval Workflow" role="admin" priority="medium">
-    <description>Two-tier approval process: Comptable validates, Directeur approves</description>
-    <trigger type="macro" location="mod_ApprovalWorkflow.ValidateByComptable" />
-    <chain>
-      <step n="1" module="mod_ApprovalWorkflow" procedure="InitializeMouvementsColumns" action="Add approval columns to MOUVEMENTS if not present (Comptable_Status, Directeur_Status)" />
-      <step n="2" module="mod_ApprovalWorkflow" procedure="ValidateByComptable" action="Set Comptable_Status = 2 (validated) for transaction ID" />
-      <step n="3" module="mod_ApprovalWorkflow" procedure="ApproveByDirecteur" action="Set Directeur_Status = 3 (approved) for transaction ID" />
-      <step n="4" module="mod_ApprovalWorkflow" procedure="CheckApprovalStatus" action="Return current approval level (1=magasinier, 2=comptable, 3=directeur)" />
-    </chain>
-    <sheets-modified>MOUVEMENTS</sheets-modified>
-    <security-checks>
-      <check n="1" type="sheet-protection" location="mod_ApprovalWorkflow" description="Unprotects MOUVEMENTS with MASTER_PWD before writing approval status" />
-      <check n="2" type="approval-level" location="mod_ApprovalWorkflow:ApprovalLevel enum" description="Three-tier enum: magasinier=1, comptable=2, directeur=3" />
-    </security-checks>
-    <rollback-if-fail>No rollback - approval status is additive and idempotent</rollback-if-fail>
-  </path>
+  <ai-backend>
+    <provider>Groq</provider>
+    <model>qwen/qwen3-32b</model>
+    <endpoint>https://api.groq.com/openai/v1/chat/completions</endpoint>
+    <fallback-local>qwen2.5-coder:1.5b (Ollama — 108s load time, HDD bottleneck)</fallback-local>
+  </ai-backend>
 
-  <!-- ============================================================ -->
-  <!-- PATH 5: BATCH SYNC (Metrics Refresh)                         -->
-  <!-- ============================================================ -->
-  <path id="AP005" name="Batch Metrics Sync" role="admin" priority="medium">
-    <description>Recalculates CMUP and ABC classification for all articles</description>
-    <trigger type="macro" location="mod_SyncBridge.SyncMetricsFromLedger" />
-    <chain>
-      <step n="1" module="mod_SyncBridge" procedure="SyncMetricsFromLedger" action="Trigger batch refresh of all article metrics" />
-      <step n="2" module="mod_StockEngine" procedure="RefreshAllCMUP" action="Loop all articles, recalculate CMUP from MOUVEMENTS history, write to ARTICLES" />
-      <step n="3" module="mod_StockEngine" procedure="UpdateAllABCClassifications" action="Loop all articles, calculate consumption percentage, assign ABC category, write to ARTICLES" />
-    </chain>
-    <sheets-modified>ARTICLES</sheets-modified>
-    <sheets-read>MOUVEMENTS, ARTICLES</sheets-read>
-    <security-checks>
-      <check n="1" type="sheet-protection" location="mod_StockEngine:RefreshAllCMUP, UpdateAllABCClassifications" description="Unprotect/protect ARTICLES with MASTER_PWD during batch update" />
-    </security-checks>
-    <rollback-if-fail>No rollback - batch operations overwrite previous values</rollback-if-fail>
-  </path>
+  <deployment>
+    <target key="opencode-config">C:\Users\Administrator\.config\opencode\</target>
+    <target key="dropbox-sync">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\</target>
+    <target key="git-repo">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\</target>
+    <target key="files-backup">C:\Users\Administrator\Downloads\files\</target>
+  </deployment>
 
-  <!-- ============================================================ -->
-  <!-- PATH 6: REPORT GENERATION                                    -->
-  <!-- ============================================================ -->
-  <path id="AP006" name="Report Generation" role="user" priority="medium">
-    <description>Generate monthly reports or individual stock cards</description>
-    <trigger type="macro" location="mod_Reports.GenerateMonthlyReport" />
-    <chain>
-      <step n="1" module="mod_Reports" procedure="GenerateMonthlyReport" action="Create RAPPORT_MENSUEL sheet, write header, aggregate MOUVEMENTS by article, add summary statistics, export PDF, delete temp sheet" />
-      <step n="2" module="mod_Reports" procedure="GenerateStockCard" action="Create FICHE_STOCK sheet for specific SKU, write all movements, calculate running balance, export PDF, delete temp sheet" />
-    </chain>
-    <sheets-modified>RAPPORT_MENSUEL (temporary), FICHE_STOCK (temporary)</sheets-modified>
-    <sheets-read>ARTICLES, MOUVEMENTS</sheets-read>
-    <security-checks>
-      <check n="1" type="sheet-protection" location="mod_Reports" description="Unprotect MOUVEMENTS with MASTER_PWD for reading movement data" />
-      <check n="2" type="cleanup" location="mod_Reports" description="Temporary report sheets deleted after PDF export" />
-    </security-checks>
-    <rollback-if-fail>Temporary sheets deleted on error via ErrorHandler</rollback-if-fail>
-  </path>
-
-  <!-- ============================================================ -->
-  <!-- PATH 7: BACKUP & RESTORE                                     -->
-  <!-- ============================================================ -->
-  <path id="AP007" name="VBA Code Backup" role="admin" priority="low">
-    <description>Export all VBA modules to text files for disaster recovery</description>
-    <trigger type="macro" location="mod_Backup.BackupProjectCode" />
-    <chain>
-      <step n="1" module="mod_Backup" procedure="BackupProjectCode" action="Create timestamped folder in workbook directory, export all VBComponents to .bas/.frm files" />
-    </chain>
-    <sheets-modified>none</sheets-modified>
-    <security-checks>
-      <check n="1" type="access" description="Requires Trust Access to VBA Project Object Model (Registry: AccessVBOM=1)" />
-    </security-checks>
-    <rollback-if-fail>Files are additive - no rollback needed</rollback-if-fail>
-  </path>
-
-  <path id="AP008" name="Inventory Restore from Backup" role="admin" priority="low">
-    <description>Restore ARTICLES data from a backup workbook</description>
-    <trigger type="macro" location="mod_Restore.RestoreInventoryAdvanced" />
-    <chain>
-      <step n="1" module="mod_Restore" procedure="RestoreInventoryAdvanced" action="Open file dialog for backup workbook, validate structure, copy ARTICLES data, re-protect" />
-      <step n="2" module="mod_Restore" procedure="(inline)" action="Read from backup workbook ARTICLES sheet, write to current workbook ARTICLES sheet" />
-    </chain>
-    <sheets-modified>ARTICLES</sheets-modified>
-    <security-checks>
-      <check n="1" type="sheet-protection" location="mod_Restore" description="Unprotect/protect ARTICLES with MASTER_PWD" />
-      <check n="2" type="validation" location="mod_Restore" description="Validates backup workbook has ARTICLES sheet before proceeding" />
-      <check n="3" type="confirmation" location="mod_Restore" description="User confirms restore before overwriting data" />
-    </security-checks>
-    <rollback-if-fail>Error handler closes backup workbook, re-protects ARTICLES, restores settings</rollback-if-fail>
-  </path>
-
-  <!-- ============================================================ -->
-  <!-- PATH 8: UI SETUP (Dashboard Buttons)                         -->
-  <!-- ============================================================ -->
-  <path id="AP009" name="Dashboard Button Setup" role="admin" priority="low">
-    <description>Create action buttons on DASHBOARD sheet with OnAction handlers</description>
-    <trigger type="macro" location="mod_UI_Setup.SetupDashboardButtons" />
-    <chain>
-      <step n="1" module="mod_UI_Setup" procedure="SetupDashboardButtons" action="Create/get DASHBOARD sheet, add shapes with OnAction handlers" />
-      <step n="2" module="mod_UI_Setup" procedure="(inline)" action="Button: Generate Order Report -> mod_Procurement.GenerateOrderReport" />
-      <step n="3" module="mod_UI_Setup" procedure="(inline)" action="Button: Sync Metrics -> mod_SyncBridge.SyncMetricsFromLedger" />
-      <step n="4" module="mod_UI_Setup" procedure="(inline)" action="Button: Restore Master Ledger -> mod_SyncBridge.RestoreMasterLedger [UNVERIFIED - may not exist]" />
-    </chain>
-    <sheets-modified>DASHBOARD</sheets-modified>
-    <security-checks>
-      <check n="1" type="existence" description="Creates DASHBOARD sheet if not found" />
-    </security-checks>
-    <rollback-if-fail>No rollback - button creation is idempotent</rollback-if-fail>
-  </path>
-
-  <!-- ============================================================ -->
-  <!-- PATH 9: RECEIPT TAG GENERATION                               -->
-  <!-- ============================================================ -->
-  <path id="AP010" name="Receipt Tag Generation" role="user" priority="low">
-    <description>Generate physical receipt tags with QR codes for inventory verification</description>
-    <trigger type="macro" location="mod_ReceiptTag.GenerateReceiptTagPDF" />
-    <chain>
-      <step n="1" module="mod_ReceiptTag" procedure="GenerateReceiptTagPDF" action="Read active row from MOUVEMENTS, populate RECEIPT_TAG template, generate verify code, export PDF" />
-      <step n="2" module="mod_ReceiptTag" procedure="GenerateLocalVerifyCode" action="Generate verification hash from receipt data" />
-    </chain>
-    <sheets-modified>RECEIPT_TAG (populated then reset)</sheets-modified>
-    <sheets-read>MOUVEMENTS</sheets-read>
-    <security-checks>
-      <check n="1" type="row-validation" location="mod_ReceiptTag:GenerateReceiptTagPDF" description="Validates active row >= 3 before proceeding" />
-    </security-checks>
-    <rollback-if-fail>No rollback - receipt tag is stateless generation</rollback-if-fail>
-  </path>
-
+  <git>
+    <remote>https://github.com/kamelmh/logistics-public-sector-refactor</remote>
+    <branch>master</branch>
+    <user>kamelmh</user>
+  </git>
 </admin-paths>
