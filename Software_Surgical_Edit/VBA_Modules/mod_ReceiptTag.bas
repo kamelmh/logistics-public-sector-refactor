@@ -15,7 +15,7 @@ Option Explicit
 ' produce a clean printable PDF receipt tag.
 ' ============================================================
 
-Sub GenerateReceiptTagPDF()
+Public Sub GenerateReceiptTagPDF()
 
     Dim wsData     As Worksheet
     Dim wsTemplate As Worksheet
@@ -116,7 +116,7 @@ End Sub
 ' ============================================================
 ' SETUP: Run this once to create named ranges on RECEIPT_TAG sheet
 ' ============================================================
-Sub SetupReceiptTagSheet()
+Public Sub SetupReceiptTagSheet()
 
     Dim ws As Worksheet
     Dim sheetExists As Boolean: sheetExists = False

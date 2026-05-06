@@ -103,7 +103,7 @@ End Function====================================================================
 ' SUB: SetupLocationDropdown
 ' Creates a dynamic dropdown list for EMPLACEMENT column (Col H)
 '=======================================================================================
-Sub SetupLocationDropdown()
+Public Sub SetupLocationDropdown()
     Dim wsMaster As Worksheet, wsLists As Worksheet
     Dim lastRow As Long
     Dim listRange As Range
@@ -175,7 +175,7 @@ End Sub
 ' SUB: ApplyInventoryHeatmap
 ' Applies ABC-aware conditional formatting to QTE_STOCK column
 '=======================================================================================
-Sub ApplyInventoryHeatmap()
+Public Sub ApplyInventoryHeatmap()
     Dim ws As Worksheet
     Dim stockRange As Range
     Dim lastRow As Long
@@ -221,7 +221,7 @@ End Sub
 ' SUB: ExportLowStockPDF
 ' Generates a Low Stock Report PDF for management
 '=======================================================================================
-Sub ExportLowStockPDF()
+Public Sub ExportLowStockPDF()
     Dim wsSource As Worksheet, wsReport As Worksheet
     Dim lastRow As Long, reportRow As Long, i As Long
     Dim pdfPath As String

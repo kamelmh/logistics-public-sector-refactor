@@ -1,5 +1,5 @@
 Attribute VB_Name = "modNavigation"
-Sub OpenStockForm()
+Public Sub OpenStockForm()
     ' This simple command triggers the UserForm you built
     frmStockEntry.Show
 End Sub
