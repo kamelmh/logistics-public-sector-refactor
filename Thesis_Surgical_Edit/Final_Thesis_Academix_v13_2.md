@@ -1432,7 +1432,7 @@ TC = (D/Q*) × S + (Q*/2) × I × h + D × h
 **المطلب الثالث: تدفق البيانات**
 
 frmStockEntry → mod_StockEntry_Logic.btnEnregistrer_Click
-  → mod_Database.SecureWriteTransaction → MOUVEMENTS
+  → السجل الرقمي (SecureWriteTransaction) → MOUVEMENTS
   → mod_SyncBridge.SyncTransactionInternal → mod_StockEngine → ARTICLES
   → mod_AuditTrail.LogTransaction → AUDIT_LOG
   → mod_ExportEngine.ExportTransactionToPDF → TEMPLATE_BON → PDF
