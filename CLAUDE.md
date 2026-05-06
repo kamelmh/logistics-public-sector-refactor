@@ -1,49 +1,102 @@
-# Project: Academix v13.2 (Public Sector Refactor)
+# Academix v13.2 — ERP Académie
 
-## 🎯 Goal
-Refactor the thesis and software from a hybrid Python/VBA system to a **pure VBA-only Decision Support System (DSS)** compliant with CNEPD BTS standards for the public sector. The project must demonstrate the professional progression from manual stock management science to digital optimization (The "Ladder Logic").
+**نظام إلكتروني متكامل للتسيير التمويني** — Integrated Electronic Inventory Management System
 
-## 🛠 Technical Stack
-- **Core:** Microsoft Excel / VBA (Pure)
-- **Architecture:** Offline-First, Local Processing Units.
-- **Data Store:** Digital Ledger (السجل الرقمي) - internal structured sheets.
-- **Dependencies:** Zero external dependencies (No Python, No Flask, No SQL).
+Direction de l'Éducation, Wilaya de El Bayadh, Algeria
 
-## 🏛 Thesis Structural Constraints
-- **Hierarchy:** `فصل` (Chapter) $\rightarrow$ `مبحث` (Section) $\rightarrow$ `مطلب` (Requirement) $\rightarrow$ `أولاً، ثانياً...` (First, Second...).
-- **Forbidden Terms:** Strictly **NO `فرع` (Branch)** in the structural hierarchy.
-- **Terminology Mapping:**
-    - ❌ Database $\rightarrow$ ✅ السجل الرقمي (Digital Ledger)
-    - ❌ Python/Backend $\rightarrow$ ✅ وحدات المعالجة VBA (VBA Processing Units)
-    - ❌ Hybrid System $\rightarrow$ ✅ نظام إلكتروني متكامل (Integrated Electronic System)
+---
 
-## 📈 Critical Constants (Ground Truth)
-- **Annual Demand (D):** 1,546 units
-- **Reorder Point (ROP):** 205.6 units
-- **Safety Stock (SS):** 200 units
-- **Economic Order Quantity (Q*):** 176 units
-- **Lead Time (LT):** 2 days
-- **Case Study Article:** Toner G030 (ART-001)
-- **Institution:** Directorate of Education, El Bayadh.
+## Project Identity
 
-## 📝 Documentation Guidelines
-- **Citations:** Use strict CNEPD footnotes (تهميش) at the bottom of each page.
-- **Language:** Formal Academic Arabic (RTL).
-- **Logic:** Emphasize "Zero Cost", "Standard Tools", and "Accountability".
+| Field | Value |
+|-------|-------|
+| **Name** | Academix v13.2 |
+| **Type** | Pure VBA Excel Decision Support System (DSS) |
+| **Architecture** | Offline-First, Zero External Dependencies |
+| **Sheets** | 25 |
+| **Modules** | 27 (clean — no dead code) |
+| **Compliance** | CNEPD BTS Public Sector Standards |
+| **Locale** | fr-FR (UI) / ar-DZ (thesis) |
 
-## 🚀 Current Status
-- Thesis structural realignment: ✅ Complete.
-- Python dependency removal from VBA: ✅ Complete.
-- Terminology cleanup: ✅ Complete.
-- Constants synchronization: ✅ Complete.
-- DSS narrative pivot: ✅ Complete.
-- Chapter alignment (6 → 4): ✅ Complete.
-- CNEPD footnotes added: ✅ Complete.
-- References cleaned (Python/Flask/JSON → VBA): ✅ Complete.
-- TOC & Table/Figure list built: ✅ Complete.
-- Defense documents sanitized: ✅ Complete.
-- Appendix JSON → VBA ledger: ✅ Complete.
-- **OMC Orchestration & Skills**: ✅ Integrated (60+ skills active).
-- **VBA Code Review**: ✅ Passed (Modules located in `Software_Surgical_Edit\VBA_Modules`).
-- **Default Model**: ✅ Gemma 4 (31B) via OpenCode Cloud.
-- VBA Modules Professional Audit: ✅ Complete (Surgically Verified)
+## Ground Truth — NEVER MODIFY
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| **D** (Annual Demand) | 1,546 | From 38-day MOUVEMENTS observation |
+| **Q*** (EOQ) | 176 | Wilson formula: √(2DS/Ih) |
+| **ROP** (Reorder Point) | 205.6 | (D/250) × LT + SS |
+| **SS** (Safety Stock) | 200 | (MaxDaily - AvgDaily) × LT |
+| **LT** (Lead Time) | 2 days | Default delivery time |
+| **S** (Order Cost) | 500 DZD | Fixed cost per order |
+| **I** (Holding Rate) | 20% | Annual holding cost |
+| **MASTER_PWD** | erp_secure_pwd_2026 | Sheet protection |
+| **VERSION** | v13.2 | Current software version |
+
+## Thesis Constraints
+
+- **Hierarchy:** فصل → مبحث → مطلب → أولاً، ثانياً...
+- **Forbidden:** NO `فرع` (Branch) in thesis structure
+- **Terminology:**
+  - ❌ Database → ✅ السجل الرقمي (Digital Ledger)
+  - ❌ Python/Backend → ✅ وحدات المعالجة VBA
+  - ❌ Hybrid System → ✅ نظام إلكتروني متكامل
+
+## VBA Modules (27 — All Clean)
+
+**Critical:** `mod_Config`, `mod_StockEngine`, `mod_StockEntry_Logic`
+**High:** `mod_SyncBridge`, `mod_Dashboard`, `mod_ExportEngine`, `mod_Utilities`, `mod_Reports`, `mod_Database`, `mod_AuditTrail`, `mod_ReceiptTag`
+**Medium:** `mod_SheetSetup`, `mod_Procurement`, `mod_Restore`, `mod_Backup`, `mod_Analysis`, `mod_Localization`, `mod_ApprovalWorkflow`, `mod_StockCalculations`
+**Low:** `mod_UI_Setup`, `mod_LogViewer`, `modNavigation`, `mod_BonLivraison`, `mod_Budget`, `mod_Facture`
+
+**Dead code DELETED:** Module1, Module2, mod_Config_Test (2026-05-06)
+
+## Admin Paths
+
+| Key | Path |
+|-----|------|
+| Project Root | `C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor` |
+| VBA Modules | `C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\VBA_Modules\` |
+| Context XML | `C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\erp-project-context.xml` |
+| Workbook | `C:\Users\Administrator\Dropbox\ERP_v13.2.xlsm` |
+| Git | `https://github.com/kamelmh/logistics-public-sector-refactor` (master) |
+
+## AI Context Trigger
+
+Type at session start:
+```
+ACADEMIX_CONTEXT v13.2 DEPLOYED_IN_OPENCODE
+```
+This loads: all XML context files, admin paths, ground truth, skills, and agentic protocols from `.opencode/context.md`.
+
+## AI Backend
+
+| Provider | Model | Response |
+|----------|-------|----------|
+| **Groq (Primary)** | qwen/qwen3-32b | ~1 second (cloud) |
+| **Ollama (Fallback)** | qwen2.5-coder:1.5b | ~108 seconds (local HDD) |
+
+## Warnings Status — ALL RESOLVED
+
+W001 ✅ · W002 ✅ · W003 ✅ · W004 ✅ · W005 ✅ · W006 ✅ · W007 ✅ · W008 ✅ · W009 ✅ · W010 ✅
+
+## Thesis Progress
+
+| Chapter | Status |
+|---------|--------|
+| Ch1 — Theoretical framework | ✅ DONE |
+| Ch2 — Institution presentation | ✅ DONE |
+| Ch3 — Field diagnosis + ABC/Wilson/CMUP | ✅ DONE |
+| Ch4 — Mini ERP solution + results | ✅ DONE (Draft_Chapter4_Implementation.md) |
+| Front matter | ✅ DONE |
+
+**Supervisor:** دهيني ميمونة (مصلحة الميزانيات والاقتصاد)
+
+## Cross-Agent Protocol
+
+1. Read `erp-project-context.xml` FIRST
+2. Check dependencies before code changes
+3. Update `erp-project-context.xml` after changes
+4. Work on copy in `$env:TEMP`, then deploy to Dropbox
+5. Never modify mod_Config constants or CANON_* values
+6. Never remove sheet protection without re-protecting
+7. Never commit without explicit user approval
