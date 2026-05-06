@@ -78,8 +78,7 @@ while ($workbook.Worksheets.Count -gt 1) {
 # Create all sheets
 $workbook.Worksheets.Item(1).Name = $sheets[0]
 for ($i = 1; $i -lt $sheets.Count; $i++) {
-    $lastSheet = $workbook.Worksheets.Item($workbook.Worksheets.Count)
-    $workbook.Worksheets.Add([System.Reflection.Missing]::Value, $lastSheet).Name = $sheets[$i] | Out-Null
+    $workbook.Sheets.Add().Name = $sheets[$i]
 }
 Write-Host "✓ 25 sheets created" -ForegroundColor Green
 
