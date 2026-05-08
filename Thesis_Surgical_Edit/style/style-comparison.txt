@@ -1,0 +1,337 @@
+============================================================================================================================================
+STYLE COMPARISON: v13.1 Memoire vs reference.docx
+============================================================================================================================================
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+STYLE: Normal
+--------------------------------------------------------------------------------------------------------------------------------------------
+Attribute                 v13.1                                         Reference                                     Match     
+--------------------------------------------------------------------------------------------------------------------------------------------
+Font Name                 N/A                                           Traditional Arabic                            DIFF      
+Font Size                 N/A                                           N/A                                           YES       
+Bold                      N/A                                           N/A                                           YES       
+Italic                    N/A                                           N/A                                           YES       
+Color                     N/A                                           N/A                                           YES       
+Alignment                 N/A                                           RIGHT                                         DIFF      
+Space Before              0                                             0                                             YES       
+Space After               0                                             0                                             YES       
+Line Spacing              ONE_POINT_FIVE (1) (1.5)                      ONE_POINT_FIVE (1) (1.5)                      YES       
+First Line Indent         0                                             0                                             YES       
+
+  --- rFonts / Bidi ---
+  v13.1   rFonts: {}
+  v13.1   Bidi:   False
+  v13.1   Type:   PARAGRAPH (1)
+  Ref     rFonts: {'ascii': 'Traditional Arabic', 'hAnsi': 'Traditional Arabic', 'eastAsia': 'Traditional Arabic', 'cs': 'Traditional Arabic'}
+  Ref     Bidi:   False
+  Ref     Type:   PARAGRAPH (1)
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+STYLE: Title
+--------------------------------------------------------------------------------------------------------------------------------------------
+Attribute                 v13.1                                         Reference                                     Match     
+--------------------------------------------------------------------------------------------------------------------------------------------
+Font Name                 N/A                                           Traditional Arabic                            DIFF      
+Font Size                 28                                            28                                            YES       
+Bold                      N/A                                           N/A                                           YES       
+Italic                    N/A                                           N/A                                           YES       
+Color                     N/A                                           N/A                                           YES       
+Alignment                 N/A                                           CENTER                                        DIFF      
+Space Before              0                                             0                                             YES       
+Space After               0                                             0                                             YES       
+Line Spacing              N/A                                           N/A                                           YES       
+First Line Indent         0                                             0                                             YES       
+
+  --- rFonts / Bidi ---
+  v13.1   rFonts: {}
+  v13.1   Bidi:   False
+  v13.1   Type:   PARAGRAPH (1)
+  Ref     rFonts: {'ascii': 'Traditional Arabic', 'hAnsi': 'Traditional Arabic', 'eastAsia': 'Traditional Arabic', 'cs': 'Traditional Arabic'}
+  Ref     Bidi:   False
+  Ref     Type:   PARAGRAPH (1)
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+STYLE: Subtitle
+--------------------------------------------------------------------------------------------------------------------------------------------
+Attribute                 v13.1                                         Reference                                     Match     
+--------------------------------------------------------------------------------------------------------------------------------------------
+Font Name                 ---                                           Traditional Arabic                            DIFF      
+Font Size                 ---                                           14                                            DIFF      
+Bold                      ---                                           N/A                                           DIFF      
+Italic                    ---                                           N/A                                           DIFF      
+Color                     ---                                           N/A                                           DIFF      
+Alignment                 ---                                           RIGHT                                         DIFF      
+Space Before              ---                                           0                                             DIFF      
+Space After               ---                                           0                                             DIFF      
+Line Spacing              ---                                           N/A                                           DIFF      
+First Line Indent         ---                                           0                                             DIFF      
+
+  --- rFonts / Bidi ---
+  Ref     rFonts: {'ascii': 'Traditional Arabic', 'hAnsi': 'Traditional Arabic', 'eastAsia': 'Traditional Arabic', 'cs': 'Traditional Arabic'}
+  Ref     Bidi:   False
+  Ref     Type:   PARAGRAPH (1)
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+STYLE: Heading 1
+--------------------------------------------------------------------------------------------------------------------------------------------
+Attribute                 v13.1                                         Reference                                     Match     
+--------------------------------------------------------------------------------------------------------------------------------------------
+Font Name                 N/A                                           Traditional Arabic                            DIFF      
+Font Size                 16                                            16                                            YES       
+Bold                      N/A                                           N/A                                           YES       
+Italic                    N/A                                           N/A                                           YES       
+Color                     2E74B5                                        2E74B5                                        YES       
+Alignment                 N/A                                           RIGHT                                         DIFF      
+Space Before              0                                             0                                             YES       
+Space After               0                                             0                                             YES       
+Line Spacing              N/A                                           N/A                                           YES       
+First Line Indent         0                                             0                                             YES       
+
+  --- rFonts / Bidi ---
+  v13.1   rFonts: {}
+  v13.1   Bidi:   False
+  v13.1   Type:   PARAGRAPH (1)
+  Ref     rFonts: {'ascii': 'Traditional Arabic', 'hAnsi': 'Traditional Arabic', 'eastAsia': 'Traditional Arabic', 'cs': 'Traditional Arabic'}
+  Ref     Bidi:   False
+  Ref     Type:   PARAGRAPH (1)
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+STYLE: Heading 2
+--------------------------------------------------------------------------------------------------------------------------------------------
+Attribute                 v13.1                                         Reference                                     Match     
+--------------------------------------------------------------------------------------------------------------------------------------------
+Font Name                 N/A                                           Traditional Arabic                            DIFF      
+Font Size                 13                                            13                                            YES       
+Bold                      N/A                                           N/A                                           YES       
+Italic                    N/A                                           N/A                                           YES       
+Color                     2E74B5                                        2E74B5                                        YES       
+Alignment                 N/A                                           RIGHT                                         DIFF      
+Space Before              0                                             0                                             YES       
+Space After               0                                             0                                             YES       
+Line Spacing              N/A                                           N/A                                           YES       
+First Line Indent         0                                             0                                             YES       
+
+  --- rFonts / Bidi ---
+  v13.1   rFonts: {}
+  v13.1   Bidi:   False
+  v13.1   Type:   PARAGRAPH (1)
+  Ref     rFonts: {'ascii': 'Traditional Arabic', 'hAnsi': 'Traditional Arabic', 'eastAsia': 'Traditional Arabic', 'cs': 'Traditional Arabic'}
+  Ref     Bidi:   False
+  Ref     Type:   PARAGRAPH (1)
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+STYLE: Heading 3
+--------------------------------------------------------------------------------------------------------------------------------------------
+Attribute                 v13.1                                         Reference                                     Match     
+--------------------------------------------------------------------------------------------------------------------------------------------
+Font Name                 N/A                                           Traditional Arabic                            DIFF      
+Font Size                 12                                            12                                            YES       
+Bold                      N/A                                           N/A                                           YES       
+Italic                    N/A                                           N/A                                           YES       
+Color                     1F4D78                                        1F4D78                                        YES       
+Alignment                 N/A                                           RIGHT                                         DIFF      
+Space Before              0                                             0                                             YES       
+Space After               0                                             0                                             YES       
+Line Spacing              N/A                                           N/A                                           YES       
+First Line Indent         0                                             0                                             YES       
+
+  --- rFonts / Bidi ---
+  v13.1   rFonts: {}
+  v13.1   Bidi:   False
+  v13.1   Type:   PARAGRAPH (1)
+  Ref     rFonts: {'ascii': 'Traditional Arabic', 'hAnsi': 'Traditional Arabic', 'eastAsia': 'Traditional Arabic', 'cs': 'Traditional Arabic'}
+  Ref     Bidi:   False
+  Ref     Type:   PARAGRAPH (1)
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+STYLE: Heading 4
+--------------------------------------------------------------------------------------------------------------------------------------------
+Attribute                 v13.1                                         Reference                                     Match     
+--------------------------------------------------------------------------------------------------------------------------------------------
+Font Name                 N/A                                           Traditional Arabic                            DIFF      
+Font Size                 N/A                                           N/A                                           YES       
+Bold                      N/A                                           N/A                                           YES       
+Italic                    True                                          True                                          YES       
+Color                     2E74B5                                        2E74B5                                        YES       
+Alignment                 N/A                                           RIGHT                                         DIFF      
+Space Before              0                                             0                                             YES       
+Space After               0                                             0                                             YES       
+Line Spacing              N/A                                           N/A                                           YES       
+First Line Indent         0                                             0                                             YES       
+
+  --- rFonts / Bidi ---
+  v13.1   rFonts: {}
+  v13.1   Bidi:   False
+  v13.1   Type:   PARAGRAPH (1)
+  Ref     rFonts: {'ascii': 'Traditional Arabic', 'hAnsi': 'Traditional Arabic', 'eastAsia': 'Traditional Arabic', 'cs': 'Traditional Arabic'}
+  Ref     Bidi:   False
+  Ref     Type:   PARAGRAPH (1)
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+STYLE: Table
+--------------------------------------------------------------------------------------------------------------------------------------------
+Attribute                 v13.1                                         Reference                                     Match     
+--------------------------------------------------------------------------------------------------------------------------------------------
+Font Name                 ---                                           Traditional Arabic                            DIFF      
+Font Size                 ---                                           N/A                                           DIFF      
+Bold                      ---                                           N/A                                           DIFF      
+Italic                    ---                                           N/A                                           DIFF      
+Color                     ---                                           N/A                                           DIFF      
+Alignment                 ---                                           RIGHT                                         DIFF      
+Space Before              ---                                           0                                             DIFF      
+Space After               ---                                           0                                             DIFF      
+Line Spacing              ---                                           N/A                                           DIFF      
+First Line Indent         ---                                           0                                             DIFF      
+
+  --- rFonts / Bidi ---
+  Ref     rFonts: {'ascii': 'Traditional Arabic', 'hAnsi': 'Traditional Arabic', 'eastAsia': 'Traditional Arabic', 'cs': 'Traditional Arabic'}
+  Ref     Bidi:   False
+  Ref     Type:   TABLE (3)
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+STYLE: Footer
+--------------------------------------------------------------------------------------------------------------------------------------------
+Attribute                 v13.1                                         Reference                                     Match     
+--------------------------------------------------------------------------------------------------------------------------------------------
+Font Name                 N/A                                           ---                                           DIFF      
+Font Size                 N/A                                           ---                                           DIFF      
+Bold                      N/A                                           ---                                           DIFF      
+Italic                    N/A                                           ---                                           DIFF      
+Color                     N/A                                           ---                                           DIFF      
+Alignment                 N/A                                           ---                                           DIFF      
+Space Before              0                                             ---                                           DIFF      
+Space After               0                                             ---                                           DIFF      
+Line Spacing              SINGLE (0) (1.0)                              ---                                           DIFF      
+First Line Indent         0                                             ---                                           DIFF      
+
+  --- rFonts / Bidi ---
+  v13.1   rFonts: {}
+  v13.1   Bidi:   False
+  v13.1   Type:   PARAGRAPH (1)
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+STYLE: Header
+--------------------------------------------------------------------------------------------------------------------------------------------
+Attribute                 v13.1                                         Reference                                     Match     
+--------------------------------------------------------------------------------------------------------------------------------------------
+Font Name                 N/A                                           ---                                           DIFF      
+Font Size                 N/A                                           ---                                           DIFF      
+Bold                      N/A                                           ---                                           DIFF      
+Italic                    N/A                                           ---                                           DIFF      
+Color                     N/A                                           ---                                           DIFF      
+Alignment                 N/A                                           ---                                           DIFF      
+Space Before              0                                             ---                                           DIFF      
+Space After               0                                             ---                                           DIFF      
+Line Spacing              SINGLE (0) (1.0)                              ---                                           DIFF      
+First Line Indent         0                                             ---                                           DIFF      
+
+  --- rFonts / Bidi ---
+  v13.1   rFonts: {}
+  v13.1   Bidi:   False
+  v13.1   Type:   PARAGRAPH (1)
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+STYLE: Footnote Text
+--------------------------------------------------------------------------------------------------------------------------------------------
+Attribute                 v13.1                                         Reference                                     Match     
+--------------------------------------------------------------------------------------------------------------------------------------------
+Font Name                 ---                                           Traditional Arabic                            DIFF      
+Font Size                 ---                                           10                                            DIFF      
+Bold                      ---                                           N/A                                           DIFF      
+Italic                    ---                                           N/A                                           DIFF      
+Color                     ---                                           N/A                                           DIFF      
+Alignment                 ---                                           RIGHT                                         DIFF      
+Space Before              ---                                           0                                             DIFF      
+Space After               ---                                           0                                             DIFF      
+Line Spacing              ---                                           SINGLE (0) (1.0)                              DIFF      
+First Line Indent         ---                                           0                                             DIFF      
+
+  --- rFonts / Bidi ---
+  Ref     rFonts: {'ascii': 'Traditional Arabic', 'hAnsi': 'Traditional Arabic', 'eastAsia': 'Traditional Arabic', 'cs': 'Traditional Arabic'}
+  Ref     Bidi:   False
+  Ref     Type:   PARAGRAPH (1)
+
+============================================================================================================================================
+SECTION / PAGE SETUP
+============================================================================================================================================
+
+--- Section 1 ---
+Attribute                 v13.1                Reference            Match     
+--------------------------------------------------------------------------------
+Page Width                595                  595                  YES       
+Page Height               841                  841                  YES       
+Top Margin                113                  113                  YES       
+Bottom Margin             113                  113                  YES       
+Left Margin               113                  113                  YES       
+Right Margin              113                  113                  YES       
+Orientation               N/A                  N/A                  YES       
+
+============================================================================================================================================
+SUMMARY OF DIFFERENCES
+============================================================================================================================================
+
+  [Normal] font_name: v13.1='N/A' vs ref='Traditional Arabic'
+  [Normal] alignment: v13.1='N/A' vs ref='RIGHT'
+  [Title] font_name: v13.1='N/A' vs ref='Traditional Arabic'
+  [Title] alignment: v13.1='N/A' vs ref='CENTER'
+  [Subtitle] font_name: v13.1='---' vs ref='Traditional Arabic'
+  [Subtitle] font_size: v13.1='---' vs ref='14'
+  [Subtitle] bold: v13.1='---' vs ref='N/A'
+  [Subtitle] italic: v13.1='---' vs ref='N/A'
+  [Subtitle] color: v13.1='---' vs ref='N/A'
+  [Subtitle] alignment: v13.1='---' vs ref='RIGHT'
+  [Subtitle] space_before: v13.1='---' vs ref='0'
+  [Subtitle] space_after: v13.1='---' vs ref='0'
+  [Subtitle] line_spacing: v13.1='---' vs ref='N/A'
+  [Subtitle] first_line_indent: v13.1='---' vs ref='0'
+  [Heading 1] font_name: v13.1='N/A' vs ref='Traditional Arabic'
+  [Heading 1] alignment: v13.1='N/A' vs ref='RIGHT'
+  [Heading 2] font_name: v13.1='N/A' vs ref='Traditional Arabic'
+  [Heading 2] alignment: v13.1='N/A' vs ref='RIGHT'
+  [Heading 3] font_name: v13.1='N/A' vs ref='Traditional Arabic'
+  [Heading 3] alignment: v13.1='N/A' vs ref='RIGHT'
+  [Heading 4] font_name: v13.1='N/A' vs ref='Traditional Arabic'
+  [Heading 4] alignment: v13.1='N/A' vs ref='RIGHT'
+  [Table] font_name: v13.1='---' vs ref='Traditional Arabic'
+  [Table] font_size: v13.1='---' vs ref='N/A'
+  [Table] bold: v13.1='---' vs ref='N/A'
+  [Table] italic: v13.1='---' vs ref='N/A'
+  [Table] color: v13.1='---' vs ref='N/A'
+  [Table] alignment: v13.1='---' vs ref='RIGHT'
+  [Table] space_before: v13.1='---' vs ref='0'
+  [Table] space_after: v13.1='---' vs ref='0'
+  [Table] line_spacing: v13.1='---' vs ref='N/A'
+  [Table] first_line_indent: v13.1='---' vs ref='0'
+  [Footer] font_name: v13.1='N/A' vs ref='---'
+  [Footer] font_size: v13.1='N/A' vs ref='---'
+  [Footer] bold: v13.1='N/A' vs ref='---'
+  [Footer] italic: v13.1='N/A' vs ref='---'
+  [Footer] color: v13.1='N/A' vs ref='---'
+  [Footer] alignment: v13.1='N/A' vs ref='---'
+  [Footer] space_before: v13.1='0' vs ref='---'
+  [Footer] space_after: v13.1='0' vs ref='---'
+  [Footer] line_spacing: v13.1='SINGLE (0) (1.0)' vs ref='---'
+  [Footer] first_line_indent: v13.1='0' vs ref='---'
+  [Header] font_name: v13.1='N/A' vs ref='---'
+  [Header] font_size: v13.1='N/A' vs ref='---'
+  [Header] bold: v13.1='N/A' vs ref='---'
+  [Header] italic: v13.1='N/A' vs ref='---'
+  [Header] color: v13.1='N/A' vs ref='---'
+  [Header] alignment: v13.1='N/A' vs ref='---'
+  [Header] space_before: v13.1='0' vs ref='---'
+  [Header] space_after: v13.1='0' vs ref='---'
+  [Header] line_spacing: v13.1='SINGLE (0) (1.0)' vs ref='---'
+  [Header] first_line_indent: v13.1='0' vs ref='---'
+  [Footnote Text] font_name: v13.1='---' vs ref='Traditional Arabic'
+  [Footnote Text] font_size: v13.1='---' vs ref='10'
+  [Footnote Text] bold: v13.1='---' vs ref='N/A'
+  [Footnote Text] italic: v13.1='---' vs ref='N/A'
+  [Footnote Text] color: v13.1='---' vs ref='N/A'
+  [Footnote Text] alignment: v13.1='---' vs ref='RIGHT'
+  [Footnote Text] space_before: v13.1='---' vs ref='0'
+  [Footnote Text] space_after: v13.1='---' vs ref='0'
+  [Footnote Text] line_spacing: v13.1='---' vs ref='SINGLE (0) (1.0)'
+  [Footnote Text] first_line_indent: v13.1='---' vs ref='0'
+  Total differences: 62
+
+Output written to: C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\style\style-comparison.txt
