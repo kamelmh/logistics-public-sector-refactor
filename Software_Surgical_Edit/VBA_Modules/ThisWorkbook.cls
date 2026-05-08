@@ -1,4 +1,4 @@
-﻿Attribute VB_Name = "ThisWorkbook"
+Attribute VB_Name = "ThisWorkbook"
 '==============================================================================
 ' ThisWorkbook.cls — ERP Académie v13.2
 ' Workbook-level event handlers
@@ -12,13 +12,24 @@ Private Sub Workbook_Open()
     Application.ScreenUpdating = False
     Application.EnableEvents = False
     
-    ' 1. Welcome message
+    ' 1. Check for concurrent workbook access
+    On Error Resume Next
+    Call mod_SharedEnvironment.CheckWorkbookAccess
+    
+    ' 2. Initialize user session (role-based tracking)
+    Call mod_SharedEnvironment.InitUserSession
+    
+    ' 3. Check for incomplete transactions (crash recovery)
+    Call mod_TransactionSafety.CheckCrashRecovery
+    On Error GoTo InitError
+    
+    ' 4. Welcome message
     Dim welcomeMsg As String
     Dim versionStr As String
     Dim titleStr As String
     
     On Error Resume Next
-    versionStr = mod_Config.VERSION
+    versionStr = mod_Config.APP_VERSION
     titleStr = mod_Config.SYS_TITLE
     On Error GoTo InitError
     
@@ -30,15 +41,19 @@ Private Sub Workbook_Open()
                  "D=1,546  |  ROP=205.6  |  Q*=176  |  SS=200"
     MsgBox welcomeMsg, vbInformation, titleStr
     
-    ' 2. Sync metrics from ledger
+    ' 5. Sync metrics from ledger
     On Error Resume Next
     Call mod_SyncBridge.SyncMetricsFromLedger
     
-    ' 3. Restore MOUVEMENTS headers if corrupted
-    Call mod_Utilities.RestoreMouvementsHeaders
+    ' 6. Restore MOUVEMENTS headers if corrupted
+    Call mod_Utilities.RestoreMouvementsHeaders(silent:=True)
     
-    ' 4. Initialize approval workflow columns
+    ' 7. Initialize approval workflow columns
     Call mod_ApprovalWorkflow.InitializeMouvementsColumns
+    
+    ' 8. Auto-backup on open (timestamped copy)
+    On Error Resume Next
+    Call mod_SharedEnvironment.AutoBackup
     On Error GoTo InitError
     
 Cleanup:

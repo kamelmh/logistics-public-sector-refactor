@@ -168,10 +168,17 @@
       <item>CI badge added to public-lsm README.md</item>
       <item>5 analysis modules: InventoryReconciliation, StockOutPredictor, SupplierScorecard, StockAging, DataValidator</item>
     </completed>
+    <completed>
+      <item>Memoire docx updated: v13.1 → v13.2 (21 references, filename + content)</item>
+      <item>Workspace setup: setup.ps1 launcher, session persistence, drive detection</item>
+      <item>Skills: workspace-setup, ssd-tools deployed in .opencode/skills/</item>
+      <item>Root cleanup: redundant AI config files → .opencode/archive/</item>
+      <item>verify.ps1: 97/97 PASS (fixed p-code cache false positive)</item>
+      <item>sanitize.ps1: full article coverage (12/12) + Chr(201) regex fix</item>
+      <item>F:\ SSD detected (1.9TB, 1.89TB free) — ready for deploy</item>
+    </completed>
     <pending>
-      <item>Defense preparation — practice jury Q&A</item>
       <item>Final thesis submission</item>
-      <item>Optional: REFINTEGRITY sheet protection fix</item>
     </pending>
   </session-handoff>
 

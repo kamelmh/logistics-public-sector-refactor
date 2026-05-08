@@ -1,23 +1,30 @@
+# Binaries & generated
 *.xlsm
 *.xlsb
 *.xlsx
-*.bak_phase*
-*.archived
-ARCHIVED/
+*.frx
+*.bak
+*.log
+
+# Academic reference materials (large PDFs)
+Academic_References/
+
+# OS / sync artifacts
 .dropbox/
 .dropbox.cache/
 desktop.ini
 .tmp.driveupload/
 *.AutoRecovered*
-LLM_WIKI_AND_DISPATCH/
-Repomix_Outputs/
-Academic_References/
-Final_Delivery_Layout/
-Claude_Desktop/
-Defense_Support/
-SYSTEM_INSTRUCTIONS.md
-*.bak
-*.frx
-*.log
-Create_StockForm.txt
-frmStockEntry_spec_table.html
+
+# Build / temp artifacts
+Software_Surgical_Edit/*.png
+Software_Surgical_Edit/*.TXT
+Software_Surgical_Edit/*.xhtml
+Software_Surgical_Edit/config.json
+Software_Surgical_Edit/vbe-auto-config.json
+Software_Surgical_Edit/erp-system-config.xml
+Software_Surgical_Edit/AUTO_COMPILE_LOG.txt
+Software_Surgical_Edit/MAPPING_ANALYSIS.txt
+Software_Surgical_Edit/SYSTEM_MAP.md
+Software_Surgical_Edit/verify_results_*.json
+Software_Surgical_Edit/ERP_Academie_v13_Master.html

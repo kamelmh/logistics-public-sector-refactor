@@ -1,6 +1,6 @@
-﻿Attribute VB_Name = "MAIN_MACROS"
+Attribute VB_Name = "MAIN_MACROS"
 '==============================================================================
-' MAIN_MACROS.bas — ERP Académie v13.2
+' MAIN_MACROS.bas - ERP Académie v13.2
 ' Entry points / macro shortcuts
 '==============================================================================
 Option Explicit
@@ -10,7 +10,7 @@ Public Sub AjouterMouvement()
     Dim frmName As String
     frmName = "frmStockEntry"
 
-    If FormExists(frmName) Then
+    If MainMacrosFormExists(frmName) Then
         VBA.UserForms.Add(frmName).Show
     Else
         MsgBox "Erreur: Le formulaire '" & frmName & "' n'existe pas." & vbCrLf & _
@@ -22,6 +22,15 @@ Public Sub AjouterMouvement()
 ErrorHandler:
     MsgBox "Erreur lors de l'ouverture du formulaire: " & Err.Description, _
            vbCritical, "ERP Académie v13.2"
+End Sub
+
+Public Sub RunGenerateDemoData()
+    On Error Resume Next
+    Call mod_DemoData.GenerateDemoData
+    If Err.Number <> 0 Then
+        MsgBox "Erreur: " & Err.Description, vbCritical, "ACADEMIX v13.2"
+    End If
+    On Error GoTo 0
 End Sub
 
 Public Sub ShowMainMenu()
@@ -39,10 +48,10 @@ ErrorHandler:
     MsgBox "Erreur: " & Err.Description, vbCritical, "ERP Académie v13.2"
 End Sub
 
-Private Function FormExists(ByVal formName As String) As Boolean
+Private Function MainMacrosFormExists(ByVal formName As String) As Boolean
     Dim vbComp As Object
     On Error Resume Next
     Set vbComp = ThisWorkbook.VBProject.VBComponents(formName)
-    FormExists = Not (vbComp Is Nothing)
+    MainMacrosFormExists = Not (vbComp Is Nothing)
     On Error GoTo 0
 End Function

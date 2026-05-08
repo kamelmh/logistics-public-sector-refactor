@@ -1,0 +1,96 @@
+Option Explicit
+
+' CNEPD standard: BR- prefix (fixed from BDR- at original line 75)
+Public Sub ExportBR()
+    Dim brNumber As String
+    brNumber = "BR-" & Format(Date, "YYYYMM") & "-" & Format(GetNextBRCounter(), "000")
+    AddCNEPDFootnote ActiveSheet, "MOUVEMENTS"
+    ExportToPDF brNumber
+End Sub
+
+Private Function GetNextBRCounter() As Long
+    Const BR_COUNTER As String = "BR_CurrentCounter"
+    Dim nm As Name
+    On Error Resume Next
+    Set nm = ThisWorkbook.Names(BR_COUNTER)
+    On Error GoTo 0
+    If nm Is Nothing Then
+        ThisWorkbook.Names.Add Name:=BR_COUNTER, RefersTo:=1
+        GetNextBRCounter = 1
+    Else
+        GetNextBRCounter = ThisWorkbook.Names(BR_COUNTER).RefersTo
+        GetNextBRCounter = GetNextBRCounter + 1
+        ThisWorkbook.Names(BR_COUNTER).RefersTo = GetNextBRCounter
+    End If
+End Function
+
+Public Sub ExportToPDF(ByVal docNumber As String, Optional ByVal ws As Worksheet = Nothing)
+    If ws Is Nothing Then Set ws = ActiveSheet
+    ws.ExportAsFixedFormat Type:=xlTypePDF, Filename:=ThisWorkbook.Path & "\" & docNumber & ".pdf", Quality:=xlQualityStandard
+End Sub
+
+' Added BL export function
+Public Sub ExportBL(ByVal blNumber As String)
+    Dim ws As Worksheet
+    Set ws = ActiveSheet
+    ws.PageSetup.CenterHeader = "CNEPD - Bon de Livraison: " & blNumber
+    AddCNEPDFootnote ws, "BL"
+    ExportToPDF "BL_" & Replace(blNumber, "-", "_")
+End Sub
+
+' =============================================
+' Sub: AddCNEPDFootnote
+' Purpose: Inject تهميش (footnotes) for CNEPD compliance
+' Called by: ExportBR, ExportBL, ExportFacture
+' =============================================
+Private Sub AddCNEPDFootnote(ByVal ws As Worksheet, ByVal docType As String)
+    On Error GoTo ErrorHandler
+    
+    Dim footnoteAr As String
+    Dim footnoteFr As String
+    
+    ' Arabic RTL footnote (تهميش)
+    Select Case docType
+        Case "MOUVEMENTS", "BR"
+            footnoteAr = "تهميش:" & vbCrLf & _
+                          "1. الوثائق: BC/BL/BR حسب المرسوم 12-200" & vbCrLf & _
+                          "2. المرجع: سانتاي 3 - صفحة 4-6 (التسجيل المحاسبي)" & vbCrLf & _
+                          "3. تقنية CMUP: المرجع سانتاي 3 - صفحة 33"
+        Case "BL"
+            footnoteAr = "تهميش:" & vbCrLf & _
+                          "1. نظام دعم القرار لتسيير المخزون - مديرية التربية لولاية البيض (2026)" & vbCrLf & _
+                          "2. المرجع: سانتاي 3 - صفحة 4 (التسجيل المحاسبي)" & vbCrLf & _
+                          "3. المرسوم: 12-200 (الوثائق الإدارية)"
+        Case "FACT"
+            footnoteAr = "تهميش:" & vbCrLf & _
+                          "1. الفاتورة: المرجع سانتاي 3 - صفحة 12-16" & vbCrLf & _
+                          "2. الحسابات: 401/701 حسب المخطط المحاسبي" & vbCrLf & _
+                          "3. المرسوم: 12-200 (الوثائق الإدارية)"
+        Case Else
+            footnoteAr = "تهميش: المرجع سانتاي - CNFEPD"
+    End Select
+    
+    ' French LTR footnote (Notes)
+    footnoteFr = "Notes (CNEPD):" & vbCrLf & _
+                 "1. Ref: TAG 1801/SEMESTRE III - Page " & GetPageRef(docType) & vbCrLf & _
+                 "2. Decret 12-200 du 23 Janvier 2012" & vbCrLf & _
+                 "3. Genere le: " & Format(Date, "DD/MM/YYYY")
+    
+    ' Apply to worksheet (for PDF export)
+    ws.PageSetup.CenterFooter = footnoteAr
+    ws.PageSetup.RightFooter = footnoteFr
+    
+    Exit Sub
+    
+ErrorHandler:
+    Debug.Print "Erreur dans AddCNEPDFootnote: " & Err.Description
+End Sub
+
+Private Function GetPageRef(ByVal docType As String) As String
+    Select Case docType
+        Case "MOUVEMENTS", "BR": GetPageRef = "4-6"
+        Case "BL": GetPageRef = "4-6"
+        Case "FACT": GetPageRef = "12-16"
+        Case Else: GetPageRef = "N/A"
+    End Select
+End Function

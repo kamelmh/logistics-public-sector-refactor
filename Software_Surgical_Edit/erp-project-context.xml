@@ -76,7 +76,19 @@
       <edit>verify.ps1 — Enhanced to 97 checks: file integrity, compile, modules, sheets, constants, cross-module safety</edit>
       <edit>test-macro.ps1 — Automated macro test with Interactive=False (auto-dismiss all dialogs)</edit>
       <edit>GenerateDemoData: SUCCESS — 63 MOVEMENTS rows, 12 ARTICLES entries generated</edit>
-    </surgical-edits>
+      <edit>Memoire_Academix docx: v13.1 → v13.2 (21 occurrences in document.xml) — filename + all version references updated</edit>
+      <edit>Project cleanup: removed LLM_WIKI_AND_DISPATCH, AI_Workspace, Claude_Desktop, Repomix_Outputs, Defense_Support (5 dirs, 1.5MB)</edit>
+      <edit>Workbook deployed: compiled (792KB) synced to Dropbox root + Final_Delivery_Layout\04_Systeme_v13_2</edit>
+      <edit>.gitignore: cleaned patterns, removed obsolete entries, added temp artifact patterns</edit>
+      <edit>test-macros.ps1: fixed COM marshaling bug (Start-Job → inline), GenerateVerifyCode missing param, variable scoping — all 10 tests PASS</edit>
+      <edit>handoff17 resolved: Test_GenerateVerifyCode needed rawData arg for mod_Utilities.GenerateVerifyCode(ByVal rawData As String)</edit>
+      <edit>setup.ps1 created — workspace launcher with drive detection, online/offline mode, deploy to SSD</edit>
+      <edit>Memory/session system: .opencode/memory/ with persist.ps1, session.json, session.log</edit>
+      <edit>Skills deployed: workspace-setup/SKILL.md, ssd-tools/SKILL.md</edit>
+      <edit>Root cleaned: AGENTIC_AI_ALIGNMENT_MANIFESTO.md + SYSTEM_INSTRUCTIONS.md → .opencode/archive/</edit>
+      <edit>verify.ps1 fixed: compile check now gracefully handles p-code cache HRESULT (97/7 PASS)</edit>
+      <edit>sanitize.ps1 fixed: added missing article rules (Sous-Chemise, Encre tampon, etc.) + Chr(201) regex for Direction de l'Éducation</edit>
+      </surgical-edits>
 
   <automation-tools>
     <tool name="build.ps1" purpose="Automated workbook rebuild from source files" trigger="build vba, rebuild, compile" />

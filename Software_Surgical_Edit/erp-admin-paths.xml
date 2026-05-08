@@ -1,50 +1,190 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ERP Academie v13.2 - Admin Paths Configuration
-  Generated: 2026-05-06
-  Purpose: All file paths, directories, and deployment targets for v13.2
+  Generated: 2026-05-06 | Updated: 2026-05-08
+  Purpose: Complete file paths, AI backends, repos, memory, skills, and tools
 -->
-<admin-paths version="13.2" date="2026-05-06">
+<admin-paths version="13.2" date="2026-05-08">
+
+  <!-- ========== PROJECT ROOT ========== -->
   <project-root>C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor</project-root>
 
+  <!-- ========== SOURCE DIRECTORIES ========== -->
   <source-directories>
     <dir key="vba-modules">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\VBA_Modules\</dir>
     <dir key="thesis">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\</dir>
     <dir key="scripts">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\</dir>
+    <dir key="milestone">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\milestone_13_2\</dir>
+    <dir key="public-lsm">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\milestone_13_2\public-lsm\</dir>
+    <dir key="agents-config">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\milestone_13_2\config\</dir>
   </source-directories>
 
+  <!-- ========== WORKBOOKS ========== -->
   <workbooks>
-    <file key="master">C:\Users\Administrator\Dropbox\ERP_v13.2.xlsm</file>
+    <file key="active">C:\Users\Administrator\Dropbox\ERP_v13.2.xlsm</file>
+    <file key="compiled">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\ERP_Academie_v13_2.xlsm</file>
+    <file key="master">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\ERP_Academie_v13_Master.xlsm</file>
+    <file key="fixed">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\ERP_Academie_v13.2_FIXED.xlsm</file>
     <file key="dss">C:\Users\Administrator\Dropbox\Decision_Support_System.xlsm</file>
-    <file key="fixed-edition">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\ERP_Academie_v13.2_FIXED.xlsm</file>
+    <file key="temp-build">$env:TEMP\ERP_Academie_v13.2_NEW.xlsm</file>
   </workbooks>
 
+  <!-- ========== VBA COMPONENTS ========== -->
+  <vba>
+    <modules count="36" source-files="29">All 36 .bas modules in workbook, 29 exported as source</modules>
+    <forms count="1">frmStockEntry.frm (714 lines, 25 controls)</forms>
+    <classes count="1">ThisWorkbook.cls</classes>
+    <total-lines>10130</total-lines>
+    <compile-errors>0</compile-errors>
+    <sheets count="25">ACCUEIL, ARTICLES, FOURNISSEURS, CONVENTIONS, MOUVEMENTS, TABLEAU_DE_BORD, ALERTE_DASHBOARD, INVENTAIRE, RAPPORTS, CALCULS_EOQ, HISTORIQUE, BON_RECEPTION, BON_SORTIE, BON_COMMANDE, DA_DEMANDE_ACHAT, GUIDE, VBA_MODULES, AUDIT_LOG, DASHBOARD, FORM_INPUT, BORDEREAU_COMMANDE, STAGING_BUFFER, SYS_STRINGS, RECEIPT_TAG, TEMPLATE_BON</sheets>
+  </vba>
+
+  <!-- ========== CONFIG FILES ========== -->
   <config-files>
     <file key="project-context">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\erp-project-context.xml</file>
     <file key="admin-paths">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\erp-admin-paths.xml</file>
     <file key="agent-handoff">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\erp-agent-handoff.xml</file>
-    <file key="agents-md">C:\Users\Administrator\.config\opencode\AGENTS.md</file>
-    <file key="instructions-md">C:\Users\Administrator\.config\opencode\instructions.md</file>
-    <file key="opencode-json">C:\Users\Administrator\.config\opencode\opencode.json</file>
+    <file key="system-config">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\erp-system-config.xml</file>
+    <file key="agent-system">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\milestone_13_2\config\agent-system.xml</file>
+    <file key="agent-routing">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\milestone_13_2\config\agent-routing.xml</file>
+    <file key="milestone">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\milestone_13_2\config\milestone-13.2.xml</file>
+    <file key="vbe-auto-config">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\vbe-auto-config.json</file>
+    <file key="data-persist">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\data-persist.json</file>
+    <file key="lsm-rag">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\milestone_13_2\rag\lsm-rag-context.xml</file>
   </config-files>
 
-  <ai-backend>
-    <provider>Groq</provider>
-    <model>qwen/qwen3-32b</model>
-    <endpoint>https://api.groq.com/openai/v1/chat/completions</endpoint>
-    <fallback-local>qwen2.5-coder:1.5b (Ollama — 108s load time, HDD bottleneck)</fallback-local>
-  </ai-backend>
+  <!-- ========== OPEnCODE CONFIG ========== -->
+  <opencode>
+    <config> C:\Users\Administrator\.config\opencode\opencode.json</config>
+    <agents-md> C:\Users\Administrator\.config\opencode\AGENTS.md</agents-md>
+    <instructions> C:\Users\Administrator\.config\opencode\instructions.md</instructions>
+    <tui> C:\Users\Administrator\.config\opencode\tui.json</tui>
+    <skills-dir count="70">C:\Users\Administrator\.opencode\skills\</skills-dir>
+    <project-context>C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\.opencode\context.md</project-context>
+    <engineering-harness>C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\.opencode\agents\engineering-harness.md</engineering-harness>
+    <database> C:\Users\Administrator\.opencode\opencode.db</database>
+  </opencode>
 
+  <!-- ========== MEMORY SYSTEM ========== -->
+  <memory>
+    <project-memory>  C:\Users\Administrator\.opencode\project-memory.json</project-memory>
+    <notepad>          C:\Users\Administrator\.opencode\notepad.md</notepad>
+    <omc-notepad>      C:\Users\Administrator\.omc\notepad.md</omc-notepad>
+    <omc-sessions>     C:\Users\Administrator\.omc\state\sessions\</omc-sessions>
+    <omc-logs>         C:\Users\Administrator\.omc\logs\</omc-logs>
+    <omc-plans>        C:\Users\Administrator\.omc\plans\</omc-plans>
+    <aihub-vector>     C:\Users\Administrator\AI-Hubs\memory\.aivectormemory</aihub-vector>
+    <opencode-db>      C:\Users\Administrator\.opencode\opencode.db</opencode-db>
+  </memory>
+
+  <!-- ========== AI BACKENDS ========== -->
+  <ai-backends>
+    <backend key="primary" provider="Groq" model="qwen/qwen3-32b" response="~1s">
+      <endpoint>https://api.groq.com/openai/v1/chat/completions</endpoint>
+      <key>C:\Users\Administrator\Desktop\groq api key - LSM in public sector education.txt</key>
+    </backend>
+    <backend key="secondary" provider="Ollama" model="qwen2.5-coder:7b" response="~30-60s">
+      <endpoint>http://localhost:11434</endpoint>
+    </backend>
+    <backend key="tertiary" provider="Ollama" model="qwen2.5-coder:1.5b" response="~100s">
+      <endpoint>http://localhost:11434</endpoint>
+    </backend>
+    <backend key="fallback-server" provider="free-claude-code" model="ollama/llama3.2:1b">
+      <path>C:\Users\Administrator\free-claude-code\</path>
+      <config>C:\Users\Administrator\free-claude-code\.env</config>
+    </backend>
+  </ai-backends>
+
+  <!-- ========== GIT REPOS ========== -->
+  <git-repositories>
+    <repo key="logistics" priority="CRITICAL">
+      <path>C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor</path>
+      <remote>https://github.com/kamelmh/logistics-public-sector-refactor</remote>
+      <branch>master</branch>
+      <purpose>Main thesis: Academix v13.2 VBA/Excel DSS</purpose>
+    </repo>
+    <repo key="free-claude-code" priority="HIGH">
+      <path>C:\Users\Administrator\free-claude-code</path>
+      <remote>https://github.com/kamelmh/free-claude-code</remote>
+      <purpose>Local AI server — Claude Code API compatible</purpose>
+    </repo>
+    <repo key="opencode" priority="HIGH">
+      <path>C:\Users\Administrator\opencode</path>
+      <remote>https://github.com/kamelmh/opencode</remote>
+      <purpose>OpenCode fork — 60+ skills, custom agents</purpose>
+    </repo>
+    <repo key="ai-hubs" priority="HIGH">
+      <path>C:\Users\Administrator\AI-Hubs</path>
+      <remote>https://github.com/kamelmh/AI-Hubs</remote>
+      <purpose>Central AI resources, vector memory</purpose>
+    </repo>
+    <repo key="agentic-hub" priority="MEDIUM">
+      <path>C:\Users\Administrator\.agentic-hub</path>
+      <remote>https://github.com/kamelmh/agentic-hub</remote>
+      <purpose>Agent orchestration patterns</purpose>
+    </repo>
+    <repo key="testgen" priority="MEDIUM">
+      <path>C:\Users\Administrator\testgen</path>
+      <remote>https://github.com/kamelmh/testgen</remote>
+      <purpose>Testing framework</purpose>
+    </repo>
+    <repo key="omc" priority="MEDIUM">
+      <path>C:\Users\Administrator\.omc</path>
+      <purpose>OMC v4.9.3 state, sessions, plans</purpose>
+    </repo>
+  </git-repositories>
+
+  <!-- ========== SKILLS ========== -->
+  <skills>
+    <group name="vba" purpose="VBA Development">
+      <skill key="vba-build">C:\Users\Administrator\.opencode\skills\vba-build\SKILL.md</skill>
+      <skill key="vba-debug">C:\Users\Administrator\.opencode\skills\vba-debug\SKILL.md</skill>
+      <skill key="vba-importer">C:\Users\Administrator\.opencode\skills\vba-importer\SKILL.md</skill>
+      <skill key="vba-excel-sync">C:\Users\Administrator\.opencode\skills\vba-excel-sync\SKILL.md</skill>
+      <skill key="vbe-auto">C:\Users\Administrator\.opencode\skills\vbe-auto\SKILL.md</skill>
+    </group>
+    <group name="opencode" purpose="OpenCode 70 Skills (All Synced)">
+      <path>C:\Users\Administrator\.opencode\skills\</path>
+      <highlights>All 70 skills from opencode fork — LLM: mcp-setup, context7-docs, external-context, harvest-context, sciomc, graph-thinking, deep-interview, ccg, ultraqa | Git: github-ops, conventional-commit, changelog-generator | RAG: harvest-context, external-context, graph-thinking | VBA: vba-build, vba-debug, vba-importer, vba-excel-sync, vbe-auto | Core: plan, build, debug, audit, test, remember, writer-memory, team, orchestrate, verify, ralph, ralplan, project, deep-dive</highlights>
+    </group>
+    <group name="claude" purpose="Review">
+      <skill key="claude-review">C:\Users\Administrator\.opencode\skills\claude-review\SKILL.md</skill>
+    </group>
+  </skills>
+
+  <!-- ========== TOOLS ========== -->
+  <tools>
+    <tool key="launcher">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\academix-launcher.ps1</tool>
+    <tool key="orchestrator">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\orchestrator.ps1</tool>
+    <tool key="build">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\build.ps1</tool>
+    <tool key="verify">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\verify.ps1</tool>
+    <tool key="dss-audit">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\milestone_13_2\tests\dss-audit.ps1</tool>
+    <tool key="test-macros">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\test-macros.ps1</tool>
+    <tool key="vbe-control">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\vbe.ps1</tool>
+    <tool key="data-persist">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\data-persist.ps1</tool>
+    <tool key="sanitize">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\milestone_13_2\public-lsm\sanitize.ps1</tool>
+    <tool key="protect-sheets">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\milestone_13_2\tests\protect-sheets.ps1</tool>
+  </tools>
+
+  <!-- ========== OMC ORCHESTRATOR ========== -->
+  <omc>
+    <version>4.9.3</version>
+    <cli>omc</cli>
+    <state>C:\Users\Administrator\.omc\state\</state>
+    <sessions>C:\Users\Administrator\.omc\state\sessions\</sessions>
+    <plans>C:\Users\Administrator\.omc\plans\</plans>
+    <logs>C:\Users\Administrator\.omc\logs\</logs>
+    <manifesto>C:\Users\Administrator\.omc\AGENTIC_AI_ALIGNMENT_MANIFESTO.md</manifesto>
+  </omc>
+
+  <!-- ========== DEPLOYMENT ========== -->
   <deployment>
     <target key="opencode-config">C:\Users\Administrator\.config\opencode\</target>
-    <target key="dropbox-sync">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\</target>
+    <target key="dropbox-root">C:\Users\Administrator\Dropbox\</target>
+    <target key="dropbox-project">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\</target>
     <target key="git-repo">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\</target>
-    <target key="files-backup">C:\Users\Administrator\Downloads\files\</target>
+    <target key="desktop-backup">C:\Users\Administrator\Desktop\vbe-auto-backup\</target>
+    <target key="downloads-backup">C:\Users\Administrator\Downloads\files\</target>
   </deployment>
 
-  <git>
-    <remote>https://github.com/kamelmh/logistics-public-sector-refactor</remote>
-    <branch>master</branch>
-    <user>kamelmh</user>
-  </git>
 </admin-paths>

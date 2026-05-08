@@ -1,0 +1,1 @@
+C:/Users/Administrator/Desktop/vbe-auto/verify.ps1

@@ -1,0 +1,510 @@
+' VBA Module: mod_StockEntry_Logic_Enhanced.bas
+' Purpose: Logique avancée pour l'entrée de stock avec validation
+' Institution: Direction de l'Éducation, El Bayadh
+' Conforme CNEPD: Terminologie administrative appropriée
+
+Option Explicit
+
+' Constantes VBA
+Private Const xlUp As Long = -4162
+Private Const xlWhole As Long = 1
+
+' =============================================
+' Sub: ValidateStockEntry
+' Purpose: Valider l'entrée de stock avant traitement
+' =============================================
+Public Sub ValidateStockEntry(articleCode As String, quantity As Double, transactionType As String)
+    On Error GoTo ErrorHandler
+    
+    Dim wsStock As Worksheet
+    Dim wsArticles As Worksheet
+    Dim currentStock As Double
+    Dim ropValue As Double
+    Dim safetyStock As Double
+    
+    ' Définir les références
+    Set wsStock = ThisWorkbook.Sheets("StockLedger")
+    Set wsArticles = ThisWorkbook.Sheets("ARTICLES")
+    
+    ' Vérifier si l'article existe
+    If Not ArticleExists(articleCode) Then
+        MsgBox "Article non trouvé: " & articleCode, vbExclamation, "Erreur de Validation"
+        Exit Sub
+    End If
+    
+    ' Valider la quantité
+    If quantity <= 0 Then
+        MsgBox "Quantité invalide. Doit être supérieure à zéro.", vbExclamation, "Erreur de Validation"
+        Exit Sub
+    End If
+    
+    ' Obtenir le stock actuel et les seuils
+    currentStock = GetCurrentStock(articleCode)
+    ropValue = GetROPValue(articleCode)
+    safetyStock = GetSafetyStock(articleCode)
+    
+    ' Vérifier si la transaction violerait les seuils
+    If transactionType = "Bon de Sortie" Then
+        If (currentStock - quantity) < safetyStock Then
+            If MsgBox("Attention: Le stock après cette sortie (" & (currentStock - quantity) & _
+                           ") sera inférieur au stock de sécurité (" & safetyStock & "). " & _
+                           "Voulez-vous continuer?", _
+                           vbYesNo + vbQuestion, "Alerte Stock") = vbNo Then
+                Exit Sub
+            End If
+        End If
+        
+        If (currentStock - quantity) <= ropValue Then
+            MsgBox "ALERTE: Le stock après cette sortie atteindra le Point de Réapprovisionnement (ROP): " & ropValue, _
+                   vbExclamation, "Alerte ROP"
+        End If
+    End If
+    
+    ' Traiter la transaction
+    ProcessTransaction articleCode, quantity, transactionType
+    
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox "Erreur lors de la validation: " & Err.Description, vbCritical, "Erreur"
+End Sub
+
+' =============================================
+' Function: ArticleExists
+' Purpose: Vérifier si l'article existe dans la feuille ARTICLES
+' =============================================
+Private Function ArticleExists(articleCode As String) As Boolean
+    On Error Resume Next
+    
+    Dim ws As Worksheet
+    Dim foundCell As Range
+    Dim lastRow As Long
+    
+    Set ws = ThisWorkbook.Sheets("ARTICLES")
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    
+    Set foundCell = ws.Range("A2:A" & lastRow).Find(What:=articleCode, LookAt:=xlWhole)
+    ArticleExists = Not foundCell Is Nothing
+    
+    On Error GoTo 0
+End Function
+
+' =============================================
+' Function: GetCurrentStock
+' Purpose: Obtenir le stock actuel d'un article
+' =============================================
+Private Function GetCurrentStock(articleCode As String) As Double
+    On Error Resume Next
+    
+    Dim ws As Worksheet
+    Dim foundCell As Range
+    Dim lastRow As Long
+    
+    Set ws = ThisWorkbook.Sheets("StockLedger")
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    
+    Set foundCell = ws.Range("A2:A" & lastRow).Find(What:=articleCode, LookAt:=xlWhole)
+    
+    If Not foundCell Is Nothing Then
+        GetCurrentStock = ws.Cells(foundCell.Row, 4).Value
+    Else
+        GetCurrentStock = 0
+    End If
+    
+    On Error GoTo 0
+End Function
+
+' =============================================
+' Function: GetROPValue
+' Purpose: Obtenir le Point de Recommandation (ROP) d'un article
+' =============================================
+Private Function GetROPValue(articleCode As String) As Double
+    On Error Resume Next
+    
+    Dim ws As Worksheet
+    Dim foundCell As Range
+    Dim lastRow As Long
+    
+    Set ws = ThisWorkbook.Sheets("ARTICLES")
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    
+    Set foundCell = ws.Range("A2:A" & lastRow).Find(What:=articleCode, LookAt:=xlWhole)
+    
+    If Not foundCell Is Nothing Then
+        GetROPValue = ws.Cells(foundCell.Row, 5).Value
+    Else
+        GetROPValue = 0
+    End If
+    
+    On Error GoTo 0
+End Function
+
+' =============================================
+' Function: GetSafetyStock
+' Purpose: Obtenir le Stock de Sécurité d'un article
+' =============================================
+Private Function GetSafetyStock(articleCode As String) As Double
+    On Error Resume Next
+    
+    Dim ws As Worksheet
+    Dim foundCell As Range
+    Dim lastRow As Long
+    
+    Set ws = ThisWorkbook.Sheets("ARTICLES")
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    
+    Set foundCell = ws.Range("A2:A" & lastRow).Find(What:=articleCode, LookAt:=xlWhole)
+    
+    If Not foundCell Is Nothing Then
+        GetSafetyStock = ws.Cells(foundCell.Row, 6).Value
+    Else
+        GetSafetyStock = 0
+    End If
+    
+    On Error GoTo 0
+End Function
+
+' =============================================
+' Sub: ProcessTransaction
+' Purpose: Traiter la transaction de stock et mettre à jour les grands livres
+' =============================================
+Private Sub ProcessTransaction(articleCode As String, quantity As Double, transactionType As String)
+    On Error GoTo ErrorHandler
+    
+    Dim wsLedger As Worksheet
+    Dim wsMovements As Worksheet
+    Dim nextRow As Long
+    Dim currentStock As Double
+    
+    Set wsLedger = ThisWorkbook.Sheets("StockLedger")
+    Set wsMovements = ThisWorkbook.Sheets("MOUVEMENTS")
+    
+    ' Mettre à jour le grand livre
+    Dim ledgerRow As Long
+    ledgerRow = FindLedgerRow(articleCode)
+    
+    If ledgerRow > 0 Then
+        currentStock = wsLedger.Cells(ledgerRow, 4).Value
+        
+        If transactionType = "Bon de Réception" Then
+            wsLedger.Cells(ledgerRow, 4).Value = currentStock + quantity
+        ElseIf transactionType = "Bon de Sortie" Then
+            wsLedger.Cells(ledgerRow, 4).Value = currentStock - quantity
+        End If
+    End If
+    
+    ' Ajouter au journal des mouvements
+    nextRow = wsMovements.Cells(wsMovements.Rows.Count, 1).End(xlUp).Row + 1
+    
+    wsMovements.Cells(nextRow, 1).Value = "MOV-" & Format(Now(), "YYYYMM") & "-" & (nextRow - 1)
+    wsMovements.Cells(nextRow, 2).Value = Now()
+    wsMovements.Cells(nextRow, 3).Value = articleCode
+    wsMovements.Cells(nextRow, 4).Value = quantity
+    wsMovements.Cells(nextRow, 5).Value = transactionType
+    wsMovements.Cells(nextRow, 6).Value = Environ("USERNAME")
+    
+    ' Mettre à jour les alertes du tableau de bord
+    UpdateDashboardAlerts
+    
+    MsgBox "Transaction traitée avec succès!", vbInformation, "Succès"
+    
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox "Erreur lors du traitement: " & Err.Description, vbCritical, "Erreur"
+End Sub
+
+' =============================================
+' Function: FindLedgerRow
+' Purpose: Trouver la ligne dans le grand livre pour un article
+' =============================================
+Private Function FindLedgerRow(articleCode As String) As Long
+    On Error Resume Next
+    
+    Dim ws As Worksheet
+    Dim foundCell As Range
+    Dim lastRow As Long
+    
+    Set ws = ThisWorkbook.Sheets("StockLedger")
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    
+    Set foundCell = ws.Range("A2:A" & lastRow).Find(What:=articleCode, LookAt:=xlWhole)
+    
+    If Not foundCell Is Nothing Then
+        FindLedgerRow = foundCell.Row
+    Else
+        FindLedgerRow = 0
+    End If
+    
+    On Error GoTo 0
+End Function
+
+' =============================================
+' Sub: UpdateDashboardAlerts
+' Purpose: Mettre à jour le Tableau de Bord avec les alertes actuelles
+' =============================================
+Private Sub UpdateDashboardAlerts()
+    On Error GoTo ErrorHandler
+    
+    Dim wsDashboard As Worksheet
+    Dim wsLedger As Worksheet
+    Dim lastRow As Long
+    Dim alertCount As Long
+    Dim i As Long
+    
+    Set wsDashboard = ThisWorkbook.Sheets("Dashboard")
+    Set wsLedger = ThisWorkbook.Sheets("StockLedger")
+    
+    ' Effacer les alertes précédentes
+    wsDashboard.Range("A2:E100").ClearContents
+    
+    ' Trouver les articles sous le ROP
+    lastRow = wsLedger.Cells(wsLedger.Rows.Count, 1).End(xlUp).Row
+    alertCount = 0
+    
+    For i = 2 To lastRow
+        Dim currentStock As Double
+        Dim ropValue As Double
+        
+        currentStock = wsLedger.Cells(i, 4).Value
+        ropValue = wsLedger.Cells(i, 5).Value
+        
+        If currentStock <= ropValue Then
+            alertCount = alertCount + 1
+            wsDashboard.Cells(alertCount + 1, 1).Value = wsLedger.Cells(i, 1).Value
+            wsDashboard.Cells(alertCount + 1, 2).Value = currentStock
+            wsDashboard.Cells(alertCount + 1, 3).Value = ropValue
+            wsDashboard.Cells(alertCount + 1, 4).Value = "ALERTE: ROP atteint!"
+            wsDashboard.Cells(alertCount + 1, 5).Value = Format(Now(), "DD/MM/YYYY")
+        End If
+    Next i
+    
+    ' Mettre à jour le résumé
+    wsDashboard.Range("H2").Value = "Total Alertes: " & alertCount
+    wsDashboard.Range("H3").Value = "Date: " & Format(Now(), "DD/MM/YYYY")
+    
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox "Erreur lors de la mise à jour du dashboard: " & Err.Description, vbCritical
+End Sub
+
+' =============================================
+' Function: ArticleExists
+' Purpose: Check if article exists in ARTICLES sheet
+' =============================================
+Private Function ArticleExists(articleCode As String) As Boolean
+    On Error Resume Next
+    
+    Dim ws As Worksheet
+    Dim foundCell As Range
+    Dim lastRow As Long
+    
+    Set ws = ThisWorkbook.Sheets("ARTICLES")
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    
+    Set foundCell = ws.Range("A2:A" & lastRow).Find(What:=articleCode, LookAt:=xlWhole)
+    ArticleExists = Not foundCell Is Nothing
+    
+    On Error GoTo 0
+End Function
+
+' =============================================
+' Function: GetCurrentStock
+' Purpose: Get current stock for an article
+' =============================================
+Private Function GetCurrentStock(articleCode As String) As Double
+    On Error Resume Next
+    
+    Dim ws As Worksheet
+    Dim foundCell As Range
+    Dim lastRow As Long
+    
+    Set ws = ThisWorkbook.Sheets("StockLedger")
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    
+    Set foundCell = ws.Range("A2:A" & lastRow).Find(What:=articleCode, LookAt:=xlWhole)
+    
+    If Not foundCell Is Nothing Then
+        GetCurrentStock = ws.Cells(foundCell.Row, 4).Value ' Column D = Current Stock
+    Else
+        GetCurrentStock = 0
+    End If
+    
+    On Error GoTo 0
+End Function
+
+' =============================================
+' Function: GetROPValue
+' Purpose: Get Reorder Point for an article
+' =============================================
+Private Function GetROPValue(articleCode As String) As Double
+    On Error Resume Next
+    
+    Dim ws As Worksheet
+    Dim foundCell As Range
+    Dim lastRow As Long
+    
+    Set ws = ThisWorkbook.Sheets("ARTICLES")
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    
+    Set foundCell = ws.Range("A2:A" & lastRow).Find(What:=articleCode, LookAt:=xlWhole)
+    
+    If Not foundCell Is Nothing Then
+        GetROPValue = ws.Cells(foundCell.Row, 5).Value ' Column E = ROP
+    Else
+        GetROPValue = 0
+    End If
+    
+    On Error GoTo 0
+End Function
+
+' =============================================
+' Function: GetSafetyStock
+' Purpose: Get Safety Stock for an article
+' =============================================
+Private Function GetSafetyStock(articleCode As String) As Double
+    On Error Resume Next
+    
+    Dim ws As Worksheet
+    Dim foundCell As Range
+    Dim lastRow As Long
+    
+    Set ws = ThisWorkbook.Sheets("ARTICLES")
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    
+    Set foundCell = ws.Range("A2:A" & lastRow).Find(What:=articleCode, LookAt:=xlWhole)
+    
+    If Not foundCell Is Nothing Then
+        GetSafetyStock = ws.Cells(foundCell.Row, 6).Value ' Column F = Safety Stock
+    Else
+        GetSafetyStock = 0
+    End If
+    
+    On Error GoTo 0
+End Function
+
+' =============================================
+' Sub: ProcessTransaction
+' Purpose: Process stock transaction and update ledgers
+' =============================================
+Private Sub ProcessTransaction(articleCode As String, quantity As Double, transactionType As String)
+    On Error GoTo ErrorHandler
+    
+    Dim wsLedger As Worksheet
+    Dim wsMovements As Worksheet
+    Dim nextRow As Long
+    Dim currentStock As Double
+    
+    Set wsLedger = ThisWorkbook.Sheets("StockLedger")
+    Set wsMovements = ThisWorkbook.Sheets("MOUVEMENTS")
+    
+    ' Update Stock Ledger
+    Dim ledgerRow As Long
+    ledgerRow = FindLedgerRow(articleCode)
+    
+    If ledgerRow > 0 Then
+        currentStock = wsLedger.Cells(ledgerRow, 4).Value
+        
+        If transactionType = "Bon de Réception" Then
+            wsLedger.Cells(ledgerRow, 4).Value = currentStock + quantity
+        ElseIf transactionType = "Bon de Sortie" Then
+            wsLedger.Cells(ledgerRow, 4).Value = currentStock - quantity
+        End If
+    End If
+    
+    ' Add to Movements log
+    nextRow = wsMovements.Cells(wsMovements.Rows.Count, 1).End(xlUp).Row + 1
+    
+    wsMovements.Cells(nextRow, 1).Value = "MOV-" & Format(Now(), "YYYYMM") & "-" & (nextRow - 1)
+    wsMovements.Cells(nextRow, 2).Value = Now()
+    wsMovements.Cells(nextRow, 3).Value = articleCode
+    wsMovements.Cells(nextRow, 4).Value = quantity
+    wsMovements.Cells(nextRow, 5).Value = transactionType
+    wsMovements.Cells(nextRow, 6).Value = Environ("USERNAME")
+    
+    ' Update dashboard alerts
+    UpdateDashboardAlerts
+    
+    MsgBox "Transaction traitée avec succès!", vbInformation, "Succès"
+    
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox "Erreur lors du traitement: " & Err.Description, vbCritical, "Erreur"
+End Sub
+
+' =============================================
+' Function: FindLedgerRow
+' Purpose: Find row in Stock Ledger for an article
+' =============================================
+Private Function FindLedgerRow(articleCode As String) As Long
+    On Error Resume Next
+    
+    Dim ws As Worksheet
+    Dim foundCell As Range
+    Dim lastRow As Long
+    
+    Set ws = ThisWorkbook.Sheets("StockLedger")
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    
+    Set foundCell = ws.Range("A2:A" & lastRow).Find(What:=articleCode, LookAt:=xlWhole)
+    
+    If Not foundCell Is Nothing Then
+        FindLedgerRow = foundCell.Row
+    Else
+        FindLedgerRow = 0
+    End If
+    
+    On Error GoTo 0
+End Function
+
+' =============================================
+' Sub: UpdateDashboardAlerts
+' Purpose: Update the Stock Dashboard with current alerts
+' =============================================
+Private Sub UpdateDashboardAlerts()
+    On Error GoTo ErrorHandler
+    
+    Dim wsDashboard As Worksheet
+    Dim wsLedger As Worksheet
+    Dim lastRow As Long
+    Dim alertCount As Long
+    Dim i As Long
+    
+    Set wsDashboard = ThisWorkbook.Sheets("Dashboard")
+    Set wsLedger = ThisWorkbook.Sheets("StockLedger")
+    
+    ' Clear previous alerts
+    wsDashboard.Range("A2:E100").ClearContents
+    
+    ' Find items below ROP
+    lastRow = wsLedger.Cells(wsLedger.Rows.Count, 1).End(xlUp).Row
+    alertCount = 0
+    
+    For i = 2 To lastRow
+        Dim currentStock As Double
+        Dim ropValue As Double
+        
+        currentStock = wsLedger.Cells(i, 4).Value
+        ropValue = wsLedger.Cells(i, 5).Value
+        
+        If currentStock <= ropValue Then
+            alertCount = alertCount + 1
+            wsDashboard.Cells(alertCount + 1, 1).Value = wsLedger.Cells(i, 1).Value ' Article
+            wsDashboard.Cells(alertCount + 1, 2).Value = currentStock
+            wsDashboard.Cells(alertCount + 1, 3).Value = ropValue
+            wsDashboard.Cells(alertCount + 1, 4).Value = "ALERTE: ROP atteint!"
+            wsDashboard.Cells(alertCount + 1, 5).Value = Format(Now(), "DD/MM/YYYY")
+        End If
+    Next i
+    
+    ' Update summary
+    wsDashboard.Range("H2").Value = "Total Alertes: " & alertCount
+    wsDashboard.Range("H3").Value = "Date: " & Format(Now(), "DD/MM/YYYY")
+    
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox "Erreur lors de la mise à jour du dashboard: " & Err.Description, vbCritical
+End Sub
