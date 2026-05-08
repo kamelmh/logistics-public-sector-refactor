@@ -32,6 +32,8 @@ function Get-Secret {
     Write-Host "  [!] $Name not set. See ~\.academix-groq.xml" -ForegroundColor Yellow
     return ""
 }
+$ANTHROPIC_API_KEY = Get-Secret -Name "ANTHROPIC_API_KEY" -File "anthropic"
+$ANTHROPIC_MODEL = "claude-sonnet-4-20250514"
 $GROQ_API_KEY = Get-Secret -Name "GROQ_API_KEY" -File "groq"
 $GROQ_MODEL = "qwen/qwen3-32b"
 $FCC_PATH = "C:\Users\Administrator\free-claude-code"
@@ -66,8 +68,17 @@ Check "SKL" (Test-Path $OPENCODE_SKILLS) ".opencode skills: $OPENCODE_SKILLS ($(
 $gitOk = git -C $ROOT status -sb 2>$null
 Check "GIT" ([bool]$gitOk) "Git repo: $GIT_REMOTE" "Not a git repo"
 
-# ─── 2. GROQ API ──────────────────────────────────────────────
-Write-Host "`n[2/6] GROQ CLOUD API (PRIMARY)" -ForegroundColor Magenta
+# ─── 2. ANTHROPIC API (PRIMARY) ────────────────────────────────
+Write-Host "`n[2/7] ANTHROPIC CLOUD API (PRIMARY)" -ForegroundColor Magenta
+try {
+    $body = @{ model = $ANTHROPIC_MODEL; max_tokens = 100; messages = @(@{ role = "user"; content = "OK" }) } | ConvertTo-Json -Depth 5
+    $anthro = Invoke-RestMethod -Uri "https://api.anthropic.com/v1/messages" -Method Post `
+        -Body $body -ContentType "application/json" -Headers @{ "x-api-key" = "$ANTHROPIC_API_KEY"; "anthropic-version" = "2023-06-01" } -TimeoutSec 30
+    Check "ANTHROPIC" $true "Claude $ANTHROPIC_MODEL OK" "Anthropic FAILED: $_"
+} catch { Check "ANTHROPIC" $false "—" "Anthropic FAILED: $_" }
+
+# ─── 3. GROQ API (FALLBACK) ──────────────────────────────────
+Write-Host "`n[3/7] GROQ CLOUD API (FALLBACK)" -ForegroundColor Magenta
 try {
     $body = @{ model = $GROQ_MODEL; messages = @(@{ role = "user"; content = "OK" }); stream = $false } | ConvertTo-Json
     $groq = Invoke-RestMethod -Uri "https://api.groq.com/openai/v1/chat/completions" -Method Post `
@@ -75,8 +86,8 @@ try {
     Check "GROQ" $true "Groq $GROQ_MODEL — Response: $($groq.choices[0].message.content)" "Groq unreachable"
 } catch { Check "GROQ" $false "—" "Groq FAILED: $_" }
 
-# ─── 3. OLLAMA LOCAL MODELS ───────────────────────────────────
-Write-Host "`n[3/6] OLLAMA LOCAL (FALLBACK)" -ForegroundColor Magenta
+# ─── 4. OLLAMA LOCAL MODELS ───────────────────────────────────
+Write-Host "`n[4/7] OLLAMA LOCAL (FALLBACK)" -ForegroundColor Magenta
 $ollamaProc = Get-Process ollama -ErrorAction SilentlyContinue
 if (-not $ollamaProc) {
     Warn "OLLAMA" "Ollama not running. Starting..."
@@ -94,8 +105,8 @@ if ($models) {
     Check "1.5B" ([bool]$model15b) "qwen2.5-coder:1.5b (986 MB) — Available" "1.5b model not found"
 } else { Warn "MODELS" "Could not list Ollama models" }
 
-# ─── 4. WORKBOOK INTEGRITY ────────────────────────────────────
-Write-Host "`n[4/6] WORKBOOK & VBA INTEGRITY" -ForegroundColor Magenta
+# ─── 5. WORKBOOK INTEGRITY ────────────────────────────────────
+Write-Host "`n[5/7] WORKBOOK & VBA INTEGRITY" -ForegroundColor Magenta
 $wb = Get-Item $WORKBOOK -ErrorAction SilentlyContinue
 if ($wb) {
     Check "WB.SIZE" ($wb.Length -gt 100KB) "Size: $([math]::Round($wb.Length/1KB)) KB" "Workbook too small"
@@ -114,8 +125,8 @@ Check "FRM" ($frmCount -ge 1) "$frmCount .frm forms" "Missing form"
 Check "CLS" ($clsCount -ge 1) "$clsCount .cls classes" "Missing class"
 Check "LINES" ($totalLines -gt 5000) "$totalLines total lines of VBA" "Low line count"
 
-# ─── 5. GIT STATUS ────────────────────────────────────────────
-Write-Host "`n[5/6] GIT STATUS" -ForegroundColor Magenta
+# ─── 6. GIT STATUS ────────────────────────────────────────────
+Write-Host "`n[6/7] GIT STATUS" -ForegroundColor Magenta
 $gitLog = git -C $ROOT log --oneline -3 2>$null
 $gitStatus = git -C $ROOT status --short 2>$null
 $commitCount = (git -C $ROOT log --oneline 2>$null | Measure-Object).Count
@@ -125,8 +136,8 @@ else { Check "CLEAN" $true "Working tree clean" "—" }
 Write-Host "  Recent commits:" -ForegroundColor Gray
 $gitLog | ForEach-Object { Write-Host "    $_" -ForegroundColor DarkGray }
 
-# ─── 6. MULTI-AGENT SYSTEM ────────────────────────────────────
-Write-Host "`n[6/7] MULTI-AGENT SYSTEM" -ForegroundColor Magenta
+# ─── 7. MULTI-AGENT SYSTEM ────────────────────────────────────
+Write-Host "`n[7/7] MULTI-AGENT SYSTEM" -ForegroundColor Magenta
 $omcVersion = omc --version 2>$null
 Check "OMC" ([bool]$omcVersion) "OMC v$omcVersion — Multi-agent orchestrator available" "OMC not found"
 Check "ORCH" (Test-Path (Join-Path $ROOT "Software_Surgical_Edit\orchestrator.ps1")) "Orchestrator: orchestrator.ps1 (6 agents)" "Orchestrator missing"
@@ -144,9 +155,10 @@ Write-Host "  FCC:    http://localhost:8082 (x-api-key: freecc)" -ForegroundColo
 Write-Host "`n[7/7] SYSTEM SUMMARY" -ForegroundColor Magenta
 Write-Host @"
   Platform:    Windows 10, Celeron, 8GB RAM, HDD
-  AI Primary:  Groq $GROQ_MODEL (~1s)
-  AI Fallback: Ollama qwen2.5-coder:7b (~30-60s) / 1.5b (~100s)
-  AI Tertiary: FCC server :8082 (ollama/qwen2.5-coder:1.5b)
+  AI Primary:  Anthropic $ANTHROPIC_MODEL (cloud)
+  AI Fallback: Groq $GROQ_MODEL (~1s)
+  AI Tertiary: Ollama qwen2.5-coder:7b (~30-60s) / 1.5b (~100s)
+  AI Quaternary: FCC server :8082 (ollama/qwen2.5-coder:1.5b)
   Workbook:    $WORKBOOK ($([math]::Round($wb.Length/1KB)) KB)
   VBA Source:  $basCount .bas | $frmCount .frm | $clsCount .cls = $($basCount+$frmCount+$clsCount) files | $totalLines lines
   Skills:      $skillCount .opencode skills (full fork sync)

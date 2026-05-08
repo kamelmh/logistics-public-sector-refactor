@@ -72,8 +72,9 @@ This loads: all XML context files, admin paths, ground truth, skills, and agenti
 
 | Provider | Model | Response |
 |----------|-------|----------|
-| **Groq (Primary)** | qwen/qwen3-32b | ~1 second (cloud) |
-| **Ollama (Fallback)** | qwen2.5-coder:1.5b | ~108 seconds (local HDD) |
+| **Anthropic (Primary)** | claude-sonnet-4-20250514 | Cloud (thesis prose, VBA logic) |
+| **Groq (Fallback)** | qwen/qwen3-32b | ~1 second (cloud, fast tasks) |
+| **Ollama (Tertiary)** | qwen2.5-coder:1.5b | ~108 seconds (local HDD) |
 
 ## Warnings Status — ALL RESOLVED
 
