@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<master-bootstrap version="13.2" date="2026-05-09">
+  <!-- ===== AUTO-LOAD PROTOCOL (READ FIRST, EVERY SESSION) ===== -->
+  <bootstrap order="mandatory">
+    <step order="1">Read this MASTER_BOOTSTRAP.xml — complete system context</step>
+    <step order="2">Call `skill` tool to load skills matching your agent type (see skills-map)</step>
+    <step order="3">Read `C:\Users\Administrator\.opencode\notepad.md` for session memory</step>
+    <step order="4">Run `/memory list` to recall previous session state</step>
+    <step order="5">Check `C:\Users\Administrator\Desktop\handoff*.txt` for pending debug tasks</step>
+    <step order="6">Begin work. Save progress before closing: `/memory save "Done: X | Next: Y"`</step>
+  </bootstrap>
+
+  <!-- ===== PROJECT IDENTITY ===== -->
+  <identity>
+    <name>ERP Académie — Decision Support System (DSS)</name>
+    <institution>Direction de l'Education, Wilaya de El Bayadh, Algeria</institution>
+    <student>Mahi Kamel Abdelghani</student>
+    <supervisor>Dehini Mimouna (مصلحة الميزانيات والاقتصاد)</supervisor>
+    <compliance>CNEPD BTS Public Sector Standards</compliance>
+    <architecture>Offline-First, Pure VBA, Zero External Dependencies</architecture>
+    <locale>French (headers/tabs), Arabic MSA (thesis)</locale>
+  </identity>
+
+  <!-- ===== GROUND TRUTH (NEVER MODIFY) ===== -->
+  <ground-truth>
+    <param name="D" value="1546" desc="Annual Demand (38-day observation)" />
+    <param name="Q_STAR" value="176" desc="EOQ via Wilson" />
+    <param name="ROP" value="205.6" desc="(D/250)*LT + SS" />
+    <param name="SS" value="200" desc="Safety Stock" />
+    <param name="LT" value="2" desc="Lead Time (days)" />
+    <param name="S" value="500" unit="DZD" desc="Order Cost" />
+    <param name="I" value="0.20" desc="Holding Rate" />
+    <param name="MASTER_PWD" value="erp_secure_pwd_2026" desc="Sheet protection" />
+    <param name="VERSION" value="v13.2" />
+    <case-study>ART-001: Toner G030 (HP LaserJet) — primary case study in Ch4</case-study>
+  </ground-truth>
+
+  <!-- ===== AGENT SKILL AUTO-LOAD ===== -->
+  <skills-map>
+    <agent type="build"  skills="vba-build,vba-debug,vba-excel-sync,naming-cheatsheet" />
+    <agent type="plan"   skills="plan,planning-and-task-breakdown,idea-refine" />
+    <agent type="explore" skills="" note="Read-only, no skills needed" />
+    <agent type="debug"  skills="vba-debug,vba-build" />
+    <agent type="audit"  skills="verify" />
+    <agent type="test"   skills="project,verify" />
+    <agent type="general" skills="naming-cheatsheet,humanizer" />
+    <agent type="ralph"  skills="ralph,verify" />
+    <always-load>naming-cheatsheet,verify</always-load>
+  </skills-map>
+
+  <!-- ===== CONTEXT FILES (read on demand) ===== -->
+  <context-files project-root="C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor">
+    <file key="project-arch" path="Software_Surgical_Edit\erp-project-context.xml" priority="high" desc="Modules, sheets, call graph, config params (253 lines)" />
+    <file key="agent-handoff" path="Software_Surgical_Edit\erp-agent-handoff.xml" priority="high" desc="Agent routing, session state, backends (102 lines)" />
+    <file key="admin-paths" path="Software_Surgical_Edit\erp-admin-paths.xml" priority="medium" desc="All file paths, AI backends, launchers (295 lines)" />
+    <file key="skills-proj" path="Software_Surgical_Edit\erp-skills-projection.xml" priority="low" desc="Skill-to-code-region mapping (91 lines)" />
+    <file key="rag-context" path="milestone_13_2\rag\lsm-rag-context.xml" priority="low" desc="RAG education for LLM (122 lines)" />
+    <file key="engineering" path=".opencode\agents\engineering-harness.md" priority="medium" desc="Multi-agent system registry (82 lines)" />
+    <file key="instructions" path="C:\Users\Administrator\.config\opencode\instructions.md" priority="always" desc="Auto-loaded every session (107 lines)" />
+  </context-files>
+
+  <!-- ===== PATH INDEX (compact) ===== -->
+  <paths root="C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor">
+    <vba-modules>Software_Surgical_Edit\VBA_Modules\</vba-modules>
+    <thesis>Software_Surgical_Edit\Thesis_Surgical_Edit\</thesis>
+    <scripts>Software_Surgical_Edit\</scripts>
+    <build-toolkit>vbe-auto\</build-toolkit>
+    <milestone>milestone_13_2\</milestone>
+    <workbook active="C:\Users\Administrator\Dropbox\ERP_v13.2.xlsm" />
+    <workbook compiled="Software_Surgical_Edit\ERP_Academie_v13_2.xlsm" />
+    <opencode-config>C:\Users\Administrator\.config\opencode\</opencode-config>
+    <opencode-skills>C:\Users\Administrator\.opencode\skills\</opencode-skills>
+    <memory-notepad>C:\Users\Administrator\.opencode\notepad.md</memory-notepad>
+    <omc-state>C:\Users\Administrator\.omc\state\</omc-state>
+    <fcc-proxy>C:\Users\Administrator\free-claude-code\</fcc-proxy>
+    <launcher>C:\Users\Administrator\Desktop\OpenCode.bat</launcher>
+    <handoff-dir>C:\Users\Administrator\Desktop\</handoff-dir>
+  </paths>
+
+  <!-- ===== BUILD & VERIFY PIPELINE ===== -->
+  <pipeline>
+    <build desc="Rebuild workbook from .bas sources">
+      <cmd>.\Software_Surgical_Edit\build.ps1</cmd>
+      <protocol>Kill Excel → Open MASTER → Strip all → Import source → Compile → Save new</protocol>
+    </build>
+    <verify desc="97-point verification">
+      <cmd>.\Software_Surgical_Edit\verify.ps1</cmd>
+    </verify>
+    <test desc="Automated macro tests">
+      <cmd>.\Software_Surgical_Edit\test-macros.ps1</cmd>
+    </test>
+    <audit desc="5-phase DSS audit">
+      <cmd>.\milestone_13_2\tests\dss-audit.ps1</cmd>
+      <checks>Structure, Security, Data Integrity, Call Graph, Compliance</checks>
+    </audit>
+    <thesis desc="Build thesis PDF from MD">
+      <cmd>.\Thesis_Surgical_Edit\build-thesis.ps1</cmd>
+    </thesis>
+  </pipeline>
+
+  <!-- ===== LAUNCHER MODES (OpenCode.bat) ===== -->
+  <launcher path="C:\Users\Administrator\Desktop\OpenCode.bat" version="3.0">
+    <mode name="cli"     model="opencode/big-pickle" desc="Default CLI" />
+    <mode name="gui"     model="gui" desc="Desktop GUI v1.14.42" />
+    <mode name="groq"    model="groq/llama-3.3-70b-versatile" desc="AI backend primary" />
+    <mode name="fcc"     model="fcc-proxy" desc="Nemotron 120B via FCC" />
+    <mode name="gemini"  model="google/gemini-2.5-flash" desc="1M context" />
+    <mode name="ollama"  model="ollama/qwen2.5-coder:1.5b" desc="Offline fallback" />
+    <mode name="proxy"   desc="FCC server only (background)" />
+    <mode name="academix" desc="Interactive dashboard" />
+    <session-naming>OpenCode &lt;mode&gt; &lt;session-name&gt; for multi-session</session-naming>
+  </launcher>
+
+  <!-- ===== SESSION PERSISTENCE PROTOCOL ===== -->
+  <session-persistence>
+    <problem>Every session disconnection causes model to lose context. Model must re-learn project state.</problem>
+    <solution>Checkpoint-based recovery: before closing or on context pressure, save state to memory files.</solution>
+    <checkpoint-files>
+      <file key="notepad">C:\Users\Administrator\.opencode\notepad.md</file>
+      <file key="memory">C:\Users\Administrator\.opencode\project-memory.json</file>
+      <file key="session-log">C:\Users\Administrator\.opencode\memory\session.log</file>
+      <file key="omc-sessions">C:\Users\Administrator\.omc\state\sessions\</file>
+    </checkpoint-files>
+    <commands>
+      <cmd desc="Save current state">/memory save "Done: [task] | Next: [task]"</cmd>
+      <cmd desc="List past states">/memory list</cmd>
+      <cmd desc="Save checkpoint">cp notepad.md notepad-checkpoint-$(date).md</cmd>
+      <cmd desc="Restore last">/memory recall 0</cmd>
+    </commands>
+    <auto-save>On every task completion, update notepad.md last-action line</auto-save>
+  </session-persistence>
+
+  <!-- ===== AI BACKENDS OVERVIEW ===== -->
+  <ai-backends>
+    <backend name="Groq Llama 3.3 70B"   ctx="32K"  speed="~2s"  cost="free" role="Daily driver" />
+    <backend name="Groq Qwen3 32B"        ctx="32K"  speed="~1s"  cost="free" role="Explore/debug" />
+    <backend name="Google Gemini 2.5 Flash" ctx="1M" speed="~2s"  cost="free" role="Large context, multimodal" />
+    <backend name="Google Gemma 4 26B"    ctx="262K" speed="~2s"  cost="free" role="Lightweight hosted" />
+    <backend name="OpenRouter Nemotron 120B" ctx="1M" speed="~3s" cost="free" role="Massive context, FCC proxy" />
+    <backend name="OpenRouter Qwen3 Coder 480B" ctx="1M" speed="~3s" cost="free" role="Code generation" note="429-limited" />
+    <backend name="Ollama Qwen 1.5B"      ctx="32K"  speed="~95s" cost="free" role="Offline emergency" />
+    <backend name="Ollama Qwen 7B"        ctx="32K"  speed="~30s" cost="free" role="Offline moderate" />
+  </ai-backends>
+
+  <!-- ===== RALPH LOOP (self-referential improvement) ===== -->
+  <ralph-map>
+    <load-skills>ralph, verify</load-skills>
+    <flow>Goal → Act → Verify → Fix → Loop until pass → Completed</flow>
+    <critical-rule>Always verify before claiming completion. If verify fails, fix and loop.</critical-rule>
+  </ralph-map>
+
+  <!-- ===== RAG DEPLOYMENT ===== -->
+  <rag>
+    <source>milestone_13_2\rag\lsm-rag-context.xml</source>
+    <purpose>Train/educate LLMs on LSM domain concepts without exposing sensitive data</purpose>
+    <deploy-to>public-lsm\rag\ for open-source LLM training</deploy-to>
+    <concepts>EOQ, CMUP, ABC, ROP, Safety Stock, Document Types, Clean-Slate Build, FormState Pattern</concepts>
+  </rag>
+
+  <!-- ===== KNOWN ISSUES ===== -->
+  <known-issues>
+    <issue fixed="true">UTF-8 em dashes in .bas → VBA syntax error (replace with -)</issue>
+    <issue fixed="true">Public Const after procedures → syntax error (move before)</issue>
+    <issue fixed="true">MASTER_PWD cross-module → use Property Get</issue>
+    <issue fixed="true">Comments between _ continuations → parser breaks</issue>
+    <issue workaround="true">Stale p-code cache → always rebuild from scratch, never modify .xlsm</issue>
+    <issue active="true">Venice-routed models (qwen3-coder, llama-3.3, gemma-4 on OpenRouter) → 429 rate-limited</issue>
+    <issue active="true">Anthropic API key may be truncated in opencode.json → regenerate if paid needed</issue>
+  </known-issues>
+</master-bootstrap>

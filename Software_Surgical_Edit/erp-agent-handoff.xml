@@ -12,7 +12,7 @@
     <backend key="local-1.5b" provider="Ollama" model="qwen2.5-coder:1.5b" response="~108s" context="4K">Offline slow fallback</backend>
   </ai-backends>
   <session-context>
-    <last-action>2026-05-09: OpenRouter free agents configured (4 models), proxy tested (Anthropic endpoint needs credits), XML context files rebuilt for token efficiency</last-action>
+    <last-action>2026-05-09: MASTER_BOOTSTRAP.xml created (uber-context), OpenCode.bat v3.0 (Ollama auto-start, multi-session, restore), AGENTS.md + instructions.md updated with bootstrap protocol, session persistence system deployed</last-action>
     <warnings-status>ALL RESOLVED (W001-W010)</warnings-status>
     <modules>
       <count>29 .bas + 1 .frm + 1 .cls + MAIN_MACROS.bas = 36 components</count>
@@ -71,6 +71,20 @@
     <task id="T005" status="completed">Fix 3 audit warnings (sheet protection, circular dep, EOQ cell read)</task>
     <task id="T006" status="completed">5 Analysis modules: InventoryReconciliation, StockOutPredictor, SupplierScorecard, StockAging, DataValidator</task>
   </task-queue>
+  <session-persistence>
+    <problem>Session disconnects cause context loss. Model must re-learn project state on reconnect.</problem>
+    <checkpoint>notepad.md + project-memory.json + session.log + OMC checkpoint</checkpoint>
+    <recovery>
+      <step order="1">instructions.md auto-loads → read BOOTSTRAP PROTOCOL section</step>
+      <step order="2">Read .opencode/bootstrap/MASTER_BOOTSTRAP.xml → full context restored</step>
+      <step order="3">Read notepad.md → see last-action, resume there</step>
+      <step order="4">Run '/memory recall 0' → restore OMC checkpoint</step>
+    </recovery>
+    <multi-session>
+      <cmd>OpenCode &lt;mode&gt; &lt;name&gt; for parallel sessions</cmd>
+      <log>\.opencode\memory\last-session-&lt;name&gt;.txt</log>
+    </multi-session>
+  </session-persistence>
   <cross-agent-protocol>
     <rule priority="1">Read erp-project-context.xml FIRST on session start</rule>
     <rule priority="2">Check dependencies in call graph before code changes</rule>
