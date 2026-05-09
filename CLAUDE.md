@@ -68,13 +68,13 @@ ACADEMIX_CONTEXT v13.2 DEPLOYED_IN_OPENCODE
 ```
 This loads: all XML context files, admin paths, ground truth, skills, and agentic protocols from `.opencode/context.md`.
 
-## AI Backend
+## AI Backend (100% Free & Open-Source)
 
-| Provider | Model | Response |
-|----------|-------|----------|
-| **Anthropic (Primary)** | claude-sonnet-4-20250514 | Cloud (thesis prose, VBA logic) |
-| **Groq (Fallback)** | qwen/qwen3-32b | ~1 second (cloud, fast tasks) |
-| **Ollama (Tertiary)** | qwen2.5-coder:1.5b | ~108 seconds (local HDD) |
+| Provider | Model | Role | Response |
+|----------|-------|------|----------|
+| **Groq (Primary)** | llama-3.3-70b-versatile | Arabic prose, VBA logic | ~2s (cloud) |
+| **Groq (Fast)** | qwen/qwen3-32b | Explore, debug, audit | ~1s (cloud) |
+| **Ollama (Local)** | qwen2.5-coder:1.5b | Offline fallback | ~108s (local HDD) |
 
 ## Warnings Status — ALL RESOLVED
 

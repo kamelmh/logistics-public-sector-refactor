@@ -8,6 +8,25 @@
 
 Write-Host "`n[TRIGGER PHRASE] ACADEMIX_CONTEXT v13.2 DEPLOYED_IN_OPENCODE`n" -ForegroundColor Yellow
 
+# ─── BOOT PROGRESS ─────────────────────────────────────────────
+Write-Host " Initializing..." -ForegroundColor DarkGray
+$bootSteps = @(
+    "Loading project context"
+    "Verifying AI providers"
+    "Checking workbook integrity"
+    "Scanning VBA modules"
+    "Syncing git state"
+    "Preparing multi-agent system"
+)
+for ($i = 0; $i -lt $bootSteps.Count; $i++) {
+    $pct = [math]::Round(($i + 1) / $bootSteps.Count * 100)
+    $bar = "#" * ($i + 1) + "-" * ($bootSteps.Count - $i - 1)
+    Write-Host "`r  Boot [$bar] $pct% — $($bootSteps[$i])" -NoNewline -ForegroundColor DarkCyan
+    Start-Sleep 0.3
+}
+Write-Host "`r  Boot [######] 100% — Ready" -ForegroundColor Green
+Write-Host ""
+
 # ─── CONFIG ───────────────────────────────────────────────────
 $ROOT = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor"
 $WORKBOOK = "C:\Users\Administrator\Dropbox\ERP_v13.2.xlsm"
@@ -32,11 +51,9 @@ function Get-Secret {
     Write-Host "  [!] $Name not set. See ~\.academix-groq.xml" -ForegroundColor Yellow
     return ""
 }
-$ANTHROPIC_API_KEY = Get-Secret -Name "ANTHROPIC_API_KEY" -File "anthropic"
-$ANTHROPIC_MODEL = "claude-sonnet-4-20250514"
 $GROQ_API_KEY = Get-Secret -Name "GROQ_API_KEY" -File "groq"
-$GROQ_MODEL = "qwen/qwen3-32b"
-$FCC_PATH = "C:\Users\Administrator\free-claude-code"
+$GROQ_MODEL = "llama-3.3-70b-versatile"
+$GROQ_FAST_MODEL = "qwen/qwen3-32b"
 $OPENCODE_SKILLS = "C:\Users\Administrator\.opencode\skills"
 $OPENCODE_FORK_SKILLS = "C:\Users\Administrator\opencode\skills"
 
@@ -63,31 +80,30 @@ Check "CFG" (Test-Path $OPENCODE_CONFIG) "OpenCode Config: $OPENCODE_CONFIG" "Mi
 Check "AG" (Test-Path $AGENTS_MD) "AGENTS.md: $AGENTS_MD" "Missing: $AGENTS_MD"
 Check "MEM" (Test-Path $MEMORY_JSON) "Memory JSON: $MEMORY_JSON" "Missing: $MEMORY_JSON"
 Check "NP" (Test-Path $NOTEPAD_MD) "Notepad MD: $NOTEPAD_MD" "Missing: $NOTEPAD_MD"
-Check "FCC" (Test-Path $FCC_PATH) "Free Claude Code: $FCC_PATH" "Missing: $FCC_PATH"
 Check "SKL" (Test-Path $OPENCODE_SKILLS) ".opencode skills: $OPENCODE_SKILLS ($((Get-ChildItem $OPENCODE_SKILLS -Directory -ea 0).Count) skills)" "Missing skills"
 $gitOk = git -C $ROOT status -sb 2>$null
 Check "GIT" ([bool]$gitOk) "Git repo: $GIT_REMOTE" "Not a git repo"
 
-# ─── 2. ANTHROPIC API (PRIMARY) ────────────────────────────────
-Write-Host "`n[2/7] ANTHROPIC CLOUD API (PRIMARY)" -ForegroundColor Magenta
-try {
-    $body = @{ model = $ANTHROPIC_MODEL; max_tokens = 100; messages = @(@{ role = "user"; content = "OK" }) } | ConvertTo-Json -Depth 5
-    $anthro = Invoke-RestMethod -Uri "https://api.anthropic.com/v1/messages" -Method Post `
-        -Body $body -ContentType "application/json" -Headers @{ "x-api-key" = "$ANTHROPIC_API_KEY"; "anthropic-version" = "2023-06-01" } -TimeoutSec 30
-    Check "ANTHROPIC" $true "Claude $ANTHROPIC_MODEL OK" "Anthropic FAILED: $_"
-} catch { Check "ANTHROPIC" $false "—" "Anthropic FAILED: $_" }
-
-# ─── 3. GROQ API (FALLBACK) ──────────────────────────────────
-Write-Host "`n[3/7] GROQ CLOUD API (FALLBACK)" -ForegroundColor Magenta
+# ─── 2. GROQ LLAMA API (PRIMARY) ──────────────────────────────
+Write-Host "`n[2/6] GROQ LLAMA-3.3-70B (PRIMARY)" -ForegroundColor Magenta
 try {
     $body = @{ model = $GROQ_MODEL; messages = @(@{ role = "user"; content = "OK" }); stream = $false } | ConvertTo-Json
+    $groq = Invoke-RestMethod -Uri "https://api.groq.com/openai/v1/chat/completions" -Method Post `
+        -Body $body -ContentType "application/json" -Headers @{ Authorization = "Bearer $GROQ_API_KEY" } -TimeoutSec 15
+    Check "LLAMA" $true "Groq $GROQ_MODEL — OK" "Llama unreachable"
+} catch { Check "LLAMA" $false "—" "Llama FAILED: $_" }
+
+# ─── 3. GROQ QWEN (FAST FALLBACK) ────────────────────────────
+Write-Host "`n[3/6] GROQ QWEN3-32B (FAST FALLBACK)" -ForegroundColor Magenta
+try {
+    $body = @{ model = $GROQ_FAST_MODEL; messages = @(@{ role = "user"; content = "OK" }); stream = $false } | ConvertTo-Json
     $groq = Invoke-RestMethod -Uri "https://api.groq.com/openai/v1/chat/completions" -Method Post `
         -Body $body -ContentType "application/json" -Headers @{ Authorization = "Bearer $GROQ_API_KEY" } -TimeoutSec 15
     Check "GROQ" $true "Groq $GROQ_MODEL — Response: $($groq.choices[0].message.content)" "Groq unreachable"
 } catch { Check "GROQ" $false "—" "Groq FAILED: $_" }
 
 # ─── 4. OLLAMA LOCAL MODELS ───────────────────────────────────
-Write-Host "`n[4/7] OLLAMA LOCAL (FALLBACK)" -ForegroundColor Magenta
+Write-Host "`n[4/6] OLLAMA LOCAL (FALLBACK)" -ForegroundColor Magenta
 $ollamaProc = Get-Process ollama -ErrorAction SilentlyContinue
 if (-not $ollamaProc) {
     Warn "OLLAMA" "Ollama not running. Starting..."
@@ -106,7 +122,7 @@ if ($models) {
 } else { Warn "MODELS" "Could not list Ollama models" }
 
 # ─── 5. WORKBOOK INTEGRITY ────────────────────────────────────
-Write-Host "`n[5/7] WORKBOOK & VBA INTEGRITY" -ForegroundColor Magenta
+Write-Host "`n[5/6] WORKBOOK & VBA INTEGRITY" -ForegroundColor Magenta
 $wb = Get-Item $WORKBOOK -ErrorAction SilentlyContinue
 if ($wb) {
     Check "WB.SIZE" ($wb.Length -gt 100KB) "Size: $([math]::Round($wb.Length/1KB)) KB" "Workbook too small"
@@ -126,7 +142,7 @@ Check "CLS" ($clsCount -ge 1) "$clsCount .cls classes" "Missing class"
 Check "LINES" ($totalLines -gt 5000) "$totalLines total lines of VBA" "Low line count"
 
 # ─── 6. GIT STATUS ────────────────────────────────────────────
-Write-Host "`n[6/7] GIT STATUS" -ForegroundColor Magenta
+Write-Host "`n[6/6] GIT STATUS" -ForegroundColor Magenta
 $gitLog = git -C $ROOT log --oneline -3 2>$null
 $gitStatus = git -C $ROOT status --short 2>$null
 $commitCount = (git -C $ROOT log --oneline 2>$null | Measure-Object).Count
@@ -137,28 +153,25 @@ Write-Host "  Recent commits:" -ForegroundColor Gray
 $gitLog | ForEach-Object { Write-Host "    $_" -ForegroundColor DarkGray }
 
 # ─── 7. MULTI-AGENT SYSTEM ────────────────────────────────────
-Write-Host "`n[7/7] MULTI-AGENT SYSTEM" -ForegroundColor Magenta
+Write-Host "`n[7] MULTI-AGENT SYSTEM" -ForegroundColor Magenta
 $omcVersion = omc --version 2>$null
 Check "OMC" ([bool]$omcVersion) "OMC v$omcVersion — Multi-agent orchestrator available" "OMC not found"
 Check "ORCH" (Test-Path (Join-Path $ROOT "Software_Surgical_Edit\orchestrator.ps1")) "Orchestrator: orchestrator.ps1 (6 agents)" "Orchestrator missing"
 Check "HARNESS" (Test-Path (Join-Path $ROOT ".opencode\agents\engineering-harness.md")) "Engineering harness: .opencode/agents/engineering-harness.md" "Harness missing"
-$fccProc = Get-Process -Name "python*" -ea 0 | Where-Object CommandLine -match "uvicorn"
-Check "FCC" ([bool]$fccProc) "Free Claude Code server running (PID $($fccProc.Id)) on :8082" "FCC server not running"
 $skillCount = (Get-ChildItem $OPENCODE_SKILLS -Directory -ea 0).Count
 Check "SKL2" ($skillCount -ge 60) "$skillCount skills in .opencode/skills/" "Only $skillCount skills"
 Write-Host "  Agents: explore | plan | build | debug | audit | test" -ForegroundColor Gray
 Write-Host "  Modes:  /mode explore|plan|build|debug|audit" -ForegroundColor Gray
 Write-Host "  Tasks:  .\orchestrator.ps1 status|next|run T003|build|audit|test" -ForegroundColor Gray
-Write-Host "  FCC:    http://localhost:8082 (x-api-key: freecc)" -ForegroundColor Gray
+Write-Host "  Stack:  Llama 3.3 70B (primary) | Qwen3 32B (fast) | Ollama (local)" -ForegroundColor Gray
 
-# ─── 7. SYSTEM SUMMARY ────────────────────────────────────────
-Write-Host "`n[7/7] SYSTEM SUMMARY" -ForegroundColor Magenta
+# ─── OUTPUT SUMMARY ──────────────────────────────────────────
+Write-Host "`n═══════════════════════════════════════════════════" -ForegroundColor Cyan
 Write-Host @"
   Platform:    Windows 10, Celeron, 8GB RAM, HDD
-  AI Primary:  Anthropic $ANTHROPIC_MODEL (cloud)
-  AI Fallback: Groq $GROQ_MODEL (~1s)
-  AI Tertiary: Ollama qwen2.5-coder:7b (~30-60s) / 1.5b (~100s)
-  AI Quaternary: FCC server :8082 (ollama/qwen2.5-coder:1.5b)
+  AI Primary:  Groq $GROQ_MODEL (free, open-source)
+  AI Fast:     Groq $GROQ_FAST_MODEL (free, open-source)
+  AI Fallback: Ollama qwen2.5-coder:7b / 1.5b (local)
   Workbook:    $WORKBOOK ($([math]::Round($wb.Length/1KB)) KB)
   VBA Source:  $basCount .bas | $frmCount .frm | $clsCount .cls = $($basCount+$frmCount+$clsCount) files | $totalLines lines
   Skills:      $skillCount .opencode skills (full fork sync)
@@ -175,6 +188,16 @@ Write-Host "══════════════════════�
 
 # ─── TODO LIST ─────────────────────────────────────────────────
 Write-Host @"
+
+[ ACADEMIX v13.2 — PROJECT WRAP ]
+  ╔══════════════════════════════════════════════════════════╗
+  ║  AI Model Stack (100% Free & Open-Source)                ║
+  ║                                                          ║
+  ║  PRIMARY:  Groq Llama 3.3 70B  (prose + VBA logic)      ║
+  ║  FAST:     Groq Qwen3 32B       (explore, debug, audit) ║
+  ║  LOCAL:    Ollama Qwen2.5 7B/1.5B  (offline fallback)   ║
+  ║  FUTURE:   Anthropic Claude     (key stored, needs $)    ║
+  ╚══════════════════════════════════════════════════════════╝
 
 [ STATUS — ALL TASKS COMPLETE ]
   ✅ Thesis Ch4 — integrated in final document (1887 lines)
@@ -202,15 +225,14 @@ Write-Host @"
 do {
     Write-Host @"
   ┌──────────────────────────────────────────────────┐
-  │  1) Launch OpenCode (Groq + full context)         │
+  │  1) Launch OpenCode (Llama 3.3 70B)               │
   │  2) Rebuild workbook (build.ps1)                  │
   │  3) Run DSS audit                                 │
   │  4) Run macro tests                               │
   │  5) Save workbook data to JSON                    │
   │  6) Show agent/orchestrator status                │
-  │  7) Start/restart FCC server (tertiary AI)        │
-  │  8) Show quick commands help                      │
-  │  9) Exit                                          │
+  │  7) Show quick commands help                      │
+  │  8) Exit                                          │
   └──────────────────────────────────────────────────┘
 "@ -ForegroundColor Cyan
     $choice = Read-Host "  Choose [1-9]"
@@ -258,18 +280,24 @@ do {
             $null = Read-Host
         }
         "7" {
-            Write-Host "  Restarting Free Claude Code server..." -ForegroundColor Yellow
-            Get-Process -Name "python*" -ea 0 | Where-Object CommandLine -match "uvicorn" | Stop-Process -Force -ea 0
-            Start-Sleep 2
-            $fccJob = Start-Process -FilePath "uv" -ArgumentList "run uvicorn server:app --host 0.0.0.0 --port 8082 --timeout-graceful-shutdown 5" `
-                -WorkingDirectory $FCC_PATH -WindowStyle Hidden -PassThru
-            Write-Host "  FCC server starting (PID $($fccJob.Id))..." -ForegroundColor Yellow
-            Start-Sleep 8
-            try {
-                $health = Invoke-RestMethod "http://localhost:8082/health" -Method Get -TimeoutSec 3 -ErrorAction Stop
-                Write-Host "  FCC server READY — Health: $($health.status)" -ForegroundColor Green
-            } catch { Write-Host "  FCC server may still be starting up..." -ForegroundColor Yellow }
-            Write-Host "  Press Enter to continue..." -ForegroundColor Gray
+            Write-Host @"
+  [ QUICK COMMANDS ]
+    opencode                                        Launch CLI
+    .\Software_Surgical_Edit\build.ps1              Rebuild
+    .\Software_Surgical_Edit\verify.ps1             Verify
+    .\Software_Surgical_Edit\milestone_13_2\tests\dss-audit.ps1   Audit
+    .\Software_Surgical_Edit\test-macros.ps1        Tests
+    .\Software_Surgical_Edit\data-persist.ps1 save  Backup data
+    .\Software_Surgical_Edit\orchestrator.ps1 status  Agent status
+    git -C "$ROOT" push                             Push to GitHub
+
+  [ TRIGGER PHRASE ]
+    >>> ACADEMIX_CONTEXT v13.2 DEPLOYED_IN_OPENCODE
+
+  [ AGENT MODES ]
+    /mode explore|plan|build|debug|audit
+"@ -ForegroundColor DarkGray
+            Write-Host "`n  Press Enter to continue..." -ForegroundColor Gray
             $null = Read-Host
         }
         "8" {
@@ -293,12 +321,12 @@ do {
             Write-Host "`n  Press Enter to continue..." -ForegroundColor Gray
             $null = Read-Host
         }
-        "9" {
+        "8" {
             Write-Host "  Goodbye." -ForegroundColor Green
             break
         }
         default {
-            Write-Host "  Invalid choice. Enter 1-9." -ForegroundColor Red
+            Write-Host "  Invalid choice. Enter 1-8." -ForegroundColor Red
         }
     }
-} while ($choice -ne "1" -and $choice -ne "9")
+} while ($choice -ne "1" -and $choice -ne "8")
