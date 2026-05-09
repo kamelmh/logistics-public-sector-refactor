@@ -25,6 +25,7 @@
     <file key="admin-paths">Software_Surgical_Edit\erp-admin-paths.xml</file>
     <file key="agent-handoff">Software_Surgical_Edit\erp-agent-handoff.xml</file>
     <file key="skills-projection">Software_Surgical_Edit\erp-skills-projection.xml</file>
+    <file key="master-bootstrap">.opencode\bootstrap\MASTER_BOOTSTRAP.xml</file>
   </config-files>
   <opencode>
     <config>C:\Users\Administrator\.config\opencode\opencode.json</config>
