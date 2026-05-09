@@ -1,0 +1,24 @@
+{
+  "project_name": "Your Project Name",
+  "version": "v1.0",
+  "description": "Brief project description",
+  "master_workbook": "C:\\Path\\To\\Master.xlsm",
+  "output_workbook": "C:\\Path\\To\\Output.xlsm",
+  "vba_source_dir": "C:\\Path\\To\\VBA_Modules",
+  "thisworkbook_source": "C:\\Path\\To\\VBA_Modules\\ThisWorkbook.cls",
+  "verification": {
+    "expected_sheets": ["Sheet1", "Sheet2"],
+    "expected_modules": ["mod_Config", "mod_Engine"],
+    "expected_constants": [
+      { "name": "VERSION", "value": "v1.0" }
+    ]
+  },
+  "protection": {
+    "sheet_password": "your_password",
+    "vba_project_password": null
+  },
+  "macros": {
+    "startup": ["InitProject"],
+    "test_all": ["TestSuite"]
+  }
+}

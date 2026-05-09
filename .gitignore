@@ -13,6 +13,32 @@
 # Embedded repos
 public-lsm/
 
-# OS files
+# OS / editor files
 Thumbs.db
 .DS_Store
+desktop.ini
+
+# Desktop scripts/tools backup (contains API keys in _api-keys/)
+scripts-tools/
+
+# Academic reference binaries
+Academic_References/
+
+# Build artifacts - compiled workbooks
+*.xlsm
+Final_Delivery_Layout/
+
+# Runtime / transient data
+data-persist.json
+Thesis_Surgical_Edit/output/
+_tmp.driveupload/
+
+# Archive / runtime state (not source)
+.opencode/archive/
+.opencode/memory/
+
+# Generated audit reports
+milestone_13_2/audit/dss-audit-report.csv
+
+# Google Sheets link files
+*.gsheet

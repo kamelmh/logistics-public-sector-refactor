@@ -1,185 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ERP Academie v13.2 - Agent Handoff Configuration
-  Updated: 2026-05-08
-  Purpose: Multi-agent routing, session state, task queue, cross-agent protocol
--->
-<agent-handoff version="13.2" date="2026-05-08">
-
+<agent-handoff version="13.2" date="2026-05-09">
   <ai-backends>
-    <backend key="primary" provider="Groq" model="qwen/qwen3-32b" response="~1s" context="16384" />
-    <backend key="secondary" provider="Ollama" model="qwen2.5-coder:7b" response="~30-60s" context="8192" />
-    <backend key="tertiary" provider="Ollama" model="qwen2.5-coder:1.5b" response="~100s" context="4096" />
-    <backend key="fallback-server" provider="free-claude-code" model="ollama/llama3.2:1b">
-      <path>C:\Users\Administrator\free-claude-code\</path>
-      <note>Claude Code API compatible — uses Completions.me/OpenRouter/Ollama</note>
-    </backend>
+    <backend key="primary" provider="Groq" model="llama-3.3-70b-versatile" response="~2s" context="32K">Daily driver</backend>
+    <backend key="fast-search" provider="Groq" model="qwen/qwen3-32b" response="~1s" context="32K">Explore/debug/audit</backend>
+    <backend key="large-ctx" provider="Google" model="gemini-2.5-flash" response="~2s" context="1M">Large context reasoning</backend>
+    <backend key="gemma-hosted" provider="Google" model="gemma-4-26b-a4b-it" response="~2s" context="262K">Free hosted Gemma 4</backend>
+    <backend key="or-nemotron" provider="OpenRouter" model="nemotron-3-super-120b-a12b:free" response="~3s" context="1M">Free 120B, 1M ctx</backend>
+    <backend key="or-coder" provider="OpenRouter" model="qwen/qwen3-coder:free" response="~3s">Free 480B coder</backend>
+    <backend key="or-gemma" provider="OpenRouter" model="gemma-4-31b-it:free" response="~3s">Free Gemma 4 31B</backend>
+    <backend key="local-7b" provider="Ollama" model="qwen2.5-coder:7b" response="~30-60s" context="8K">Offline fallback</backend>
+    <backend key="local-1.5b" provider="Ollama" model="qwen2.5-coder:1.5b" response="~108s" context="4K">Offline slow fallback</backend>
   </ai-backends>
-
   <session-context>
-    <last-action>5 analysis modules implemented: InventoryReconciliation, StockOutPredictor, SupplierScorecard, StockAging, DataValidator</last-action>
-    <warnings-status>ALL RESOLVED (W001-W015)</warnings-status>
+    <last-action>2026-05-09: OpenRouter free agents configured (4 models), proxy tested (Anthropic endpoint needs credits), XML context files rebuilt for token efficiency</last-action>
+    <warnings-status>ALL RESOLVED (W001-W010)</warnings-status>
     <modules>
-      <count>41 .bas + 1 .frm + ThisWorkbook = 43 components</count>
-      <source-exported>36 .bas + 1 .frm + 1 .cls = 38 source files</source-exported>
-      <lines>~12000</lines>
+      <count>29 .bas + 1 .frm + 1 .cls + MAIN_MACROS.bas = 36 components</count>
+      <lines>~10130</lines>
       <compile-errors>0</compile-errors>
     </modules>
-    <workbook>
-      <active>C:\Users\Administrator\Dropbox\ERP_v13.2.xlsm (701 KB)</active>
-      <compiled>C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\ERP_Academie_v13_2.xlsm (701 KB)</compiled>
-      <sheets>30</sheets>
-    </workbook>
-    <dead-modules-deleted>Module1, Module2, mod_Config_Test, mod_StockEntry_Logic_Enhanced, mod_TestHarness, frmSystemLog, frmStockEntry_Enhanced</dead-modules-deleted>
+    <workbook active="ERP_v13.2.xlsm" compiled="ERP_Academie_v13_2.xlsm" sheets="25" />
   </session-context>
-
-  <multi-agent-system>
-    <agents>
-      <agent name="explore" mode="explore" model="groq/qwen/qwen3-32b">
-        <purpose>Codebase recon — map files, grep patterns, trace call graphs</purpose>
-        <trigger>/mode explore or task subagent_type=explore</trigger>
-        <rules>Read-only. Never modify files. Report architecture insights.</rules>
-      </agent>
-      <agent name="plan" mode="plan" model="groq/qwen/qwen3-32b">
-        <purpose>Architecture decisions — document plans in .opencode/plans/</purpose>
-        <trigger>/mode plan</trigger>
-        <rules>Never modify mod_Config constants or CANON_* values. Document impact on existing modules.</rules>
-      </agent>
-      <agent name="build" mode="build" model="groq/qwen/qwen3-32b">
-        <purpose>Write/edit VBA code, run build.ps1 after changes</purpose>
-        <trigger>/mode build (default)</trigger>
-        <rules>Always fix .bas source files, never .xlsm directly. Use build.ps1 to rebuild.</rules>
-      </agent>
-      <agent name="debug" mode="debug" model="groq/qwen/qwen3-32b">
-        <purpose>Handoff-based VBA error diagnosis — fix .bas, rebuild, verify</purpose>
-        <trigger>/mode debug or handoff file on Desktop</trigger>
-        <rules>Read handoffN.txt → diagnose → fix source → build.ps1 → verify.ps1 → report</rules>
-        <known-issues>UTF-8 em dashes, Public Const ordering, UDT-Variant coercion, Exit Sub in Function, Controls(name) syntax, stale p-code cache</known-issues>
-      </agent>
-      <agent name="audit" mode="audit" model="groq/qwen/qwen3-32b">
-        <purpose>5-phase DSS audit via dss-audit.ps1</purpose>
-        <trigger>/mode audit</trigger>
-        <checks>Structure, Security, Data Integrity, Call Graph, Compliance (CNEPD)</checks>
-      </agent>
-      <agent name="test" mode="auto" model="groq/qwen/qwen3-32b">
-        <purpose>Macro test suite via test-macros.ps1</purpose>
-        <trigger>task subagent_type=test-runner</trigger>
-        <macros>GenerateDemoData, RefreshDashboard, SyncMetricsFromLedger, UpdateABC_Classification, RefreshAllCMUP, ExportTransactionToPDF</macros>
-      </agent>
-    </agents>
-
-    <workflows>
-      <workflow name="feature" steps="explore → plan → build">
-        <description>New feature: recon the codebase, design architecture, implement</description>
-      </workflow>
-      <workflow name="fix" steps="debug → build → test">
-        <description>Bug fix: diagnose error, fix source, rebuild, verify tests pass</description>
-      </workflow>
-      <workflow name="quality" steps="audit → explore → build">
-        <description>Quality gate: audit first, fix issues, rebuild</description>
-      </workflow>
-      <workflow name="public-release" steps="sanitize → build → audit → sync">
-        <description>Release: strip sensitive data → rebuild → audit → push to GitHub</description>
-      </workflow>
-    </workflows>
-  </multi-agent-system>
-
+  <agents>
+    <agent name="build" model="groq/llama-3.3-70b-versatile">
+      <purpose>Write/edit VBA code, run build.ps1 after changes</purpose>
+      <rules>Fix .bas source files, never .xlsm directly. Run build.ps1 to rebuild.</rules>
+    </agent>
+    <agent name="plan" model="groq/llama-3.3-70b-versatile">
+      <purpose>Architecture decisions, document plans in .opencode/plans/</purpose>
+      <rules>Never modify mod_Config constants or CANON_* values.</rules>
+    </agent>
+    <agent name="explore" model="groq/qwen/qwen3-32b">
+      <purpose>Codebase recon - map files, grep patterns, trace call graphs</purpose>
+      <rules>Read-only. Never modify files.</rules>
+    </agent>
+    <agent name="debug" model="groq/qwen/qwen3-32b">
+      <purpose>Handoff-based VBA error diagnosis</purpose>
+      <rules>Read handoffN.txt -> diagnose -> fix source -> build.ps1 -> verify.ps1</rules>
+    </agent>
+    <agent name="audit" model="groq/qwen/qwen3-32b">
+      <purpose>5-phase DSS audit via dss-audit.ps1</purpose>
+      <checks>Structure, Security, Data Integrity, Call Graph, Compliance (CNEPD)</checks>
+    </agent>
+    <agent name="test" model="groq/qwen/qwen3-32b">
+      <purpose>Macro test suite via test-macros.ps1</purpose>
+    </agent>
+    <agent name="or-free" model="openrouter/nvidia/nemotron-3-super-120b-a12b:free">
+      <purpose>OpenRouter free tier - Nemotron 120B, 1M context</purpose>
+    </agent>
+    <agent name="or-coder" model="openrouter/qwen/qwen3-coder:free">
+      <purpose>OpenRouter free coder - Qwen3 Coder 480B</purpose>
+    </agent>
+    <agent name="or-gemma" model="openrouter/google/gemma-4-31b-it:free">
+      <purpose>OpenRouter free Gemma 4 31B</purpose>
+    </agent>
+    <agent name="or-nemotron" model="openrouter/nvidia/nemotron-3-super-120b-a12b:free">
+      <purpose>OpenRouter dedicated Nemotron 120B</purpose>
+    </agent>
+  </agents>
+  <workflows>
+    <workflow name="feature" steps="explore -> plan -> build">New feature development</workflow>
+    <workflow name="fix" steps="debug -> build -> test">Bug fix workflow</workflow>
+    <workflow name="quality" steps="audit -> explore -> build">Quality gate workflow</workflow>
+  </workflows>
   <task-queue>
-    <task id="T001" priority="CRITICAL" agent="builder" status="completed">
-      <name>Fix blank article codes</name>
-      <description>Find and fix blank article codes in ARTICLES sheet or data generation</description>
-    </task>
-    <task id="T002" priority="CRITICAL" agent="builder" status="completed">
-      <name>Fix non-numeric stock values</name>
-      <description>Fix non-numeric stock values in ARTICLES column C</description>
-    </task>
-    <task id="T003" priority="HIGH" agent="documenter" status="completed">
-      <name>Write Thesis Chapter 4 (Arabic)</name>
-      <description>Full implementation chapter — 280 lines in Final_Thesis_Academix_v13_2.md (lines 1230-1507). Results, case study Toner G030, KPI comparison, recommendations.</description>
-    </task>
-    <task id="T004" priority="HIGH" agent="sanitizer" status="completed">
-      <name>Add demo data to public LSM</name>
-      <description>Include mod_DemoData with sample datasets for public release</description>
-    </task>
-    <task id="T005" priority="HIGH" agent="documenter" status="completed">
-      <name>Update GitHub token for CI/CD</name>
-      <description>Add workflow scope to token for GitHub Actions</description>
-    </task>
-    <task id="T006" priority="MEDIUM" agent="builder" status="completed">
-      <name>CSV import/export</name>
-      <description>Add bulk data import from CSV files. Created mod_CSVImportExport.bas (489 lines) with import/export for MOUVEMENTS, ARTICLES, FOURNISSEURS.</description>
-    </task>
-    <task id="T007" priority="MEDIUM" agent="builder" status="completed">
-      <name>Barcode scanner integration</name>
-      <description>Integrate barcode scanner input for stock entries. Created mod_Barcode.bas (227 lines) with keyboard-wedge barcode scanning, default mapping for 12 articles.</description>
-    </task>
-    <task id="T008" priority="MEDIUM" agent="auditor" status="completed">
-      <name>Fix 3 audit warnings</name>
-      <description>1) Sheet protection — build.ps1 now protects ALL 26 sheets. 2) Circular dep — broken via Application.Run, audit passes (strings stripped before graph analysis). 3) EOQ cell read — all EOQ constants read from VBA constants, no CALCULS_EOQ sheet references remain.</description>
-    </task>
-    <task id="T009" priority="MEDIUM" agent="builder" status="completed">
-      <name>5 Analysis modules</name>
-      <description>mod_InventoryReconciliation, mod_StockOutPredictor, mod_SupplierScorecard, mod_StockAging, mod_DataValidator — runtime analysis sheets, PDF export, color-coded dashboards.</description>
-    </task>
+    <task id="T001" status="completed">Fix blank article codes</task>
+    <task id="T002" status="completed">Fix non-numeric stock values</task>
+    <task id="T003" status="completed">Write Thesis Chapter 4 (Arabic)</task>
+    <task id="T004" status="completed">Add demo data to public LSM</task>
+    <task id="T005" status="completed">Fix 3 audit warnings (sheet protection, circular dep, EOQ cell read)</task>
+    <task id="T006" status="completed">5 Analysis modules: InventoryReconciliation, StockOutPredictor, SupplierScorecard, StockAging, DataValidator</task>
   </task-queue>
-
   <cross-agent-protocol>
     <rule priority="1">Read erp-project-context.xml FIRST on session start</rule>
     <rule priority="2">Check dependencies in call graph before code changes</rule>
-    <rule priority="3">Update erp-project-context.xml after code changes</rule>
-    <rule priority="4">Always work on copy in $env:TEMP, then deploy to Dropbox</rule>
+    <rule priority="3">Always work on .bas source files, never .xlsm directly</rule>
+    <rule priority="4">Run build.ps1 after code changes, verify.ps1 to confirm</rule>
     <rule priority="5">Never modify mod_Config constants or CANON_* values</rule>
-    <rule priority="6">Never remove sheet protection without re-protecting</rule>
-    <rule priority="7">Never commit changes without explicit user approval</rule>
-    <rule priority="8">Never modify .xlsm directly — fix .bas, then build.ps1</rule>
-    <rule priority="9">Use orchestrator.ps1 for task dispatch, not manual edits</rule>
-    <rule priority="10">Read memory files (notepad.md + project-memory.json) before handoffs</rule>
+    <rule priority="6">Never commit without explicit user approval</rule>
   </cross-agent-protocol>
-
   <agent-routing>
-    <task type="vba-edit" agent="build" priority="critical" />
-    <task type="feature-plan" agent="plan" priority="high" />
-    <task type="codebase-search" agent="explore" priority="medium" />
-    <task type="code-review" agent="general" priority="medium" />
-    <task type="thesis-arabic" agent="build" priority="high" language="ar" />
-    <task type="vba-debug" agent="debug" priority="critical" />
-    <task type="dss-audit" agent="audit" priority="high" />
-    <task type="macro-test" agent="test" priority="high" />
-    <task type="public-release" agent="build" priority="medium" />
+    <task type="vba-edit" agent="build" />
+    <task type="feature-plan" agent="plan" />
+    <task type="codebase-search" agent="explore" />
+    <task type="thesis-arabic" agent="build" language="ar" />
+    <task type="vba-debug" agent="debug" />
+    <task type="dss-audit" agent="audit" />
+    <task type="macro-test" agent="test" />
   </agent-routing>
-
-  <session-handoff>
-    <completed>
-      <item>All warnings W001-W010 resolved</item>
-      <item>Dead code deleted: Module1, Module2, mod_Config_Test, mod_StockEntry_Logic_Enhanced, mod_TestHarness, frmSystemLog, frmStockEntry_Enhanced</item>
-      <item>Public keywords added to mod_Navigation, mod_ReceiptTag, mod_Utilities</item>
-      <item>6 VBA fixes applied (build.ps1, SyncBridge, Forecasting, StockEntry_Logic, ThemingEngine, frmStockEntry)</item>
-      <item>New workbook ERP_Academie_v13_2.xlsm (679 KB, 0 compile errors)</item>
-      <item>Multi-agent system deployed: 6 agents (explore, plan, build, debug, audit, test)</item>
-      <item>Orchestrator deployed: orchestrator.ps1 with 7 tasks</item>
-      <item>Data persistence: data-persist.ps1 + data-persist.json</item>
-      <item>DSS audit framework: dss-audit.ps1 (5-phase, 14 PASS)</item>
-      <item>Public LSM release prepared: lsm-vba-core (26 modules, MIT license)</item>
-      <item>Launcher script: academix-launcher.ps1 with interactive menu</item>
-      <item>Context window bumped: 8192 → 16384 for Groq</item>
-      <item>Both local models pulled: qwen2.5-coder:7b + 1.5b</item>
-      <item>Memory system updated: project-memory.json + notepad.md</item>
-      <item>AGENTS.md + CLAUDE.md + context.md + instructions.md all synced</item>
-      <item>CI badge added to public-lsm README.md</item>
-      <item>5 analysis modules: InventoryReconciliation, StockOutPredictor, SupplierScorecard, StockAging, DataValidator</item>
-    </completed>
-    <completed>
-      <item>Memoire docx updated: v13.1 → v13.2 (21 references, filename + content)</item>
-      <item>Workspace setup: setup.ps1 launcher, session persistence, drive detection</item>
-      <item>Skills: workspace-setup, ssd-tools deployed in .opencode/skills/</item>
-      <item>Root cleanup: redundant AI config files → .opencode/archive/</item>
-      <item>verify.ps1: 97/97 PASS (fixed p-code cache false positive)</item>
-      <item>sanitize.ps1: full article coverage (12/12) + Chr(201) regex fix</item>
-      <item>F:\ SSD detected (1.9TB, 1.89TB free) — ready for deploy</item>
-    </completed>
-    <pending>
-      <item>Final thesis submission</item>
-    </pending>
-  </session-handoff>
-
+  <ground-truth>
+    <param name="D" value="1546">Annual Demand (38-day observation)</param>
+    <param name="Q*" value="176">EOQ (Wilson formula)</param>
+    <param name="ROP" value="205.6">Reorder Point</param>
+    <param name="SS" value="200">Safety Stock</param>
+    <param name="LT" value="2">Lead Time (days)</param>
+    <param name="S" value="500 DZD">Order Cost</param>
+    <param name="I" value="20%">Holding Rate</param>
+    <param name="MASTER_PWD" value="erp_secure_pwd_2026" />
+    <param name="VERSION" value="v13.2" />
+  </ground-truth>
 </agent-handoff>

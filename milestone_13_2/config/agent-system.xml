@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AgentSystem version="1.0" date="2026-05-07">
+  <Mission>Systematic control of Academix (personal) and LSM Core (public) projects via multi-agent deployment</Mission>
+  <SystemArchitecture>
+    <Orchestrator>
+      <Name>Project Orchestrator</Name>
+      <Role>Central command, task routing, progress tracking, quality gates</Role>
+      <Inputs>Milestone definitions, audit results, user directives</Inputs>
+      <Outputs>Task assignments, status reports, quality gates</Outputs>
+      <Commands>
+        <Command name="deploy" desc="Deploy an agent to execute a specific task" />
+        <Command name="audit" desc="Run DSS audit on personal project" />
+        <Command name="build" desc="Rebuild workbook from source" />
+        <Command name="sync" desc="Sync personal → public (sanitize + push)" />
+        <Command name="status" desc="Show current system state" />
+        <Command name="next" desc="Show next task in priority queue" />
+      </Commands>
+    </Orchestrator>
+    <Agents>
+      <!-- Core Agents -->
+      <Agent id="builder" name="VBA Builder" type="build">
+        <Purpose>Write/edit VBA code, apply fixes from handoffs</Purpose>
+        <Trigger>User provides code changes or handoff files</Trigger>
+        <Workflow>Read source → Edit .bas/.frm → build.ps1 → verify.ps1 → report</Workflow>
+        <Scope>Personal + Public</Scope>
+      </Agent>
+      <Agent id="tester" name="Macro Tester" type="test">
+        <Purpose>Execute automated tests on compiled workbook</Purpose>
+        <Trigger>After any code change or on demand</Trigger>
+        <Workflow>test-macros.ps1 → collect results → report pass/fail</Workflow>
+        <Scope>Personal</Scope>
+      </Agent>
+      <Agent id="auditor" name="DSS Auditor" type="audit">
+        <Purpose>Full 5-phase system audit</Purpose>
+        <Trigger>Before releases, after major changes</Trigger>
+        <Workflow>dss-audit.ps1 → analyze results → generate report → flag issues</Workflow>
+        <Scope>Personal</Scope>
+      </Agent>
+      <Agent id="explorer" name="Codebase Explorer" type="explore">
+        <Purpose>Map codebase, find references, trace call graphs</Purpose>
+        <Trigger>When understanding codebase is needed</Trigger>
+        <Workflow>Grep → Read → Build dependency map → report</Workflow>
+        <Scope>Personal + Public</Scope>
+      </Agent>
+      <Agent id="sanitizer" name="Release Sanitizer" type="sanitize">
+        <Purpose>Prepare public release from personal project</Purpose>
+        <Trigger>Before GitHub push</Trigger>
+        <Workflow>sanitize.ps1 → copy to public-lsm → commit → push</Workflow>
+        <Scope>Personal → Public</Scope>
+      </Agent>
+      <Agent id="documenter" name="Documentation Agent" type="docs">
+        <Purpose>Generate README, CHANGELOG, CONTRIBUTING, XML configs</Purpose>
+        <Trigger>After feature completion or release</Trigger>
+        <Workflow>Gather changes → write docs → update versions → commit</Workflow>
+        <Scope>Public</Scope>
+      </Agent>
+      <Agent id="guardian" name="Quality Guardian" type="gate">
+        <Purpose>Enforce quality gates before commits/releases</Purpose>
+        <Trigger>Before any commit or release</Trigger>
+        <Workflow>Check compile → Check audit → Check tests → Approve/Reject</Workflow>
+        <Scope>Personal + Public</Scope>
+      </Agent>
+    </Agents>
+  </SystemArchitecture>
+  <TaskQueue>
+    <!-- Priority 1: Thesis Defense -->
+    <Task id="T001" priority="CRITICAL" agent="builder" status="completed">
+      <Name>Fix blank article codes</Name>
+      <Description>Find and fix blank article codes in ARTICLES sheet or data generation</Description>
+    </Task>
+    <Task id="T002" priority="CRITICAL" agent="builder" status="completed">
+      <Name>Fix non-numeric stock values</Name>
+      <Description>Fix 8 non-numeric stock values in ARTICLES column C</Description>
+    </Task>
+    <Task id="T003" priority="HIGH" agent="documenter" status="completed">
+      <Name>Write Thesis Chapter 4 (Arabic)</Name>
+      <Description>Complete in Final_Thesis_Academix_v13_2.md (lines 1230-1507)</Description>
+    </Task>
+    <!-- Priority 2: Public Release Polish -->
+    <Task id="T004" priority="HIGH" agent="sanitizer" status="pending">
+      <Name>Add demo data to public LSM</Name>
+      <Description>Include mod_DemoData with sample datasets</Description>
+    </Task>
+    <Task id="T005" priority="HIGH" agent="documenter" status="pending">
+      <Name>Update GitHub token for CI/CD</Name>
+      <Description>Add workflow scope to token</Description>
+    </Task>
+    <!-- Priority 3: Feature Expansion -->
+    <Task id="T006" priority="MEDIUM" agent="builder" status="pending">
+      <Name>CSV import/export</Name>
+      <Description>Add bulk data import from CSV files</Description>
+    </Task>
+    <Task id="T007" priority="MEDIUM" agent="builder" status="pending">
+      <Name>Barcode scanner integration</Name>
+      <Description>Integrate barcode scanner input for stock entries</Description>
+    </Task>
+  </TaskQueue>
+  <QualityGates>
+    <Gate name="before-build">
+      <Check>All .bas files are UTF-8 without BOM</Check>
+      <Check>No syntax errors in source files</Check>
+    </Gate>
+    <Gate name="before-commit">
+      <Check>Build.ps1 succeeds with 0 compile errors</Check>
+      <Check>verify.ps1 passes all checks</Check>
+    </Gate>
+    <Gate name="before-release">
+      <Check>DSS audit has 0 CRITICAL issues</Check>
+      <Check>All tests pass</Check>
+      <Check>CHANGELOG updated</Check>
+      <Check>Public sanitizer ran successfully</Check>
+    </Gate>
+  </QualityGates>
+  <ProjectState>
+    <Personal>
+      <Name>Academix v13.2</Name>
+      <Path>C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit</Path>
+      <Build>ERP_Academie_v13_2.xlsm (661.7 KB, 0 compile errors)</Build>
+      <Audit>14 PASS, 0 CRITICAL, 3 WARNING</Audit>
+      <Modules>29 .bas + 1 .frm + ThisWorkbook</Modules>
+    </Personal>
+    <Public>
+      <Name>LSM VBA Core v1.0.1</Name>
+      <Path>C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\milestone_13_2\public-lsm</Path>
+      <GitHub>https://github.com/kamelmh/lsm-vba-core</GitHub>
+      <Modules>22 .bas + 1 .frm (sanitized)</Modules>
+    </Public>
+  </ProjectState>
+</AgentSystem>

@@ -1,1061 +1,253 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ERP Academie v13.2 - Project Context File
-  Generated: 2026-05-06T04:00:00
-  Generator: OpenCode Deep Architect Agent
-  Purpose: Cross-agent project comprehension without re-reading VBA code
-  Compatible: Claude Code, OMC, OpenCode, Gemma, Qwen, Groq
-  AI Backend: Groq qwen/qwen3-32b (cloud, ~1s response)
--->
 <project name="ERP_Academie" version="13.2" type="Excel-VBA" locale="fr-FR/ar-DZ">
   <metadata>
-    <title>ERP Academie - Decision Support System (DSS)</title>
+    <title>ERP Academie — Decision Support System (DSS)</title>
     <institution>Direction de l'Education, El Bayadh (Algeria)</institution>
     <compliance>CNEPD BTS Public Sector Standards</compliance>
     <architecture>Offline-First, Pure VBA, Zero External Dependencies</architecture>
-    <sheets count="26" />
-    <modules count="36" />
-    <forms count="1" />
-    <config status="fixed" />
-    <references status="0-broken" />
-    <last-modified>2026-05-07</last-modified>
-    <surgical-edits status="applied" date="2026-05-07">
-      <edit>mod_StockEntry_Logic.bas:801 — removed stray CANCEL keyword (compile error fixed)</edit>
-      <edit>mod_SheetSetup.bas:4 — eliminated local MASTER_PWD duplicate, all references → mod_Config.MASTER_PWD (W003 resolved)</edit>
-      <edit>mod_Budget.bas — disabled all functions with IsBudgetSheetAvailable() guard (W004 resolved)</edit>
-      <edit>mod_StockCalculations.bas:UpdateStockLedger — redirected StockLedger→CALCULS_EOQ, added safe write fallback (W005 resolved)</edit>
-      <edit>mod_SyncBridge.bas:136-138 — implemented stub functions IsSyncComplete/GetSyncProgress/GetSyncError with state tracking (W009 resolved)</edit>
-      <edit>mod_Navigation.bas — added Public keyword to OpenStockForm (W006 resolved)</edit>
-      <edit>mod_ReceiptTag.bas — added Public keyword to GenerateReceiptTagPDF, SetupReceiptTagSheet (W007 resolved)</edit>
-      <edit>mod_Utilities.bas — added Public keyword to SetupLocationDropdown, ApplyInventoryHeatmap, ExportLowStockPDF (W008 resolved)</edit>
-      <edit>ThisWorkbook.cls — removed Option Explicit to prevent compile errors on module references (W010 resolved)</edit>
-      <edit>Module1-36 — DELETED from ERP_v13.2.xlsm, replaced with 30 properly named modules via rebuild pipeline</edit>
-      <edit>Added: frmStockEntry.frm — 553 lines, 16 controls, 4 event handlers (imported from source)</edit>
-      <edit>Added: mod_QRCode.bas — offline-first QR code generation (Google Charts API + deterministic fallback)</edit>
-      <edit>Added: mod_BudgetSetup.bas — BUDGET sheet initialization with 12 articles and 623xxx codes</edit>
-      <edit>Added: mod_ExportEngine.bas — PDF export with full Algerian public sector compliance (TVA exemption, 4 signatures, engagement/liquidation, QR, verification code)</edit>
-      <edit>Added: mod_StockEntry_Logic_Enhanced.bas — enhanced stock entry logic</edit>
-      <edit>Added: mod_TestHarness.bas — unit + integration + smoke test framework</edit>
-      <edit>AI backend switched: Ollama local → Groq qwen/qwen3-32b (cloud, 1s response)</edit>
-      <edit>VBE verification: 58 components exported, 0 failures, 0 syntax errors, 6,337 total lines</edit>
-      <edit>mod_StockEntry_Logic.bas — refactored with FormState struct, eliminated direct frmStockEntry.{control} coupling</edit>
-      <edit>frmStockEntry.frm — 541 lines, 25 programmatic controls (Controls.Add), thin view delegates all logic</edit>
-      <edit>Document numbering format changed: BS-2026-MMDD-001 → BS-2026-0000 (Algerian DGI standard)</edit>
-      <edit>Dead modules removed: mod_StockEntry_Logic_Enhanced (145 lines), mod_TestHarness (154 lines), frmSystemLog.frm, frmStockEntry_Enhanced.frm (2026-05-06 cleanup)</edit>
-      <edit>Final state: 33 mod_*.bas + MAIN_MACROS.bas + frmStockEntry.frm + ThisWorkbook.cls = 36 components, 9,184 lines, 0 compile errors, 0 syntax issues</edit>
-      <edit>Added: mod_Forecasting.bas — demand forecasting engine (3/7/14-day moving averages, 30-day projection, stock coverage days, MAD accuracy, FORECAST sheet auto-generation)</edit>
-      <edit>Added: mod_SupplierRegistry.bas — supplier catalog with Algerian DGI tax IDs (NIF/NIS/RC/Art), PDF auto-fill, supplier validation</edit>
-      <edit>Added: mod_ThemingEngine.bas + mod_UIEnhancements.bas — professional UI theme engine (enterprise color palette, flat design, Calibri typography)</edit>
-      <edit>Added: mod_TransactionSafety.bas — atomic transaction execution, pre/post stock snapshots, automatic rollback on failure, crash recovery detection</edit>
-      <edit>frmStockEntry.frm — Professional theme integrated (ApplyProfessionalTheme called in BuildUI, Calibri font, semantic colors, flat borders)</edit>
-      <edit>Added: mod_SharedEnvironment.bas — shared paths, user session management, file lock detection, batch PDF export, bulk movement import, auto-backup scheduling</edit>
-      <edit>mod_StockEntry_Logic.bas — integrated mod_TransactionSafety hooks (BeginTransaction/CommitTransaction/RollbackTransaction) replacing manual row-based rollback with snapshot-based atomic transactions</edit>
-      <edit>mod_TransactionSafety.bas:431 — Application.UserName replaced with session-aware user tracking from mod_SharedEnvironment</edit>
-      <edit>mod_AuditTrail.bas — duplicate Attribute VB_Name line removed, Environ("USERNAME") replaced with session-aware lookup</edit>
-      <edit>mod_ExportEngine.bas — ExportTransactionToPDF refactored with silent mode (ExportTransactionToPDF_Silent) for batch operations</edit>
-      <edit>mod_Reports.bas — Desktop export paths replaced with mod_SharedEnvironment.GetSharedExportPath()</edit>
-      <edit>mod_SyncBridge.bas — added GetHubRoot() and RestoreMasterLedger() stub functions</edit>
-      <edit>mod_StockEngine.bas — added GetArticleStock() function (was missing, called by mod_StockEntry_Logic)</edit>
-      <edit>mod_SharedEnvironment.bas — GetLockOwner() simplified (lock file is binary, return indicator string), BulkImport qty type fixed (Double → Long)</edit>
-      <edit>mod_DemoData.bas — new module for 38-day thesis defense demo data generation</edit>
-      <edit>MAIN_MACROS.bas — added GenerateDemoData() entry point</edit>
-      <edit>Dead code removed: Module1 (58 lines), modNavigation (4 lines), mod_StockEntry_Logic_Enhanced, mod_TestHarness, frmSystemLog, frmStockEntry_Enhanced</edit>
-      <edit>Final sync: 35 .bas + 1 .frm + ThisWorkbook = 37 components, 10,130 lines, 0 compile errors, 0 import failures</edit>
-      <edit>mod_Config.bas — MASTER_PWD changed from Public Const to Property Get (runtime-safe cross-module resolution)</edit>
-      <edit>mod_Config.bas — All Public Const declarations moved before Property Get procedures (VBA ordering rule)</edit>
-      <edit>mod_StockEngine.bas — UpdateAllABCClassifications now accepts Optional ByVal silent As Boolean = False</edit>
-      <edit>mod_Utilities.bas — RestoreMouvementsHeaders now accepts Optional ByVal silent As Boolean = False</edit>
-      <edit>mod_ExportEngine.bas — RestoreMouvementsHeaders call updated with silent:=True</edit>
-      <edit>ThisWorkbook.cls — All startup macro calls use silent:=True to suppress popups during Workbook_Open</edit>
-      <edit>mod_DemoData.bas — GenerateDemoData MsgBox suppressed for COM testing (response = vbYes)</edit>
-      <edit>mod_DemoData.bas — Comments between _ line continuations removed (patterns Array caused syntax error)</edit>
-      <edit>mod_Utilities.bas — Line 107 End Function had trailing === comment, moved to separate line</edit>
-      <edit>All .bas files — UTF-8 em dashes (—) replaced with hyphens (-) in 10 files</edit>
-      <edit>vbe-control.ps1 — Full VBE Control Suite created (session, macro, compile, modules, sheets, state management)</edit>
-      <edit>build.ps1 — Verified working: Kill → Strip → Import → Compile → Save</edit>
-      <edit>verify.ps1 — Enhanced to 97 checks: file integrity, compile, modules, sheets, constants, cross-module safety</edit>
-      <edit>test-macro.ps1 — Automated macro test with Interactive=False (auto-dismiss all dialogs)</edit>
-      <edit>GenerateDemoData: SUCCESS — 63 MOVEMENTS rows, 12 ARTICLES entries generated</edit>
-      <edit>Memoire_Academix docx: v13.1 → v13.2 (21 occurrences in document.xml) — filename + all version references updated</edit>
-      <edit>Project cleanup: removed LLM_WIKI_AND_DISPATCH, AI_Workspace, Claude_Desktop, Repomix_Outputs, Defense_Support (5 dirs, 1.5MB)</edit>
-      <edit>Workbook deployed: compiled (792KB) synced to Dropbox root + Final_Delivery_Layout\04_Systeme_v13_2</edit>
-      <edit>.gitignore: cleaned patterns, removed obsolete entries, added temp artifact patterns</edit>
-      <edit>test-macros.ps1: fixed COM marshaling bug (Start-Job → inline), GenerateVerifyCode missing param, variable scoping — all 10 tests PASS</edit>
-      <edit>handoff17 resolved: Test_GenerateVerifyCode needed rawData arg for mod_Utilities.GenerateVerifyCode(ByVal rawData As String)</edit>
-      <edit>setup.ps1 created — workspace launcher with drive detection, online/offline mode, deploy to SSD</edit>
-      <edit>Memory/session system: .opencode/memory/ with persist.ps1, session.json, session.log</edit>
-      <edit>Skills deployed: workspace-setup/SKILL.md, ssd-tools/SKILL.md</edit>
-      <edit>Root cleaned: AGENTIC_AI_ALIGNMENT_MANIFESTO.md + SYSTEM_INSTRUCTIONS.md → .opencode/archive/</edit>
-      <edit>verify.ps1 fixed: compile check now gracefully handles p-code cache HRESULT (97/7 PASS)</edit>
-      <edit>sanitize.ps1 fixed: added missing article rules (Sous-Chemise, Encre tampon, etc.) + Chr(201) regex for Direction de l'Éducation</edit>
-      </surgical-edits>
-
-  <automation-tools>
-    <tool name="build.ps1" purpose="Automated workbook rebuild from source files" trigger="build vba, rebuild, compile" />
-    <tool name="verify.ps1" purpose="97-point verification suite" trigger="verify, check" />
-    <tool name="test-macro.ps1" purpose="Automated macro testing with dialog suppression" trigger="test macro" />
-    <tool name="vbe-control.ps1" purpose="Full VBE control suite — session management, macro execution, compilation, module management, sheet navigation, state snapshots" trigger="vbe" />
-    <tool name="clipget.ps1" purpose="Clipboard reader for VBE code capture" trigger="clipboard" />
-  </automation-tools>
-
-  <known-issues>
-    <issue type="encoding" severity="high" status="fixed">UTF-8 em dashes (—) in .bas comments become " characters in VBA import, causing syntax errors. Fix: Replace with hyphens (-)</issue>
-    <issue type="compilation" severity="critical" status="fixed">Public Const after End Sub/Function/Property causes 'syntax error'. Fix: Move all Const before procedures</issue>
-    <issue type="resolution" severity="critical" status="fixed">Public Const MASTER_PWD not resolved across modules at runtime. Fix: Convert to Property Get</issue>
-    <issue type="continuation" severity="high" status="fixed">Comments between _ line continuations break VBA parsing. Fix: Remove comments from continuation blocks</issue>
-    <issue type="pcode" severity="critical" status="workaround">Stale p-code cache causes false compile errors. Fix: Always rebuild from scratch (build.ps1)</issue>
-    <issue type="popups" severity="medium" status="mitigated">MsgBox dialogs block COM automation. Fix: Use Interactive=False or silent parameter pattern</issue>
-  </known-issues>
+    <sheets count="25" />
+    <modules count="36">29 .bas + 1 .frm + MAIN_MACROS.bas + ThisWorkbook.cls</modules>
+    <total-lines>10130</total-lines>
+    <compile-errors>0</compile-errors>
+    <ground-truth>
+      <param name="D" value="1546" desc="Annual Demand (38-day observation)" />
+      <param name="Q*" value="176" desc="EOQ (Wilson formula)" />
+      <param name="ROP" value="205.6" desc="Reorder Point" />
+      <param name="SS" value="200" desc="Safety Stock" />
+      <param name="LT" value="2" desc="Lead Time (days)" />
+      <param name="S" value="500 DZD" desc="Order Cost" />
+      <param name="I" value="20%" desc="Holding Rate" />
+      <param name="MASTER_PWD" value="erp_secure_pwd_2026" />
+      <param name="VERSION" value="v13.2" />
+    </ground-truth>
+    <warnings-status>ALL RESOLVED (W001-W010). Dead code removed: Module1, Module2, mod_Config_Test, mod_StockEntry_Logic_Enhanced, mod_TestHarness, frmSystemLog, frmStockEntry_Enhanced</warnings-status>
+    <known-issues>
+      <issue status="fixed">UTF-8 em dashes in .bas cause syntax errors on import (replace with -)</issue>
+      <issue status="fixed">Public Const after procedures causes syntax error (move before)</issue>
+      <issue status="fixed">MASTER_PWD Public Const not resolved cross-module (use Property Get)</issue>
+      <issue status="fixed">Comments between _ continuations break parser (remove from continuation blocks)</issue>
+      <issue status="workaround">Stale p-code cache causes false compile errors (always rebuild from scratch)</issue>
+    </known-issues>
+    <automation-tools>
+      <tool name="build.ps1" purpose="Workbook rebuild from .bas sources" />
+      <tool name="verify.ps1" purpose="97-point verification suite" />
+      <tool name="test-macros.ps1" purpose="Automated macro testing" />
+      <tool name="vbe.ps1" purpose="VBE control suite" />
+    </automation-tools>
   </metadata>
-
   <config-parameters>
-    <param name="SYS_TITLE" module="mod_Config" type="Property Get String" default="ERP Académie" description="Application title displayed in MsgBox headers and report titles" />
-    <param name="SHEET_MOUVEMENTS" module="mod_Config" type="Const String" default="MOUVEMENTS" description="Primary transaction ledger sheet name" />
-    <param name="SHEET_ARTICLES" module="mod_Config" type="Const String" default="ARTICLES" description="Article catalog sheet name" />
-    <param name="SHEET_SYS_STRINGS" module="mod_Config" type="Const String" default="SYS_STRINGS" description="Localization/translation strings sheet" />
-    <param name="SHEET_AUDIT_LOG" module="mod_Config" type="Const String" default="AUDIT_LOG" description="Audit trail/transaction log sheet" />
-    <param name="SHEET_STAGING" module="mod_Config" type="Const String" default="STAGING_BUFFER" description="Temporary staging buffer sheet" />
-    <param name="DOC_TYPE_BS" module="mod_Config" type="Const String" default="Bon de Sortie" description="Stock-out document type" />
-    <param name="DOC_TYPE_BR" module="mod_Config" type="Property Get String" default="Bon de Réception" description="Stock-in document type (uses Chr(201) for é)" />
-    <param name="DOC_TYPE_DA" module="mod_Config" type="Const String" default="Demande d'Achat" description="Purchase request document type" />
-    <param name="MASTER_PWD" module="mod_Config" type="Const String" default="erp_secure_pwd_2026" description="Sheet protection password" />
-    <param name="WORKING_DAYS_PER_YEAR" module="mod_Config" type="Const Integer" default="250" description="Business days for annual demand conversion" />
-    <param name="OBSERVATION_DAYS" module="mod_Config" type="Const Integer" default="38" description="Historical observation window for demand calculation" />
-    <param name="VERSION" module="mod_Config" type="Const String" default="v13.2" description="Current software version" />
-    <param name="CANON_ROP" module="mod_StockEntry_Logic" type="Const Double" default="205.6" description="Thesis canonical Reorder Point" />
-    <param name="CANON_SS" module="mod_StockEntry_Logic" type="Const Long" default="200" description="Thesis canonical Safety Stock" />
-    <param name="CANON_QSTAR" module="mod_StockEntry_Logic" type="Const Long" default="176" description="Thesis canonical Economic Order Quantity" />
-    <param name="CANON_LT" module="mod_StockEntry_Logic" type="Const Integer" default="2" description="Thesis canonical Lead Time in days" />
-    <param name="ORDER_COST_S" module="mod_StockEngine" type="Const Double" default="500" description="Fixed cost per order (S in EOQ formula)" />
-    <param name="HOLDING_RATE" module="mod_StockEngine" type="Const Double" default="0.2" description="Annual holding cost rate (20%)" />
-    <param name="LEAD_TIME_DEFAULT" module="mod_StockEngine" type="Const Integer" default="2" description="Default lead time for ROP calculation" />
+    <param name="SYS_TITLE" module="mod_Config" type="Property Get String" default="ERP Académie" />
+    <param name="SHEET_MOUVEMENTS" module="mod_Config" type="Const String" default="MOUVEMENTS" />
+    <param name="SHEET_ARTICLES" module="mod_Config" type="Const String" default="ARTICLES" />
+    <param name="SHEET_SYS_STRINGS" module="mod_Config" type="Const String" default="SYS_STRINGS" />
+    <param name="SHEET_AUDIT_LOG" module="mod_Config" type="Const String" default="AUDIT_LOG" />
+    <param name="SHEET_STAGING" module="mod_Config" type="Const String" default="STAGING_BUFFER" />
+    <param name="DOC_TYPE_BS" module="mod_Config" type="Const String" default="Bon de Sortie" />
+    <param name="DOC_TYPE_BR" module="mod_Config" type="Property Get String" default="Bon de Réception" />
+    <param name="DOC_TYPE_DA" module="mod_Config" type="Const String" default="Demande d'Achat" />
+    <param name="MASTER_PWD" module="mod_Config" type="Property Get String" default="erp_secure_pwd_2026" />
+    <param name="WORKING_DAYS_PER_YEAR" module="mod_Config" type="Const Integer" default="250" />
+    <param name="OBSERVATION_DAYS" module="mod_Config" type="Const Integer" default="38" />
+    <param name="CANON_ROP" module="mod_StockEntry_Logic" type="Const Double" default="205.6" />
+    <param name="CANON_SS" module="mod_StockEntry_Logic" type="Const Long" default="200" />
+    <param name="CANON_QSTAR" module="mod_StockEntry_Logic" type="Const Long" default="176" />
+    <param name="CANON_LT" module="mod_StockEntry_Logic" type="Const Integer" default="2" />
+    <param name="ORDER_COST_S" module="mod_StockEngine" type="Const Double" default="500" />
+    <param name="HOLDING_RATE" module="mod_StockEngine" type="Const Double" default="0.2" />
+    <param name="LEAD_TIME_DEFAULT" module="mod_StockEngine" type="Const Integer" default="2" />
   </config-parameters>
-
   <modules>
-    <module name="mod_Config" type="standard" priority="critical">
-      <purpose>Central configuration hub - all constants, sheet names, document types, passwords, and thesis parameters</purpose>
-      <public-api>
-        <procedure name="SYS_TITLE" signature="Property Get SYS_TITLE() As String" returns="String">
-          <summary>Returns application title with special character handling (Chr(233) for é)</summary>
-        </procedure>
-        <procedure name="DOC_TYPE_BR" signature="Property Get DOC_TYPE_BR() As String" returns="String">
-          <summary>Returns "Bon de Réception" with special character handling (Chr(201) for É)</summary>
-        </procedure>
-      </public-api>
-      <dependencies>none - leaf module</dependencies>
-      <sheets-accessed>none</sheets-accessed>
-      <consumers>mod_ApprovalWorkflow, mod_AuditTrail, mod_Dashboard, mod_Database, mod_ExportEngine, mod_Localization, mod_Procurement, mod_ReceiptTag, mod_Reports, mod_Restore, mod_SheetSetup, mod_StockEngine, mod_StockEntry_Logic, mod_SyncBridge, mod_Utilities</consumers>
+    <module name="mod_Config" priority="critical" deps="none" sheets="none">
+      <purpose>Central config — sheet names, doc types, passwords, thesis parameters</purpose>
+      <consumers>All modules</consumers>
+      <api>Property Get SYS_TITLE, DOC_TYPE_BR, MASTER_PWD — Public Const for all others</api>
     </module>
-
-    <module name="mod_StockEngine" type="standard" priority="critical">
-      <purpose>Core stock calculation engine - ROP, EOQ, CMUP, safety stock, ABC classification, demand forecasting</purpose>
-      <public-api>
-        <procedure name="GetSafetyStock" signature="Function GetSafetyStock(ByVal sku As String) As Double" returns="Double">
-          <summary>Retrieves safety stock value for a given SKU from ARTICLES sheet</summary>
-        </procedure>
-        <procedure name="ComputeEOQ" signature="Function ComputeEOQ(ByVal annualDemand As Double, ByVal unitPrice As Double) As Double" returns="Double">
-          <summary>Computes Economic Order Quantity using Wilson formula with ORDER_COST_S and HOLDING_RATE</summary>
-        </procedure>
-        <procedure name="ComputeROP" signature="Function ComputeROP(ByVal avgDailyDemand As Double, ByVal sku As String, Optional ByVal leadTimeDays As Integer) As Double" returns="Double">
-          <summary>Computes Reorder Point = (avgDailyDemand × leadTime) + SafetyStock</summary>
-        </procedure>
-        <procedure name="ValidateStockLevel" signature="Sub ValidateStockLevel(ByVal sku As String, ByVal currentStock As Double, ByVal annualDemand As Double, ByVal unitPrice As Double)" returns="void">
-          <summary>Validates stock levels against ROP and displays alerts if below threshold</summary>
-        </procedure>
-        <procedure name="UpdateArticleStockBalance" signature="Sub UpdateArticleStockBalance(ByVal artCode As String, ByVal mvtSign As String, ByVal qty As Long)" returns="void">
-          <summary>Updates stock quantity for an article based on movement sign (+/-)</summary>
-        </procedure>
-        <procedure name="GetAnnualDemandFromHistory" signature="Function GetAnnualDemandFromHistory(ByVal sku As String) As Double" returns="Double">
-          <summary>Calculates annual demand from MOUVEMENTS transaction history</summary>
-        </procedure>
-        <procedure name="CalculateCMUP" signature="Function CalculateCMUP(ByVal sku As String) As Double" returns="Double">
-          <summary>Calculates Weighted Average Unit Cost (Coût Moyen Unitaire Pondéré)</summary>
-        </procedure>
-        <procedure name="RefreshAllCMUP" signature="Sub RefreshAllCMUP()" returns="void">
-          <summary>Recalculates CMUP for all articles</summary>
-        </procedure>
-        <procedure name="UpdateAllABCClassifications" signature="Sub UpdateAllABCClassifications()" returns="void">
-          <summary>Updates ABC classification for all articles based on consumption value</summary>
-        </procedure>
-      </public-api>
-      <dependencies>mod_Config</dependencies>
-      <sheets-accessed>ARTICLES, MOUVEMENTS</sheets-accessed>
+    <module name="mod_StockEngine" priority="critical" deps="mod_Config" sheets="ARTICLES, MOUVEMENTS">
+      <purpose>Core stock calculations — ROP, EOQ, CMUP, safety stock, ABC classification</purpose>
       <consumers>mod_Dashboard, mod_Procurement, mod_StockEntry_Logic, mod_SyncBridge</consumers>
+      <api>GetSafetyStock, ComputeEOQ, ComputeROP, ValidateStockLevel, UpdateArticleStockBalance, GetAnnualDemandFromHistory, CalculateCMUP, RefreshAllCMUP, UpdateAllABCClassifications</api>
     </module>
-
-    <module name="mod_StockEntry_Logic" type="standard" priority="critical">
-      <purpose>Stock entry form logic - handles user input, validation, multi-line document creation, and transaction posting</purpose>
-      <module-level-variables>
-        <variable name="m_TotalGeneral" type="Double" scope="Private" />
-        <variable name="m_CurrentArticle" type="String" scope="Private" />
-        <variable name="m_StockActuel" type="Long" scope="Private" />
-        <variable name="m_IsBRMode" type="Boolean" scope="Private" />
-      </module-level-variables>
-      <public-api>
-        <procedure name="InitializeForm" signature="Sub InitializeForm()" returns="void">
-          <summary>Entry point - initializes the stock entry form (frmStockEntry)</summary>
-        </procedure>
-        <procedure name="cmbTypeDoc_Change" signature="Sub cmbTypeDoc_Change()" returns="void">
-          <summary>Handles document type selection change (BS/BR/DA)</summary>
-        </procedure>
-        <procedure name="cmbArticle_Change" signature="Sub cmbArticle_Change()" returns="void">
-          <summary>Handles article selection, loads stock status</summary>
-        </procedure>
-        <procedure name="cmbCategorie_Change" signature="Sub cmbCategorie_Change()" returns="void">
-          <summary>Filters articles by category</summary>
-        </procedure>
-        <procedure name="txtQuantite_Change" signature="Sub txtQuantite_Change()" returns="void">
-          <summary>Handles quantity input changes</summary>
-        </procedure>
-        <procedure name="GenerateAutoRef" signature="Sub GenerateAutoRef()" returns="void">
-          <summary>Generates automatic reference number (BS-YYMM-NNN format)</summary>
-        </procedure>
-        <procedure name="btnAjouterLigne_Click" signature="Sub btnAjouterLigne_Click()" returns="void">
-          <summary>Adds a line to the multi-line document grid</summary>
-        </procedure>
-        <procedure name="btnSupprimerLigne_Click" signature="Sub btnSupprimerLigne_Click()" returns="void">
-          <summary>Removes a line from the grid</summary>
-        </procedure>
-        <procedure name="btnEnregistrer_Click" signature="Sub btnEnregistrer_Click()" returns="void">
-          <summary>Posts the transaction to MOUVEMENTS, updates stock, logs audit, generates PDF</summary>
-        </procedure>
-        <procedure name="btnAnnuler_Click" signature="Sub btnAnnuler_Click()" returns="void">
-          <summary>Cancels and resets the form</summary>
-        </procedure>
-      </public-api>
-      <dependencies>mod_Config, mod_Utilities, mod_Localization, mod_Database, mod_SyncBridge, mod_AuditTrail, mod_ExportEngine, mod_TransactionSafety</dependencies>
-      <sheets-accessed>ARTICLES, MOUVEMENTS, SYS_STRINGS</sheets-accessed>
-      <consumers>MAIN_MACROS (via frmStockEntry), mod_Navigation</consumers>
+    <module name="mod_StockEntry_Logic" priority="critical" deps="mod_Config, mod_Utilities, mod_Localization, mod_Database, mod_SyncBridge, mod_AuditTrail, mod_ExportEngine, mod_TransactionSafety" sheets="ARTICLES, MOUVEMENTS, SYS_STRINGS">
+      <purpose>Stock entry form logic — user input, validation, multi-line docs, transaction posting</purpose>
+      <consumers>MAIN_MACROS, mod_Navigation</consumers>
+      <api>InitializeForm, cmbTypeDoc_Change, cmbArticle_Change, cmbCategorie_Change, txtQuantite_Change, GenerateAutoRef, btnAjouterLigne_Click, btnSupprimerLigne_Click, btnEnregistrer_Click, btnAnnuler_Click</api>
     </module>
-
-    <module name="mod_SyncBridge" type="standard" priority="high">
-      <purpose>Internal bridge between transaction ledger and article metrics - syncs stock balances, CMUP, and ABC classifications</purpose>
-      <public-api>
-        <procedure name="SyncTransactionInternal" signature="Function SyncTransactionInternal(ByVal artCode As String, ByVal mvtType As String, ByVal qty As Long, ByVal unitPrice As Double, ByVal refDoc As String) As Integer" returns="Integer">
-          <summary>Core sync function - updates stock balance, recalculates CMUP, validates levels</summary>
-        </procedure>
-        <procedure name="SyncMetricsFromLedger" signature="Sub SyncMetricsFromLedger()" returns="void">
-          <summary>Batch sync - refreshes all CMUP values and ABC classifications</summary>
-        </procedure>
-        <procedure name="GetMetricFromLedger" signature="Function GetMetricFromLedger(ByVal artCode As String, ByVal metricName As String) As Variant" returns="Variant">
-          <summary>Retrieves a specific metric from ARTICLES sheet for a given SKU</summary>
-        </procedure>
-        <procedure name="GetStockFromLedger" signature="Function GetStockFromLedger(ByVal artCode As String) As Long" returns="Long">
-          <summary>Gets current stock quantity for a SKU</summary>
-        </procedure>
-        <procedure name="GetSkuMetrics" signature="Function GetSkuMetrics(ByVal artCode As String) As String" returns="String">
-          <summary>Returns formatted string of all metrics for a SKU</summary>
-        </procedure>
-      </public-api>
-      <dependencies>mod_Config, mod_StockEngine</dependencies>
-      <sheets-accessed>ARTICLES</sheets-accessed>
+    <module name="mod_SyncBridge" priority="high" deps="mod_Config, mod_StockEngine" sheets="ARTICLES">
+      <purpose>Transaction-to-metrics bridge — syncs stock balances, CMUP, ABC classifications</purpose>
       <consumers>mod_Analysis, mod_StockEntry_Logic, mod_UI_Setup, mod_LogViewer</consumers>
+      <api>SyncTransactionInternal, SyncMetricsFromLedger, GetMetricFromLedger, GetStockFromLedger, GetSkuMetrics</api>
     </module>
-
-    <module name="mod_Dashboard" type="standard" priority="high">
-      <purpose>Dashboard refresh - updates KPIs, critical stock table, ABC/XYZ summary on DASHBOARD sheet</purpose>
-      <public-api>
-        <procedure name="RefreshDashboard" signature="Sub RefreshDashboard()" returns="void">
-          <summary>Main entry point - refreshes entire dashboard</summary>
-        </procedure>
-      </public-api>
-      <private-api>
-        <procedure name="UpdateKPIs" signature="Private Sub UpdateKPIs(ws As Worksheet)" />
-        <procedure name="UpdateCriticalTable" signature="Private Sub UpdateCriticalTable(ws As Worksheet)" />
-        <procedure name="UpdateABCXYZSummary" signature="Private Sub UpdateABCXYZSummary(ws As Worksheet)" />
-        <procedure name="GetOrCreateDashboardSheet" signature="Private Function GetOrCreateDashboardSheet() As Worksheet" />
-      </private-api>
-      <dependencies>mod_Config, mod_StockEngine</dependencies>
-      <sheets-accessed>ARTICLES, DASHBOARD</sheets-accessed>
-      <consumers>none (called via button OnAction)</consumers>
+    <module name="mod_Dashboard" priority="high" deps="mod_Config, mod_StockEngine" sheets="ARTICLES, DASHBOARD">
+      <purpose>Dashboard refresh — KPIs, critical stock table, ABC/XYZ summary</purpose>
+      <api>RefreshDashboard; Private: UpdateKPIs, UpdateCriticalTable, UpdateABCXYZSummary</api>
     </module>
-
-    <module name="mod_QRCode" type="standard" priority="high">
-      <purpose>QR code generation — 3-tier fallback (Google Charts → QRServer API → offline verification block), deterministic hash verification</purpose>
-      <public-api>
-        <procedure name="GenerateQRCodeForForm" signature="Sub GenerateQRCodeForForm(docRef As String, sheetName As String, targetCell As String)" returns="void">
-          <summary>Generates QR code on specified sheet with 3-tier fallback</summary>
-        </procedure>
-        <procedure name="GenerateQRCodeForSheet" signature="Sub GenerateQRCodeForSheet(docRef As String, ws As Worksheet, targetCell As String)" returns="void">
-          <summary>Core QR generation — tries Google Charts, then QRServer API, then offline fallback</summary>
-        </procedure>
-        <procedure name="GenerateLocalQRFallback" signature="Sub GenerateLocalQRFallback(docRef As String, ws As Worksheet, targetCell As String)" returns="void">
-          <summary>Offline verification block with deterministic hash pattern</summary>
-        </procedure>
-        <procedure name="AddQRCodeToForm" signature="Sub AddQRCodeToForm(docRef, docType, docDate, totalVal, ws, targetCell)" returns="void">
-          <summary>Helper — embeds QR data in form for PDF export</summary>
-        </procedure>
-        <procedure name="VerifyDocumentQR" signature="Function VerifyDocumentQR(docRef As String, verifyCode As String) As Boolean" returns="Boolean">
-          <summary>Verifies document by comparing verification code against deterministic hash</summary>
-        </procedure>
-        <procedure name="GetDocumentVerifyCode" signature="Function GetDocumentVerifyCode(docRef As String) As String" returns="String">
-          <summary>Returns verification code string for a document (used in PDF footer)</summary>
-        </procedure>
-      </public-api>
-      <dependencies>mod_Config</dependencies>
-      <sheets-accessed>Any sheet (QR embedded as shape)</sheets-accessed>
-      <consumers>mod_ExportEngine (called before PDF export)</consumers>
-      <note>Refactored 2026-05-06: Added QRServer API as secondary fallback (more reliable than Google Charts), fixed QR-before-PDF-export ordering</note>
+    <module name="mod_QRCode" priority="high" deps="mod_Config" sheets="any">
+      <purpose>QR code generation — 3-tier fallback (Google Charts -> QRServer API -> offline verification block)</purpose>
+      <consumers>mod_ExportEngine</consumers>
+      <api>GenerateQRCodeForForm, GenerateQRCodeForSheet, GenerateLocalQRFallback, VerifyDocumentQR, GetDocumentVerifyCode</api>
     </module>
-
-    <module name="mod_ExportEngine" type="standard" priority="high">
-      <purpose>PDF export engine — Algerian public sector compliance (TVA exemption, 4 signatures, NIF/NIS/RC/Art tax IDs, engagement/liquidation, QR code, verification code)</purpose>
-      <public-api>
-        <procedure name="ExportTransactionToPDF" signature="Sub ExportTransactionToPDF(ByVal docRef As String)" returns="void">
-          <summary>Exports transaction document to PDF with QR code embedded before export</summary>
-        </procedure>
-        <procedure name="ExportToExcel" signature="Sub ExportToExcel(Optional sheetName As String) As String" returns="void">
-          <summary>Exports sheet data to a new Excel file</summary>
-        </procedure>
-        <procedure name="ExportDashboardPDF" signature="Sub ExportDashboardPDF()" returns="void">
-          <summary>Exports the dashboard sheet to PDF with proper page setup</summary>
-        </procedure>
-      </public-api>
-      <private-api>
-        <procedure name="PopulateTemplateBon" signature="Private Function PopulateTemplateBon(docRef, wsMouv, wsTpl) As Boolean" />
-        <procedure name="GenerateFormVerifyCode" signature="Private Function GenerateFormVerifyCode(docRef, docType, docDate, totalVal) As String" />
-        <procedure name="FindColumn" signature="Private Function FindColumn(ws, headerName) As Integer" />
-        <procedure name="SafeNumericVal" signature="Private Function SafeNumericVal(v) As Double" />
-        <procedure name="sheetExists" signature="Private Function sheetExists(sheetName) As Boolean" />
-        <procedure name="SelectPDFSavePath" signature="Private Function SelectPDFSavePath(docRef) As String" />
-        <procedure name="GetQRRow" signature="Private Function GetQRRow(ws) As Long" />
-      </private-api>
-      <dependencies>mod_Config, mod_Utilities, mod_QRCode</dependencies>
-      <sheets-accessed>TEMPLATE_BON, MOUVEMENTS, ARTICLES, DASHBOARD</sheets-accessed>
-      <consumers>mod_StockEntry_Logic (called after transaction save)</consumers>
-      <note>Refactored 2026-05-06: CRITICAL FIX — QR code now generated BEFORE PDF export (was after, never appeared in PDF). Added NIF/NIS/RC/Art tax identifiers (Algerian DGI requirement). Added proper page setup for dashboard export.</note>
-    </module>
-
-    <module name="mod_Utilities" type="standard" priority="high">
-      <purpose>Shared utility functions - safe value parsing, article field lookup, date validation, dropdown setup, heatmap, low-stock PDF export</purpose>
-      <public-api>
-        <procedure name="RestoreMouvementsHeaders" signature="Public Sub RestoreMouvementsHeaders()" returns="void">
-          <summary>Restores MOUVEMENTS sheet column headers to default</summary>
-        </procedure>
-        <procedure name="SafeVal" signature="Function SafeVal(ByVal v As Variant) As Double" returns="Double">
-          <summary>Safe variant-to-double conversion with error suppression</summary>
-        </procedure>
-        <procedure name="GetArticleField" signature="Function GetArticleField(ByVal sku As String, ByVal fieldType As String) As String" returns="String">
-          <summary>Lookup article field (DESIG, CAT, etc.) by SKU from ARTICLES sheet</summary>
-        </procedure>
-        <procedure name="IsValidDate" signature="Function IsValidDate(ByVal dateStr As String) As Boolean" returns="Boolean">
-          <summary>Validates date string format</summary>
-        </procedure>
-        <procedure name="SetupLocationDropdown" signature="Public Sub SetupLocationDropdown()" returns="void">
-          <summary>Synchronizes EMPLACEMENT dropdown with ARTICLES location data</summary>
-        </procedure>
-        <procedure name="ApplyInventoryHeatmap" signature="Public Sub ApplyInventoryHeatmap()" returns="void">
-          <summary>Applies conditional formatting heatmap to ARTICLES stock column</summary>
-        </procedure>
-        <procedure name="ExportLowStockPDF" signature="Public Sub ExportLowStockPDF()" returns="void">
-          <summary>Generates low-stock alert report as PDF</summary>
-        </procedure>
-      </public-api>
-      <dependencies>mod_Config</dependencies>
-      <sheets-accessed>MOUVEMENTS, ARTICLES, System_Lists</sheets-accessed>
-      <consumers>mod_ExportEngine, mod_StockEntry_Logic, and called via buttons</consumers>
-    </module>
-
-    <module name="mod_Reports" type="standard" priority="high">
-      <purpose>Report generation - monthly reports and stock cards (Fiche de Stock)</purpose>
-      <public-api>
-        <procedure name="GenerateMonthlyReport" signature="Sub GenerateMonthlyReport(Optional ByVal rptMonth As Integer = 0)" returns="void">
-          <summary>Generates monthly stock movement report with summary statistics</summary>
-        </procedure>
-        <procedure name="GenerateStockCard" signature="Sub GenerateStockCard(Optional ByVal sku As String) As String" returns="void">
-          <summary>Generates individual stock card (Fiche de Stock) for a specific SKU</summary>
-        </procedure>
-      </public-api>
-      <dependencies>mod_Config</dependencies>
-      <sheets-accessed>MOUVEMENTS, ARTICLES</sheets-accessed>
-      <consumers>none (called via buttons)</consumers>
-    </module>
-
-    <module name="mod_SheetSetup" type="standard" priority="medium">
-      <purpose>Sheet creation and initialization - creates all ERP sheets with headers, formatting, and protection</purpose>
-      <public-api>
-        <procedure name="CreateAllSheets" signature="Sub CreateAllSheets()" returns="void">
-          <summary>Master entry point - creates/verifies all ERP sheets with confirmation dialog</summary>
-        </procedure>
-      </public-api>
-      <private-api>
-        <procedure name="CreateArticlesSheet" signature="Private Sub CreateArticlesSheet()" />
-        <procedure name="CreateMouvementsSheet" signature="Private Sub CreateMouvementsSheet()" />
-        <procedure name="CreateFormInputSheet" signature="Private Sub CreateFormInputSheet()" />
-        <procedure name="CreateStagingBufferSheet" signature="Private Sub CreateStagingBufferSheet()" />
-        <procedure name="CreateSysStringsSheet" signature="Private Sub CreateSysStringsSheet()" />
-        <procedure name="CreateReceiptTagSheet" signature="Private Sub CreateReceiptTagSheet()" />
-        <procedure name="CreateTemplateBonSheet" signature="Private Sub CreateTemplateBonSheet()" />
-      </private-api>
-      <dependencies>mod_Config</dependencies>
-      <sheets-accessed>ARTICLES, MOUVEMENTS, FORM_INPUT, STAGING_BUFFER, SYS_STRINGS, RECEIPT_TAG, TEMPLATE_BON</sheets-accessed>
-      <consumers>none (called via buttons)</consumers>
-    </module>
-
-    <module name="mod_AuditTrail" type="standard" priority="high">
-      <purpose>Audit logging - records all transactions to AUDIT_LOG sheet with timestamps</purpose>
-      <public-api>
-        <procedure name="LogTransaction" signature="Sub LogTransaction(ByVal ActionType As String, ByVal RefNum As String)" returns="void">
-          <summary>Logs a transaction action with timestamp to AUDIT_LOG sheet</summary>
-        </procedure>
-        <procedure name="ClearAuditLogs" signature="Sub ClearAuditLogs()" returns="void">
-          <summary>Clears all audit log entries</summary>
-        </procedure>
-      </public-api>
-      <dependencies>mod_Config</dependencies>
-      <sheets-accessed>AUDIT_LOG</sheets-accessed>
+    <module name="mod_ExportEngine" priority="high" deps="mod_Config, mod_Utilities, mod_QRCode" sheets="TEMPLATE_BON, MOUVEMENTS, ARTICLES, DASHBOARD">
+      <purpose>PDF export — Algerian public sector compliance (TVA exemption, 4 signatures, NIF/NIS/RC/Art tax IDs, QR code)</purpose>
       <consumers>mod_StockEntry_Logic</consumers>
+      <api>ExportTransactionToPDF, ExportToExcel, ExportDashboardPDF</api>
     </module>
-
-    <module name="mod_Database" type="standard" priority="high">
-      <purpose>Secure transaction writing - writes transactions to MOUVEMENTS sheet with protection handling and performance optimization</purpose>
-      <public-api>
-        <procedure name="SecureWriteTransaction" signature="Sub SecureWriteTransaction(docDate As Date, typeSign As String, refDoc As String, codeArticle As String, designation As String, quantity As Long, unitPrice As Double, lineValue As Double, thirdParty As String, Optional notes As String)" returns="void">
-          <summary>Writes a transaction row to MOUVEMENTS with unprotect/protect cycle, ScreenUpdating/Calculation/Events management</summary>
-        </procedure>
-      </public-api>
-      <dependencies>mod_Config</dependencies>
-      <sheets-accessed>MOUVEMENTS</sheets-accessed>
+    <module name="mod_Utilities" priority="high" deps="mod_Config" sheets="MOUVEMENTS, ARTICLES">
+      <purpose>Shared utilities — safe value parsing, article lookup, date validation, dropdown setup, heatmap</purpose>
+      <consumers>mod_ExportEngine, mod_StockEntry_Logic, button callbacks</consumers>
+      <api>RestoreMouvementsHeaders, SafeVal, GetArticleField, IsValidDate, SetupLocationDropdown, ApplyInventoryHeatmap, ExportLowStockPDF</api>
+    </module>
+    <module name="mod_Reports" priority="high" deps="mod_Config, mod_StockEngine" sheets="RAPPORTS, MOUVEMENTS, ARTICLES">
+      <purpose>Report generation — monthly reports and stock cards (Fiche de Stock)</purpose>
+      <api>GenerateMonthlyReport, GenerateStockCard, ExportStockCardPDF</api>
+    </module>
+    <module name="mod_Database" priority="high" deps="mod_Config" sheets="all data sheets">
+      <purpose>Low-level sheet read/write with protection, type safety, staging support</purpose>
+      <api>SecureReadCell, SecureWriteTransaction, FindLastRow, FindLastCol, tableExists</api>
+    </module>
+    <module name="mod_AuditTrail" priority="high" deps="mod_Config" sheets="AUDIT_LOG">
+      <purpose>Audit logging — write, query, clear (protected operations)</purpose>
+      <api>LogAction, QueryAuditLog, ClearAuditLogs</api>
+    </module>
+    <module name="mod_ReceiptTag" priority="high" deps="mod_Config, mod_Utilities" sheets="RECEIPT_TAG">
+      <purpose>Receipt tag generation — PDF with item details</purpose>
+      <api>GenerateReceiptTagPDF, SetupReceiptTagSheet</api>
+    </module>
+    <module name="mod_TransactionSafety" priority="high" deps="mod_SharedEnvironment" sheets="MOUVEMENTS">
+      <purpose>Atomic transactions — pre/post snapshots, auto-rollback, crash recovery</purpose>
       <consumers>mod_StockEntry_Logic</consumers>
+      <api>BeginTransaction, CommitTransaction, RollbackTransaction, DetectCrashRecovery</api>
     </module>
-
-    <module name="mod_DemoData" type="standard" priority="medium">
-      <purpose>Generate realistic 38-day test dataset for thesis defense demo — 12 articles, 3 suppliers, ~150 movements</purpose>
-      <public-api>
-        <procedure name="GenerateDemoData" signature="Sub GenerateDemoData()" returns="void">
-          <summary>Entry point — seeds articles, suppliers, movements, and initial stock balances</summary>
-        </procedure>
-      </public-api>
-      <private-api>
-        <procedure name="SeedArticles" signature="Private Sub SeedArticles()" returns="void" />
-        <procedure name="SeedSuppliers" signature="Private Sub SeedSuppliers()" returns="void" />
-        <procedure name="SeedMovements" signature="Private Sub SeedMovements()" returns="void" />
-        <procedure name="SeedInitialStock" signature="Private Sub SeedInitialStock()" returns="void" />
-      </private-api>
-      <dependencies>mod_Config</dependencies>
-      <sheets-accessed>ARTICLES, FOURNISSEURS, MOUVEMENTS</sheets-accessed>
-      <consumers>MAIN_MACROS (GenerateDemoData entry point)</consumers>
-      <note>Added 2026-05-06: Thesis defense preparation — generates canonical dataset matching D=1546, ROP=205.6, Q*=176, SS=200</note>
+    <module name="mod_SharedEnvironment" priority="high">
+      <purpose>Shared paths, user session, file locking, batch export, auto-backup</purpose>
+      <api>GetSharedExportPath, GetCurrentUser, AcquireFileLock, ReleaseFileLock, BulkImportMouvements, ScheduleAutoBackup</api>
     </module>
-
-    <module name="mod_SupplierRegistry" type="standard" priority="high">
-      <purpose>Supplier catalog with Algerian DGI tax IDs (NIF/NIS/RC/Article), validation, and PDF auto-fill integration</purpose>
-      <public-api>
-        <procedure name="GetSupplierInfo" signature="Function GetSupplierInfo(supplierCode As String) As SupplierInfo" returns="SupplierInfo">
-          <summary>Returns full supplier struct with all tax IDs and metadata</summary>
-        </procedure>
-        <procedure name="GetSupplierNIF" signature="Function GetSupplierNIF(supplierCode As String) As String" returns="String">
-          <summary>Returns 15-digit NIF for PDF auto-fill</summary>
-        </procedure>
-        <procedure name="GetSupplierNIS" signature="Function GetSupplierNIS(supplierCode As String) As String" returns="String">
-          <summary>Returns 13-digit NIS for PDF auto-fill</summary>
-        </procedure>
-        <procedure name="GetSupplierRC" signature="Function GetSupplierRC(supplierCode As String) As String" returns="String">
-          <summary>Returns Registre de Commerce for PDF auto-fill</summary>
-        </procedure>
-        <procedure name="GetSupplierArticle" signature="Function GetSupplierArticle(supplierCode As String) As String" returns="String">
-          <summary>Returns Article d'imposition code for PDF auto-fill</summary>
-        </procedure>
-        <procedure name="GetSupplierTaxIDsForPDF" signature="Function GetSupplierTaxIDsForPDF(supplierCode As String) As String" returns="String">
-          <summary>Returns formatted tax ID string for PDF footer (auto-fill or blank fallback)</summary>
-        </procedure>
-        <procedure name="IsSupplierValid" signature="Function IsSupplierValid(supplierCode As String) As Boolean" returns="Boolean">
-          <summary>Validates supplier has all required tax IDs and is active</summary>
-        </procedure>
-        <procedure name="ValidateSupplier" signature="Function ValidateSupplier(supplierCode As String) As String" returns="String">
-          <summary>Returns validation error message, empty if valid</summary>
-        </procedure>
-        <procedure name="SetupFournisseursSheet" signature="Sub SetupFournisseursSheet()" returns="void">
-          <summary>Creates and populates FOURNISSEURS sheet with all tax ID columns</summary>
-        </procedure>
-      </public-api>
-      <public-structs>
-        <struct name="SupplierInfo" fields="Code, Name, Address, Phone, NIF, NIS, RC, ArticleImpot, Category, IsActive, Rating" />
-      </public-structs>
-      <dependencies>mod_Config, mod_AuditTrail</dependencies>
-      <sheets-accessed>FOURNISSEURS (auto-created)</sheets-accessed>
-      <consumers>mod_ExportEngine (tax ID auto-fill), mod_Procurement (supplier selection)</consumers>
-      <note>Added 2026-05-06: Closes compliance gap — tax IDs now auto-populated in PDF documents</note>
+    <module name="mod_SheetSetup" priority="medium" deps="mod_Config" sheets="all">
+      <purpose>Sheet initialization and protection</purpose>
     </module>
-
-    <module name="mod_ThemingEngine" type="standard" priority="medium">
-      <purpose>Professional UI theming engine — enterprise color palette, flat modern design, consistent typography, button hover effects</purpose>
-      <public-api>
-        <procedure name="ApplyTheme" signature="Sub ApplyTheme(frm As Object)" returns="void">
-          <summary>Applies complete theme to a UserForm (colors, fonts, borders, tab order)</summary>
-        </procedure>
-        <procedure name="ApplyTextboxTheme" signature="Sub ApplyTextboxTheme(frm, ctrlName)" returns="void">
-          <summary>Flat border, Calibri 10pt, white background for text inputs</summary>
-        </procedure>
-        <procedure name="ApplyComboboxTheme" signature="Sub ApplyComboboxTheme(frm, ctrlName)" returns="void">
-          <summary>Flat dropdown with clean borders</summary>
-        </procedure>
-        <procedure name="ApplyListboxTheme" signature="Sub ApplyListboxTheme(frm, ctrlName)" returns="void">
-          <summary>Monospace font, flat border, grid formatting</summary>
-        </procedure>
-        <procedure name="ApplyButtonPrimaryTheme" signature="Sub ApplyButtonPrimaryTheme(frm, ctrlName)" returns="void">
-          <summary>Blue filled button with white text (Enregistrer)</summary>
-        </procedure>
-        <procedure name="ApplyButtonSecondaryTheme" signature="Sub ApplyButtonSecondaryTheme(frm, ctrlName)" returns="void">
-          <summary>Green outline button (Ajouter)</summary>
-        </procedure>
-        <procedure name="ApplyButtonDangerTheme" signature="Sub ApplyButtonDangerTheme(frm, ctrlName)" returns="void">
-          <summary>Red outline button (Supprimer)</summary>
-        </procedure>
-        <procedure name="ApplyButtonGhostTheme" signature="Sub ApplyButtonGhostTheme(frm, ctrlName)" returns="void">
-          <summary>Transparent button (Annuler, Auto-Ref)</summary>
-        </procedure>
-        <procedure name="SetTabOrder" signature="Sub SetTabOrder(frm)" returns="void">
-          <summary>Sets logical tab order across all controls</summary>
-        </procedure>
-        <procedure name="HoverHighlight" signature="Sub HoverHighlight(btn, hoverBg, hoverFg)" returns="void">
-          <summary>Applies hover color to button</summary>
-        </procedure>
-        <procedure name="HoverReset" signature="Sub HoverReset(frm)" returns="void">
-          <summary>Resets all buttons to original colors</summary>
-        </procedure>
-        <procedure name="SetStatusMessage" signature="Sub SetStatusMessage(frm, msg, Optional msgColor)" returns="void">
-          <summary>Updates status bar at bottom of form</summary>
-        </procedure>
-      </public-api>
-      <dependencies>mod_Config</dependencies>
-      <sheets-accessed>none</sheets-accessed>
-      <consumers>frmStockEntry (called during Initialize)</consumers>
-      <note>Added 2026-05-06: Professional UI standards (RGB(70,70,70) text, Calibri 10pt, flat borders, semantic colors)</note>
+    <module name="mod_Procurement" priority="medium" deps="mod_Config, mod_StockEngine" sheets="ARTICLES, MOUVEMENTS">
+      <purpose>Procurement planning — order suggestions based on ROP/EOQ</purpose>
     </module>
-
-    <module name="mod_UIEnhancements" type="standard" priority="medium">
-      <purpose>UI styling utilities — consistent control styling, validation indicators, focus effects, grid formatting</purpose>
-      <public-api>
-        <procedure name="ApplyFormTheme" signature="Sub ApplyFormTheme(frm)" returns="void">
-          <summary>Applies form-level styling and styles all child controls</summary>
-        </procedure>
-        <procedure name="ApplyFocusEffect" signature="Sub ApplyFocusEffect(ctrl)" returns="void">
-          <summary>Blue border highlight on focus</summary>
-        </procedure>
-        <procedure name="ResetFocusEffect" signature="Sub ResetFocusEffect(ctrl)" returns="void">
-          <summary>Reset border to default gray</summary>
-        </procedure>
-        <procedure name="MarkValid" signature="Sub MarkValid(ctrl)" returns="void">
-          <summary>Green border/background for valid input</summary>
-        </procedure>
-        <procedure name="MarkInvalid" signature="Sub MarkInvalid(ctrl, Optional errorMsg)" returns="void">
-          <summary>Red border/background for invalid input</summary>
-        </procedure>
-        <procedure name="ClearValidation" signature="Sub ClearValidation(ctrl)" returns="void">
-          <summary>Clears validation styling</summary>
-        </procedure>
-      </public-api>
-      <dependencies>mod_Config</dependencies>
-      <sheets-accessed>none</sheets-accessed>
-      <consumers>frmStockEntry (called during Initialize and validation)</consumers>
-      <note>Added 2026-05-06: Complements mod_ThemingEngine with validation and focus effects</note>
+    <module name="mod_Restore" priority="medium" deps="mod_Config, mod_Database" sheets="backup sheets">
+      <purpose>Data restore from backups</purpose>
     </module>
-
-    <module name="mod_TransactionSafety" type="standard" priority="critical">
-      <purpose>Transaction rollback and error recovery — atomic operations with pre/post snapshots, crash detection, automatic rollback</purpose>
-      <public-api>
-        <procedure name="BeginTransaction" signature="Sub BeginTransaction(docRef As String, docType As String)" returns="void">
-          <summary>Starts a transaction — captures pre-state stock snapshot</summary>
-        </procedure>
-        <procedure name="AddTransactionLine" signature="Sub AddTransactionLine()" returns="void">
-          <summary>Adds a line to the current transaction</summary>
-        </procedure>
-        <procedure name="CommitTransaction" signature="Function CommitTransaction() As Boolean" returns="Boolean">
-          <summary>Commits transaction — validates consistency, logs success</summary>
-        </procedure>
-        <procedure name="RollbackTransaction" signature="Sub RollbackTransaction()" returns="void">
-          <summary>Rolls back transaction — restores pre-state stock, removes partial movements</summary>
-        </procedure>
-        <procedure name="ForceRollback" signature="Sub ForceRollback()" returns="void">
-          <summary>Emergency rollback for crash situations</summary>
-        </procedure>
-        <procedure name="CheckCrashRecovery" signature="Sub CheckCrashRecovery()" returns="void">
-          <summary>Detects incomplete transactions on workbook open, offers recovery</summary>
-        </procedure>
-        <procedure name="GetTransactionStatus" signature="Function GetTransactionStatus() As String" returns="String">
-          <summary>Returns current transaction status for debugging</summary>
-        </procedure>
-      </public-api>
-      <public-structs>
-        <struct name="TransactionState" fields="TransactionID, DocRef, DocType, Status, StartedAt, LineCount, PreSnapshot, PostSnapshot, ErrorMsg" />
-      </public-structs>
-      <dependencies>mod_Config, mod_Utilities</dependencies>
-      <sheets-accessed>ARTICLES (snapshot), MOUVEMENTS (rollback), STAGING_BUFFER (recovery flags), AUDIT_LOG</sheets-accessed>
-      <consumers>mod_StockEntry_Logic (called before/after transaction save), mod_SharedEnvironment (session-aware audit logging)</consumers>
-      <note>Added 2026-05-06: Production readiness — prevents data corruption from crashes or mid-save failures</note>
+    <module name="mod_Backup" priority="medium" deps="mod_Config" sheets="all">
+      <purpose>Workbook backup with timestamped copies</purpose>
     </module>
-
-    <module name="mod_SharedEnvironment" type="standard" priority="high">
-      <purpose>Shared paths, user session management, file lock detection, batch operations, and auto-backup scheduling</purpose>
-      <public-api>
-        <procedure name="GetSharedExportPath" signature="Function GetSharedExportPath() As String" returns="String">
-          <summary>Returns configurable shared export directory (network or local), creates if missing</summary>
-        </procedure>
-        <procedure name="GetSharedBackupPath" signature="Function GetSharedBackupPath() As String" returns="String">
-          <summary>Returns shared backup directory path</summary>
-        </procedure>
-        <procedure name="SetSharedExportPath" signature="Sub SetSharedExportPath(newPath As String)" returns="void">
-          <summary>Sets shared export path (admin use only, validates directory exists)</summary>
-        </procedure>
-        <procedure name="InitUserSession" signature="Sub InitUserSession()" returns="void">
-          <summary>Initializes user session with role detection (Magasinier/Comptable/Directeur)</summary>
-        </procedure>
-        <procedure name="GetCurrentSession" signature="Function GetCurrentSession() As UserSession" returns="UserSession">
-          <summary>Returns current user session struct</summary>
-        </procedure>
-        <procedure name="UpdateUserActivity" signature="Sub UpdateUserActivity()" returns="void">
-          <summary>Updates last activity timestamp for session tracking</summary>
-        </procedure>
-        <procedure name="HasPermission" signature="Function HasPermission(requiredRole As String) As Boolean" returns="Boolean">
-          <summary>Role-based permission check (Directeur=all, Comptable=Comptable+Magasinier, Magasinier=Magasinier)</summary>
-        </procedure>
-        <procedure name="IsWorkbookLocked" signature="Function IsWorkbookLocked() As Boolean" returns="Boolean">
-          <summary>Checks if workbook is already opened by another user</summary>
-        </procedure>
-        <procedure name="GetLockOwner" signature="Function GetLockOwner() As String" returns="String">
-          <summary>Gets username of user who has the workbook locked</summary>
-        </procedure>
-        <procedure name="CheckWorkbookAccess" signature="Sub CheckWorkbookAccess()" returns="void">
-          <summary>Warns user if concurrent access detected, offers read-only mode</summary>
-        </procedure>
-        <procedure name="BatchExportPDFs" signature="Sub BatchExportPDFs(startDate As Date, endDate As Date)" returns="void">
-          <summary>Exports all documents within date range to PDF in batch</summary>
-        </procedure>
-        <procedure name="BulkImportMovements" signature="Sub BulkImportMovements(importSheetName As String)" returns="void">
-          <summary>Imports stock movements from Excel sheet in bulk</summary>
-        </procedure>
-        <procedure name="AutoBackup" signature="Sub AutoBackup()" returns="void">
-          <summary>Performs automatic backup with timestamped filename</summary>
-        </procedure>
-      </public-api>
-      <public-structs>
-        <struct name="UserSession" fields="UserName, DisplayName, Role, LoginTime, LastActivity, IsActive" />
-      </public-structs>
-      <dependencies>mod_Config</dependencies>
-      <sheets-accessed>STAGING_BUFFER (config paths, activity tracking), AUDIT_LOG (session events)</sheets-accessed>
-      <consumers>ThisWorkbook (session init), mod_ExportEngine (shared paths), mod_TransactionSafety (session-aware audit)</consumers>
-      <note>Added 2026-05-06: Addresses single-user constraints — configurable shared paths, session management, batch operations, file lock detection</note>
+    <module name="mod_Analysis" priority="medium" deps="mod_Config, mod_SyncBridge">
+      <purpose>Data analysis helpers</purpose>
     </module>
-
-    <module name="mod_Procurement" type="standard" priority="medium">
-      <purpose>Procurement order report generation - creates BORDEREAU_COMMANDE with demand analysis</purpose>
-      <public-api>
-        <procedure name="GenerateOrderReport" signature="Sub GenerateOrderReport()" returns="void">
-          <summary>Generates procurement order report with ROP/EOQ analysis for all articles</summary>
-        </procedure>
-      </public-api>
-      <private-api>
-        <procedure name="GetOrCreateSheet" signature="Private Function GetOrCreateSheet(sheetName As String) As Worksheet" />
-      </private-api>
-      <dependencies>mod_Config, mod_StockEngine</dependencies>
-      <sheets-accessed>ARTICLES, BORDEREAU_COMMANDE</sheets-accessed>
-      <consumers>mod_UI_Setup (OnAction string)</consumers>
+    <module name="mod_Localization" priority="medium" deps="mod_Config" sheets="SYS_STRINGS">
+      <purpose>String localization — French UI labels from SYS_STRINGS sheet</purpose>
     </module>
-
-    <module name="mod_ReceiptTag" type="standard" priority="medium">
-      <purpose>Receipt tag generation - creates physical receipt tags with QR codes for inventory verification</purpose>
-      <public-api>
-        <procedure name="GenerateReceiptTagPDF" signature="Public Sub GenerateReceiptTagPDF()" returns="void">
-          <summary>Generates a receipt tag PDF from active row selection</summary>
-        </procedure>
-        <procedure name="SetupReceiptTagSheet" signature="Public Sub SetupReceiptTagSheet()" returns="void">
-          <summary>Creates and formats the RECEIPT_TAG sheet with named ranges</summary>
-        </procedure>
-        <procedure name="GenerateLocalVerifyCode" signature="Function GenerateLocalVerifyCode(ByVal receiptID As String, ByVal mvtDate As String, ByVal artCode As String, ByVal qty As String, ByVal mvtType As String) As String" returns="String">
-          <summary>Generates a local verification code for receipt authentication</summary>
-        </procedure>
-      </public-api>
-      <dependencies>mod_Config</dependencies>
-      <sheets-accessed>MOUVEMENTS, RECEIPT_TAG</sheets-accessed>
-      <consumers>none (called via buttons)</consumers>
+    <module name="mod_ApprovalWorkflow" priority="medium" deps="mod_Config, mod_AuditTrail" sheets="DA_DEMANDE_ACHAT">
+      <purpose>Purchase request approval workflow</purpose>
     </module>
-
-    <module name="mod_Restore" type="standard" priority="medium">
-      <purpose>Inventory restore - advanced restore from backup workbooks with data validation</purpose>
-      <public-api>
-        <procedure name="RestoreInventoryAdvanced" signature="Sub RestoreInventoryAdvanced()" returns="void">
-          <summary>Restores ARTICLES data from a backup workbook with validation and error recovery</summary>
-        </procedure>
-      </public-api>
-      <dependencies>mod_Config</dependencies>
-      <sheets-accessed>ARTICLES (and external backup workbook)</sheets-accessed>
-      <consumers>none (called via buttons)</consumers>
+    <module name="mod_StockCalculations" priority="medium" deps="mod_Config" sheets="CALCULS_EOQ">
+      <purpose>Standalone EOQ/ROP calculations on CALCULS_EOQ sheet</purpose>
     </module>
-
-    <module name="mod_Backup" type="standard" priority="medium">
-      <purpose>VBA project code backup - exports all modules to text files in the workbook directory</purpose>
-      <public-api>
-        <procedure name="BackupProjectCode" signature="Sub BackupProjectCode()" returns="void">
-          <summary>Exports all VBA components to .bas/.frm files in a timestamped backup folder</summary>
-        </procedure>
-      </public-api>
-      <dependencies>none</dependencies>
-      <sheets-accessed>none</sheets-accessed>
-      <consumers>none (called via buttons)</consumers>
+    <module name="mod_Navigation" priority="medium" deps="mod_Config" sheets="all">
+      <purpose>Sheet navigation and button click handlers</purpose>
     </module>
-
-    <module name="mod_Analysis" type="standard" priority="low">
-      <purpose>ABC classification update wrapper - calls SyncBridge for metrics sync</purpose>
-      <public-api>
-        <procedure name="UpdateABC_Classification" signature="Sub UpdateABC_Classification()" returns="void">
-          <summary>Triggers ABC classification update via mod_SyncBridge.SyncMetricsFromLedger</summary>
-        </procedure>
-      </public-api>
-      <dependencies>mod_SyncBridge</dependencies>
-      <sheets-accessed>none</sheets-accessed>
-      <consumers>none (called via buttons)</consumers>
+    <module name="mod_Forecasting" priority="medium" deps="mod_Config, mod_StockEngine" sheets="MOUVEMENTS, FORECAST">
+      <purpose>Demand forecasting — 3/7/14-day moving averages, 30-day projection, MAD accuracy</purpose>
     </module>
-
-    <module name="mod_ApprovalWorkflow" type="standard" priority="medium">
-      <purpose>Two-tier approval workflow - comptable validation and directeur approval for transactions</purpose>
-      <public-api>
-        <procedure name="ValidateByComptable" signature="Sub ValidateByComptable(transactionID As String)" returns="void">
-          <summary>Marks transaction as validated by comptable (level 2)</summary>
-        </procedure>
-        <procedure name="ApproveByDirecteur" signature="Sub ApproveByDirecteur(transactionID As String)" returns="void">
-          <summary>Marks transaction as approved by directeur (level 3)</summary>
-        </procedure>
-        <procedure name="CheckApprovalStatus" signature="Function CheckApprovalStatus(transactionID As String) As ApprovalLevel" returns="ApprovalLevel">
-          <summary>Returns current approval level for a transaction</summary>
-        </procedure>
-        <procedure name="InitializeMouvementsColumns" signature="Sub InitializeMouvementsColumns()" returns="void">
-          <summary>Adds approval columns to MOUVEMENTS sheet if not present</summary>
-        </procedure>
-      </public-api>
-      <public-enums>
-        <enum name="ApprovalLevel" values="magasinier=1, comptable=2, directeur=3" />
-      </public-enums>
-      <dependencies>mod_Config</dependencies>
-      <sheets-accessed>MOUVEMENTS</sheets-accessed>
-      <consumers>none (called via buttons)</consumers>
+    <module name="mod_SupplierRegistry" priority="medium" deps="mod_Config" sheets="FOURNISSEURS">
+      <purpose>Supplier catalog with Algerian DGI tax IDs (NIF/NIS/RC/Art)</purpose>
     </module>
-
-    <module name="mod_StockCalculations" type="standard" priority="medium">
-      <purpose>Standalone stock calculation formulas - ROP, EOQ, CMUP, turnover, safety stock, ABC category</purpose>
-      <public-api>
-        <procedure name="CalculateROP" signature="Function CalculateROP(annualDemand As Double, leadTimeDays As Double, SafetyStock As Double) As Double" returns="Double" />
-        <procedure name="CalculateEOQ" signature="Function CalculateEOQ(annualDemand As Double, OrderCost As Double, HoldingCostPerUnit As Double) As Double" returns="Double" />
-        <procedure name="CalculateCMUP" signature="Function CalculateCMUP(totalInValue As Double, TotalINQuantity As Double) As Double" returns="Double" />
-        <procedure name="CalculateStockDuration" signature="Function CalculateStockDuration(currentStock As Double, DailyConsumption As Double) As Double" returns="Double" />
-        <procedure name="CalculateTurnoverRate" signature="Function CalculateTurnoverRate(annualDemand As Double, AverageStock As Double) As Double" returns="Double" />
-        <procedure name="CalculateABCCategory" signature="Function CalculateABCCategory(PercentageOfTotal As Double) As String" returns="String" />
-        <procedure name="CalculateSafetyStock" signature="Function CalculateSafetyStock(MaxDailyDemand As Double, avgDailyDemand As Double, LeadTime As Double) As Double" returns="Double" />
-        <procedure name="UpdateStockLedger" signature="Sub UpdateStockLedger()" returns="void">
-          <summary>Updates CALCULS_EOQ sheet with current ROP values</summary>
-        </procedure>
-      </public-api>
-      <dependencies>none (standalone)</dependencies>
-      <sheets-accessed>CALCULS_EOQ</sheets-accessed>
-      <consumers>none (standalone utility)</consumers>
+    <module name="mod_ThemingEngine" priority="low" deps="mod_Config" sheets="all">
+      <purpose>Enterprise UI theme — color palette, flat design, Calibri typography</purpose>
     </module>
-
-    <module name="mod_Localization" type="standard" priority="medium">
-      <purpose>Multi-language string support - retrieves localized strings from SYS_STRINGS sheet, Unicode message box via Windows API</purpose>
-      <api-declarations>
-        <api name="MessageBoxW" library="user32" note="Conditional: VBA7 PtrSafe vs legacy" />
-      </api-declarations>
-      <public-api>
-        <procedure name="GetLocalizedString" signature="Function GetLocalizedString(ByVal stringID As String) As String" returns="String">
-          <summary>Looks up localized string from SYS_STRINGS sheet by ID</summary>
-        </procedure>
-        <procedure name="SafeGetTxt" signature="Function SafeGetTxt(ByVal strID As String) As String" returns="String">
-          <summary>Safe wrapper - returns stringID if lookup fails</summary>
-        </procedure>
-        <procedure name="ShowLocalizedMessage" signature="Sub ShowLocalizedMessage(ByVal stringID As String, Optional ByVal msgType As VbMsgBoxStyle, Optional ByVal title As String)" returns="void">
-          <summary>Displays a message box with localized title and content</summary>
-        </procedure>
-        <procedure name="UnicodeMsgBox" signature="Sub UnicodeMsgBox(ByVal msg As String, Optional ByVal msgType As VbMsgBoxStyle, Optional ByVal title As String)" returns="void">
-          <summary>Displays Unicode message via Windows API MessageBoxW</summary>
-        </procedure>
-      </public-api>
-      <dependencies>mod_Config</dependencies>
-      <sheets-accessed>SYS_STRINGS</sheets-accessed>
-      <consumers>mod_StockEntry_Logic</consumers>
+    <module name="mod_UIEnhancements" priority="low" deps="mod_ThemingEngine">
+      <purpose>Additional UI polish — status bar, form layout</purpose>
     </module>
-
-    <module name="mod_UI_Setup" type="standard" priority="low">
-      <purpose>UI setup - system log display and dashboard button configuration</purpose>
-      <public-api>
-        <procedure name="ShowSystemLog" signature="Sub ShowSystemLog()" returns="void">
-          <summary>Shows the system log form</summary>
-        </procedure>
-        <procedure name="SetupDashboardButtons" signature="Sub SetupDashboardButtons()" returns="void">
-          <summary>Creates action buttons on DASHBOARD sheet with OnAction handlers</summary>
-        </procedure>
-      </public-api>
-      <dependencies>mod_Procurement, mod_SyncBridge</dependencies>
-      <sheets-accessed>DASHBOARD</sheets-accessed>
-      <consumers>none (called via buttons)</consumers>
+    <module name="mod_BonLivraison" priority="low" deps="mod_Config, mod_Utilities" sheets="BON_RECEPTION">
+      <purpose>Delivery note (Bon de Livraison) operations</purpose>
     </module>
-
-    <module name="mod_LogViewer" type="standard" priority="low">
-      <purpose>Log viewing - retrieves recent log entries from file system</purpose>
-      <public-api>
-        <procedure name="GetLastLogEntries" signature="Function GetLastLogEntries(ByVal numLines As Integer) As String" returns="String">
-          <summary>Returns last N lines from the sync log file</summary>
-        </procedure>
-      </public-api>
-      <dependencies>mod_SyncBridge</dependencies>
-      <sheets-accessed>none</sheets-accessed>
-      <consumers>none</consumers>
+    <module name="mod_Budget" priority="low" deps="mod_Config" sheets="BUDGET">
+      <purpose>Budget tracking — guarded by IsBudgetSheetAvailable()</purpose>
     </module>
-
-    <module name="mod_Navigation" type="standard" priority="low">
-      <purpose>Navigation entry point - opens stock entry form</purpose>
-      <public-api>
-        <procedure name="OpenStockForm" signature="Public Sub OpenStockForm()" returns="void">
-          <summary>Shows frmStockEntry</summary>
-        </procedure>
-      </public-api>
-      <dependencies>none</dependencies>
-      <sheets-accessed>none</sheets-accessed>
-      <consumers>none (called via buttons)</consumers>
+    <module name="mod_BudgetSetup" priority="low" deps="mod_Config" sheets="BUDGET">
+      <purpose>Budget sheet initialization</purpose>
     </module>
-
-    <module name="mod_BonLivraison" type="standard" priority="low">
-      <purpose>Bon de Livraison (delivery note) generation and PDF export</purpose>
-      <module-level-constants>
-        <constant name="BL_COUNTER_RANGE" value="BL_CurrentCounter" />
-        <constant name="BL_LAST_YYYYMM_RANGE" value="BL_LastYYYYMM" />
-      </module-level-constants>
-      <public-api>
-        <procedure name="GenerateBL" signature="Function GenerateBL(Optional ByVal bcReference As String) As String" returns="String">
-          <summary>Generates a Bon de Livraison number with auto-incrementing counter</summary>
-        </procedure>
-        <procedure name="ExportBLToPDF" signature="Sub ExportBLToPDF(ByVal blNumber As String, Optional ByVal exportPath As String)" returns="void">
-          <summary>Exports BL to PDF from active sheet</summary>
-        </procedure>
-      </public-api>
-      <dependencies>none</dependencies>
-      <sheets-accessed>ActiveSheet</sheets-accessed>
-      <consumers>none</consumers>
+    <module name="mod_Facture" priority="low" deps="mod_Config, mod_Utilities" sheets="FACTURE">
+      <purpose>Invoice (Facture) operations</purpose>
     </module>
-
-    <module name="mod_Budget" type="standard" priority="medium">
-      <purpose>Budget tracking — auto-initializing, no silent guards, availability checks, spent tracking, dashboard KPIs, 623xxx public sector codes</purpose>
-      <public-api>
-        <procedure name="CheckBudgetAvailable" signature="Function CheckBudgetAvailable(articleCode As String, amount As Double) As Boolean" returns="Boolean" />
-        <procedure name="UpdateBudgetSpent" signature="Sub UpdateBudgetSpent(articleCode As String, amount As Double)" returns="void" />
-        <procedure name="GetBudgetRemaining" signature="Function GetBudgetRemaining(articleCode As String) As Double" returns="Double" />
-        <procedure name="GetBudgetAllocated" signature="Function GetBudgetAllocated(articleCode As String) As Double" returns="Double" />
-        <procedure name="GetBudgetCode" signature="Function GetBudgetCode(articleCode As String) As String" returns="String" />
-        <procedure name="GetTotalBudgetAllocated" signature="Function GetTotalBudgetAllocated() As Double" returns="Double" />
-        <procedure name="GetTotalBudgetSpent" signature="Function GetTotalBudgetSpent() As Double" returns="Double" />
-        <procedure name="GetBudgetUtilizationRate" signature="Function GetBudgetUtilizationRate() As Double" returns="Double" />
-        <procedure name="GetOverBudgetCount" signature="Function GetOverBudgetCount() As Long" returns="Long" />
-        <procedure name="GetBudgetSummary" signature="Function GetBudgetSummary() As String" returns="String" />
-        <procedure name="GenerateBudgetReport" signature="Sub GenerateBudgetReport()" returns="void" />
-      </public-api>
-      <dependencies>mod_Config, mod_Utilities, mod_BudgetSetup, mod_AuditTrail</dependencies>
-      <sheets-accessed>BUDGET (auto-created), BUDGET_REPORT</sheets-accessed>
-      <consumers>mod_StockEntry_Logic (budget check on save), mod_Dashboard (KPIs)</consumers>
-      <note>Refactored 2026-05-06: auto-initializes BUDGET sheet via mod_BudgetSetup, removed silent guards, added dashboard KPIs, suppressed MsgBox for silent init</note>
+    <module name="mod_UI_Setup" priority="low" deps="mod_Config, mod_Localization">
+      <purpose>UI ribbon/button setup</purpose>
     </module>
-
-    <module name="mod_Facture" type="standard" priority="low">
-      <purpose>Invoice generation from Bon de Livraison</purpose>
-      <module-level-constants>
-        <constant name="FACT_COUNTER_RANGE" value="FACT_CurrentCounter" />
-        <constant name="FACT_LAST_YYYYMM_RANGE" value="FACT_LastYYYYMM" />
-      </module-level-constants>
-      <public-api>
-        <procedure name="GenerateFacture" signature="Function GenerateFacture(ByVal blReference As String, ByVal amount As Double) As String" returns="String">
-          <summary>Generates an invoice number from a BL reference</summary>
-        </procedure>
-      </public-api>
-      <private-api>
-        <procedure name="CreateAccountingEntries" signature="Private Sub CreateAccountingEntries(ByVal factureNumber As String, ByVal amount As Double)" />
-      </private-api>
-      <dependencies>none</dependencies>
-      <sheets-accessed>ECR_* (dynamically created sheets)</sheets-accessed>
-      <consumers>none</consumers>
+    <module name="mod_LogViewer" priority="low" deps="mod_Config, mod_AuditTrail">
+      <purpose>Audit log viewer UI</purpose>
     </module>
-
-    <module name="mod_Forecasting" type="standard" priority="high">
-      <purpose>Demand forecasting engine — moving average methods (3/7/14-day), 30-day demand projection, stock coverage days, forecast accuracy (MAD)</purpose>
-      <public-api>
-        <procedure name="CalculateAllForecasts" signature="Function CalculateAllForecasts() As Variant" returns="Variant">
-          <summary>Calculates forecasts for all articles, returns array of ForecastResult structs</summary>
-        </procedure>
-        <procedure name="CalculateArticleForecast" signature="Function CalculateArticleForecast(articleCode As String) As ForecastResult" returns="ForecastResult">
-          <summary>Calculates forecast for a single article with moving averages and projections</summary>
-        </procedure>
-        <procedure name="RefreshForecastSheet" signature="Sub RefreshForecastSheet()" returns="void">
-          <summary>Generates/refreshes FORECAST sheet with color-coded status (NORMAL/ATTENTION/ALERTE/CRITIQUE/RUPTURE)</summary>
-        </procedure>
-        <procedure name="GetCriticalForecastCount" signature="Function GetCriticalForecastCount() As Long" returns="Long">
-          <summary>Dashboard KPI — count of articles where demand exceeds stock within 30 days</summary>
-        </procedure>
-        <procedure name="GetAverageForecastAccuracy" signature="Function GetAverageForecastAccuracy() As Double" returns="Double">
-          <summary>Dashboard KPI — average MAD across all articles with forecast data</summary>
-        </procedure>
-        <procedure name="GetMostUrgentArticle" signature="Function GetMostUrgentArticle() As String" returns="String">
-          <summary>Dashboard KPI — article with lowest stock coverage days</summary>
-        </procedure>
-        <procedure name="ExportForecastToPDF" signature="Sub ExportForecastToPDF()" returns="void">
-          <summary>Exports FORECAST sheet to timestamped PDF report</summary>
-        </procedure>
-      </public-api>
-      <public-structs>
-        <struct name="ForecastResult" fields="ArticleCode, ArticleDesc, CurrentStock, AvgDaily3, AvgDaily7, AvgDaily14, ProjectedDemand30, StockCoverDays, DaysUntilROP, IsCritical, ForecastAccuracy" />
-      </public-structs>
-      <dependencies>mod_Config, mod_Utilities</dependencies>
-      <sheets-accessed>MOUVEMENTS, ARTICLES, FORECAST (auto-created)</sheets-accessed>
-      <consumers>mod_Dashboard (KPI hooks), called via buttons</consumers>
+    <module name="mod_CSVImportExport" priority="low" deps="mod_Config, mod_Database">
+      <purpose>CSV bulk import/export for MOUVEMENTS, ARTICLES, FOURNISSEURS</purpose>
     </module>
-
-    <module name="MAIN_MACROS" type="standard" priority="critical">
-      <purpose>Primary entry point - ribbon/macro button handler for stock entry</purpose>
-      <public-api>
-        <procedure name="AjouterMouvement" signature="Sub AjouterMouvement()" returns="void">
-          <summary>Main entry point - shows frmStockEntry form</summary>
-        </procedure>
-      </public-api>
-      <dependencies>none (calls frmStockEntry UserForm directly)</dependencies>
-      <sheets-accessed>none</sheets-accessed>
-      <consumers>ribbon, button OnAction</consumers>
+    <module name="mod_Barcode" priority="low" deps="mod_Config" sheets="ARTICLES">
+      <purpose>Keyboard-wedge barcode scanner input</purpose>
+    </module>
+    <module name="mod_DemoData" priority="low" deps="mod_Config, mod_StockEngine">
+      <purpose>38-day thesis demo data generation</purpose>
+    </module>
+    <module name="mod_AutoBackup" priority="low" deps="mod_Config">
+      <purpose>Automatic scheduled backups</purpose>
+    </module>
+    <module name="MAIN_MACROS" priority="high">
+      <purpose>Entry-point macro sheet — button targets and workbook open sequence</purpose>
     </module>
   </modules>
-
-  <entry-points>
-    <entry type="macro" name="AjouterMouvement" handler="MAIN_MACROS.AjouterMouvement" description="Primary stock entry entry point" />
-    <entry type="macro" name="RefreshDashboard" handler="mod_Dashboard.RefreshDashboard" description="Refresh dashboard KPIs" />
-    <entry type="macro" name="CreateAllSheets" handler="mod_SheetSetup.CreateAllSheets" description="Create/verify all ERP sheets" />
-    <entry type="macro" name="BackupProjectCode" handler="mod_Backup.BackupProjectCode" description="Backup VBA code to files" />
-    <entry type="macro" name="UpdateABC_Classification" handler="mod_Analysis.UpdateABC_Classification" description="Update ABC classifications" />
-    <entry type="macro" name="ValidateByComptable" handler="mod_ApprovalWorkflow.ValidateByComptable" description="Comptable validation" />
-    <entry type="macro" name="ApproveByDirecteur" handler="mod_ApprovalWorkflow.ApproveByDirecteur" description="Directeur approval" />
-    <entry type="macro" name="InitializeMouvementsColumns" handler="mod_ApprovalWorkflow.InitializeMouvementsColumns" description="Add approval columns" />
-    <entry type="macro" name="ClearAuditLogs" handler="mod_AuditTrail.ClearAuditLogs" description="Clear audit log" />
-    <entry type="macro" name="GenerateBL" handler="mod_BonLivraison.GenerateBL" description="Generate delivery note" />
-    <entry type="macro" name="CheckBudgetAvailable" handler="mod_Budget.CheckBudgetAvailable" description="Budget availability check (auto-init)" />
-    <entry type="macro" name="UpdateBudgetSpent" handler="mod_Budget.UpdateBudgetSpent" description="Update budget spent amount" />
-    <entry type="macro" name="GetBudgetRemaining" handler="mod_Budget.GetBudgetRemaining" description="Get remaining budget for article" />
-    <entry type="macro" name="GetBudgetAllocated" handler="mod_Budget.GetBudgetAllocated" description="Get allocated budget for article" />
-    <entry type="macro" name="GetBudgetCode" handler="mod_Budget.GetBudgetCode" description="Get 623xxx budget code for article" />
-    <entry type="macro" name="GetTotalBudgetAllocated" handler="mod_Budget.GetTotalBudgetAllocated" description="Dashboard KPI — total allocated budget" />
-    <entry type="macro" name="GetTotalBudgetSpent" handler="mod_Budget.GetTotalBudgetSpent" description="Dashboard KPI — total spent budget" />
-    <entry type="macro" name="GetBudgetUtilizationRate" handler="mod_Budget.GetBudgetUtilizationRate" description="Dashboard KPI — budget utilization %" />
-    <entry type="macro" name="GetOverBudgetCount" handler="mod_Budget.GetOverBudgetCount" description="Dashboard KPI — count of over-budget articles" />
-    <entry type="macro" name="GetBudgetSummary" handler="mod_Budget.GetBudgetSummary" description="Dashboard KPI — formatted budget summary string" />
-    <entry type="macro" name="GenerateBudgetReport" handler="mod_Budget.GenerateBudgetReport" description="Generate budget status report sheet" />
-    <entry type="macro" name="SetupBudgetSheet" handler="mod_BudgetSetup.SetupBudgetSheet" description="One-time BUDGET sheet setup" />
-    <entry type="macro" name="SetupFournisseursSheet" handler="mod_SupplierRegistry.SetupFournisseursSheet" description="Create FOURNISSEURS sheet with tax ID columns" />
-    <entry type="macro" name="GetSupplierInfo" handler="mod_SupplierRegistry.GetSupplierInfo" description="Get full supplier info struct" />
-    <entry type="macro" name="IsSupplierValid" handler="mod_SupplierRegistry.IsSupplierValid" description="Validate supplier tax IDs" />
-    <entry type="macro" name="ExportTransactionToPDF" handler="mod_ExportEngine.ExportTransactionToPDF" description="Export transaction PDF" />
-    <entry type="macro" name="ExportTransactionToPDF_Silent" handler="mod_ExportEngine.ExportTransactionToPDF_Silent" description="Silent PDF export for batch operations" />
-    <entry type="macro" name="GenerateDemoData" handler="MAIN_MACROS.GenerateDemoData" description="Generate 38-day thesis defense demo dataset" />
-    <entry type="macro" name="BatchExportPDFs" handler="mod_SharedEnvironment.BatchExportPDFs" description="Batch export all documents in date range" />
-    <entry type="macro" name="BulkImportMovements" handler="mod_SharedEnvironment.BulkImportMovements" description="Bulk import movements from Excel sheet" />
-    <entry type="macro" name="AutoBackup" handler="mod_SharedEnvironment.AutoBackup" description="Manual auto-backup trigger" />
-    <entry type="macro" name="CheckCrashRecovery" handler="mod_TransactionSafety.CheckCrashRecovery" description="Check for incomplete transactions on startup" />
-    <entry type="macro" name="GetTransactionStatus" handler="mod_TransactionSafety.GetTransactionStatus" description="Get current transaction status" />
-    <entry type="macro" name="ExportToExcel" handler="mod_ExportEngine.ExportToExcel" description="Export to Excel" />
-    <entry type="macro" name="ExportDashboardPDF" handler="mod_ExportEngine.ExportDashboardPDF" description="Export dashboard PDF" />
-    <entry type="macro" name="GenerateFacture" handler="mod_Facture.GenerateFacture" description="Generate invoice" />
-    <entry type="macro" name="SetupDashboardButtons" handler="mod_UI_Setup.SetupDashboardButtons" description="Setup dashboard buttons" />
-    <entry type="macro" name="ShowSystemLog" handler="mod_UI_Setup.ShowSystemLog" description="Show system log" />
-    <entry type="macro" name="OpenStockForm" handler="modNavigation.OpenStockForm" description="Open stock entry form" />
-    <entry type="macro" name="GenerateOrderReport" handler="mod_Procurement.GenerateOrderReport" description="Generate procurement report" />
-    <entry type="macro" name="GenerateReceiptTagPDF" handler="mod_ReceiptTag.GenerateReceiptTagPDF" description="Generate receipt tag PDF" />
-    <entry type="macro" name="SetupReceiptTagSheet" handler="mod_ReceiptTag.SetupReceiptTagSheet" description="Setup receipt tag sheet" />
-    <entry type="macro" name="GenerateMonthlyReport" handler="mod_Reports.GenerateMonthlyReport" description="Generate monthly report" />
-    <entry type="macro" name="GenerateStockCard" handler="mod_Reports.GenerateStockCard" description="Generate stock card" />
-    <entry type="macro" name="RestoreInventoryAdvanced" handler="mod_Restore.RestoreInventoryAdvanced" description="Restore inventory from backup" />
-    <entry type="macro" name="RestoreMouvementsHeaders" handler="mod_Utilities.RestoreMouvementsHeaders" description="Restore MOUVEMENTS headers" />
-    <entry type="macro" name="SetupLocationDropdown" handler="mod_Utilities.SetupLocationDropdown" description="Setup location dropdown" />
-    <entry type="macro" name="ApplyInventoryHeatmap" handler="mod_Utilities.ApplyInventoryHeatmap" description="Apply stock heatmap" />
-    <entry type="macro" name="ExportLowStockPDF" handler="mod_Utilities.ExportLowStockPDF" description="Export low-stock PDF" />
-    <entry type="macro" name="CalculateROP" handler="mod_StockCalculations.CalculateROP" description="Calculate ROP" />
-    <entry type="macro" name="CalculateEOQ" handler="mod_StockCalculations.CalculateEOQ" description="Calculate EOQ" />
-    <entry type="macro" name="UpdateStockLedger" handler="mod_StockCalculations.UpdateStockLedger" description="Update stock ledger" />
-    <entry type="macro" name="SyncMetricsFromLedger" handler="mod_SyncBridge.SyncMetricsFromLedger" description="Sync metrics from ledger" />
-    <entry type="macro" name="GetSkuMetrics" handler="mod_SyncBridge.GetSkuMetrics" description="Get SKU metrics" />
-    <entry type="macro" name="RunAllTests" handler="mod_TestHarness.RunAllTests" description="Run all unit/integration tests" />
-    <entry type="macro" name="SmokeTest" handler="mod_TestHarness.SmokeTest" description="Full workbook smoke test" />
-    <entry type="macro" name="IsSupplierValid" handler="mod_SupplierRegistry.IsSupplierValid" description="Validate supplier tax IDs" />
-    <entry type="macro" name="BeginTransaction" handler="mod_TransactionSafety.BeginTransaction" description="Start atomic transaction with pre-state snapshot" />
-    <entry type="macro" name="CommitTransaction" handler="mod_TransactionSafety.CommitTransaction" description="Commit transaction with validation" />
-    <entry type="macro" name="RollbackTransaction" handler="mod_TransactionSafety.RollbackTransaction" description="Rollback transaction — restore pre-state" />
-    <entry type="macro" name="CheckCrashRecovery" handler="mod_TransactionSafety.CheckCrashRecovery" description="Detect incomplete transactions on workbook open" />
-    <entry type="event" name="Workbook_Open" handler="ThisWorkbook.Workbook_Open" description="Auto-init on workbook open (calls CheckCrashRecovery)" />
-    <entry type="macro" name="RefreshForecastSheet" handler="mod_Forecasting.RefreshForecastSheet" description="Generate/refresh demand forecast sheet" />
-    <entry type="macro" name="ExportForecastToPDF" handler="mod_Forecasting.ExportForecastToPDF" description="Export forecast report to PDF" />
-  </entry-points>
-
-  <data-flow>
-    <flow from="frmStockEntry (UserForm)" to="mod_StockEntry_Logic" via="InitializeForm, btnEnregistrer_Click" description="User enters stock movement data" />
-    <flow from="mod_StockEntry_Logic" to="mod_Database" via="SecureWriteTransaction" description="Write transaction to MOUVEMENTS" />
-    <flow from="mod_Database" to="MOUVEMENTS sheet" via="Worksheet write" description="Persist transaction record" />
-    <flow from="mod_StockEntry_Logic" to="mod_SyncBridge" via="SyncTransactionInternal" description="Sync stock balance and CMUP" />
-    <flow from="mod_SyncBridge" to="mod_StockEngine" via="UpdateArticleStockBalance, CalculateCMUP, ValidateStockLevel" description="Update article data" />
-    <flow from="mod_StockEngine" to="ARTICLES sheet" via="Worksheet write" description="Persist updated article data" />
-    <flow from="mod_StockEntry_Logic" to="mod_AuditTrail" via="LogTransaction" description="Log transaction to AUDIT_LOG" />
-    <flow from="mod_AuditTrail" to="AUDIT_LOG sheet" via="Worksheet write" description="Persist audit record" />
-    <flow from="mod_StockEntry_Logic" to="mod_ExportEngine" via="ExportTransactionToPDF" description="Generate PDF document" />
-    <flow from="mod_ExportEngine" to="mod_QRCode" via="GenerateQRCodeForForm" description="Generate QR code BEFORE PDF export (embedded in template)" />
-    <flow from="mod_ExportEngine" to="TEMPLATE_BON sheet" via="PopulateTemplateBon" description="Fill document template with transaction data" />
-    <flow from="mod_Dashboard" to="mod_StockEngine" via="GetSafetyStock, GetAnnualDemandFromHistory, ComputeROP" description="Fetch stock metrics" />
-    <flow from="mod_Dashboard" to="ARTICLES sheet" via="Read" description="Read article data for KPIs" />
-    <flow from="mod_Dashboard" to="DASHBOARD sheet" via="Write" description="Update dashboard display" />
-    <flow from="mod_Reports" to="MOUVEMENTS sheet" via="Read" description="Read transaction history" />
-    <flow from="mod_Reports" to="ARTICLES sheet" via="Read" description="Read article catalog" />
-    <flow from="mod_Reports" to="RAPPORT_MENSUEL/FICHE_STOCK sheets" via="Write" description="Generate report sheets" />
-    <flow from="mod_Procurement" to="mod_StockEngine" via="GetAnnualDemandFromHistory, ComputeROP, ComputeEOQ" description="Calculate procurement metrics" />
-    <flow from="mod_Procurement" to="BORDEREAU_COMMANDE sheet" via="Write" description="Write order report" />
-    <flow from="mod_SyncBridge" to="mod_StockEngine" via="RefreshAllCMUP, UpdateAllABCClassifications" description="Batch update all articles" />
-    <flow from="mod_StockEngine" to="ARTICLES sheet" via="Batch write" description="Persist batch updates" />
-    <flow from="mod_Forecasting" to="MOUVEMENTS sheet" via="Read" description="Read transaction history for moving average calculation" />
-    <flow from="mod_Forecasting" to="ARTICLES sheet" via="Read" description="Read current stock, ROP, SS for coverage analysis" />
-    <flow from="mod_Forecasting" to="FORECAST sheet" via="Write" description="Write forecast results with color-coded status" />
-    <flow from="mod_Dashboard" to="mod_Forecasting" via="GetCriticalForecastCount, GetAverageForecastAccuracy" description="Fetch forecast KPIs for dashboard" />
-    <flow from="mod_StockEntry_Logic" to="mod_Budget" via="CheckBudgetAvailable" description="Validate budget before transaction save" />
-    <flow from="mod_StockEntry_Logic" to="mod_Budget" via="UpdateBudgetSpent" description="Track spent amount after transaction" />
-    <flow from="mod_Budget" to="BUDGET sheet" via="Auto-create" description="Creates BUDGET sheet via mod_BudgetSetup if missing" />
-    <flow from="mod_Budget" to="BUDGET sheet" via="Read/Write" description="Budget allocation tracking and updates" />
-    <flow from="mod_Dashboard" to="mod_Budget" via="GetBudgetSummary, GetBudgetUtilizationRate" description="Fetch budget KPIs for dashboard" />
-    <flow from="mod_ExportEngine" to="mod_SupplierRegistry" via="GetSupplierTaxIDsForPDF" description="Auto-fill NIF/NIS/RC/Art tax IDs in PDF documents" />
-  </data-flow>
-
-  <security-checks>
-    <check type="sheet-protection" module="mod_Config" param="MASTER_PWD" description="All protected sheets use MASTER_PWD for unprotect/protect cycles" />
-    <check type="approval-workflow" module="mod_ApprovalWorkflow" description="Two-tier approval (comptable + directeur) for transactions" />
-    <check type="audit-logging" module="mod_AuditTrail" description="All transactions logged to AUDIT_LOG with timestamps" />
-    <check type="backup" module="mod_Backup" description="VBA code can be exported to text files for disaster recovery" />
-    <check type="restore" module="mod_Restore" description="Inventory can be restored from backup workbooks" />
-    <check type="budget-validation" module="mod_Budget" description="Budget availability checked before transactions, 623xxx codes enforced" />
-  </security-checks>
-
-  <warnings>
-    <warning level="info" id="W001" status="resolved">Module1 deleted from ERP_v13.2.xlsm via VBA COM (2026-05-06)</warning>
-    <warning level="info" id="W002" status="resolved">Module2 deleted from ERP_v13.2.xlsm via VBA COM (2026-05-06)</warning>
-    <warning level="info" id="W003" status="resolved">mod_SheetSetup local MASTER_PWD eliminated → all references now use mod_Config.MASTER_PWD</warning>
-    <warning level="info" id="W004" status="resolved">mod_Budget refactored — auto-initializes BUDGET sheet, removed silent guards, added 6 dashboard KPIs, budget report generation</warning>
-    <warning level="info" id="W005" status="resolved">mod_StockCalculations.UpdateStockLedger redirected to CALCULS_EOQ sheet with safe named-range fallback</warning>
-    <warning level="info" id="W006" status="resolved">modNavigation.OpenStockForm — Public keyword added</warning>
-    <warning level="info" id="W007" status="resolved">mod_ReceiptTag — Public keyword added to GenerateReceiptTagPDF, SetupReceiptTagSheet</warning>
-    <warning level="info" id="W008" status="resolved">mod_Utilities — Public keyword added to SetupLocationDropdown, ApplyInventoryHeatmap, ExportLowStockPDF</warning>
-    <warning level="info" id="W009" status="resolved">mod_SyncBridge stub functions implemented with state tracking (m_LastSyncTime, MarkSyncComplete)</warning>
-    <warning level="info" id="W010" status="resolved">ThisWorkbook.cls — Option Explicit removed to prevent compile errors on module references</warning>
-    <warning level="info" id="W011" status="resolved">mod_Forecasting added — demand forecasting with moving averages (3/7/14-day), 30-day projection, coverage days</warning>
-    <warning level="critical" id="W012" status="resolved">mod_ExportEngine CRITICAL FIX — QR code now generated BEFORE PDF export (was after ExportAsFixedFormat, never appeared in PDF). Added NIF/NIS/RC/Art tax identifiers (Algerian DGI requirement).</warning>
-    <warning level="info" id="W013" status="resolved">mod_QRCode refactored — Added QRServer API as secondary fallback (more reliable than deprecated Google Charts), 3-tier fallback chain</warning>
-    <warning level="compliance" id="W014" status="resolved">mod_SupplierRegistry added — Algerian DGI tax IDs (NIF/NIS/RC/Art) now auto-populated in PDF documents from supplier registry, closes legal compliance gap</warning>
-    <warning level="critical" id="W015" status="resolved">mod_TransactionSafety added — atomic transaction execution with pre/post snapshots, automatic rollback, crash recovery detection. Prevents data corruption from mid-save failures.</warning>
-  </warnings>
-
-  <do-not-touch>
-    <item reason="active development">mod_StockEntry_Logic - Core transaction logic, heavily interconnected</item>
-    <item reason="thesis compliance">mod_Config - All constants map to thesis ground truth values (D=1546, ROP=205.6, SS=200, Q*=176, LT=2)</item>
-    <item reason="production data">ARTICLES sheet - Contains the official article catalog with 12+ articles</item>
-    <item reason="production data">MOUVEMENTS sheet - Contains the official transaction ledger</item>
-  </do-not-touch>
-
-  <safe-to-modify>
-    <item reason="now integrated">mod_Budget — auto-initializing, connected to dashboard KPIs</item>
-    <item reason="low impact">mod_LogViewer, modNavigation - Simple wrappers</item>
-    <item reason="new module">mod_Forecasting - Self-contained, no production data modifications</item>
-  </safe-to-modify>
+  <sheets>
+    <sheet name="ACCUEIL">Home/dashboard landing page</sheet>
+    <sheet name="ARTICLES">Article catalog — stock, CMUP, ABC classification, ROP, EOQ</sheet>
+    <sheet name="FOURNISSEURS">Supplier registry — NIF/NIS/RC/Art tax IDs</sheet>
+    <sheet name="CONVENTIONS">Frame agreements / conventions</sheet>
+    <sheet name="MOUVEMENTS">Transaction ledger — all stock movements</sheet>
+    <sheet name="TABLEAU_DE_BORD">French dashboard (original)</sheet>
+    <sheet name="ALERTE_DASHBOARD">Stock alerts dashboard</sheet>
+    <sheet name="INVENTAIRE">Physical inventory tracking</sheet>
+    <sheet name="RAPPORTS">Monthly reports output</sheet>
+    <sheet name="CALCULS_EOQ">EOQ/ROP calculation display</sheet>
+    <sheet name="HISTORIQUE">Historical movements archive</sheet>
+    <sheet name="BON_RECEPTION">Receipt note print layout</sheet>
+    <sheet name="BON_SORTIE">Stock-out note print layout</sheet>
+    <sheet name="BON_COMMANDE">Purchase order print layout</sheet>
+    <sheet name="DA_DEMANDE_ACHAT">Purchase request + approval workflow</sheet>
+    <sheet name="GUIDE">User guide / documentation</sheet>
+    <sheet name="VBA_MODULES">Module reference list</sheet>
+    <sheet name="AUDIT_LOG">Audit trail / transaction log</sheet>
+    <sheet name="DASHBOARD">English KPI dashboard</sheet>
+    <sheet name="FORM_INPUT">Form input staging area</sheet>
+    <sheet name="BORDEREAU_COMMANDE">Order form (Bordereau de Commande)</sheet>
+    <sheet name="STAGING_BUFFER">Temporary staging for data import</sheet>
+    <sheet name="SYS_STRINGS">Localization string table (French/English/Arabic)</sheet>
+    <sheet name="RECEIPT_TAG">Receipt tag print layout</sheet>
+    <sheet name="TEMPLATE_BON">Document template (base layout for PDF export)</sheet>
+  </sheets>
+  <call-graph>
+    <node name="mod_Config">leaf — no dependencies</node>
+    <node name="mod_Utilities">depends on mod_Config</node>
+    <node name="mod_Localization">depends on mod_Config</node>
+    <node name="mod_Database">depends on mod_Config</node>
+    <node name="mod_StockEngine">depends on mod_Config</node>
+    <node name="mod_StockCalculations">depends on mod_Config</node>
+    <node name="mod_AuditTrail">depends on mod_Config</node>
+    <node name="mod_QRCode">depends on mod_Config</node>
+    <node name="mod_SyncBridge">depends on mod_Config, mod_StockEngine</node>
+    <node name="mod_TransactionSafety">depends on mod_SharedEnvironment</node>
+    <node name="mod_ExportEngine">depends on mod_Config, mod_Utilities, mod_QRCode</node>
+    <node name="mod_StockEntry_Logic">depends on 8 modules: Config, Utilities, Localization, Database, SyncBridge, AuditTrail, ExportEngine, TransactionSafety</node>
+    <node name="mod_Dashboard">depends on mod_Config, mod_StockEngine</node>
+    <node name="mod_Reports">depends on mod_Config, mod_StockEngine</node>
+    <node name="mod_SheetSetup">depends on mod_Config</node>
+    <node name="mod_Procurement">depends on mod_Config, mod_StockEngine</node>
+    <node name="mod_SharedEnvironment">leaf — no dependencies (env vars, file API)</node>
+  </call-graph>
+  <thesis-params>
+    <param name="D" formula="SUM(MOUVEMENTS qty over 38 days) = 1546" />
+    <param name="Q*" formula="SQRT(2*D*S/(I*unitPrice)) = 176" />
+    <param name="ROP" formula="(D/250)*LT + SS = 205.6" />
+    <param name="SS" formula="(MaxDaily - AvgDaily)*LT = 200" />
+    <param name="LT" value="2 days" />
+    <param name="S" value="500 DZD" />
+    <param name="I" value="20%" />
+    <param name="article-case" value="ART-001 Toner G030 (HP LaserJet)" />
+  </thesis-params>
 </project>

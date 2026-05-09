@@ -42,20 +42,6 @@ if (-not (Test-Path $sourcePath)) {
 $docx = Join-Path $outDir "$OutputName.docx"
 Write-Host "[2/6] Generating DOCX..." -ForegroundColor Yellow
 
-# Pass metadata: title, author, etc. from metadata file
-$metaFile = Join-Path $style "thesis-metadata.yaml"
-$meta = Get-Content $metaFile -Raw
-$metaFlags = @()
-foreach ($line in ($meta -split "`n")) {
-    if ($line -match '^(\w+):\s*(.+)$') {
-        $key = $matches[1]
-        $val = $matches[2].Trim().Trim('"', "'")
-        if ($val -ne "..." -and $key -notin @("dir","lang","documentclass")) {
-            $metaFlags += "--metadata"; $metaFlags += "$key=$val"
-        }
-    }
-}
-
 $pandocArgs = @(
     $sourcePath,
     "--from", "markdown+grid_tables-yaml_metadata_block",
@@ -66,7 +52,7 @@ $pandocArgs = @(
     "--resource-path", "$root\images;$root",
     "--wrap", "preserve",
     "--eol", "lf"
-) + $metaFlags
+)
 
 try {
     & pandoc $pandocArgs 2>&1
@@ -86,9 +72,18 @@ try {
     Write-Host "  [WARN] Table formatting failed: $_" -ForegroundColor Yellow
 }
 
-# Step 4: Generate PDF via Word
+# Step 4: Format cover page with professional styling
+Write-Host "[4/7] Formatting cover page..." -ForegroundColor Yellow
+try {
+    python (Join-Path $style "format-cover.py") $docx 2>&1
+    Write-Host "  Cover formatted with reference DOCX design" -ForegroundColor Green
+} catch {
+    Write-Host "  [WARN] Cover formatting failed: $_" -ForegroundColor Yellow
+}
+
+# Step 5: Generate PDF via Word
 $pdf = Join-Path $outDir "$OutputName.pdf"
-Write-Host "[4/6] Generating PDF via Word..." -ForegroundColor Yellow
+Write-Host "[5/7] Generating PDF via Word..." -ForegroundColor Yellow
 try {
     $word = New-Object -ComObject Word.Application
     $word.Visible = $false
@@ -104,8 +99,8 @@ try {
     Write-Host "  Open $docx in Word and save as PDF manually." -ForegroundColor Yellow
 }
 
-# Step 5: Verify output
-Write-Host "[5/6] Verifying..." -ForegroundColor Yellow
+# Step 6: Verify output
+Write-Host "[6/7] Verifying..." -ForegroundColor Yellow
 if (Test-Path $docx) {
     Write-Host "  DOCX OK: $([math]::Round((Get-Item $docx).Length/1KB)) KB" -ForegroundColor Green
 }
@@ -113,15 +108,16 @@ if (Test-Path $pdf) {
     Write-Host "  PDF OK: $([math]::Round((Get-Item $pdf).Length/1KB)) KB" -ForegroundColor Green
 }
 
-# Step 6: Done
-Write-Host "[6/6] Complete" -ForegroundColor Yellow
+# Step 7: Done
+Write-Host "[7/7] Complete" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "=== BUILD COMPLETE ===" -ForegroundColor Green
 Write-Host "DOCX: $docx" -ForegroundColor Cyan
 if (Test-Path $pdf) { Write-Host "PDF:  $pdf" -ForegroundColor Cyan }
 Write-Host ""
-Write-Host "Design notes:" -ForegroundColor Gray
-Write-Host "- Font: Traditional Arabic 14pt (from user's original DOC)" -ForegroundColor Gray
-Write-Host "- Headers: #1B2631 (dark navy) section titles, #0C447C (deep blue) subs" -ForegroundColor Gray
+Write-Host "Design notes (from reference DOCX):" -ForegroundColor Gray
+Write-Host "- Font: Traditional Arabic 14pt (docDefaults from user's original)" -ForegroundColor Gray
+Write-Host "- Headings: #1B2631 22pt (H1), #0C447C 18pt (H2), #0C447C 16pt (H3)" -ForegroundColor Gray
+Write-Host "- Cover: #1A1A1A titles, #1F6B2E English title (Times New Roman), #806000 date" -ForegroundColor Gray
 Write-Host "- Tables: #0C447C header fill, white bold text, #EBF5FB alternating rows" -ForegroundColor Gray
-Write-Host "- Page: A4, 4cm margins, RTL layout" -ForegroundColor Gray
+Write-Host "- Page: A4, 4cm margins, RTL, 1.5 line spacing" -ForegroundColor Gray

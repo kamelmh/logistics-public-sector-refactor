@@ -31,7 +31,7 @@ Write-Host ""
 $ROOT = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor"
 $WORKBOOK = "C:\Users\Administrator\Dropbox\ERP_v13.2.xlsm"
 $VBA_MODULES = Join-Path $ROOT "Software_Surgical_Edit\VBA_Modules"
-$SYSTEM_CONFIG = Join-Path $ROOT "Software_Surgical_Edit\erp-system-config.xml"
+$SYSTEM_CONFIG = Join-Path $ROOT "Software_Surgical_Edit\erp-project-context.xml"
 $CONTEXT_XML = Join-Path $ROOT "Software_Surgical_Edit\erp-project-context.xml"
 $AGENT_HANDOFF = Join-Path $ROOT "Software_Surgical_Edit\erp-agent-handoff.xml"
 $OPENCODE_CONFIG = "C:\Users\Administrator\.config\opencode\opencode.json"
@@ -258,7 +258,7 @@ do {
         }
         "3" {
             Write-Host "  Running DSS audit..." -ForegroundColor Yellow
-            & "$ROOT\Software_Surgical_Edit\milestone_13_2\tests\dss-audit.ps1"
+            & "$ROOT\milestone_13_2\tests\dss-audit.ps1"
             Write-Host "  Press Enter to continue..." -ForegroundColor Gray
             $null = Read-Host
         }

@@ -1,0 +1,48 @@
+{
+  "project_name": "Academix v13.2",
+  "version": "v13.2",
+  "description": "ERP Académie — Inventory Management DSS",
+  "master_workbook": "C:\\Users\\Administrator\\Dropbox\\Logistics.Public.Sector.Refactor\\Software_Surgical_Edit\\ERP_Academie_v13_Master.xlsm",
+  "output_workbook": "C:\\Users\\Administrator\\Dropbox\\Logistics.Public.Sector.Refactor\\Software_Surgical_Edit\\ERP_Academie_v13_2.xlsm",
+  "vba_source_dir": "C:\\Users\\Administrator\\Dropbox\\Logistics.Public.Sector.Refactor\\Software_Surgical_Edit\\VBA_Modules",
+  "thisworkbook_source": "C:\\Users\\Administrator\\Dropbox\\Logistics.Public.Sector.Refactor\\Software_Surgical_Edit\\VBA_Modules\\ThisWorkbook.cls",
+  "verification": {
+    "expected_sheets": [
+      "ACCUEIL", "ARTICLES", "FOURNISSEURS", "CONVENTIONS", "MOUVEMENTS",
+      "TABLEAU DE BORD", "ALERTE_DASHBOARD", "INVENTAIRE", "RAPPORTS",
+      "CALCULS_EOQ", "HISTORIQUE", "BON_RECEPTION", "BON_SORTIE",
+      "BON_COMMANDE", "DA_DEMANDE_ACHAT", "GUIDE", "VBA_MODULES",
+      "AUDIT_LOG", "DASHBOARD", "FORM_INPUT", "BORDEREAU_COMMANDE",
+      "STAGING_BUFFER", "SYS_STRINGS", "RECEIPT_TAG", "TEMPLATE_BON"
+    ],
+    "expected_modules": [
+      "mod_Config", "mod_StockEngine", "mod_StockEntry_Logic",
+      "mod_TransactionSafety", "mod_AuditTrail", "mod_ExportEngine",
+      "mod_Dashboard", "mod_Reports", "mod_DemoData"
+    ],
+    "expected_constants": [
+      { "name": "VERSION", "value": "v13.2" },
+      { "name": "SHEET_MOUVEMENTS", "value": "MOUVEMENTS" },
+      { "name": "SHEET_ARTICLES", "value": "ARTICLES" },
+      { "name": "WORKING_DAYS_PER_YEAR", "value": "250" },
+      { "name": "OBSERVATION_DAYS", "value": "38" }
+    ]
+  },
+  "protection": {
+    "sheet_password": "erp_secure_pwd_2026",
+    "vba_project_password": null
+  },
+  "macros": {
+    "startup": ["RestoreMouvementsHeaders", "SyncMetricsFromLedger"],
+    "test_all": [
+      "RestoreMouvementsHeaders",
+      "GenerateDemoData",
+      "RefreshDashboard",
+      "SyncMetricsFromLedger",
+      "UpdateABC_Classification",
+      "RefreshAllCMUP",
+      "UpdateAllABCClassifications"
+    ]
+  },
+  "notes": "Pure VBA Excel DSS — Zero external dependencies — Offline-first"
+}
