@@ -29,7 +29,7 @@ Write-Host ""
 
 # ─── CONFIG ───────────────────────────────────────────────────
 $ROOT = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor"
-$WORKBOOK = "C:\Users\Administrator\Dropbox\ERP_v13.2.xlsm"
+$WORKBOOK = Join-Path $ROOT "Software_Surgical_Edit\ERP_Academie_v13_2.xlsm"
 $VBA_MODULES = Join-Path $ROOT "Software_Surgical_Edit\VBA_Modules"
 $SYSTEM_CONFIG = Join-Path $ROOT "Software_Surgical_Edit\erp-project-context.xml"
 $CONTEXT_XML = Join-Path $ROOT "Software_Surgical_Edit\erp-project-context.xml"

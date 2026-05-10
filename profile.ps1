@@ -2,12 +2,13 @@
 # Academix v13.2 — Portable Profile Module
 # Source this from your PowerShell $PROFILE to get all shortcuts + PATH setup
 # Location: Project root (move project anywhere, update one path in $PROFILE)
-# Updated: 2026-05-10 — Cleaned stale models, standardized shortcuts
+# Updated: 2026-05-10 — Portable launcher paths, OpenCode wrapper function
 # =============================================================================
 
 $script:ProjRoot = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor"
 $script:Desktop   = "C:\Users\Administrator\Desktop"
 $script:OcBin     = "$Desktop\opencode-windows-x64-baseline"
+$script:OcBat     = "$ProjRoot\OpenCode.bat"
 
 # ── PATH Setup ──────────────────────────────────────────────────────────────
 $needed = @($Desktop, $OcBin)
@@ -54,8 +55,9 @@ function autotest   { & "$script:ProjRoot\Software_Surgical_Edit\test-macros.ps1
 function autoaudit  { & "$script:ProjRoot\milestone_13_2\tests\dss-audit.ps1" }
 function autocheck  { health; git -C $script:ProjRoot status }
 function autofix    { build; verify; autotest; autoaudit }
-function autoclean  { & "$script:Desktop\OpenCode.bat" autoclean }
-function status     { & "$script:Desktop\OpenCode.bat" status }
+function OpenCode   { & $script:OcBat $args }
+function autoclean  { & $script:OcBat autoclean }
+function status     { & $script:OcBat status }
 
 # ── File Browsers ───────────────────────────────────────────────────────────
 function docs   { notepad "$script:ProjRoot\USER_GUIDE.md" }
