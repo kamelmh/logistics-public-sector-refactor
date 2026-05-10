@@ -28,21 +28,21 @@ Write-Host "`r  Boot [######] 100% — Ready" -ForegroundColor Green
 Write-Host ""
 
 # ─── CONFIG ───────────────────────────────────────────────────
-$ROOT = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor"
+$ROOT = Split-Path $PSScriptRoot -Parent
 $WORKBOOK = Join-Path $ROOT "Software_Surgical_Edit\ERP_Academie_v13_2.xlsm"
 $VBA_MODULES = Join-Path $ROOT "Software_Surgical_Edit\VBA_Modules"
 $SYSTEM_CONFIG = Join-Path $ROOT "Software_Surgical_Edit\erp-project-context.xml"
 $CONTEXT_XML = Join-Path $ROOT "Software_Surgical_Edit\erp-project-context.xml"
 $AGENT_HANDOFF = Join-Path $ROOT "Software_Surgical_Edit\erp-agent-handoff.xml"
-$OPENCODE_CONFIG = "C:\Users\Administrator\.config\opencode\opencode.json"
-$AGENTS_MD = "C:\Users\Administrator\.config\opencode\AGENTS.md"
-$MEMORY_JSON = "C:\Users\Administrator\.opencode\project-memory.json"
-$NOTEPAD_MD = "C:\Users\Administrator\.opencode\notepad.md"
+$OPENCODE_CONFIG = "$env:USERPROFILE\.config\opencode\opencode.json"
+$AGENTS_MD = "$env:USERPROFILE\.config\opencode\AGENTS.md"
+$MEMORY_JSON = "$env:USERPROFILE\.opencode\project-memory.json"
+$NOTEPAD_MD = "$env:USERPROFILE\.opencode\notepad.md"
 $GIT_REMOTE = "https://github.com/kamelmh/logistics-public-sector-refactor"
 function Get-Secret {
     param([string]$Name, [string]$File)
-    # Priority: env var > encrypted DPAPI XML > warning
-    $v = [Environment]::GetEnvironmentVariable($Name, "User") -or [Environment]::GetEnvironmentVariable($Name, "Process")
+    $v = [Environment]::GetEnvironmentVariable($Name, "User")
+    if (-not $v) { $v = [Environment]::GetEnvironmentVariable($Name, "Process") }
     if ($v) { return $v }
     $xmlPath = "$env:USERPROFILE\.academix-$File.xml"
     if (Test-Path $xmlPath) {
@@ -54,8 +54,8 @@ function Get-Secret {
 $GROQ_API_KEY = Get-Secret -Name "GROQ_API_KEY" -File "groq"
 $GROQ_MODEL = "llama-3.3-70b-versatile"
 $GROQ_FAST_MODEL = "qwen/qwen3-32b"
-$OPENCODE_SKILLS = "C:\Users\Administrator\.opencode\skills"
-$OPENCODE_FORK_SKILLS = "C:\Users\Administrator\opencode\skills"
+$OPENCODE_SKILLS = "$env:USERPROFILE\.opencode\skills"
+$OPENCODE_FORK_SKILLS = "$env:USERPROFILE\opencode\skills"
 
 $pass = 0; $fail = 0; $warn = 0
 function Check {
@@ -263,8 +263,9 @@ do {
     OpenCode ollama          Ollama model picker (all 4 local models)
     OpenCode fcc             Nemotron 120B (OpenRouter free, 1M ctx)
 
-  Then type trigger phrase:
+  Then type trigger phrase in chat:
     ACADEMIX_CONTEXT v13.2 DEPLOYED_IN_OPENCODE
+  Or use /academix command for live context reload with git status
 "@ -ForegroundColor Green
             break
         }
@@ -317,6 +318,7 @@ do {
 
   [ TRIGGER PHRASE ]
     >>> ACADEMIX_CONTEXT v13.2 DEPLOYED_IN_OPENCODE
+    >>> /academix  (slash command — reloads context + live git status)
 
   [ AGENT MODES ]
     /mode explore|plan|build|debug|audit

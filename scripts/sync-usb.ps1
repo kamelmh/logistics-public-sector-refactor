@@ -4,7 +4,7 @@
 
 param([string]$Mode = "status")
 
-$root = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor"
+$root = Split-Path $PSScriptRoot -Parent
 $usbRoot = "H:\Academix"
 
 $pairs = @(
@@ -28,8 +28,8 @@ function Show-Status {
     }
     Write-Host "`nUSB: H:\  $(if(Test-Path $usbRoot){'FOUND'}else{'NOT FOUND'})" -ForegroundColor $(if(Test-Path $usbRoot){'Green'}else{'Red'})
     Write-Host "Commands:" -ForegroundColor Cyan
-    Write-Host "  .\sync-usb.ps1 push   — USB ← Workspace (backup to USB)" -ForegroundColor White
-    Write-Host "  .\sync-usb.ps1 pull   — USB → Workspace (restore from USB)" -ForegroundColor White
+    Write-Host "  .\scripts\sync-usb.ps1 push   — USB ← Workspace (backup to USB)" -ForegroundColor White
+    Write-Host "  .\scripts\sync-usb.ps1 pull   — USB → Workspace (restore from USB)" -ForegroundColor White
 }
 
 function Sync-Push {

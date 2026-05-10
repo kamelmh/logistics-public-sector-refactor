@@ -5,8 +5,8 @@
 # Updated: 2026-05-10 — Portable launcher paths, OpenCode wrapper function
 # =============================================================================
 
-$script:ProjRoot = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor"
-$script:Desktop   = "C:\Users\Administrator\Desktop"
+$script:ProjRoot = Split-Path $PSScriptRoot -Parent
+$script:Desktop   = "$env:USERPROFILE\Desktop"
 $script:OcBin     = "$Desktop\opencode-windows-x64-baseline"
 $script:OcBat     = "$ProjRoot\OpenCode.bat"
 
@@ -45,7 +45,7 @@ function oo     { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe"
 # ── Build & Verify ──────────────────────────────────────────────────────────
 function build  { & "$script:ProjRoot\vbe-auto\build.ps1" -ConfigPath "$script:ProjRoot\vbe-auto\config.json" }
 function verify { & "$script:ProjRoot\vbe-auto\verify.ps1" -ConfigPath "$script:ProjRoot\vbe-auto\config.json" }
-function health { & "$script:ProjRoot\system-health-test.ps1" }
+function health { & "$script:ProjRoot\scripts\system-health-test.ps1" }
 function thesis { & "$script:ProjRoot\Thesis_Surgical_Edit\build-thesis.ps1" }
 
 # ── AUTO Pipeline ──────────────────────────────────────────────────────────

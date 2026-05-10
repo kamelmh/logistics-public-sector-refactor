@@ -4,9 +4,9 @@
 # ============================================================================
 
 $ErrorActionPreference = "Continue"
-$ROOT = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor"
-$OPENCODE_CONFIG = "C:\Users\Administrator\.config\opencode"
-$DESKTOP = "C:\Users\Administrator\Desktop"
+$ROOT = Split-Path $PSScriptRoot -Parent
+$OPENCODE_CONFIG = "$env:USERPROFILE\.config\opencode"
+$DESKTOP = "$env:USERPROFILE\Desktop"
 $PASS = 0; $FAIL = 0; $WARN = 0; $TOTAL = 0
 
 function Test-Step {

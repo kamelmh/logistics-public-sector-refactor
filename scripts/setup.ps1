@@ -5,7 +5,7 @@
 param([string]$Mode = "status")
 
 $ErrorActionPreference = "Continue"
-$root = Split-Path $MyInvocation.MyCommand.Path -Parent
+$root = Split-Path $PSScriptRoot -Parent
 $memory = "$root\.opencode\memory"
 $sessionFile = "$memory\session.json"
 $logFile = "$memory\session.log"
@@ -84,11 +84,11 @@ function Show-Status {
     Write-Host "  Build: .\vbe-auto\build.ps1 -ConfigPath .\vbe-auto\config.json" -ForegroundColor Gray
 
     Write-Host "`nCommands:" -ForegroundColor Cyan
-    Write-Host "  .\setup.ps1 online   — force online mode" -ForegroundColor White
-    Write-Host "  .\setup.ps1 offline  — force offline mode" -ForegroundColor White
-    Write-Host "  .\setup.ps1 drive    — detect drives" -ForegroundColor White
-    Write-Host "  .\setup.ps1 deploy   — deploy to detected SSD" -ForegroundColor White
-    Write-Host "  .\setup.ps1 status   — show this status" -ForegroundColor White
+    Write-Host "  .\scripts\setup.ps1 online   — force online mode" -ForegroundColor White
+    Write-Host "  .\scripts\setup.ps1 offline  — force offline mode" -ForegroundColor White
+    Write-Host "  .\scripts\setup.ps1 drive    — detect drives" -ForegroundColor White
+    Write-Host "  .\scripts\setup.ps1 deploy   — deploy to detected SSD" -ForegroundColor White
+    Write-Host "  .\scripts\setup.ps1 status   — show this status" -ForegroundColor White
 }
 
 function Set-Mode {

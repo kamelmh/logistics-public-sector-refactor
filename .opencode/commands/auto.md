@@ -28,7 +28,7 @@ Scripts:
 - Test:    pwsh -NoProfile -ExecutionPolicy Bypass -File Software_Surgical_Edit/test-macros.ps1
 - Audit:   pwsh -NoProfile -ExecutionPolicy Bypass -File milestone_13_2/tests/dss-audit.ps1
 - Thesis:  pwsh -NoProfile -ExecutionPolicy Bypass -File Thesis_Surgical_Edit/build-thesis.ps1
-- Health:  pwsh -NoProfile -ExecutionPolicy Bypass -File system-health-test.ps1
+- Health:  pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/system-health-test.ps1
 
 For "plan", load the plan skill and do a planning session for the current task.
 

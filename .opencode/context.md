@@ -59,7 +59,7 @@
 | Context XML | `C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\erp-project-context.xml` |
 | Admin Paths XML | `C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\erp-admin-paths.xml` |
 | Workbook | `C:\Users\Administrator\Dropbox\ERP_v13.2.xlsm` |
-| Launcher | `C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\academix-launcher.ps1` |
+| Launcher | `C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\scripts\academix-launcher.ps1` |
 | OpenCode Config | `C:\Users\Administrator\.config\opencode\opencode.json` |
 | AGENTS.md | `C:\Users\Administrator\.config\opencode\AGENTS.md` |
 | Memory JSON | `C:\Users\Administrator\.opencode\project-memory.json` |
@@ -145,7 +145,7 @@ See `.opencode/agents/engineering-harness.md` for full agent definitions.
 
 ## Next Session Protocol
 1. Open terminal → `cd C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor`
-2. Run launcher: `.\academix-launcher.ps1` (optional — health check)
+2. Run launcher: `.\scripts\academix-launcher.ps1` (optional — health check)
 3. Launch OpenCode: `opencode`
 4. Type: `ACADEMIX_CONTEXT v13.2 DEPLOYED_IN_OPENCODE`
 5. Groq instantly knows: all paths, all modules, all ground truth, all agents

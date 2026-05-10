@@ -92,8 +92,8 @@ set "CONFIG_PATH=%VBE_AUTO%\config.json"
 set "TEST_SCRIPT=%PROJECT_ROOT%\Software_Surgical_Edit\test-macros.ps1"
 set "AUDIT_SCRIPT=%PROJECT_ROOT%\milestone_13_2\tests\dss-audit.ps1"
 set "THESIS_SCRIPT=%PROJECT_ROOT%\Thesis_Surgical_Edit\build-thesis.ps1"
-set "HEALTH_SCRIPT=%PROJECT_ROOT%\system-health-test.ps1"
-set "ACADEMIX_SCRIPT=%PROJECT_ROOT%\academix-launcher.ps1"
+set "HEALTH_SCRIPT=%PROJECT_ROOT%\scripts\system-health-test.ps1"
+set "ACADEMIX_SCRIPT=%PROJECT_ROOT%\scripts\academix-launcher.ps1"
 set "PWSH=pwsh -NoProfile -ExecutionPolicy Bypass"
 
 :: ---- Remove trailing backslash from OC_EXE dir for BASEDIR ----
@@ -496,6 +496,10 @@ if exist "%VBE_AUTO%\results" (
 forfiles /p "%VBE_AUTO%" /s /m verify_results_*.json /d -30 /c "cmd /c del @path" >nul 2>&1
 forfiles /p "%PROJECT_ROOT%" /s /m *.tmp /d -30 /c "cmd /c del @path" >nul 2>&1
 forfiles /p "%PROJECT_ROOT%" /s /m *.temp /d -30 /c "cmd /c del @path" >nul 2>&1
+if exist "%PROJECT_ROOT%\.tmp.driveupload" (
+    rmdir /s /q "%PROJECT_ROOT%\.tmp.driveupload"
+    set /a CLEANED+=1
+)
 if exist "%MEMORY_DIR%" (
     pushd "%MEMORY_DIR%"
     for /f "skip=5 delims=" %%f in ('dir /b /o-d last-session-*.txt 2^>nul') do del "%%f" 2>nul

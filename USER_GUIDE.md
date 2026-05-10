@@ -166,7 +166,7 @@ git push                                     # Upload to GitHub
 
 ### 🃏 Project Dashboard (menu-based)
 ```powershell
-.\academix-launcher.ps1                      # Interactive menu
+.\scripts\academix-launcher.ps1               # Interactive menu
 # Or: OpenCode academix
 ```
 

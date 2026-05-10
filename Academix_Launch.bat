@@ -2,7 +2,7 @@
 title Academix v13.2 ^| ERP Academie DSS ^| El Bayadh
 :: Portable — uses %~dp0 relative paths
 set "SCRIPT_ROOT=%~dp0"
-set "PS1_PATH=%SCRIPT_ROOT%academix-launcher.ps1"
+set "PS1_PATH=%SCRIPT_ROOT%scripts\academix-launcher.ps1"
 echo.
 echo  ===========================================
 echo    Academix v13.2 — Decision Support System
