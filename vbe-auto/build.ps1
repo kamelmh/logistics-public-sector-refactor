@@ -60,7 +60,7 @@ if (-not (Test-Path $sourceDir)) {
 # STEP 1: Kill Excel
 # ============================================================================
 
-Write-Host "[1/7] Killing Excel..." -ForegroundColor Yellow
+Write-Host "[1/9] Killing Excel..." -ForegroundColor Yellow
 Get-Process -Name "EXCEL" -ErrorAction SilentlyContinue | Stop-Process -Force
 Start-Sleep 2
 
@@ -68,7 +68,7 @@ Start-Sleep 2
 # STEP 2: Open Master Workbook
 # ============================================================================
 
-Write-Host "[2/7] Opening MASTER workbook..." -ForegroundColor Yellow
+Write-Host "[2/9] Opening MASTER workbook..." -ForegroundColor Yellow
 $xl = New-Object -ComObject Excel.Application
 $xl.Visible = $false
 $xl.DisplayAlerts = $false
@@ -89,7 +89,7 @@ try {
 # STEP 3: Strip All User Modules
 # ============================================================================
 
-Write-Host "[3/7] Stripping all user modules..." -ForegroundColor Yellow
+Write-Host "[3/9] Stripping all user modules..." -ForegroundColor Yellow
 $removed = 0
 $components = @()
 
@@ -114,7 +114,7 @@ Write-Host "  Removed $removed modules" -ForegroundColor Gray
 # STEP 4: Import Source Files
 # ============================================================================
 
-Write-Host "[4/7] Importing source files..." -ForegroundColor Yellow
+Write-Host "[4/9] Importing source files..." -ForegroundColor Yellow
 
 # Import .bas files
 $basFiles = Get-ChildItem -Path $sourceDir -Filter "*.bas" -ErrorAction SilentlyContinue
@@ -165,7 +165,7 @@ Write-Host "  Imported $basCount .bas, $frmCount .frm files" -ForegroundColor Gr
 # STEP 5: Compile
 # ============================================================================
 
-Write-Host "[5/7] Compiling..." -ForegroundColor Yellow
+Write-Host "[5/9] Compiling..." -ForegroundColor Yellow
 try {
     $xl.VBE.CommandBars("Menu Bar").Controls("Debug").Controls("Compile VBAProject").Execute()
     Write-Host "  COMPILE: OK" -ForegroundColor Green
@@ -180,8 +180,8 @@ try {
 # STEP 5b: Protect Sheets
 # ============================================================================
 
-Write-Host "[5b/8] Protecting sheets..." -ForegroundColor Yellow
-$pwd = $config.master_pwd
+Write-Host "[6/9] Protecting sheets..." -ForegroundColor Yellow
+$pwd = $config.protection.sheet_password
 $protCount = 0
 foreach ($ws in $wb.Sheets) {
     if (-not $ws.ProtectContents) {
@@ -196,10 +196,25 @@ foreach ($ws in $wb.Sheets) {
 Write-Host "  Protected $protCount sheets" -ForegroundColor Gray
 
 # ============================================================================
-# STEP 6: Save
+# STEP 7: Generate Demo Data
 # ============================================================================
 
-Write-Host "[6/8] Saving output..." -ForegroundColor Yellow
+Write-Host "[7/9] Generating demo data..." -ForegroundColor Yellow
+try {
+    $null = $xl.Run("GenerateDemoData")
+    Write-Host "  GenerateDemoData: OK" -ForegroundColor Green
+} catch {
+    Write-Host "  GenerateDemoData: FAILED - $($_.Exception.Message)" -ForegroundColor Red
+    $wb.Close($false)
+    $xl.Quit()
+    exit 1
+}
+
+# ============================================================================
+# STEP 8: Save
+# ============================================================================
+
+Write-Host "[8/9] Saving output..." -ForegroundColor Yellow
 
 # Ensure output directory exists
 $outDir = Split-Path $outputPath -Parent
@@ -224,13 +239,13 @@ try {
 }
 
 # ============================================================================
-# STEP 7: Cleanup
+# STEP 9: Cleanup
 # ============================================================================
 
-Write-Host "[7/8] Cleaning up..." -ForegroundColor Yellow
+Write-Host "[9/9] Cleaning up..." -ForegroundColor Yellow
 
 # Data reload temporarily disabled - column mapping differs between Master and output
-Write-Host "[7b/8] Data reload skipped (column mapping pending)" -ForegroundColor Gray
+Write-Host "  Data reload skipped" -ForegroundColor Gray
 
 $wb.Close($false)
 $xl.Quit()

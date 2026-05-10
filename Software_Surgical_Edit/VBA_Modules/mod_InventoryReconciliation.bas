@@ -18,7 +18,7 @@ Public Sub RunInventoryReconciliation()
     Application.Calculation = xlCalculationManual
 
     Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
-    lastArtRow = wsArt.Cells(wsArt.Rows.Count, 1).End(xlUp).Row
+    lastArtRow = wsArt.Cells(wsArt.Rows.Count, COL_ART_CODE).End(xlUp).Row
 
     Set wsInv = GetOrCreateSheet(SHEET_INVENTAIRE)
     wsInv.Unprotect Password:=mod_Config.MASTER_PWD
@@ -67,7 +67,7 @@ Public Sub RunInventoryReconciliation()
         If IsError(found) Then
             sysStock = 0
         Else
-            sysStock = mod_Utilities.SafeVal(wsArt.Cells(found, 7).Value)
+            sysStock = mod_Utilities.SafeVal(wsArt.Cells(found, COL_ART_STOCK_ACTUEL).Value)
         End If
 
         variance = physCount - sysStock

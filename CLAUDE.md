@@ -14,8 +14,7 @@ Direction de l'Éducation, Wilaya de El Bayadh, Algeria
 | **Type** | Pure VBA Excel Decision Support System (DSS) |
 | **Architecture** | Offline-First, Zero External Dependencies |
 | **Sheets** | 25 |
-| **Modules** | 36 (clean — no dead code) |
-| **Compliance** | CNEPD BTS Public Sector Standards |
+| **Modules** | 37 (clean — no dead code) || **Compliance** | CNEPD BTS Public Sector Standards |
 | **Locale** | fr-FR (UI) / ar-DZ (thesis) |
 
 ## Ground Truth — NEVER MODIFY
@@ -38,7 +37,14 @@ Direction de l'Éducation, Wilaya de El Bayadh, Algeria
 |----------|-------|------|----------|
 | **Groq (Primary)** | llama-3.3-70b-versatile | Arabic prose, VBA logic | ~2s (cloud) |
 | **Groq (Fast)** | qwen/qwen3-32b | Explore, debug, audit | ~1s (cloud) |
-| **Ollama (Local)** | qwen2.5-coder:1.5b | Offline fallback | ~108s (local HDD) |
+| **Google** | gemini-2.5-flash | Large context (1M), vision, deep reasoning | ~2s (cloud) |
+| **OpenRouter** | nemotron-3-super-120b | 1M context (429-limited) | ~3s (cloud) |
+| **Ollama (CPU)** | phi4-mini:3.8b | Offline coding | ~25s (local) |
+| **Ollama (CPU)** | qwen3:1.7b | Offline reasoning | ~40s (local) |
+| **Ollama (CPU)** | qwen2.5-coder:1.5b | Offline fallback | ~95s (local) |
+
+## Default Model
+- `opencode/big-pickle` — CLI default (daily driver)
 
 ## Thesis Constraints
 
@@ -49,14 +55,14 @@ Direction de l'Éducation, Wilaya de El Bayadh, Algeria
   - ❌ Python/Backend → ✅ وحدات المعالجة VBA
   - ❌ Hybrid System → ✅ نظام إلكتروني متكامل
 
-## VBA Modules (36 — All Clean)
+## VBA Modules (37 — All Clean)
 
-**Critical:** mod_Config, mod_StockEngine, mod_StockEntry_Logic
-**High:** mod_SyncBridge, mod_Dashboard, mod_ExportEngine, mod_Utilities, mod_Reports, mod_Database, mod_AuditTrail, mod_ReceiptTag
-**Medium:** mod_SheetSetup, mod_Procurement, mod_Restore, mod_Backup, mod_Analysis, mod_Localization, mod_ApprovalWorkflow, mod_StockCalculations
-**Low:** mod_UI_Setup, mod_LogViewer, mod_Navigation, mod_BonLivraison, mod_Budget, mod_Facture
+**Critical:** mod_Config, mod_StockEngine, mod_StockEntry_Logic, mod_TransactionSafety
+**High:** mod_SyncBridge, mod_Dashboard, mod_ExportEngine, mod_Utilities, mod_Reports, mod_Database, mod_AuditTrail, mod_ReceiptTag, mod_QRCode, mod_SharedEnvironment, mod_InventoryReconciliation, mod_SupplierScorecard, mod_SupplierRegistry, mod_StockAging, mod_StockOutPredictor, mod_Forecasting, mod_DataValidator, mod_DemoData, mod_Barcode, mod_CSVImportExport, mod_EntryPoints, mod_ThemingEngine
+**Medium:** mod_SheetSetup, mod_Procurement, mod_Analysis, mod_Localization, mod_ApprovalWorkflow, mod_Navigation, mod_Budget, mod_BudgetSetup, mod_UIEnhancements
+**Low:** mod_UI_Setup
 
-**Dead code DELETED:** Module1, Module2, mod_Config_Test (2026-05-06)
+**Dead code DELETED:** Module1, Module2, mod_Config_Test, mod_StockEntry_Logic_Enhanced, mod_TestHarness, frmSystemLog, frmStockEntry_Enhanced (7 total)
 
 ## Admin Paths
 

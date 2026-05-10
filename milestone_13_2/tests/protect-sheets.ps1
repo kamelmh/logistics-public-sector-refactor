@@ -5,7 +5,14 @@ $xl.Visible = $false
 $xl.DisplayAlerts = $false
 $wb = $xl.Workbooks.Open("C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\ERP_Academie_v13_2.xlsm")
 
-$pwd = "erp_secure_pwd_2026"
+$configPath = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\vbe-auto\config.json"
+if (Test-Path $configPath) {
+    $cfg = Get-Content $configPath -Raw | ConvertFrom-Json
+    $pwd = $cfg.protection.sheet_password
+} else {
+    Write-Host "WARNING: config.json not found, using default password" -ForegroundColor Yellow
+    $pwd = "erp_secure_pwd_2026"
+}
 $protected = 0
 $skipped = 0
 

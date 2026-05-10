@@ -236,12 +236,12 @@ Private Sub LoadArticleComboBox(ByVal filterCat As String, ByRef state As FormSt
         Exit Sub
     End If
 
-    lastRow = wsArt.Cells(wsArt.Rows.count, 1).End(xlUp).Row
+    lastRow = wsArt.Cells(wsArt.Rows.count, COL_ART_CODE).End(xlUp).Row
 
     For i = 3 To lastRow
-        code = Trim(CStr(wsArt.Cells(i, 1).Value))
-        desig = Trim(CStr(wsArt.Cells(i, 2).Value))
-        cat = Trim(CStr(wsArt.Cells(i, 5).Value))
+        code = Trim(CStr(wsArt.Cells(i, COL_ART_CODE).Value))
+        desig = Trim(CStr(wsArt.Cells(i, COL_ART_DESIGNATION).Value))
+        cat = Trim(CStr(wsArt.Cells(i, COL_ART_CATEGORIE).Value))
 
         If code = "" Then GoTo nextRow
 
@@ -434,8 +434,8 @@ Private Sub EvaluateStockStatus(ByVal artCode As String, ByRef state As FormStat
         Exit Sub
     End If
 
-    pu = CDbl(mod_Utilities.SafeVal(wsArt.Cells(foundRow, 8).Value))
-    cat = Trim(CStr(wsArt.Cells(foundRow, 11).Value))
+    pu = CDbl(mod_Utilities.SafeVal(wsArt.Cells(foundRow, COL_ART_PU).Value))
+    cat = Trim(CStr(wsArt.Cells(foundRow, COL_ART_CATEGORIE).Value))
     state.ArticlePU = pu
     state.ArticleCat = cat
 
@@ -593,10 +593,10 @@ Private Function GetNextSequence(ByVal prefix As String) As Long
         Exit Function
     End If
 
-    lastRow = wsMouv.Cells(wsMouv.Rows.count, 7).End(xlUp).Row
+    lastRow = wsMouv.Cells(wsMouv.Rows.count, COL_MOUV_REF_DOC).End(xlUp).Row
     
     For i = 3 To lastRow
-        refStr = CStr(wsMouv.Cells(i, 7).Value)
+        refStr = CStr(wsMouv.Cells(i, COL_MOUV_REF_DOC).Value)
         If Left(refStr, Len(prefix)) = prefix And InStr(refStr, "-") > 0 Then
             Dim parts() As String
             parts = Split(refStr, "-")

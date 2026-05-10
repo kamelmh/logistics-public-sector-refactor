@@ -22,15 +22,15 @@ Public Sub RunSupplierScorecard()
 
     Set wsMouv = ThisWorkbook.Sheets(mod_Config.SHEET_MOUVEMENTS)
     Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
-    lastMouvRow = wsMouv.Cells(wsMouv.Rows.Count, 1).End(xlUp).Row
-    lastArtRow = wsArt.Cells(wsArt.Rows.Count, 1).End(xlUp).Row
+    lastMouvRow = wsMouv.Cells(wsMouv.Rows.Count, COL_MOUV_DATE).End(xlUp).Row
+    lastArtRow = wsArt.Cells(wsArt.Rows.Count, COL_ART_CODE).End(xlUp).Row
 
     Set artSupplierMap = CreateObject("Scripting.Dictionary")
     For i = 3 To lastArtRow
         Dim aCode As String
-        aCode = Trim(wsArt.Cells(i, 1).Value)
+        aCode = Trim(wsArt.Cells(i, COL_ART_CODE).Value)
         If aCode <> "" Then
-            artSupplierMap(aCode) = Trim(wsArt.Cells(i, 9).Value)
+            artSupplierMap(aCode) = Trim(wsArt.Cells(i, COL_ART_FOURNISSEUR).Value)
         End If
     Next i
 
@@ -38,14 +38,14 @@ Public Sub RunSupplierScorecard()
 
     Dim mvtType As String, qty As Double, val As Double, mvtSupplier As String
     For j = 3 To lastMouvRow
-        mvtType = Trim(wsMouv.Cells(j, 4).Value)
-        qty = mod_Utilities.SafeVal(wsMouv.Cells(j, 5).Value)
-        val = mod_Utilities.SafeVal(wsMouv.Cells(j, 6).Value)
+        mvtType = Trim(wsMouv.Cells(j, COL_MOUV_TYPE).Value)
+        qty = mod_Utilities.SafeVal(wsMouv.Cells(j, COL_MOUV_QTE).Value)
+        val = mod_Utilities.SafeVal(wsMouv.Cells(j, COL_MOUV_VALEUR).Value)
 
         If mvtType = "IN" Then
-            mvtSupplier = Trim(wsMouv.Cells(j, 9).Value)
+            mvtSupplier = Trim(wsMouv.Cells(j, COL_MOUV_THIRD_PARTY).Value)
             If mvtSupplier = "" Then
-                mvtSupplier = GetArticleSupplier(wsMouv.Cells(j, 2).Value)
+                mvtSupplier = GetArticleSupplier(wsMouv.Cells(j, COL_MOUV_CODE_ARTICLE).Value)
             End If
             If mvtSupplier <> "" Then
                 If Not poCount.Exists(mvtSupplier) Then
@@ -210,7 +210,7 @@ Private Function GetArticleSupplier(ByVal artCode As Variant) As String
     If IsError(found) Then
         GetArticleSupplier = ""
     Else
-        GetArticleSupplier = Trim(wsArt.Cells(found, 9).Value)
+        GetArticleSupplier = Trim(wsArt.Cells(found, COL_ART_FOURNISSEUR).Value)
     End If
 End Function
 

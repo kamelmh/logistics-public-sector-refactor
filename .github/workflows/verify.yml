@@ -1,0 +1,85 @@
+name: Verify
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  structure:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate config.json
+        shell: pwsh
+        run: |
+          $cfg = Get-Content vbe-auto/config.json | ConvertFrom-Json
+          Write-Host "Project: $($cfg.project_name)" -ForegroundColor Cyan
+          Write-Host "Version: $($cfg.version)" -ForegroundColor Cyan
+          Write-Host "Expected sheets: $($cfg.verification.expected_sheets.Count)" -ForegroundColor Cyan
+          Write-Host "Expected modules: $($cfg.verification.expected_modules.Count)" -ForegroundColor Cyan
+          if ($cfg.verification.expected_modules.Count -ne 37) {
+            Write-Host "FAIL: Expected 37 modules, found $($cfg.verification.expected_modules.Count)" -ForegroundColor Red
+            exit 1
+          }
+          Write-Host "OK" -ForegroundColor Green
+
+      - name: Check VBA module files exist
+        shell: pwsh
+        run: |
+          $expected = (Get-Content vbe-auto/config.json | ConvertFrom-Json).verification.expected_modules
+          $srcDir = "Software_Surgical_Edit/VBA_Modules"
+          $missing = @()
+          foreach ($mod in $expected) {
+            $path = "$srcDir/$mod.bas"
+            if (-not (Test-Path $path)) { $missing += $mod }
+          }
+          if ($missing.Count -gt 0) {
+            Write-Host "Missing modules: $($missing -join ', ')" -ForegroundColor Red
+            exit 1
+          }
+          $actualCount = (Get-ChildItem "$srcDir/*.bas").Count
+          $frmCount = (Get-ChildItem "$srcDir/*.frm").Count
+          $clsCount = (Get-ChildItem "$srcDir/*.cls").Count
+          Write-Host "VBA modules: $actualCount .bas, $frmCount .frm, $clsCount .cls" -ForegroundColor Cyan
+          Write-Host "OK" -ForegroundColor Green
+
+      - name: Validate data-persist.json
+        shell: pwsh
+        run: |
+          $dp = Get-Content Software_Surgical_Edit/data-persist.json | ConvertFrom-Json
+          Write-Host "Articles: $($dp.ARTICLES.Count)" -ForegroundColor Cyan
+          Write-Host "Movements: $($dp.MOUVEMENTS.Count)" -ForegroundColor Cyan
+          Write-Host "OK" -ForegroundColor Green
+
+      - name: Check build scripts exist
+        shell: pwsh
+        run: |
+          $paths = @(
+            "vbe-auto/build.ps1",
+            "vbe-auto/verify.ps1",
+            "vbe-auto/config.json",
+            "academix-launcher.ps1",
+            "system-health-test.ps1"
+          )
+          $missing = $paths | Where-Object { -not (Test-Path $_) }
+          if ($missing.Count -gt 0) {
+            Write-Host "Missing: $($missing -join ', ')" -ForegroundColor Red
+            exit 1
+          }
+          Write-Host "All build scripts present" -ForegroundColor Green
+
+      - name: Check no stale files in active dirs
+        shell: pwsh
+        run: |
+          $staleRoot = Get-ChildItem Software_Surgical_Edit/ARCHIVED -ErrorAction SilentlyContinue
+          $staleVba = Get-ChildItem Software_Surgical_Edit/VBA_Modules/ARCHIVED -ErrorAction SilentlyContinue
+          if ($staleRoot) { Write-Host "ARCHIVED/ in root: $($staleRoot.Count) files" -ForegroundColor DarkYellow }
+          if ($staleVba) { Write-Host "ARCHIVED/ in VBA_Modules: $($staleVba.Count) files" -ForegroundColor DarkYellow }
+          Write-Host "No stale files leaked into active source dirs" -ForegroundColor Green
+
+      - name: Summary
+        shell: pwsh
+        run: Write-Host "All structure checks passed." -ForegroundColor Green

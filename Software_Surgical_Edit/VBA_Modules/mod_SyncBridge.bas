@@ -34,7 +34,7 @@ Public Function SyncTransactionInternal(ByVal artCode As String, _
     
     If Not IsError(foundRow) Then
         wsArt.Unprotect Password:=mod_Config.MASTER_PWD
-        wsArt.Cells(foundRow, 8).Value = newCMUP ' Col H: CMUP
+        wsArt.Cells(foundRow, COL_ART_PU).Value = newCMUP ' Col H: PU/CMUP
         wsArt.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
     End If
     
@@ -87,9 +87,9 @@ Public Function GetMetricFromLedger(ByVal artCode As String, ByVal metricName As
     
     Select Case LCase(metricName)
         Case "cmup"
-            GetMetricFromLedger = wsArt.Cells(foundRow, 8).Value ' Col H
+            GetMetricFromLedger = wsArt.Cells(foundRow, COL_ART_PU).Value ' Col H
         Case "abc_class"
-            GetMetricFromLedger = wsArt.Cells(foundRow, 5).Value ' Col E
+            GetMetricFromLedger = wsArt.Cells(foundRow, COL_ART_CLASSE_ABC).Value
         Case Else
             GetMetricFromLedger = "Unknown"
     End Select
@@ -106,7 +106,7 @@ Public Function GetStockFromLedger(ByVal artCode As String) As Long
     If IsError(foundRow) Then
         GetStockFromLedger = -1
     Else
-        GetStockFromLedger = CLng(wsArt.Cells(foundRow, 3).Value) ' Col C
+        GetStockFromLedger = CLng(wsArt.Cells(foundRow, COL_ART_STOCK).Value) ' Col C
     End If
 End Function
 

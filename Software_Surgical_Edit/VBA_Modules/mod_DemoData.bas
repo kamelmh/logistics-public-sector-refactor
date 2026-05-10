@@ -73,10 +73,10 @@ Private Sub SeedArticles()
     
     wsArt.Unprotect Password:=mod_Config.MASTER_PWD
     
-    ' Clear existing data (keep headers)
+    ' Clear all existing content
     Dim lastRow As Long
     lastRow = wsArt.Cells(wsArt.Rows.Count, "A").End(xlUp).Row
-    If lastRow > 2 Then wsArt.Rows("3:" & lastRow).Delete
+    If lastRow > 1 Then wsArt.Rows("2:" & lastRow).Delete
     
     ' 12 articles with realistic initial stock
     Dim articles As Variant
@@ -98,20 +98,20 @@ Private Sub SeedArticles()
     Dim i As Long
     For i = 0 To UBound(articles)
         Dim rowIdx As Long
-        rowIdx = 3 + i
+        rowIdx = 2 + i
         
-        wsArt.Cells(rowIdx, 1).Value = articles(i)(0)   ' CODE
-        wsArt.Cells(rowIdx, 2).Value = articles(i)(1)   ' DESIGNATION
-        wsArt.Cells(rowIdx, 3).Value = articles(i)(4)   ' STOCK INITIAL
-        wsArt.Cells(rowIdx, 4).Value = ""               ' SEUIL_MIN (auto)
-        wsArt.Cells(rowIdx, 5).Value = articles(i)(2)   ' CATEGORIE
-        wsArt.Cells(rowIdx, 6).Value = articles(i)(7)   ' CLASSE ABC
-        wsArt.Cells(rowIdx, 7).Value = articles(i)(4)   ' STOCK ACTUEL (same as initial)
-        wsArt.Cells(rowIdx, 8).Value = articles(i)(5)   ' PU (DZD)
-        wsArt.Cells(rowIdx, 9).Value = articles(i)(3)   ' FOURNISSEUR
-        wsArt.Cells(rowIdx, 10).Value = articles(i)(6)  ' STOCK SECURITE
-        wsArt.Cells(rowIdx, 11).Value = articles(i)(8)  ' NOTES
-        wsArt.Cells(rowIdx, 12).Value = ""              ' CMUP (auto)
+        wsArt.Cells(rowIdx, COL_ART_CODE).Value = articles(i)(0)   ' CODE
+        wsArt.Cells(rowIdx, COL_ART_DESIGNATION).Value = articles(i)(1)   ' DESIGNATION
+        wsArt.Cells(rowIdx, COL_ART_STOCK).Value = articles(i)(4)   ' STOCK INITIAL
+        wsArt.Cells(rowIdx, COL_ART_SEUIL_MIN).Value = ""               ' SEUIL_MIN (auto)
+        wsArt.Cells(rowIdx, COL_ART_CATEGORIE).Value = articles(i)(2)   ' CATEGORIE
+        wsArt.Cells(rowIdx, COL_ART_CLASSE_ABC).Value = articles(i)(7)   ' CLASSE ABC
+        wsArt.Cells(rowIdx, COL_ART_STOCK_ACTUEL).Value = articles(i)(4)   ' STOCK ACTUEL (same as initial)
+        wsArt.Cells(rowIdx, COL_ART_PU).Value = articles(i)(5)   ' PU (DZD)
+        wsArt.Cells(rowIdx, COL_ART_FOURNISSEUR).Value = articles(i)(3)   ' FOURNISSEUR
+        wsArt.Cells(rowIdx, COL_ART_STOCK_SECURITE).Value = articles(i)(6)  ' STOCK SECURITE
+        wsArt.Cells(rowIdx, COL_ART_NOTES).Value = articles(i)(8)  ' NOTES
+        wsArt.Cells(rowIdx, COL_ART_CMUP).Value = ""              ' CMUP (auto)
     Next i
     
     wsArt.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
@@ -149,14 +149,14 @@ Private Sub SeedSuppliers()
         Dim rowIdx As Long
         rowIdx = 3 + i
         
-        wsFou.Cells(rowIdx, 1).Value = suppliers(i)(0)  ' CODE
-        wsFou.Cells(rowIdx, 2).Value = suppliers(i)(1)  ' RAISON_SOCIALE
-        wsFou.Cells(rowIdx, 3).Value = suppliers(i)(2)  ' ADRESSE
-        wsFou.Cells(rowIdx, 4).Value = suppliers(i)(3)  ' TELEPHONE
-        wsFou.Cells(rowIdx, 5).Value = suppliers(i)(4)  ' NIF
-        wsFou.Cells(rowIdx, 6).Value = suppliers(i)(5)  ' NIS
-        wsFou.Cells(rowIdx, 7).Value = suppliers(i)(6)  ' RC
-        wsFou.Cells(rowIdx, 8).Value = suppliers(i)(7)  ' ARTICLE_IMPOSITION
+        wsFou.Cells(rowIdx, COL_FOU_CODE).Value = suppliers(i)(0)  ' CODE
+        wsFou.Cells(rowIdx, COL_FOU_RAISON_SOCIALE).Value = suppliers(i)(1)  ' RAISON_SOCIALE
+        wsFou.Cells(rowIdx, COL_FOU_ADRESSE).Value = suppliers(i)(2)  ' ADRESSE
+        wsFou.Cells(rowIdx, COL_FOU_TELEPHONE).Value = suppliers(i)(3)  ' TELEPHONE
+        wsFou.Cells(rowIdx, COL_FOU_NIF).Value = suppliers(i)(4)  ' NIF
+        wsFou.Cells(rowIdx, COL_FOU_NIS).Value = suppliers(i)(5)  ' NIS
+        wsFou.Cells(rowIdx, COL_FOU_RC).Value = suppliers(i)(6)  ' RC
+        wsFou.Cells(rowIdx, COL_FOU_ARTICLE_IMPOSITION).Value = suppliers(i)(7)  ' ARTICLE_IMPOSITION
     Next i
     
     wsFou.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
@@ -240,17 +240,17 @@ Private Sub SeedMovements()
                     Dim bsRef As String
                     bsRef = "BS-2026-" & Format(bsNum, "0000")
                     
-                    wsMouv.Cells(rowIdx, 1).Value = mvtDate
-                    wsMouv.Cells(rowIdx, 2).Value = artCode
-                    wsMouv.Cells(rowIdx, 4).Value = "OUT"
-                    wsMouv.Cells(rowIdx, 5).Value = outQtys(dIdx)
-                    wsMouv.Cells(rowIdx, 7).Value = bsRef
+                    wsMouv.Cells(rowIdx, COL_MOUV_DATE).Value = mvtDate
+                    wsMouv.Cells(rowIdx, COL_MOUV_CODE_ARTICLE).Value = artCode
+                    wsMouv.Cells(rowIdx, COL_MOUV_TYPE).Value = "OUT"
+                    wsMouv.Cells(rowIdx, COL_MOUV_QTE).Value = outQtys(dIdx)
+                    wsMouv.Cells(rowIdx, COL_MOUV_REF_DOC).Value = bsRef
                     
                     ' Get PU from ARTICLES
-                    wsMouv.Cells(rowIdx, 8).Value = GetArticlePU(artCode)
+                    wsMouv.Cells(rowIdx, COL_MOUV_PU).Value = GetArticlePU(artCode)
                     
                     ' Random service
-                    wsMouv.Cells(rowIdx, 9).Value = RandomService()
+                    wsMouv.Cells(rowIdx, COL_MOUV_THIRD_PARTY).Value = RandomService()
                     
                     rowIdx = rowIdx + 1
                 End If
@@ -274,16 +274,16 @@ Private Sub SeedMovements()
                     Dim brRef As String
                     brRef = "BR-2026-" & Format(brNum, "0000")
                     
-                    wsMouv.Cells(rowIdx, 1).Value = mvtDate
-                    wsMouv.Cells(rowIdx, 2).Value = artCode
-                    wsMouv.Cells(rowIdx, 4).Value = "IN"
-                    wsMouv.Cells(rowIdx, 5).Value = inQtys(dIdx)
-                    wsMouv.Cells(rowIdx, 7).Value = brRef
+                    wsMouv.Cells(rowIdx, COL_MOUV_DATE).Value = mvtDate
+                    wsMouv.Cells(rowIdx, COL_MOUV_CODE_ARTICLE).Value = artCode
+                    wsMouv.Cells(rowIdx, COL_MOUV_TYPE).Value = "IN"
+                    wsMouv.Cells(rowIdx, COL_MOUV_QTE).Value = inQtys(dIdx)
+                    wsMouv.Cells(rowIdx, COL_MOUV_REF_DOC).Value = brRef
                     
-                    wsMouv.Cells(rowIdx, 8).Value = GetArticlePU(artCode)
+                    wsMouv.Cells(rowIdx, COL_MOUV_PU).Value = GetArticlePU(artCode)
                     
                     ' Assign supplier based on article
-                    wsMouv.Cells(rowIdx, 9).Value = GetArticleSupplier(artCode)
+                    wsMouv.Cells(rowIdx, COL_MOUV_THIRD_PARTY).Value = GetArticleSupplier(artCode)
                     
                     rowIdx = rowIdx + 1
                 End If
@@ -296,9 +296,9 @@ Private Sub SeedMovements()
     For i = 3 To rowIdx - 1
         Dim qty As Double
         Dim pu As Double
-        qty = wsMouv.Cells(i, 5).Value
-        pu = wsMouv.Cells(i, 8).Value
-        wsMouv.Cells(i, 6).Value = qty * pu
+        qty = wsMouv.Cells(i, COL_MOUV_QTE).Value
+        pu = wsMouv.Cells(i, COL_MOUV_PU).Value
+        wsMouv.Cells(i, COL_MOUV_VALEUR).Value = qty * pu
     Next i
     
     ' Sort by date
@@ -337,28 +337,30 @@ Private Sub SeedInitialStock()
     Dim artIdx As Long
     For artIdx = 3 To lastArtRow
         Dim artCode As String
-        artCode = wsArt.Cells(artIdx, 1).Value
+        artCode = wsArt.Cells(artIdx, COL_ART_CODE).Value
         
         Dim totalIn As Double
         Dim totalOut As Double
         Dim i As Long
         
         For i = 3 To lastMouvRow
-            If wsMouv.Cells(i, 2).Value = artCode Then
-                If wsMouv.Cells(i, 4).Value = "IN" Then
-                    totalIn = totalIn + wsMouv.Cells(i, 5).Value
-                ElseIf wsMouv.Cells(i, 4).Value = "OUT" Then
-                    totalOut = totalOut + wsMouv.Cells(i, 5).Value
+            If wsMouv.Cells(i, COL_MOUV_CODE_ARTICLE).Value = artCode Then
+                If wsMouv.Cells(i, COL_MOUV_TYPE).Value = "IN" Then
+                    totalIn = totalIn + wsMouv.Cells(i, COL_MOUV_QTE).Value
+                ElseIf wsMouv.Cells(i, COL_MOUV_TYPE).Value = "OUT" Then
+                    totalOut = totalOut + wsMouv.Cells(i, COL_MOUV_QTE).Value
                 End If
             End If
         Next i
         
         ' Stock = Initial + IN - OUT
         Dim initialStock As Double
-        initialStock = wsArt.Cells(artIdx, 3).Value
+        initialStock = wsArt.Cells(artIdx, COL_ART_STOCK).Value
         
-        wsArt.Cells(artIdx, 3).Value = initialStock
-        wsArt.Cells(artIdx, 7).Value = initialStock + totalIn - totalOut
+        Dim finalStock As Double
+        finalStock = initialStock + totalIn - totalOut
+        wsArt.Cells(artIdx, COL_ART_STOCK).Value = finalStock
+        wsArt.Cells(artIdx, COL_ART_STOCK_ACTUEL).Value = finalStock
         
         Debug.Print "[DemoData] " & artCode & ": Initial=" & initialStock & " IN=" & totalIn & " OUT=" & totalOut & " Final=" & (initialStock + totalIn - totalOut)
     Next artIdx
@@ -387,7 +389,7 @@ Private Function GetArticlePU(ByVal artCode As String) As Double
     If IsError(foundRow) Then
         GetArticlePU = 500
     Else
-        GetArticlePU = wsArt.Cells(foundRow, 8).Value
+        GetArticlePU = wsArt.Cells(foundRow, COL_ART_PU).Value
     End If
 End Function
 
@@ -408,7 +410,7 @@ Private Function GetArticleSupplier(ByVal artCode As String) As String
     If IsError(foundRow) Then
         GetArticleSupplier = "F-001"
     Else
-        GetArticleSupplier = wsArt.Cells(foundRow, 9).Value
+        GetArticleSupplier = wsArt.Cells(foundRow, COL_ART_FOURNISSEUR).Value
     End If
 End Function
 

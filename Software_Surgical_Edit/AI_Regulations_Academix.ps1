@@ -120,8 +120,8 @@ if ($gitLog) { Status "GIT" $true "Last commit: $gitLog" "Git not available" }
 Write-Host "`n[5/5] QUICK ACTIONS (edit this script to customize)" -ForegroundColor Magenta
 Write-Host @"
   1) OpenCode session:      opencode
-  2) Rebuild workbook:      & '$ROOT\Software_Surgical_Edit\build.ps1'
-  3) Verify workbook:       & '$ROOT\Software_Surgical_Edit\verify.ps1'
+  2) Rebuild workbook:      & '$ROOT\vbe-auto\build.ps1' -ConfigPath '$ROOT\vbe-auto\config.json'
+  3) Verify workbook:       & '$ROOT\vbe-auto\verify.ps1' -ConfigPath '$ROOT\vbe-auto\config.json'
   4) Build thesis PDF:      & '$ROOT\Thesis_Surgical_Edit\build-thesis.ps1'
   5) Open this script:      notepad "$PSCommandPath"
   6) Git push:              git -C '$ROOT' push

@@ -49,14 +49,14 @@ Public Sub GenerateMonthlyReport(Optional ByVal rptMonth As Integer = 0)
         .Range("A5:H5").Font.Color = vbWhite
     End With
     
-    Dim lastArtRow As Long: lastArtRow = wsArt.Cells(wsArt.Rows.count, 1).End(xlUp).Row
+    Dim lastArtRow As Long: lastArtRow = wsArt.Cells(wsArt.Rows.count, COL_ART_CODE).End(xlUp).Row
     Dim reportRow As Integer: reportRow = 6
     Dim totalIn As Double, totalOut As Double, totalValue As Double
     
     Dim i As Long
     For i = 3 To lastArtRow
-        Dim sku As String: sku = Trim(wsArt.Cells(i, 1).Value)
-        Dim name As String: name = Trim(wsArt.Cells(i, 2).Value)
+        Dim sku As String: sku = Trim(wsArt.Cells(i, COL_ART_CODE).Value)
+        Dim name As String: name = Trim(wsArt.Cells(i, COL_ART_DESIGNATION).Value)
         
         If sku <> "" Then
             Dim monthIn As Double, monthOut As Double
@@ -71,8 +71,8 @@ Public Sub GenerateMonthlyReport(Optional ByVal rptMonth As Integer = 0)
                                                wsMouv.Range("A:A"), "<" & DateSerial(Year(Date), rptMonth + 1, 1))
             wsMouv.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
             
-            Dim totalStock As Double: totalStock = wsArt.Cells(i, 7).Value
-            Dim pu As Double: pu = wsArt.Cells(i, 6).Value
+            Dim totalStock As Double: totalStock = wsArt.Cells(i, COL_ART_STOCK_ACTUEL).Value
+            Dim pu As Double: pu = wsArt.Cells(i, COL_ART_PU).Value
             Dim rowValue As Double: rowValue = totalStock * pu
             
             With wsReport
@@ -86,7 +86,7 @@ Public Sub GenerateMonthlyReport(Optional ByVal rptMonth As Integer = 0)
                 
                 ' --- Enhanced Metrics ---
                 ' Pull ABC Class from ARTICLES sheet (Col E = 5)
-                .Cells(reportRow, 7).Value = wsArt.Cells(i, 5).Value
+                .Cells(reportRow, 7).Value = wsArt.Cells(i, COL_ART_CATEGORIE).Value
                 
                 ' Contribution % (calculated at the end or updated later)
                 ' We'll leave Col H for now and fill it in a second pass
@@ -169,28 +169,28 @@ Public Sub GenerateStockCard(Optional ByVal sku As String = "")
         .Range("A1").Font.Bold = True
         .Range("A1").Font.Size = 14
         .Range("A3").Value = "CODE:": .Range("B3").Value = sku
-        .Range("A4").Value = "D" & Chr(233) & "SIGNATION:": .Range("B4").Value = wsArt.Cells(artRow, 2).Value
-        .Range("A5").Value = "STOCK ACTUEL:": .Range("B5").Value = wsArt.Cells(artRow, 7).Value
-        .Range("A6").Value = "PRIX UNITAIRE:": .Range("B6").Value = wsArt.Cells(artRow, 6).Value
+        .Range("A4").Value = "D" & Chr(233) & "SIGNATION:":         .Range("B4").Value = wsArt.Cells(artRow, COL_ART_DESIGNATION).Value
+        .Range("A5").Value = "STOCK ACTUEL:": .Range("B5").Value = wsArt.Cells(artRow, COL_ART_STOCK_ACTUEL).Value
+        .Range("A6").Value = "PRIX UNITAIRE:": .Range("B6").Value = wsArt.Cells(artRow, COL_ART_PU).Value
         .Range("A8").Value = "DATE": .Range("B8").Value = "TYPE": .Range("C8").Value = "QT" & Chr(233): .Range("D8").Value = "VALEUR": .Range("E8").Value = "R" & Chr(233) & "F" & Chr(233) & "RENCE"
         .Range("A8:E8").Font.Bold = True
         .Range("A8:E8").Interior.Color = RGB(0, 112, 192)
         .Range("A8:E8").Font.Color = vbWhite
     End With
     
-    Dim lastMvtRow As Long: lastMvtRow = wsMouv.Cells(wsMouv.Rows.count, 1).End(xlUp).Row
+    Dim lastMvtRow As Long: lastMvtRow = wsMouv.Cells(wsMouv.Rows.count, COL_MOUV_DATE).End(xlUp).Row
     Dim cardRow As Integer: cardRow = 9
     Dim j As Long
     On Error Resume Next
     wsMouv.Unprotect Password:=mod_Config.MASTER_PWD
     On Error GoTo ReportError
     For j = 2 To lastMvtRow
-        If Trim(wsMouv.Cells(j, 2).Value) = sku Then
-            wsCard.Cells(cardRow, 1).Value = wsMouv.Cells(j, 1).Value
-            wsCard.Cells(cardRow, 2).Value = wsMouv.Cells(j, 3).Value
-            wsCard.Cells(cardRow, 3).Value = wsMouv.Cells(j, 5).Value
-            wsCard.Cells(cardRow, 4).Value = wsMouv.Cells(j, 7).Value
-            wsCard.Cells(cardRow, 5).Value = wsMouv.Cells(j, 8).Value
+        If Trim(wsMouv.Cells(j, COL_MOUV_CODE_ARTICLE).Value) = sku Then
+            wsCard.Cells(cardRow, 1).Value = wsMouv.Cells(j, COL_MOUV_DATE).Value
+            wsCard.Cells(cardRow, 2).Value = wsMouv.Cells(j, COL_MOUV_DESIGNATION).Value
+            wsCard.Cells(cardRow, 3).Value = wsMouv.Cells(j, COL_MOUV_QTE).Value
+            wsCard.Cells(cardRow, 4).Value = wsMouv.Cells(j, COL_MOUV_VALEUR).Value
+            wsCard.Cells(cardRow, 5).Value = wsMouv.Cells(j, COL_MOUV_PU).Value
             cardRow = cardRow + 1
         End If
     Next j

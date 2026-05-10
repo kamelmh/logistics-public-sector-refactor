@@ -63,35 +63,8 @@ Public Const FONT_SIZE_HEADING   As Integer = 12
 Public Const FONT_SIZE_TITLE     As Integer = 14
 
 '================================================================================
-' APPLY THEME TO FORM — Main entry point
+' APPLY THEME TO FORM — delegated to mod_ThemingEngine
 '================================================================================
-
-Public Sub ApplyFormTheme(ByRef frm As Object)
-    On Error Resume Next
-    
-    ' Apply form-level styling
-    With frm
-        .BackColor = CLR_BG_FORM
-        .BorderStyle = fmBorderStyleSingle
-        .SpecialEffect = fmSpecialEffectFlat
-        .Font.Name = FONT_PRIMARY
-        .Font.Size = FONT_SIZE_DEFAULT
-        .ForeColor = CLR_TEXT_PRIMARY
-    End With
-    
-    ' Style all controls
-    Dim ctrl As Object
-    For Each ctrl In frm.Controls
-        Call StyleControl(ctrl)
-    Next ctrl
-    
-    ' Set tab order (logical flow)
-    Call SetLogicalTabOrder(frm)
-    
-    Debug.Print "[UIEnhancements] Theme applied to " & frm.Name
-    
-    On Error GoTo 0
-End Sub
 
 '================================================================================
 ' STYLE INDIVIDUAL CONTROL

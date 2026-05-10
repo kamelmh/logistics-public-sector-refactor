@@ -48,19 +48,20 @@ Private Sub UpdateKPIs(ws As Worksheet)
     Dim countAlert As Long
     Dim totalValue As Double
     
-    totalSKUs = wsArt.Cells(wsArt.Rows.count, 1).End(xlUp).Row - 1
+    totalSKUs = wsArt.Cells(wsArt.Rows.count, COL_ART_CODE).End(xlUp).Row - 1
     If totalSKUs < 0 Then totalSKUs = 0
     
     ' Iterate through ARTICLES to find status and total value
     Dim i As Long
+    On Error Resume Next
     For i = 2 To totalSKUs + 1
-        Dim stock As Long: stock = Val(wsArt.Cells(i, 3).Value) ' Col C: Stock
-        Dim pu As Double: pu = Val(wsArt.Cells(i, 8).Value)     ' Col H: PU
+        Dim stock As Long: stock = Val(wsArt.Cells(i, COL_ART_STOCK).Value) ' Col C: Stock
+        Dim pu As Double: pu = Val(wsArt.Cells(i, COL_ART_PU).Value)     ' Col H: PU
         
         totalValue = totalValue + (stock * pu)
         
         ' Simple status check based on ROP/SS from mod_StockEngine
-        Dim sku As String: sku = Trim(wsArt.Cells(i, 1).Value)
+        Dim sku As String: sku = Trim(wsArt.Cells(i, COL_ART_CODE).Value)
         Dim ss As Double: ss = mod_StockEngine.GetSafetyStock(sku)
         Dim AnnualDemand As Double: AnnualDemand = mod_StockEngine.GetAnnualDemandFromHistory(sku)
         Dim rop As Double: rop = mod_StockEngine.ComputeROP(AnnualDemand / mod_Config.WORKING_DAYS_PER_YEAR, sku)
@@ -71,6 +72,7 @@ Private Sub UpdateKPIs(ws As Worksheet)
             countAlert = countAlert + 1
         End If
     Next i
+    On Error GoTo 0
     
     ' Layout KPIs
     ws.Range("B2").Value = "Total Articles"
@@ -116,7 +118,7 @@ Private Sub UpdateCriticalTable(ws As Worksheet)
     ws.Range("D2:G2").HorizontalAlignment = xlCenter
     
     Dim wsArt As Worksheet: Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
-    Dim lastRow As Long: lastRow = wsArt.Cells(wsArt.Rows.count, 1).End(xlUp).Row
+    Dim lastRow As Long: lastRow = wsArt.Cells(wsArt.Rows.count, COL_ART_CODE).End(xlUp).Row
     
     ' Store critical items in a temporary array
     Dim criticalList(1 To 1000, 1 To 4) As Variant
@@ -124,8 +126,8 @@ Private Sub UpdateCriticalTable(ws As Worksheet)
     
     Dim i As Long
     For i = 2 To lastRow
-        Dim sku As String: sku = Trim(wsArt.Cells(i, 1).Value)
-        Dim stock As Long: stock = Val(wsArt.Cells(i, 3).Value)
+        Dim sku As String: sku = Trim(wsArt.Cells(i, COL_ART_CODE).Value)
+        Dim stock As Long: stock = Val(wsArt.Cells(i, COL_ART_STOCK).Value)
         
         Dim AnnualDemand As Double: AnnualDemand = mod_StockEngine.GetAnnualDemandFromHistory(sku)
         Dim rop As Double: rop = mod_StockEngine.ComputeROP(AnnualDemand / mod_Config.WORKING_DAYS_PER_YEAR, sku)
@@ -135,7 +137,7 @@ Private Sub UpdateCriticalTable(ws As Worksheet)
             If countCrit > 1000 Then Exit For
             
             criticalList(countCrit, 1) = sku
-            criticalList(countCrit, 2) = wsArt.Cells(i, 2).Value
+            criticalList(countCrit, 2) = wsArt.Cells(i, COL_ART_DESIGNATION).Value
             criticalList(countCrit, 3) = stock
             criticalList(countCrit, 4) = IIf(stock <= 0, "RUPTURE", "ALERTE")
         End If
@@ -171,7 +173,7 @@ Private Sub UpdateABCXYZSummary(ws As Worksheet)
     ws.Range("I2:J2").Font.Bold = True
     
     Dim wsArt As Worksheet: Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
-    Dim lastRow As Long: lastRow = wsArt.Cells(wsArt.Rows.count, 1).End(xlUp).Row
+    Dim lastRow As Long: lastRow = wsArt.Cells(wsArt.Rows.count, COL_ART_CODE).End(xlUp).Row
     
     Dim classes As Variant: classes = Array("A", "B", "C")
     Dim rowNum As Integer: rowNum = 3
@@ -183,7 +185,7 @@ Private Sub UpdateABCXYZSummary(ws As Worksheet)
         
         Dim i As Long
         For i = 2 To lastRow
-            If wsArt.Cells(i, 5).Value = cls Then ' Col E: ABC Class
+            If wsArt.Cells(i, COL_ART_CLASSE_ABC).Value = cls Then
                 countCls = countCls + 1
             End If
         Next i

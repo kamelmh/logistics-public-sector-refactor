@@ -305,7 +305,7 @@ if ($critical -eq 0 -and $warning -eq 0) {
 Write-Host ""
 
 # Save report
-$reportPath = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\milestone_13_2\audit\dss-audit-report.csv"
+$reportPath = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\milestone_13_2\audit\dss-audit-report.csv"
 $auditResults | Export-Csv -Path $reportPath -NoTypeInformation -Encoding UTF8
 Write-Host "  Report saved to: $reportPath" -ForegroundColor Gray
 Write-Host ""

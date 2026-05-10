@@ -155,12 +155,12 @@ Private Function PopulateTemplateBon(ByVal docRef As String, _
     End If
     
     ' Fallback to hardcoded positions
-    If colDesig = 0 Then colDesig = 3
-    If colType = 0 Then colType = 4
-    If colQte = 0 Then colQte = 5
-    If colPU = 0 Then colPU = 8
-    If colThird = 0 Then colThird = 9
-    If colNotes = 0 Then colNotes = 12
+    If colDesig = 0 Then colDesig = mod_Config.COL_MOUV_DESIGNATION
+    If colType = 0 Then colType = mod_Config.COL_MOUV_TYPE
+    If colQte = 0 Then colQte = mod_Config.COL_MOUV_QTE
+    If colPU = 0 Then colPU = mod_Config.COL_MOUV_PU
+    If colThird = 0 Then colThird = mod_Config.COL_MOUV_THIRD_PARTY
+    If colNotes = 0 Then colNotes = mod_Config.COL_MOUV_NOTES
     
     On Error GoTo PopulateError
     
@@ -352,9 +352,9 @@ Private Function PopulateTemplateBon(ByVal docRef As String, _
                     artMatchRow = Application.Match(artCode, wsArt.Range("A:A"), 0)
                     If Not IsError(artMatchRow) Then
                         Dim arLabel As String
-                        arLabel = Trim(CStr(wsArt.Cells(artMatchRow, 2).Value))
+                        arLabel = Trim(CStr(wsArt.Cells(artMatchRow, COL_ART_DESIGNATION).Value))
                         Dim unitLabel As String
-                        unitLabel = Trim(CStr(wsArt.Cells(artMatchRow, 4).Value))
+                        unitLabel = Trim(CStr(wsArt.Cells(artMatchRow, COL_ART_SEUIL_MIN).Value))
                         If Len(arLabel) > 0 Then artDesig = arLabel
                         If Len(unitLabel) > 0 Then artUnit = unitLabel
                     End If

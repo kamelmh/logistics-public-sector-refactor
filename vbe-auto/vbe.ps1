@@ -15,6 +15,7 @@ $VBEConfigPaths = @(
     "$PSScriptRoot\vbe-auto-config.json",
     "$env:USERPROFILE\Desktop\vbe-auto\config.json",
     ".\vbe-auto-config.json",
+    "$PSScriptRoot\config.json",
     "$PSScriptRoot\..\config.json"
 )
 foreach ($_vbeCfgPath in $VBEConfigPaths) {

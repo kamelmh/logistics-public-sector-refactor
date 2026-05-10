@@ -60,12 +60,12 @@ Public Function GetArticleField(ByVal sku As String, ByVal fieldType As String) 
     
     ' Determine column based on fieldType
     Select Case UCase(fieldType)
-        Case "CODE":  colIdx = 1  ' Column A: Article Code
-        Case "DESIG": colIdx = 2  ' Column B: Designation
+        Case "CODE":  colIdx = mod_Config.COL_ART_CODE
+        Case "DESIG": colIdx = mod_Config.COL_ART_DESIGNATION
         Case "QTE":   GetArticleField = "0": Exit Function  ' No stock column in ARTICLES
-        Case "PU":    colIdx = 8  ' Column H: Prix Unitaire
-        Case "CAT":   colIdx = 5  ' Column E: Categorie
-        Case Else:    colIdx = 2  ' Default to Designation
+        Case "PU":    colIdx = mod_Config.COL_ART_PU
+        Case "CAT":   colIdx = mod_Config.COL_ART_CATEGORIE
+        Case Else:    colIdx = mod_Config.COL_ART_DESIGNATION
     End Select
     
     foundRow = Application.Match(sku, wsArt.Range("A:A"), 0)
@@ -260,12 +260,12 @@ Public Sub ExportLowStockPDF()
     reportRow = 6
     
     For i = 3 To lastRow
-        If wsSource.Cells(i, 3).Value <= wsSource.Cells(i, 6).Value Then
-            wsReport.Cells(reportRow, 1).Value = wsSource.Cells(i, 1).Value
-            wsReport.Cells(reportRow, 2).Value = wsSource.Cells(i, 2).Value
-            wsReport.Cells(reportRow, 3).Value = wsSource.Cells(i, 3).Value
-            wsReport.Cells(reportRow, 4).Value = wsSource.Cells(i, 6).Value
-            wsReport.Cells(reportRow, 5).Value = wsSource.Cells(i, 8).Value
+        If wsSource.Cells(i, COL_ART_STOCK).Value <= wsSource.Cells(i, COL_ART_SEUIL_MIN).Value Then
+            wsReport.Cells(reportRow, 1).Value = wsSource.Cells(i, COL_ART_CODE).Value
+            wsReport.Cells(reportRow, 2).Value = wsSource.Cells(i, COL_ART_DESIGNATION).Value
+            wsReport.Cells(reportRow, 3).Value = wsSource.Cells(i, COL_ART_STOCK).Value
+            wsReport.Cells(reportRow, 4).Value = wsSource.Cells(i, COL_ART_SEUIL_MIN).Value
+            wsReport.Cells(reportRow, 5).Value = wsSource.Cells(i, COL_ART_PU).Value
             reportRow = reportRow + 1
         End If
     Next i

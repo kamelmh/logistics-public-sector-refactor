@@ -16,12 +16,21 @@
       "STAGING_BUFFER", "SYS_STRINGS", "RECEIPT_TAG", "TEMPLATE_BON"
     ],
     "expected_modules": [
-      "mod_Config", "mod_StockEngine", "mod_StockEntry_Logic",
-      "mod_TransactionSafety", "mod_AuditTrail", "mod_ExportEngine",
-      "mod_Dashboard", "mod_Reports", "mod_DemoData"
+      "MAIN_MACROS", "mod_Analysis", "mod_ApprovalWorkflow",
+      "mod_AuditTrail", "mod_Barcode", "mod_Budget", "mod_BudgetSetup",
+      "mod_Config", "mod_CSVImportExport", "mod_Dashboard", "mod_Database",
+      "mod_DataValidator", "mod_DemoData", "mod_EntryPoints",
+      "mod_ExportEngine", "mod_Forecasting", "mod_InventoryReconciliation",
+      "mod_Localization", "mod_Navigation", "mod_Procurement", "mod_QRCode",
+      "mod_ReceiptTag", "mod_Reports", "mod_SharedEnvironment",
+      "mod_SheetSetup", "mod_StockAging", "mod_StockEngine",
+      "mod_StockEntry_Logic", "mod_StockOutPredictor", "mod_SupplierRegistry",
+      "mod_SupplierScorecard", "mod_SyncBridge", "mod_ThemingEngine",
+      "mod_TransactionSafety", "mod_UI_Setup", "mod_UIEnhancements",
+      "mod_Utilities"
     ],
     "expected_constants": [
-      { "name": "VERSION", "value": "v13.2" },
+      { "name": "APP_VERSION", "value": "v13.2" },
       { "name": "SHEET_MOUVEMENTS", "value": "MOUVEMENTS" },
       { "name": "SHEET_ARTICLES", "value": "ARTICLES" },
       { "name": "WORKING_DAYS_PER_YEAR", "value": "250" },
@@ -44,5 +53,6 @@
       "UpdateAllABCClassifications"
     ]
   },
+  "data_persist": "C:\\Users\\Administrator\\Dropbox\\Logistics.Public.Sector.Refactor\\Software_Surgical_Edit\\data-persist.json",
   "notes": "Pure VBA Excel DSS — Zero external dependencies — Offline-first"
 }

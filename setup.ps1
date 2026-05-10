@@ -81,7 +81,7 @@ function Show-Status {
     Write-Host "  Root: $root" -ForegroundColor Gray
     Write-Host "  Modules: 36 .bas + 1 .frm + 1 .cls" -ForegroundColor Gray
     Write-Host "  Lines: ~11,400" -ForegroundColor Gray
-    Write-Host "  Build: .\Software_Surgical_Edit\build.ps1" -ForegroundColor Gray
+    Write-Host "  Build: .\vbe-auto\build.ps1 -ConfigPath .\vbe-auto\config.json" -ForegroundColor Gray
 
     Write-Host "`nCommands:" -ForegroundColor Cyan
     Write-Host "  .\setup.ps1 online   — force online mode" -ForegroundColor White
@@ -102,7 +102,11 @@ function Set-Mode {
     $session.last_session = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ss")
     $session.session_count = [int]$session.session_count + 1
     $session | ConvertTo-Json | Out-File $sessionFile -Encoding UTF8
-    & $persist -Action save >$null
+    if (Test-Path $persist) {
+        & $persist -Action save >$null
+    } else {
+        Write-Host "  [WARN] persist.ps1 not found at $persist — session not persisted" -ForegroundColor Yellow
+    }
     Write-Host "Mode set to: $NewMode" -ForegroundColor Green
 }
 

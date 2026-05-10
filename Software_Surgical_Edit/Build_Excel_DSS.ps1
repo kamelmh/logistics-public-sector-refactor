@@ -1,5 +1,5 @@
 # Build_Excel_DSS.ps1 — ERP Académie v13.2
-# Purpose: Create workbook with all 25 sheets, import 27 VBA modules, apply protection
+# Purpose: Create workbook with all 25 sheets, import 36 VBA modules, apply protection
 # Institution: Direction de l'Éducation, El Bayadh
 # Version: v13.2 | Generated: 2026-05-06
 
@@ -14,7 +14,7 @@ $ErrorActionPreference = "Stop"
 Write-Host "=============================================" -ForegroundColor Cyan
 Write-Host "  Building ERP Académie v13.2" -ForegroundColor Cyan
 Write-Host "  Pure VBA · Offline-First · Zero Dependencies" -ForegroundColor Cyan
-Write-Host "  25 Sheets · 27 Modules" -ForegroundColor Cyan
+Write-Host "  25 Sheets · 36 Modules" -ForegroundColor Cyan
 Write-Host "=============================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -48,7 +48,7 @@ $sheets = @(
     "FOURNISSEURS",
     "CONVENTIONS",
     "MOUVEMENTS",
-    "TABLEAU_DE_BORD",
+    "TABLEAU DE BORD",
     "ALERTE_DASHBOARD",
     "INVENTAIRE",
     "RAPPORTS",
@@ -168,35 +168,45 @@ for ($i = 0; $i -lt $eoaData.Length; $i++) {
 $ws.Columns.AutoFit() | Out-Null
 Write-Host "✓ CALCULS_EOQ configured" -ForegroundColor Green
 
-# ─── Import VBA Modules (27) ───
+# ─── Import VBA Modules (37) ───
 $vbaFiles = @(
-    "mod_Config.bas",
-    "mod_StockEngine.bas",
-    "mod_StockEntry_Logic.bas",
-    "mod_SyncBridge.bas",
-    "mod_Dashboard.bas",
-    "mod_ExportEngine.bas",
-    "mod_Utilities.bas",
-    "mod_Reports.bas",
-    "mod_SheetSetup.bas",
-    "mod_AuditTrail.bas",
-    "mod_Database.bas",
-    "mod_Procurement.bas",
-    "mod_ReceiptTag.bas",
-    "mod_Restore.bas",
-    "mod_Backup.bas",
+    "MAIN_MACROS.bas",
     "mod_Analysis.bas",
     "mod_ApprovalWorkflow.bas",
-    "mod_StockCalculations.bas",
-    "mod_Localization.bas",
-    "mod_UI_Setup.bas",
-    "mod_LogViewer.bas",
-    "mod_Navigation.bas",
-    "mod_BonLivraison.bas",
+    "mod_AuditTrail.bas",
+    "mod_Barcode.bas",
     "mod_Budget.bas",
-    "mod_Facture.bas",
-    "MAIN_MACROS.bas",
-    "mod_TestHarness.bas"
+    "mod_BudgetSetup.bas",
+    "mod_Config.bas",
+    "mod_CSVImportExport.bas",
+    "mod_Dashboard.bas",
+    "mod_Database.bas",
+    "mod_DataValidator.bas",
+    "mod_DemoData.bas",
+    "mod_EntryPoints.bas",
+    "mod_ExportEngine.bas",
+    "mod_Forecasting.bas",
+    "mod_InventoryReconciliation.bas",
+    "mod_Localization.bas",
+    "mod_Navigation.bas",
+    "mod_Procurement.bas",
+    "mod_QRCode.bas",
+    "mod_ReceiptTag.bas",
+    "mod_Reports.bas",
+    "mod_SharedEnvironment.bas",
+    "mod_SheetSetup.bas",
+    "mod_StockAging.bas",
+    "mod_StockEngine.bas",
+    "mod_StockEntry_Logic.bas",
+    "mod_StockOutPredictor.bas",
+    "mod_SupplierRegistry.bas",
+    "mod_SupplierScorecard.bas",
+    "mod_SyncBridge.bas",
+    "mod_ThemingEngine.bas",
+    "mod_TransactionSafety.bas",
+    "mod_UI_Setup.bas",
+    "mod_UIEnhancements.bas",
+    "mod_Utilities.bas"
 )
 
 $imported = 0

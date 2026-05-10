@@ -270,7 +270,7 @@ do {
         }
         "2" {
             Write-Host "  Rebuilding workbook..." -ForegroundColor Yellow
-            & "$ROOT\Software_Surgical_Edit\build.ps1"
+            & "$ROOT\vbe-auto\build.ps1" -ConfigPath "$ROOT\vbe-auto\config.json"
             Write-Host "  Press Enter to continue..." -ForegroundColor Gray
             $null = Read-Host
         }
@@ -307,9 +307,9 @@ do {
     OpenCode qwen3                                  Ollama Qwen3 1.7B (CPU)
     OpenCode ollama                                 Ollama model selection menu
     OpenCode fcc                                    Nemotron 120B (OpenRouter free)
-    .\Software_Surgical_Edit\build.ps1              Rebuild
-    .\Software_Surgical_Edit\verify.ps1             Verify
-    .\Software_Surgical_Edit\milestone_13_2\tests\dss-audit.ps1   Audit
+    .\vbe-auto\build.ps1 -ConfigPath .\vbe-auto\config.json   Rebuild
+    .\vbe-auto\verify.ps1 -ConfigPath .\vbe-auto\config.json  Verify
+    .\milestone_13_2\tests\dss-audit.ps1                Audit
     .\Software_Surgical_Edit\test-macros.ps1        Tests
     .\Software_Surgical_Edit\data-persist.ps1 save  Backup data
     .\Software_Surgical_Edit\orchestrator.ps1 status  Agent status

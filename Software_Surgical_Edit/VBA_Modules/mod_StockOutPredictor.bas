@@ -19,8 +19,8 @@ Public Sub RunStockOutPrediction()
 
     Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
     Set wsMouv = ThisWorkbook.Sheets(mod_Config.SHEET_MOUVEMENTS)
-    lastArtRow = wsArt.Cells(wsArt.Rows.Count, 1).End(xlUp).Row
-    lastMouvRow = wsMouv.Cells(wsMouv.Rows.Count, 1).End(xlUp).Row
+    lastArtRow = wsArt.Cells(wsArt.Rows.Count, COL_ART_CODE).End(xlUp).Row
+    lastMouvRow = wsMouv.Cells(wsMouv.Rows.Count, COL_MOUV_DATE).End(xlUp).Row
 
     Set wsOut = GetOrCreateSheet(SHEET_STOCKOUT)
     wsOut.Unprotect Password:=mod_Config.MASTER_PWD
@@ -50,17 +50,17 @@ Public Sub RunStockOutPrediction()
     outRow = 5
 
     For i = 3 To lastArtRow
-        artCode = Trim(wsArt.Cells(i, 1).Value)
+        artCode = Trim(wsArt.Cells(i, COL_ART_CODE).Value)
         If artCode = "" Then GoTo NextArt
 
-        designation = Trim(wsArt.Cells(i, 2).Value)
-        currentStock = mod_Utilities.SafeVal(wsArt.Cells(i, 7).Value)
-        pu = mod_Utilities.SafeVal(wsArt.Cells(i, 8).Value)
+        designation = Trim(wsArt.Cells(i, COL_ART_DESIGNATION).Value)
+        currentStock = mod_Utilities.SafeVal(wsArt.Cells(i, COL_ART_STOCK_ACTUEL).Value)
+        pu = mod_Utilities.SafeVal(wsArt.Cells(i, COL_ART_PU).Value)
 
         totalOut = 0: totalDays = 0
         For j = 3 To lastMouvRow
-            If Trim(wsMouv.Cells(j, 2).Value) = artCode And Trim(wsMouv.Cells(j, 4).Value) = "OUT" Then
-                totalOut = totalOut + mod_Utilities.SafeVal(wsMouv.Cells(j, 5).Value)
+            If Trim(wsMouv.Cells(j, COL_MOUV_CODE_ARTICLE).Value) = artCode And Trim(wsMouv.Cells(j, COL_MOUV_TYPE).Value) = "OUT" Then
+                totalOut = totalOut + mod_Utilities.SafeVal(wsMouv.Cells(j, COL_MOUV_QTE).Value)
                 totalDays = totalDays + 1
             End If
         Next j

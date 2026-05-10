@@ -7,7 +7,7 @@ param(
 $ErrorActionPreference = "Continue"
 
 $scriptDir = Split-Path $MyInvocation.MyCommand.Path -Parent
-$configFile = Join-Path $scriptDir "milestone_13_2\config\agent-system.xml"
+$configFile = Join-Path (Split-Path $scriptDir -Parent) "milestone_13_2\config\agent-system.xml"
 
 # Load system config
 if (Test-Path $configFile) {

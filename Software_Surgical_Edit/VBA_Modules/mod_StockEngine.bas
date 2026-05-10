@@ -103,7 +103,7 @@ Public Function GetArticleStock(ByVal sku As String) As Double
         Exit Function
     End If
     
-    GetArticleStock = mod_Utilities.SafeVal(wsArt.Cells(foundRow, 3).Value)
+    GetArticleStock = mod_Utilities.SafeVal(wsArt.Cells(foundRow, COL_ART_STOCK).Value)
 End Function
 
 ' ================================================================================
@@ -125,12 +125,12 @@ Public Sub UpdateArticleStockBalance(ByVal artCode As String, ByVal mvtSign As S
     If Not IsError(foundRow) Then
         wsArt.Unprotect Password:=mod_Config.MASTER_PWD
         
-        Dim currentQty As Double: currentQty = Val(wsArt.Cells(foundRow, 3).Value) ' Column C: Stock
+        Dim currentQty As Double: currentQty = Val(wsArt.Cells(foundRow, COL_ART_STOCK).Value) ' Column C: Stock
         
         If mvtSign = "IN" Then
-            wsArt.Cells(foundRow, 3).Value = currentQty + qty
+            wsArt.Cells(foundRow, COL_ART_STOCK).Value = currentQty + qty
         Else
-            wsArt.Cells(foundRow, 3).Value = currentQty - qty
+            wsArt.Cells(foundRow, COL_ART_STOCK).Value = currentQty - qty
         End If
         
         wsArt.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
@@ -187,23 +187,25 @@ End Function
 ' ================================================================================
 Public Sub RefreshAllCMUP()
     Dim wsArt As Worksheet: Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
-    Dim lastRow As Long: lastRow = wsArt.Cells(wsArt.Rows.count, 1).End(xlUp).Row
+    Dim lastRow As Long: lastRow = wsArt.Cells(wsArt.Rows.count, COL_ART_CODE).End(xlUp).Row
     
     Application.ScreenUpdating = False
     Application.Calculation = xlCalculationManual
     
     Dim i As Long, cmup As Double
     For i = 2 To lastRow
-        Dim sku As String: sku = Trim(wsArt.Cells(i, 1).Value)
+        Dim sku As String: sku = Trim(wsArt.Cells(i, COL_ART_CODE).Value)
         If sku <> "" Then
             cmup = CalculateCMUP(sku)
-            If cmup > 0 Then wsArt.Cells(i, 12).Value = cmup
+            If cmup > 0 Then wsArt.Cells(i, COL_ART_CMUP).Value = cmup
         End If
     Next i
     
     Application.Calculation = xlCalculationAutomatic
     Application.ScreenUpdating = True
-    MsgBox "CMUP (Prix Moyen) mis " & Chr(233) & " jour.", vbInformation, mod_Config.SYS_TITLE
+    If Application.UserControl Then
+        MsgBox "CMUP (Prix Moyen) mis " & Chr(233) & " jour.", vbInformation, mod_Config.SYS_TITLE
+    End If
 End Sub
 
 ' ================================================================================
@@ -213,7 +215,7 @@ End Sub
 ' ================================================================================
 Public Sub UpdateAllABCClassifications(Optional ByVal silent As Boolean = False)
     Dim wsArt As Worksheet: Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
-    Dim lastRow As Long: lastRow = wsArt.Cells(wsArt.Rows.count, 1).End(xlUp).Row
+    Dim lastRow As Long: lastRow = wsArt.Cells(wsArt.Rows.count, COL_ART_CODE).End(xlUp).Row
     If lastRow < 2 Then Exit Sub
 
     Dim i As Long
@@ -225,10 +227,10 @@ Public Sub UpdateAllABCClassifications(Optional ByVal silent As Boolean = False)
 
     ' 1. Calculate total value for each article
     For i = 2 To lastRow
-        Dim sku As String: sku = Trim(wsArt.Cells(i, 1).Value)
+        Dim sku As String: sku = Trim(wsArt.Cells(i, COL_ART_CODE).Value)
         If sku <> "" Then
             Dim AnnualDemand As Double: AnnualDemand = GetAnnualDemandFromHistory(sku)
-            Dim pu As Double: pu = Val(wsArt.Cells(i, 8).Value) ' Column H: PU
+            Dim pu As Double: pu = Val(wsArt.Cells(i, COL_ART_PU).Value) ' Column H: PU
             articleValues(i) = AnnualDemand * pu
             articleCodes(i) = sku
             totalValue = totalValue + articleValues(i)
@@ -266,11 +268,11 @@ Public Sub UpdateAllABCClassifications(Optional ByVal silent As Boolean = False)
             abcClass = "C"
         End If
 
-        ' Update ARTICLES sheet (Column F = 6)
+        ' Update ARTICLES sheet (Column F = COL_ART_CLASSE_ABC)
         Dim foundRow As Variant
         foundRow = Application.Match(articleCodes(i), wsArt.Range("A:A"), 0)
         If Not IsError(foundRow) Then
-            wsArt.Cells(foundRow, 6).Value = abcClass
+            wsArt.Cells(foundRow, COL_ART_CLASSE_ABC).Value = abcClass
         End If
     Next i
 

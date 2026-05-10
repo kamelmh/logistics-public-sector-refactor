@@ -40,5 +40,16 @@ _tmp.driveupload/
 # Generated audit reports
 milestone_13_2/audit/dss-audit-report.csv
 
+# Auto-log output
+logs/
+
+# Verification results archive
+vbe-auto/results/
+vbe-auto/verify_results_*.json
+
+# Stale/archived build artifacts (not source)
+Software_Surgical_Edit/ARCHIVED/
+VBA_Modules/ARCHIVED/
+
 # Google Sheets link files
 *.gsheet

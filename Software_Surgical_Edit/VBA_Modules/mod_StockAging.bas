@@ -19,8 +19,8 @@ Public Sub RunStockAgingReport()
 
     Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
     Set wsMouv = ThisWorkbook.Sheets(mod_Config.SHEET_MOUVEMENTS)
-    lastArtRow = wsArt.Cells(wsArt.Rows.Count, 1).End(xlUp).Row
-    lastMouvRow = wsMouv.Cells(wsMouv.Rows.Count, 1).End(xlUp).Row
+    lastArtRow = wsArt.Cells(wsArt.Rows.Count, COL_ART_CODE).End(xlUp).Row
+    lastMouvRow = wsMouv.Cells(wsMouv.Rows.Count, COL_MOUV_DATE).End(xlUp).Row
 
     Set wsOut = GetOrCreateSheet(SHEET_AGING)
     wsOut.Unprotect Password:=mod_Config.MASTER_PWD
@@ -50,19 +50,19 @@ Public Sub RunStockAgingReport()
     outRow = 5
 
     For i = 3 To lastArtRow
-        artCode = Trim(wsArt.Cells(i, 1).Value)
+        artCode = Trim(wsArt.Cells(i, COL_ART_CODE).Value)
         If artCode = "" Then GoTo NextArt
 
-        designation = Trim(wsArt.Cells(i, 2).Value)
-        currentStock = mod_Utilities.SafeVal(wsArt.Cells(i, 7).Value)
-        pu = mod_Utilities.SafeVal(wsArt.Cells(i, 8).Value)
+        designation = Trim(wsArt.Cells(i, COL_ART_DESIGNATION).Value)
+        currentStock = mod_Utilities.SafeVal(wsArt.Cells(i, COL_ART_STOCK_ACTUEL).Value)
+        pu = mod_Utilities.SafeVal(wsArt.Cells(i, COL_ART_PU).Value)
 
         lastDate = DateSerial(2026, 1, 1)
         For j = 3 To lastMouvRow
-            If Trim(wsMouv.Cells(j, 2).Value) = artCode Then
+            If Trim(wsMouv.Cells(j, COL_MOUV_CODE_ARTICLE).Value) = artCode Then
                 Dim mvtDate As Date
                 On Error Resume Next
-                mvtDate = CDate(wsMouv.Cells(j, 1).Value)
+                mvtDate = CDate(wsMouv.Cells(j, COL_MOUV_DATE).Value)
                 If Err.Number = 0 Then
                     If mvtDate > lastDate Then lastDate = mvtDate
                 End If

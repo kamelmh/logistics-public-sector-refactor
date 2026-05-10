@@ -23,7 +23,7 @@ Private Sub Workbook_Open()
     Call mod_TransactionSafety.CheckCrashRecovery
     On Error GoTo InitError
     
-    ' 4. Welcome message
+    ' 4. Welcome message (skip when opened via COM automation)
     Dim welcomeMsg As String
     Dim versionStr As String
     Dim titleStr As String
@@ -36,14 +36,18 @@ Private Sub Workbook_Open()
     If versionStr = "" Then versionStr = "v13.2"
     If titleStr = "" Then titleStr = "ERP Académie"
     
-    welcomeMsg = "ERP Académie " & versionStr & vbCrLf & _
-                 "Direction de l'Éducation — El Bayadh" & vbCrLf & vbCrLf & _
-                 "D=1,546  |  ROP=205.6  |  Q*=176  |  SS=200"
-    MsgBox welcomeMsg, vbInformation, titleStr
+    If Application.UserControl Then
+        welcomeMsg = "ERP Académie " & versionStr & vbCrLf & _
+                     "Direction de l'Éducation — El Bayadh" & vbCrLf & vbCrLf & _
+                     "D=1,546  |  ROP=205.6  |  Q*=176  |  SS=200"
+        MsgBox welcomeMsg, vbInformation, titleStr
+    End If
     
-    ' 5. Sync metrics from ledger
-    On Error Resume Next
-    Call mod_SyncBridge.SyncMetricsFromLedger
+    ' 5. Sync metrics from ledger (skip when opened via COM automation)
+    If Application.UserControl Then
+        On Error Resume Next
+        Call mod_SyncBridge.SyncMetricsFromLedger
+    End If
     
     ' 6. Restore MOUVEMENTS headers if corrupted
     Call mod_Utilities.RestoreMouvementsHeaders(silent:=True)

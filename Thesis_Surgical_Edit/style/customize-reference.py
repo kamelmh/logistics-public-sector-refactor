@@ -15,7 +15,7 @@ import inspect
 
 W = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 
-USER_DOC = r"D:\_MERGED\Software and System Tools\Dropbox\Logistics.and.Thesis.Hub\Z_ARCHIVE\03_Thesis_and_Internship\Drafts_AR_Memoire_Final_Complet.docx"
+USER_DOC = r"C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\Memoire_Academix_v13_2_Final.docx"
 REF_IN = os.path.join(os.path.dirname(__file__), "reference-in.docx")
 REF_OUT = os.path.join(os.path.dirname(__file__), "reference.docx")
 

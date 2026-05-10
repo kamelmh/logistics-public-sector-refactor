@@ -18,6 +18,42 @@ Public Const DOC_TYPE_DA As String = "Demande d'Achat"
 Public Const WORKING_DAYS_PER_YEAR As Integer = 250
 Public Const OBSERVATION_DAYS As Integer = 38
 
+' ARTICLES sheet column indices
+Public Const COL_ART_CODE As Long = 1
+Public Const COL_ART_DESIGNATION As Long = 2
+Public Const COL_ART_STOCK As Long = 3
+Public Const COL_ART_SEUIL_MIN As Long = 4
+Public Const COL_ART_CATEGORIE As Long = 5
+Public Const COL_ART_CLASSE_ABC As Long = 6
+Public Const COL_ART_STOCK_ACTUEL As Long = 7
+Public Const COL_ART_PU As Long = 8
+Public Const COL_ART_FOURNISSEUR As Long = 9
+Public Const COL_ART_STOCK_SECURITE As Long = 10
+Public Const COL_ART_NOTES As Long = 11
+Public Const COL_ART_CMUP As Long = 12
+
+' MOUVEMENTS sheet column indices
+Public Const COL_MOUV_DATE As Long = 1
+Public Const COL_MOUV_CODE_ARTICLE As Long = 2
+Public Const COL_MOUV_DESIGNATION As Long = 3
+Public Const COL_MOUV_TYPE As Long = 4
+Public Const COL_MOUV_QTE As Long = 5
+Public Const COL_MOUV_VALEUR As Long = 6
+Public Const COL_MOUV_REF_DOC As Long = 7
+Public Const COL_MOUV_PU As Long = 8
+Public Const COL_MOUV_THIRD_PARTY As Long = 9
+Public Const COL_MOUV_NOTES As Long = 10
+
+' FOURNISSEURS sheet column indices
+Public Const COL_FOU_CODE As Long = 1
+Public Const COL_FOU_RAISON_SOCIALE As Long = 2
+Public Const COL_FOU_ADRESSE As Long = 3
+Public Const COL_FOU_TELEPHONE As Long = 4
+Public Const COL_FOU_NIF As Long = 5
+Public Const COL_FOU_NIS As Long = 6
+Public Const COL_FOU_RC As Long = 7
+Public Const COL_FOU_ARTICLE_IMPOSITION As Long = 8
+
 ' Properties (must come after all Const declarations)
 Public Property Get SYS_TITLE() As String
     SYS_TITLE = "ERP Acad" & Chr(233) & "mie"

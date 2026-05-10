@@ -16,7 +16,7 @@ function Save-Data {
 
         $wsArt = $wb.Sheets("ARTICLES")
         $lastRow = $wsArt.Cells($wsArt.Rows.Count, 1).End(-4162).Row
-        for ($i = 3; $i -le $lastRow; $i++) {
+        for ($i = 2; $i -le $lastRow; $i++) {
             $row = @{
                 CODE = $wsArt.Cells($i, 1).Value2
                 DESIGNATION = $wsArt.Cells($i, 2).Value2
@@ -32,7 +32,7 @@ function Save-Data {
 
         $wsMouv = $wb.Sheets("MOUVEMENTS")
         $lastMouv = $wsMouv.Cells($wsMouv.Rows.Count, 1).End(-4162).Row
-        for ($i = 3; $i -le $lastMouv; $i++) {
+        for ($i = 2; $i -le $lastMouv; $i++) {
             $row = @{
                 N_MVT = $wsMouv.Cells($i, 1).Value2
                 DATE = $wsMouv.Cells($i, 2).Value2

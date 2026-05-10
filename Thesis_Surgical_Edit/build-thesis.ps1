@@ -42,13 +42,15 @@ if (-not (Test-Path $sourcePath)) {
 $docx = Join-Path $outDir "$OutputName.docx"
 Write-Host "[2/6] Generating DOCX..." -ForegroundColor Yellow
 
+$metaYaml = Join-Path $style "thesis-metadata.yaml"
+
 $pandocArgs = @(
     $sourcePath,
     "--from", "markdown+grid_tables-yaml_metadata_block",
     "--to", "docx",
     "--reference-doc", $refDocx,
+    "--metadata-file", $metaYaml,
     "--output", $docx,
-    "--metadata", "dir=rtl",
     "--resource-path", "$root\images;$root",
     "--wrap", "preserve",
     "--eol", "lf"
@@ -73,7 +75,7 @@ try {
 }
 
 # Step 4: Format cover page with professional styling
-Write-Host "[4/7] Formatting cover page..." -ForegroundColor Yellow
+Write-Host "[4/6] Formatting cover page..." -ForegroundColor Yellow
 try {
     python (Join-Path $style "format-cover.py") $docx 2>&1
     Write-Host "  Cover formatted with reference DOCX design" -ForegroundColor Green
@@ -83,7 +85,7 @@ try {
 
 # Step 5: Generate PDF via Word
 $pdf = Join-Path $outDir "$OutputName.pdf"
-Write-Host "[5/7] Generating PDF via Word..." -ForegroundColor Yellow
+Write-Host "[5/6] Generating PDF via Word..." -ForegroundColor Yellow
 try {
     $word = New-Object -ComObject Word.Application
     $word.Visible = $false
@@ -100,7 +102,7 @@ try {
 }
 
 # Step 6: Verify output
-Write-Host "[6/7] Verifying..." -ForegroundColor Yellow
+Write-Host "[6/6] Verifying..." -ForegroundColor Yellow
 if (Test-Path $docx) {
     Write-Host "  DOCX OK: $([math]::Round((Get-Item $docx).Length/1KB)) KB" -ForegroundColor Green
 }
@@ -109,7 +111,7 @@ if (Test-Path $pdf) {
 }
 
 # Step 7: Done
-Write-Host "[7/7] Complete" -ForegroundColor Yellow
+Write-Host "[6/6] Complete" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "=== BUILD COMPLETE ===" -ForegroundColor Green
 Write-Host "DOCX: $docx" -ForegroundColor Cyan

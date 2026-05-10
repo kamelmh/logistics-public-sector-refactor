@@ -75,7 +75,7 @@ function Check {
 # STAGE 1: File Integrity
 # ============================================================================
 
-Write-Host "`n[1/5] File Integrity Checks..." -ForegroundColor Cyan
+Write-Host "`n[1/6] File Integrity Checks..." -ForegroundColor Cyan
 
 $fileSize = (Get-Item $wbPath).Length
 Check "1" "File exists" $true
@@ -86,7 +86,7 @@ Check "1" "File accessible" ($fileSize -gt 0) "Zero bytes"
 # STAGE 2: COM Compilation
 # ============================================================================
 
-Write-Host "`n[2/5] COM Compilation Check..." -ForegroundColor Cyan
+Write-Host "`n[2/6] COM Compilation Check..." -ForegroundColor Cyan
 
 Check "2" "Workbook opened via COM" ($wb -ne $null)
 
@@ -97,7 +97,7 @@ Check "2" "VBA compilation (build verified, $compCount components)" $true "p-cod
 # STAGE 3: Module Inventory
 # ============================================================================
 
-Write-Host "`n[3/5] Module Inventory..." -ForegroundColor Cyan
+Write-Host "`n[3/6] Module Inventory..." -ForegroundColor Cyan
 
 $moduleCount = 0
 foreach ($comp in $wb.VBProject.VBComponents) {
@@ -135,7 +135,7 @@ Check "3" "Total: $moduleCount modules, $totalLines lines" ($moduleCount -gt 0) 
 # STAGE 4: Sheet Verification
 # ============================================================================
 
-Write-Host "`n[4/5] Sheet Verification..." -ForegroundColor Cyan
+Write-Host "`n[4/6] Sheet Verification..." -ForegroundColor Cyan
 
 $sheetCount = $wb.Sheets.Count
 foreach ($ws in $wb.Sheets) {
@@ -161,7 +161,7 @@ Check "4" "Sheet count: $sheetCount" ($sheetCount -gt 0) "No sheets"
 # STAGE 5: Configuration & Constants
 # ============================================================================
 
-Write-Host "`n[5/5] Configuration & Constants..." -ForegroundColor Cyan
+Write-Host "`n[5/6] Configuration & Constants..." -ForegroundColor Cyan
 
 # Check config constants
 if ($config -and $config.verification -and $config.verification.expected_constants) {
@@ -245,6 +245,40 @@ if ($config -and $config.protection -and $config.protection.sheet_password) {
 }
 
 # ============================================================================
+# STAGE 6: Data Persist Verification
+# ============================================================================
+
+Write-Host "`n[6/6] Data Persist Verification..." -ForegroundColor Cyan
+
+$dataPersistPath = if ($config -and $config.data_persist) { $config.data_persist } else { "$ScriptDir\..\Software_Surgical_Edit\data-persist.json" }
+if (Test-Path $dataPersistPath) {
+    try {
+        $json = Get-Content $dataPersistPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        $artCount = $json.ARTICLES.Count
+        $mouvCount = $json.MOUVEMENTS.Count
+        Check "6" "Data persist file exists" $true
+        Check "6" "ARTICLES: $artCount records" ($artCount -gt 0) "Empty ARTICLES"
+        Check "6" "MOUVEMENTS: $mouvCount records" ($mouvCount -gt 0) "Empty MOUVEMENTS"
+        if ($artCount -gt 0) {
+            $firstArt = $json.ARTICLES[0]
+            Check "6" "ARTICLES has CODE field" ([bool]$firstArt.CODE) "Missing CODE"
+            Check "6" "ARTICLES has DESIGNATION field" ([bool]$firstArt.DESIGNATION) "Missing DESIGNATION"
+            Check "6" "ARTICLES has STOCK field" ($firstArt.PSObject.Properties.Name -contains "STOCK") "Missing STOCK"
+        }
+        if ($mouvCount -gt 0) {
+            $firstMouv = $json.MOUVEMENTS[0]
+            Check "6" "MOUVEMENTS has TYPE_MVT field" ([bool]$firstMouv.TYPE_MVT) "Missing TYPE_MVT"
+            Check "6" "MOUVEMENTS has CODE_ARTICLE field" ([bool]$firstMouv.CODE_ARTICLE) "Missing CODE_ARTICLE"
+            Check "6" "MOUVEMENTS has DATE field" ($firstMouv.PSObject.Properties.Name -contains "DATE") "Missing DATE"
+        }
+    } catch {
+        Check "6" "Data persist file valid JSON" $false "Parse error: $_"
+    }
+} else {
+    Check "6" "Data persist file exists" $false "Not found at $dataPersistPath"
+}
+
+# ============================================================================
 # SUMMARY
 # ============================================================================
 
@@ -265,7 +299,9 @@ if ($failed -eq 0) {
 }
 
 # Export results
-$resultsPath = "$ScriptDir\verify_results_$(Get-Date -Format 'yyyyMMdd_HHmmss').json"
+$resultsDir = "$ScriptDir\results"
+if (-not (Test-Path $resultsDir)) { New-Item -ItemType Directory -Path $resultsDir -Force | Out-Null }
+$resultsPath = "$resultsDir\verify_results_$(Get-Date -Format 'yyyyMMdd_HHmmss').json"
 @{
     Timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
     Workbook = $wbPath

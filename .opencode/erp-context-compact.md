@@ -21,11 +21,11 @@
 ## 25 Sheets
 ACCUEIL | ARTICLES | FOURNISSEURS | CONVENTIONS | MOUVEMENTS | TABLEAU_DE_BORD | ALERTE_DASHBOARD | INVENTAIRE | RAPPORTS | CALCULS_EOQ | HISTORIQUE | BON_RECEPTION | BON_SORTIE | BON_COMMANDE | DA_DEMANDE_ACHAT | GUIDE | VBA_MODULES | AUDIT_LOG | DASHBOARD | FORM_INPUT | BORDEREAU_COMMANDE | STAGING_BUFFER | SYS_STRINGS | RECEIPT_TAG | TEMPLATE_BON
 
-## 36 VBA Modules (29 .bas + 1 .frm + MAIN_MACROS.bas + ThisWorkbook.cls = ~10K lines, 0 compile errors)
+## 37 VBA Modules (30 .bas + 1 .frm + MAIN_MACROS.bas + ThisWorkbook.cls = ~11.5K lines, 0 compile errors)
 ### Critical
 | Module | Deps | Key API | Consumers |
 |--------|------|---------|-----------|
-| mod_Config | none | SYS_TITLE, MASTER_PWD, DOC_TYPE_*, SHEET_* consts | All |
+| mod_Config | none | SYS_TITLE, MASTER_PWD, DOC_TYPE_*, SHEET_* consts, COL_ART_*/COL_MOUV_*/COL_FOU_* column consts | All |
 | mod_StockEngine | Config | GetSafetyStock, ComputeEOQ, ComputeROP, ValidateStockLevel, UpdateArticleStockBalance, GetAnnualDemandFromHistory, CalculateCMUP, RefreshAllCMUP, UpdateAllABCClassifications | Dashboard, Procurement, StockEntry_Logic, SyncBridge |
 | mod_StockEntry_Logic | Config, Utilities, Localization, Database, SyncBridge, AuditTrail, ExportEngine, TransactionSafety | InitializeForm, cmb*_Change, GenerateAutoRef, btn*_Click, FormState struct pattern | MAIN_MACROS, Navigation |
 | mod_TransactionSafety | SharedEnvironment | BeginTransaction, CommitTransaction, RollbackTransaction, DetectCrashRecovery | StockEntry_Logic |
@@ -43,12 +43,18 @@ ACCUEIL | ARTICLES | FOURNISSEURS | CONVENTIONS | MOUVEMENTS | TABLEAU_DE_BORD |
 | mod_ReceiptTag | Config, Utilities | GenerateReceiptTagPDF, SetupReceiptTagSheet |
 | mod_QRCode | Config | GenerateQRCodeForForm, GenerateQRCodeForSheet, GenerateLocalQRFallback, VerifyDocumentQR, GetDocumentVerifyCode |
 | mod_SharedEnvironment | none | GetSharedExportPath, GetCurrentUser, AcquireFileLock, ReleaseFileLock, BulkImportMouvements, ScheduleAutoBackup |
+| mod_InventoryReconciliation | Config, StockEngine | ReconcileInventory, GenerateReconciliationReport |
+| mod_SupplierScorecard | Config | ScoreSupplier, EvaluateDeliveryPerformance, GenerateScorecard |
 
 ### Medium
-mod_SheetSetup | mod_Procurement | mod_Restore | mod_Backup | mod_Analysis | mod_Localization | mod_ApprovalWorkflow | mod_StockCalculations | mod_Forecasting (3/7/14-day MA, 30-day proj, MAD) | mod_SupplierRegistry (NIF/NIS/RC/Art tax IDs) | mod_ThemingEngine | mod_UIEnhancements | mod_DemoData (38-day thesis demo)
+mod_SheetSetup | mod_Procurement | mod_Analysis | mod_Localization | mod_ApprovalWorkflow | mod_Forecasting (3/7/14-day MA, 30-day proj, MAD) | mod_SupplierRegistry (NIF/NIS/RC/Art tax IDs) | mod_ThemingEngine | mod_UIEnhancements | mod_DemoData (38-day thesis demo) | mod_DataValidator | mod_StockAging | mod_StockOutPredictor | mod_EntryPoints (20-entry registry)
 
 ### Low
-mod_UI_Setup | mod_LogViewer | mod_Navigation | mod_BonLivraison | mod_Budget | mod_Facture | mod_CSVImportExport | mod_Barcode (keyboard-wedge) | mod_AutoBackup
+mod_UI_Setup | mod_Navigation | mod_Budget | mod_CSVImportExport | mod_Barcode (keyboard-wedge)
+
+### Entry-Point Modules (registered in mod_EntryPoints — 20 entries with trigger type + description)
+Run `Call mod_EntryPoints.ListAllEntryPoints` in Immediate Window to see all registered entry points.
+Covers: mod_Dashboard | mod_Reports | mod_DemoData | mod_Navigation | mod_Analysis | mod_Forecasting | mod_ApprovalWorkflow | mod_ReceiptTag | mod_SheetSetup | mod_UIEnhancements | mod_ThemingEngine | mod_DataValidator | mod_StockAging | mod_StockOutPredictor | mod_SupplierScorecard | mod_InventoryReconciliation | mod_Utilities | mod_ExportEngine | mod_Barcode | mod_CSVImportExport
 
 ## Transaction Data Flow
 frmStockEntry → StockEntry_Logic.btnEnregistrer_Click → Database.SecureWriteTransaction → MOUVEMENTS sheet
@@ -109,9 +115,9 @@ Workflows: feature (explore→plan→build) | fix (debug→build→test) | quali
 ## Build/Verify/Test Commands
 | Cmd | Action |
 |-----|--------|
-| `.\Software_Surgical_Edit\build.ps1` | Rebuild workbook from .bas sources |
-| `.\Software_Surgical_Edit\verify.ps1` | 97-point verification |
-| `.\Software_Surgical_Edit\milestone_13_2\tests\dss-audit.ps1` | 5-phase DSS audit |
+| `.\vbe-auto\build.ps1 -ConfigPath .\vbe-auto\config.json` | Rebuild workbook from .bas sources (8 steps: kill→open→strip→import→compile→protect→demo+save→cleanup) |
+| `.\vbe-auto\verify.ps1 -ConfigPath .\vbe-auto\config.json` | 137-point verification (file→COM→modules→sheets→constants) |
+| `.\milestone_13_2\tests\dss-audit.ps1` | 5-phase DSS audit |
 | `.\Software_Surgical_Edit\test-macros.ps1` | Automated macro tests |
 | `.\Thesis_Surgical_Edit\build-thesis.ps1` | Build thesis PDF |
 | `git -C "$ROOT" push` | Push to GitHub |
@@ -139,7 +145,23 @@ Workflows: feature (explore→plan→build) | fix (debug→build→test) | quali
 - Front matter: DONE (intro, abstract AR+FR, glossary, dedication)
 - Supervisor: دهيني ميمونة (مصلحة الميزانيات والاقتصاد)
 - Thesis source: `Thesis_Surgical_Edit\Final_Thesis_Academix_v13_2_FIXED.md`
-- Terminology: ❌ "Database"/"Python"/"Hybrid System"/"فرع" — use "السجل الرقمي"/"وحدات المعالجة VBA"/"نظام إلكتروني متكامل" instead
+- Build: `& "Thesis_Surgical_Edit\build-thesis.ps1"` → output DOCX + PDF in `Thesis_Surgical_Edit\output\`
+- Pipeline: pandoc MD→DOCX → Python table/cover formatting → Word COM → PDF
+- Terminology: ❌ "Database"/"Python"/"Hybrid System"/"فرع" → "السجل الرقمي"/"وحدات المعالجة VBA"/"نظام إلكتروني متكامل" instead
+- Chapter outline: `Thesis_Surgical_Edit\THESIS_CHAPTER_OUTLINE.md`
+- Full terminology map: `Thesis_Surgical_Edit\THESIS_TERMINOLOGY_MAPPING.md`
+- Session handoff: `Thesis_Surgical_Edit\SESSION_HANDOFF.md`
+
+## Workflow Rules (Every Agent Must Follow)
+- Edit .bas source files ONLY — never modify .xlsm directly
+- Source files in: `Software_Surgical_Edit\VBA_Modules\*.bas`
+- After edits: build.ps1 → verify.ps1 → report results
+- Build: `& "vbe-auto\build.ps1" -ConfigPath "vbe-auto\config.json"`
+- Verify: `& "vbe-auto\verify.ps1" -ConfigPath "vbe-auto\config.json"`
+- Audit: `& "milestone_13_2\tests\dss-audit.ps1"`
+- Report format: what was fixed, what files changed, build/verify/audit results
+- No XLOOKUP (Excel 2010 compat), pure VBA only, no Python/Flask/databases
+- French headers & tab names, PascalCase modules
 
 ## Project Paths (Essential)
 | Path | Location |
@@ -150,5 +172,5 @@ Workflows: feature (explore→plan→build) | fix (debug→build→test) | quali
 | Compiled | Software_Surgical_Edit\ERP_Academie_v13_2.xlsm |
 | Config dir | .config\opencode\ |
 | Context XMLs | Software_Surgical_Edit\erp-*.xml (4 files) |
-| Launcher | Desktop\OpenCode.bat (v3.1, 13 modes) |
+| Launcher | Desktop\OpenCode.bat (v3.3, 26 modes) |
 | Git remote | https://github.com/kamelmh/logistics-public-sector-refactor |

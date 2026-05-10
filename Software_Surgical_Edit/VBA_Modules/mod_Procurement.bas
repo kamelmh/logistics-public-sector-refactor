@@ -22,7 +22,7 @@ Public Sub GenerateOrderReport()
     Dim i As Long
     Dim rowNum As Long
     
-    lastRow = wsArt.Cells(wsArt.Rows.count, 1).End(xlUp).Row
+    lastRow = wsArt.Cells(wsArt.Rows.count, COL_ART_CODE).End(xlUp).Row
     If lastRow < 2 Then
         MsgBox "Aucun article trouvé dans le catalogue.", vbExclamation, "ACADEMIX v13"
         Exit Sub
@@ -52,12 +52,12 @@ Public Sub GenerateOrderReport()
     wsArt.Unprotect Password:=mod_Config.MASTER_PWD
     
     For i = 2 To lastRow
-        Dim sku As String: sku = Trim(wsArt.Cells(i, 1).Value)
+        Dim sku As String: sku = Trim(wsArt.Cells(i, COL_ART_CODE).Value)
         If sku = "" Then GoTo NextArticle
         
-        Dim desig As String: desig = wsArt.Cells(i, 2).Value
-        Dim stock As Long: stock = Val(wsArt.Cells(i, 3).Value)
-        Dim pu As Double: pu = Val(wsArt.Cells(i, 8).Value) ' Col H: PU/CMUP
+        Dim desig As String: desig = wsArt.Cells(i, COL_ART_DESIGNATION).Value
+        Dim stock As Long: stock = Val(wsArt.Cells(i, COL_ART_STOCK).Value)
+        Dim pu As Double: pu = Val(wsArt.Cells(i, COL_ART_PU).Value) ' Col H: PU/CMUP
         
         ' Calculate ROP and EOQ locally
         Dim AnnualDemand As Double: AnnualDemand = mod_StockEngine.GetAnnualDemandFromHistory(sku)

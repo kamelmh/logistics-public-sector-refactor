@@ -69,13 +69,13 @@ This triggers instant project awareness: all paths, all modules, all ground trut
 | `CALCULS_EOQ` | Wilson EOQ calculations |
 | `AUDIT_LOG` | Audit trail — append-only |
 
-### VBA Modules (27 — All Clean)
+### VBA Modules (37 — All Clean)
 | Tier | Modules |
 |------|---------|
-| **Critical** | `mod_Config`, `mod_StockEngine`, `mod_StockEntry_Logic` |
-| **High** | `mod_SyncBridge`, `mod_Dashboard`, `mod_ExportEngine`, `mod_Utilities`, `mod_Reports`, `mod_Database`, `mod_AuditTrail`, `mod_ReceiptTag` |
-| **Medium** | `mod_SheetSetup`, `mod_Procurement`, `mod_Restore`, `mod_Backup`, `mod_Analysis`, `mod_Localization`, `mod_ApprovalWorkflow`, `mod_StockCalculations` |
-| **Low** | `mod_UI_Setup`, `mod_LogViewer`, `modNavigation`, `mod_BonLivraison`, `mod_Budget`, `mod_Facture` |
+| **Critical** | `mod_Config`, `mod_StockEngine`, `mod_StockEntry_Logic`, `mod_TransactionSafety` |
+| **High** | `mod_SyncBridge`, `mod_Dashboard`, `mod_ExportEngine`, `mod_Utilities`, `mod_Reports`, `mod_Database`, `mod_AuditTrail`, `mod_ReceiptTag`, `mod_QRCode`, `mod_SharedEnvironment`, `mod_InventoryReconciliation`, `mod_SupplierScorecard`, `mod_SupplierRegistry`, `mod_StockAging`, `mod_StockOutPredictor`, `mod_Forecasting`, `mod_DataValidator`, `mod_DemoData`, `mod_Barcode`, `mod_CSVImportExport`, `mod_EntryPoints`, `mod_ThemingEngine` |
+| **Medium** | `mod_SheetSetup`, `mod_Procurement`, `mod_Analysis`, `mod_Localization`, `mod_ApprovalWorkflow`, `mod_Navigation`, `mod_Budget`, `mod_BudgetSetup`, `mod_UIEnhancements` |
+| **Low** | `mod_UI_Setup` |
 
 ### Transaction Data Flow
 ```
@@ -153,6 +153,13 @@ Dropbox/Logistics.Public.Sector.Refactor/
 | W008 | ✅ Resolved | Public keywords (mod_Utilities) |
 | W009 | ✅ Resolved | SyncBridge stubs implemented |
 | W010 | ✅ Resolved | ThisWorkbook.cls fixed |
+
+## Additional Documentation
+- `AGENTS.md` — Agent configuration, model routing, session recovery
+- `CLAUDE.md` — Project identity, ground truth, thesis constraints, AI backends
+- `CNEPD_REQUIREMENTS.md` — CNEPD BTS compliance, privacy, case study details
+- `USER_GUIDE.md` — End-user instructions for the ERP workbook
+- The `.opencode/bootstrap/` directory contains the master system context
 
 ## Thesis Progress
 
