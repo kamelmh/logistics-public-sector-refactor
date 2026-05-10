@@ -115,10 +115,14 @@ Check "OLLAMA" ([bool]$ollamaProc) "Ollama running (PID $($ollamaProc.Id))" "Oll
 
 $models = ollama list 2>$null
 if ($models) {
-    $model7b = $models -match "qwen2.5-coder:7b"
-    $model15b = $models -match "qwen2.5-coder:1.5b"
-    Check "7B" ([bool]$model7b) "qwen2.5-coder:7b (4.7 GB) — Available" "7b model not found"
-    Check "1.5B" ([bool]$model15b) "qwen2.5-coder:1.5b (986 MB) — Available" "1.5b model not found"
+    $model7b   = $models -match "qwen2.5-coder:7b"
+    $model15b  = $models -match "qwen2.5-coder:1.5b"
+    $modelQwen3 = $models -match "qwen3:1.7b"
+    $modelPhi4  = $models -match "phi4-mini"
+    Check "7B"    ([bool]$model7b)    "qwen2.5-coder:7b (4.7 GB) — Available" "7b model not found"
+    Check "1.5B"  ([bool]$model15b)   "qwen2.5-coder:1.5b (986 MB) — Available" "1.5b model not found"
+    Check "QWEN3" ([bool]$modelQwen3) "qwen3:1.7b (1.4 GB, CPU reasoning) — Available" "qwen3:1.7b not found"
+    Check "PHI4"  ([bool]$modelPhi4)  "phi4-mini:3.8b (2.5 GB, CPU coding) — Available" "phi4-mini not found"
 } else { Warn "MODELS" "Could not list Ollama models" }
 
 # ─── 5. WORKBOOK INTEGRITY ────────────────────────────────────
@@ -163,7 +167,7 @@ Check "SKL2" ($skillCount -ge 60) "$skillCount skills in .opencode/skills/" "Onl
 Write-Host "  Agents: explore | plan | build | debug | audit | test" -ForegroundColor Gray
 Write-Host "  Modes:  /mode explore|plan|build|debug|audit" -ForegroundColor Gray
 Write-Host "  Tasks:  .\orchestrator.ps1 status|next|run T003|build|audit|test" -ForegroundColor Gray
-Write-Host "  Stack:  Llama 3.3 70B (primary) | Qwen3 32B (fast) | Ollama (local)" -ForegroundColor Gray
+Write-Host "  Stack:  Llama 3.3 70B (primary) | Qwen3 32B (fast) | Ollama local (4 models) | Gemini 1M ctx" -ForegroundColor Gray
 
 # ─── OUTPUT SUMMARY ──────────────────────────────────────────
 Write-Host "`n═══════════════════════════════════════════════════" -ForegroundColor Cyan
@@ -171,7 +175,8 @@ Write-Host @"
   Platform:    Windows 10, Celeron, 8GB RAM, HDD
   AI Primary:  Groq $GROQ_MODEL (free, open-source)
   AI Fast:     Groq $GROQ_FAST_MODEL (free, open-source)
-  AI Fallback: Ollama qwen2.5-coder:7b / 1.5b (local)
+  AI Local:    Ollama 7B / 1.5B / Qwen3 1.7B / Phi4-mini 3.8B
+  AI Cloud:    Gemini 2.5 Flash 1M (free) + OpenRouter 30+ models
   Workbook:    $WORKBOOK ($([math]::Round($wb.Length/1KB)) KB)
   VBA Source:  $basCount .bas | $frmCount .frm | $clsCount .cls = $($basCount+$frmCount+$clsCount) files | $totalLines lines
   Skills:      $skillCount .opencode skills (full fork sync)
@@ -193,10 +198,14 @@ Write-Host @"
   ╔══════════════════════════════════════════════════════════╗
   ║  AI Model Stack (100% Free & Open-Source)                ║
   ║                                                          ║
-  ║  PRIMARY:  Groq Llama 3.3 70B  (prose + VBA logic)      ║
-  ║  FAST:     Groq Qwen3 32B       (explore, debug, audit) ║
-  ║  LOCAL:    Ollama Qwen2.5 7B/1.5B  (offline fallback)   ║
-  ║  FUTURE:   Anthropic Claude     (key stored, needs $)    ║
+  ║  PRIMARY:  Groq Llama 3.3 70B      (prose + VBA logic)     ║
+  ║  FAST:     Groq Qwen3 32B          (explore, debug, audit) ║
+  ║  LOCAL:    Qwen2.5 7B / 1.5B      (offline fallback)      ║
+  ║  LOCAL:    Qwen3 1.7B             (CPU reasoning)          ║
+  ║  LOCAL:    Phi4-mini 3.8B         (CPU coding)             ║
+  ║  CLOUD:    Gemini 2.5 Flash 1M ctx(Google, free tier)      ║
+  ║  CLOUD:    Nemotron 120B 1M ctx   (OpenRouter free)        ║
+  ║  FUTURE:   Anthropic Claude       (key stored, needs $)    ║
   ╚══════════════════════════════════════════════════════════╝
 
 [ STATUS — ALL TASKS COMPLETE ]
@@ -211,7 +220,11 @@ Write-Host @"
   ✅ Test pipeline — 10/10 PASS
   ✅ SSD workspace — F:\Academix (COMPILE: OK)
   ✅ Session/memory system — .opencode/memory/ active
-  ✅ Launcher linked — desktop + PATH
+  ✅ Launcher v3.1 — Desktop OpenCode.bat with 13 modes
+  ✅ Model landscape — .opencode/model-landscape-2026.md
+  ✅ API keys fixed — Anthropic, OpenRouter, OpenAI, DeepSeek
+  ✅ System cheatsheet — .opencode/system-context-cheatsheet.md
+  ✅ Ollama models — Qwen3 1.7B + Phi4-mini 3.8B installed
 
 [ REMAINING — YOUR ACTION ]
   [ ] Defense practice — jury Q&A from DEFENSE_QA_GUIDE.md
@@ -240,13 +253,18 @@ do {
     switch ($choice) {
         "1" {
             Write-Host @"
-  Run this in your terminal:
-    opencode
+  Run in your terminal (choose a backend):
+
+    opencode                 Default (big-pickle, CLI)
+    OpenCode groq            Groq Llama 3.3 70B (fastest, primary)
+    OpenCode gemini          Gemini 2.5 Flash (1M context)
+    OpenCode phi4            Ollama Phi4-mini 3.8B (offline CPU coding)
+    OpenCode qwen3           Ollama Qwen3 1.7B (offline CPU reasoning)
+    OpenCode ollama          Ollama model picker (all 4 local models)
+    OpenCode fcc             Nemotron 120B (OpenRouter free, 1M ctx)
+
   Then type trigger phrase:
     ACADEMIX_CONTEXT v13.2 DEPLOYED_IN_OPENCODE
-
-  Or launch directly with:
-    opencode -m "ACADEMIX_CONTEXT v13.2 DEPLOYED_IN_OPENCODE"
 "@ -ForegroundColor Green
             break
         }
@@ -282,28 +300,13 @@ do {
         "7" {
             Write-Host @"
   [ QUICK COMMANDS ]
-    opencode                                        Launch CLI
-    .\Software_Surgical_Edit\build.ps1              Rebuild
-    .\Software_Surgical_Edit\verify.ps1             Verify
-    .\Software_Surgical_Edit\milestone_13_2\tests\dss-audit.ps1   Audit
-    .\Software_Surgical_Edit\test-macros.ps1        Tests
-    .\Software_Surgical_Edit\data-persist.ps1 save  Backup data
-    .\Software_Surgical_Edit\orchestrator.ps1 status  Agent status
-    git -C "$ROOT" push                             Push to GitHub
-
-  [ TRIGGER PHRASE ]
-    >>> ACADEMIX_CONTEXT v13.2 DEPLOYED_IN_OPENCODE
-
-  [ AGENT MODES ]
-    /mode explore|plan|build|debug|audit
-"@ -ForegroundColor DarkGray
-            Write-Host "`n  Press Enter to continue..." -ForegroundColor Gray
-            $null = Read-Host
-        }
-        "8" {
-            Write-Host @"
-  [ QUICK COMMANDS ]
-    opencode                                        Launch CLI
+    opencode                                        Launch CLI (default)
+    OpenCode groq                                   Groq Llama 3.3 70B
+    OpenCode gemini                                 Gemini 2.5 Flash (1M ctx)
+    OpenCode phi4                                   Ollama Phi4-mini 3.8B (CPU)
+    OpenCode qwen3                                  Ollama Qwen3 1.7B (CPU)
+    OpenCode ollama                                 Ollama model selection menu
+    OpenCode fcc                                    Nemotron 120B (OpenRouter free)
     .\Software_Surgical_Edit\build.ps1              Rebuild
     .\Software_Surgical_Edit\verify.ps1             Verify
     .\Software_Surgical_Edit\milestone_13_2\tests\dss-audit.ps1   Audit

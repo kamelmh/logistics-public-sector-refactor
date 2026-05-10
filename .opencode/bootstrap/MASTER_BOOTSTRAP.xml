@@ -3,11 +3,12 @@
   <!-- ===== AUTO-LOAD PROTOCOL (READ FIRST, EVERY SESSION) ===== -->
   <bootstrap order="mandatory">
     <step order="1">Read this MASTER_BOOTSTRAP.xml — complete system context</step>
-    <step order="2">Call `skill` tool to load skills matching your agent type (see skills-map)</step>
-    <step order="3">Read `C:\Users\Administrator\.opencode\notepad.md` for session memory</step>
-    <step order="4">Run `/memory list` to recall previous session state</step>
-    <step order="5">Check `C:\Users\Administrator\Desktop\handoff*.txt` for pending debug tasks</step>
-    <step order="6">Begin work. Save progress before closing: `/memory save "Done: X | Next: Y"`</step>
+    <step order="2">Read `.opencode\erp-context-compact.md` — token-optimized snapshot (covers all XMLs, backends, models)</step>
+    <step order="3">Call `skill` tool to load skills matching agent type (see skills-map)</step>
+    <step order="4">Read `C:\Users\Administrator\.opencode\notepad.md` for session memory</step>
+    <step order="5">Run `/memory list` to recall previous session state</step>
+    <step order="6">Check `C:\Users\Administrator\Desktop\handoff*.txt` for pending debug tasks</step>
+    <step order="7">Begin work. Save progress: `/memory save "Done: X | Next: Y"`</step>
   </bootstrap>
 
   <!-- ===== PROJECT IDENTITY ===== -->
@@ -36,11 +37,15 @@
   </ground-truth>
 
   <!-- ===== AGENT SKILL AUTO-LOAD ===== -->
+  <!-- Note: VBA-specific skills (vba-build, vba-debug) exist on disk at
+       .opencode/skills/ but aren't in OpenCode's global skill catalog.
+       They can be read manually from: file:///C:/Users/Administrator/.opencode/skills/vba-build/SKILL.md
+       VBA domain knowledge is loaded via instructions.md + XML context files instead. -->
   <skills-map>
-    <agent type="build"  skills="vba-build,vba-debug,vba-excel-sync,naming-cheatsheet" />
+    <agent type="build"  skills="naming-cheatsheet,humanizer" />
     <agent type="plan"   skills="plan,planning-and-task-breakdown,idea-refine" />
     <agent type="explore" skills="" note="Read-only, no skills needed" />
-    <agent type="debug"  skills="vba-debug,vba-build" />
+    <agent type="debug"  skills="verify" />
     <agent type="audit"  skills="verify" />
     <agent type="test"   skills="project,verify" />
     <agent type="general" skills="naming-cheatsheet,humanizer" />
@@ -50,6 +55,7 @@
 
   <!-- ===== CONTEXT FILES (read on demand) ===== -->
   <context-files project-root="C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor">
+    <file key="compact" path=".opencode\erp-context-compact.md" priority="always" desc="Token-optimized snapshot of all 4 XMLs + backends + models (9.6KB, ~2.5K tokens)" />
     <file key="project-arch" path="Software_Surgical_Edit\erp-project-context.xml" priority="high" desc="Modules, sheets, call graph, config params (253 lines)" />
     <file key="agent-handoff" path="Software_Surgical_Edit\erp-agent-handoff.xml" priority="high" desc="Agent routing, session state, backends (102 lines)" />
     <file key="admin-paths" path="Software_Surgical_Edit\erp-admin-paths.xml" priority="medium" desc="All file paths, AI backends, launchers (295 lines)" />
@@ -62,7 +68,7 @@
   <!-- ===== PATH INDEX (compact) ===== -->
   <paths root="C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor">
     <vba-modules>Software_Surgical_Edit\VBA_Modules\</vba-modules>
-    <thesis>Software_Surgical_Edit\Thesis_Surgical_Edit\</thesis>
+    <thesis>Thesis_Surgical_Edit\</thesis>
     <scripts>Software_Surgical_Edit\</scripts>
     <build-toolkit>vbe-auto\</build-toolkit>
     <milestone>milestone_13_2\</milestone>
@@ -99,15 +105,18 @@
   </pipeline>
 
   <!-- ===== LAUNCHER MODES (OpenCode.bat) ===== -->
-  <launcher path="C:\Users\Administrator\Desktop\OpenCode.bat" version="3.0">
+  <launcher path="C:\Users\Administrator\Desktop\OpenCode.bat" version="3.1">
     <mode name="cli"     model="opencode/big-pickle" desc="Default CLI" />
     <mode name="gui"     model="gui" desc="Desktop GUI v1.14.42" />
     <mode name="groq"    model="groq/llama-3.3-70b-versatile" desc="AI backend primary" />
-    <mode name="fcc"     model="fcc-proxy" desc="Nemotron 120B via FCC" />
     <mode name="gemini"  model="google/gemini-2.5-flash" desc="1M context" />
-    <mode name="ollama"  model="ollama/qwen2.5-coder:1.5b" desc="Offline fallback" />
+    <mode name="ollama"  model="ollama" desc="Ollama model picker (4 models)" />
+    <mode name="phi4"    model="ollama/phi4-mini:3.8b-q4_K_M" desc="CPU coding" />
+    <mode name="qwen3"   model="ollama/qwen3:1.7b" desc="CPU reasoning" />
+    <mode name="fcc"     model="fcc-proxy" desc="Nemotron 120B via FCC" />
     <mode name="proxy"   desc="FCC server only (background)" />
     <mode name="academix" desc="Interactive dashboard" />
+    <mode name="restore" desc="Restore last session mode" />
     <session-naming>OpenCode &lt;mode&gt; &lt;session-name&gt; for multi-session</session-naming>
   </launcher>
 
@@ -140,6 +149,8 @@
     <backend name="OpenRouter Qwen3 Coder 480B" ctx="1M" speed="~3s" cost="free" role="Code generation" note="429-limited" />
     <backend name="Ollama Qwen 1.5B"      ctx="32K"  speed="~95s" cost="free" role="Offline emergency" />
     <backend name="Ollama Qwen 7B"        ctx="32K"  speed="~30s" cost="free" role="Offline moderate" />
+    <backend name="Ollama Qwen3 1.7B"     ctx="16K"  speed="~40s" cost="free" role="CPU reasoning" />
+    <backend name="Ollama Phi4-mini 3.8B"  ctx="16K"  speed="~25s" cost="free" role="CPU coding (best quality)" />
   </ai-backends>
 
   <!-- ===== RALPH LOOP (self-referential improvement) ===== -->

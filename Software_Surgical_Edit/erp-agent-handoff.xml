@@ -9,10 +9,12 @@
     <backend key="or-coder" provider="OpenRouter" model="qwen/qwen3-coder:free" response="~3s">Free 480B coder</backend>
     <backend key="or-gemma" provider="OpenRouter" model="gemma-4-31b-it:free" response="~3s">Free Gemma 4 31B</backend>
     <backend key="local-7b" provider="Ollama" model="qwen2.5-coder:7b" response="~30-60s" context="8K">Offline fallback</backend>
-    <backend key="local-1.5b" provider="Ollama" model="qwen2.5-coder:1.5b" response="~108s" context="4K">Offline slow fallback</backend>
+    <backend key="local-1.5b" provider="Ollama" model="qwen2.5-coder:1.5b" response="~95s" context="4K">Offline slow fallback</backend>
+    <backend key="local-qwen3" provider="Ollama" model="qwen3:1.7b" response="~40s" context="16K">CPU reasoning</backend>
+    <backend key="local-phi4" provider="Ollama" model="phi4-mini:3.8b-q4_K_M" response="~25s" context="16K">CPU coding</backend>
   </ai-backends>
   <session-context>
-    <last-action>2026-05-09: MASTER_BOOTSTRAP.xml created (uber-context), OpenCode.bat v3.0 (Ollama auto-start, multi-session, restore), AGENTS.md + instructions.md updated with bootstrap protocol, session persistence system deployed</last-action>
+    <last-action>2026-05-09: Mass update — AGENTS.md, MASTER_BOOTSTRAP.xml, instructions.md, erp-admin-paths.xml, erp-agent-handoff.xml: fixed stale skill refs (vba-build→available skills), added Qwen3 1.7B + Phi4-mini 3.8B models, launcher v3.1 (13 modes), corrected file sizes + paths, added note about VBA skills not in global catalog</last-action>
     <warnings-status>ALL RESOLVED (W001-W010)</warnings-status>
     <modules>
       <count>29 .bas + 1 .frm + 1 .cls + MAIN_MACROS.bas = 36 components</count>

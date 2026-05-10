@@ -174,7 +174,7 @@
     <backend key="local-fast"
              provider="Ollama"
              model="qwen2.5-coder:7b"
-             context="32K"
+             context="8K"
              vision="no"
              pdf="no"
              xml-opt="low"
@@ -188,7 +188,7 @@
     <backend key="local-slow"
              provider="Ollama"
              model="qwen2.5-coder:1.5b"
-             context="32K"
+             context="4K"
              vision="no"
              pdf="no"
              xml-opt="very-low"
@@ -197,6 +197,32 @@
              best-for="Last-resort offline fallback, simple VBA syntax review">
       Smallest model. Very slow (~95s). Reads: tiny .bas files only.
       Cannot handle large XML context files. For extreme emergencies only.
+    </backend>
+    <backend key="local-qwen3"
+             provider="Ollama"
+             model="qwen3:1.7b"
+             context="16K"
+             vision="no"
+             pdf="no"
+             xml-opt="low"
+             speed="~40s"
+             cost="free"
+             best-for="CPU reasoning tasks, when no internet available">
+      CPU reasoning model (1.4GB RAM). Good for logic/analysis under 16K ctx.
+      Slower than cloud but usable offline. Reads: .bas, .txt, .md, .xml.
+    </backend>
+    <backend key="local-phi4"
+             provider="Ollama"
+             model="phi4-mini:3.8b-q4_K_M"
+             context="16K"
+             vision="no"
+             pdf="no"
+             xml-opt="low"
+             speed="~25s"
+             cost="free"
+             best-for="CPU coding, best local model for VBA">
+      Best CPU coding model (2.5GB RAM). Strongest local option for VBA work.
+      Still much slower than cloud (~25s/req). Reads: .bas, .txt, .md, .xml.
     </backend>
 
     <!-- ======================================================================
@@ -263,7 +289,9 @@
     <launcher key="gui">OpenCode.bat gui → Desktop GUI v1.14.42</launcher>
     <launcher key="groq">OpenCode.bat groq → Groq Llama 3.3 70B (AI backend)</launcher>
     <launcher key="gemini">OpenCode.bat gemini → Google Gemini 2.5 Flash (1M ctx)</launcher>
-    <launcher key="ollama">OpenCode.bat ollama → Ollama Qwen 1.5B (offline)</launcher>
+    <launcher key="ollama">OpenCode.bat ollama → Ollama model picker (4 models)</launcher>
+    <launcher key="phi4">OpenCode.bat phi4 → Ollama Phi4-mini 3.8B (CPU coding)</launcher>
+    <launcher key="qwen3">OpenCode.bat qwen3 → Ollama Qwen3 1.7B (CPU reasoning)</launcher>
     <launcher key="fcc">OpenCode.bat fcc → FCC proxy Nemotron 120B (auto-start)</launcher>
     <launcher key="proxy">OpenCode.bat proxy → Start FCC proxy only (background)</launcher>
     <launcher key="academix">OpenCode.bat academix → Interactive project dashboard</launcher>

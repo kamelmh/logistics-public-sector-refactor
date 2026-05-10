@@ -27,6 +27,7 @@
       <issue status="fixed">MASTER_PWD Public Const not resolved cross-module (use Property Get)</issue>
       <issue status="fixed">Comments between _ continuations break parser (remove from continuation blocks)</issue>
       <issue status="workaround">Stale p-code cache causes false compile errors (always rebuild from scratch)</issue>
+      <issue status="note">VBA-specific skills (vba-build, vba-debug) exist on disk but not in OpenCode global skill catalog — load via instructions.md + XML context</issue>
     </known-issues>
     <automation-tools>
       <tool name="build.ps1" purpose="Workbook rebuild from .bas sources" />
