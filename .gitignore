@@ -32,6 +32,7 @@ Final_Delivery_Layout/
 data-persist.json
 Thesis_Surgical_Edit/output/
 _tmp.driveupload/
+.tmp.driveupload/
 
 # Archive / runtime state (not source)
 .opencode/archive/
