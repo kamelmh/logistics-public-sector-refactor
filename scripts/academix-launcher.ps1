@@ -167,7 +167,7 @@ Check "SKL2" ($skillCount -ge 60) "$skillCount skills in .opencode/skills/" "Onl
 Write-Host "  Agents: explore | plan | build | debug | audit | test" -ForegroundColor Gray
 Write-Host "  Modes:  /mode explore|plan|build|debug|audit" -ForegroundColor Gray
 Write-Host "  Tasks:  .\orchestrator.ps1 status|next|run T003|build|audit|test" -ForegroundColor Gray
-Write-Host "  Stack:  Llama 3.3 70B (primary) | Qwen3 32B (fast) | Ollama local (4 models) | Gemini 1M ctx" -ForegroundColor Gray
+Write-Host "  Stack:  Llama 3.3 70B (primary) | Qwen3 32B (fast) | Ollama local (4 models) | Gemini 1M ctx | Gemma 4 26B (256K, multimodal)" -ForegroundColor Gray
 
 # ─── OUTPUT SUMMARY ──────────────────────────────────────────
 Write-Host "`n═══════════════════════════════════════════════════" -ForegroundColor Cyan
@@ -176,7 +176,7 @@ Write-Host @"
   AI Primary:  Groq $GROQ_MODEL (free, open-source)
   AI Fast:     Groq $GROQ_FAST_MODEL (free, open-source)
   AI Local:    Ollama 7B / 1.5B / Qwen3 1.7B / Phi4-mini 3.8B
-  AI Cloud:    Gemini 2.5 Flash 1M (free) + OpenRouter 30+ models
+  AI Cloud:    Gemini 2.5 Flash 1M + Gemma 4 26B 256K (free, multimodal) + OpenRouter 30+ models
   Workbook:    $WORKBOOK ($([math]::Round($wb.Length/1KB)) KB)
   VBA Source:  $basCount .bas | $frmCount .frm | $clsCount .cls = $($basCount+$frmCount+$clsCount) files | $totalLines lines
   Skills:      $skillCount .opencode skills (full fork sync)
@@ -204,6 +204,7 @@ Write-Host @"
   ║  LOCAL:    Qwen3 1.7B             (CPU reasoning)          ║
   ║  LOCAL:    Phi4-mini 3.8B         (CPU coding)             ║
   ║  CLOUD:    Gemini 2.5 Flash 1M ctx(Google, free tier)      ║
+  ║  CLOUD:    Gemma 4 26B 256K ctx   (Google, multimodal)     ║
   ║  CLOUD:    Nemotron 120B 1M ctx   (OpenRouter free)        ║
   ║  FUTURE:   Anthropic Claude       (key stored, needs $)    ║
   ╚══════════════════════════════════════════════════════════╝
@@ -258,6 +259,7 @@ do {
     opencode                 Default (big-pickle, CLI)
     OpenCode groq            Groq Llama 3.3 70B (fastest, primary)
     OpenCode gemini          Gemini 2.5 Flash (1M context)
+    OpenCode gemma / ogg     Gemma 4 26B (256K ctx, multimodal)
     OpenCode phi4            Ollama Phi4-mini 3.8B (offline CPU coding)
     OpenCode qwen3           Ollama Qwen3 1.7B (offline CPU reasoning)
     OpenCode ollama          Ollama model picker (all 4 local models)
@@ -304,6 +306,7 @@ do {
     opencode                                        Launch CLI (default)
     OpenCode groq                                   Groq Llama 3.3 70B
     OpenCode gemini                                 Gemini 2.5 Flash (1M ctx)
+    OpenCode gemma / ogg                            Gemma 4 26B (256K ctx, multimodal)
     OpenCode phi4                                   Ollama Phi4-mini 3.8B (CPU)
     OpenCode qwen3                                  Ollama Qwen3 1.7B (CPU)
     OpenCode ollama                                 Ollama model selection menu

@@ -38,6 +38,12 @@ _tmp.driveupload/
 .opencode/archive/
 .opencode/memory/
 
+# Generated DOCX files (binary, rebuilt)
+Memoire_Academix_v13_2_Final_Master_Generation.docx
+Memoire_Academix_v13_2_Final_Master_Generation_backup.docx
+Thesis_Surgical_Edit/Memoire_Academix_v13_2_Final_Master_Generation.docx
+Thesis_Surgical_Edit/Memoire_Academix_v13_2_Final_Master_Generation_backup.docx
+
 # Generated audit reports
 milestone_13_2/audit/dss-audit-report.csv
 

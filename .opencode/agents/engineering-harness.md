@@ -1,82 +1,82 @@
-# Engineering Harness — Multi-Agent System for Academix v13.2
-# Agent: explore | plan | build | debug | audit | test
-# Framework: OpenCode + OMC v4.9.3
+# Engineering Harness — Full Agent Spectrum (LCC s01-s12)
+# Agent: explore | plan | build | debug | audit | test | orchestrator | autonomous
+# Framework: OpenCode + LCC Harness Spectrum
+# Skill: engineering-harness (load with `skill` tool)
+
+## LCC Harness Layers Deployed
+
+```
+s01 Agent Loop        →  OpenCode native (stop_reason, tool dispatch)
+s02 Tool Use          →  bash | read | write | edit | load_skill | task | build | verify | audit | test
+s03 TodoWrite         →  session-level checklists, nag reminder at 3+ rounds
+s04 Subagents         →  explore (ro) | plan (arch) | build (vba) | debug (diag) | audit (dss) | test (macro)
+s05 Skill Loading     →  engineering-harness, naming-cheatsheet, verify, humanizer, autopilot
+s06 Context Compact   →  microcompact (silent, every turn) + auto-compact (token threshold) + transcripts
+s07 Task System       →  .tasks/ JSON DAG with blockedBy edges (pending → in_progress → completed)
+s08 Background Tasks  →  daemon threads for build.ps1, verify.ps1, dss-audit.ps1 (async notifications)
+s09 Agent Teams       →  6 agents + .team/config.json + JSONL inboxes in .team/inbox/
+s10 Team Protocols    →  shutdown_request/response handshake + plan_approval submit/review (request_id)
+s11 Autonomous Agents →  idle/claim cycle + auto-claim from .tasks/ + identity re-injection
+s12 Worktree Isolation →  git worktrees in .worktrees/{name}/ bound to task["worktree"]
+```
 
 ## Agent Registry
 
-| Agent | Mode | Skill | Model | Purpose |
-|-------|------|-------|-------|---------|
-| **explore** | explore | `general` | qwen3-32b | Codebase recon — map, grep, trace deps |
-| **plan** | plan | `general` | qwen3-32b | Architecture — document plans in `.opencode/plans/` |
-| **build** | build | `vba-build` + `vba-importer` | qwen3-32b | Write VBA, rebuild via build.ps1 |
-| **debug** | debug | `vba-debug` | qwen3-32b | Handoff-based VBA error diagnosis |
-| **audit** | audit | `security-audit` | qwen3-32b | 5-phase DSS audit via dss-audit.ps1 |
-| **test** | test | `test-runner` | qwen3-32b | Macro test suite via test-macros.ps1 |
+| Agent | Layer | Tools | Purpose |
+|-------|-------|-------|---------|
+| **explore** | s04 | bash, read, grep | Codebase recon — map, grep, trace deps |
+| **plan** | s07+s10 | task_create/list, bash, read, write | Architecture decisions, impact docs |
+| **build** | s05+s02 | bash (build.ps1), read, write, edit | Write VBA, rebuild via build.ps1 |
+| **debug** | s06 | bash, read, edit, verify.ps1 | Handoff-based VBA error diagnosis |
+| **audit** | s08+s10 | bash (dss-audit.ps1), read | 5-phase DSS audit |
+| **test** | s07+s08 | bash (test-macros.ps1) | Macro test suite |
+| **orchestrator** | s09+s11 | spawn, send, broadcast, claim, shutdown, plan_approval | Task dispatch + team coordination |
+| **autonomous** | s11+s12 | idle, claim_task, worktree_create/remove | Self-organizing parallel agents |
 
-## Agent Workflows
+## Workflows
 
-### explore → plan → build (Feature Pipeline)
+### Feature (explore → plan → build)
 ```
-User request
-  → explore: map affected files, grep references, trace call graph
-  → plan: document architecture decision in .opencode/plans/
-  → build: write/edit .bas, run build.ps1, commit
-```
-
-### debug → build → test (Fix Pipeline)
-```
-VBA error (handoffN.txt)
-  → debug: diagnose error type, fix .bas
-  → build: run build.ps1 → verify.ps1
-  → test: run test-macros.ps1 → confirm pass
+s07 task_create "explore" → s04 subagent explore → returns map
+s07 task_create "plan" (blockedBy: 1) → s10 plan_approval
+s07 task_create "build" (blockedBy: 2) → s05 load_skill + build.ps1
 ```
 
-### audit (Quality Gate)
+### Fix (debug → build → test)
 ```
-Before release/commit
-  → dss-audit.ps1 (5-phase)
-  → If 0 CRITICAL → proceed
-  → If CRITICAL found → route to debug → fix → re-audit
+s07 task_create "diagnose" → s04 debug subagent
+s07 task_create "rebuild" (blockedBy: 1) → s08 bg_run build.ps1
+s07 task_create "verify" (blockedBy: 2) → test-macros.ps1
 ```
 
-## Engineering Harness Commands
+### Parallel (audit + test concurrent)
+```
+s12 worktree_create "audit-wt" → git isolate
+s08 bg_run dss-audit (in worktree) + test-macros (main)
+s06 drain notifications → inject results
+s10 shutdown on completion
+```
+
+## Commands
 
 ```powershell
-# Agent dispatch via orchestrator
-.\Software_Surgical_Edit\orchestrator.ps1 status      # Show all tasks
-.\Software_Surgical_Edit\orchestrator.ps1 next         # Next task
-.\Software_Surgical_Edit\orchestrator.ps1 run T003     # Run specific task
-.\Software_Surgical_Edit\orchestrator.ps1 build        # Rebuild workbook
-.\Software_Surgical_Edit\orchestrator.ps1 audit        # Run DSS audit
-.\Software_Surgical_Edit\orchestrator.ps1 test         # Run tests
-.\Software_Surgical_Edit\orchestrator.ps1 sync         # Sync personal → public
+# Build
+.\Software_Surgical_Edit\build.ps1
 
-# Direct tool access
-.\Software_Surgical_Edit\build.ps1                     # Rebuild from source
-.\Software_Surgical_Edit\verify.ps1                    # 97-point verification
-.\Software_Surgical_Edit\milestone_13_2\tests\dss-audit.ps1  # Full audit
-.\Software_Surgical_Edit\test-macros.ps1               # Macro test suite
+# Verify (137 checks)
+.\Software_Surgical_Edit\verify.ps1
+
+# Audit (5-phase DSS)
+.\milestone_13_2\tests\dss-audit.ps1
+
+# Macro tests
+.\Software_Surgical_Edit\test-macros.ps1
 ```
 
-## Agent Routing Rules (from agent-routing.xml)
+## Ground Rules
 
-1. Never modify .xlsm directly — always fix source files then rebuild
-2. Personal project stays in Dropbox/private; only generic LSM goes to GitHub
-3. Strip all sensitive data before public release
-4. Private declarations before Public procedures in modules
-5. UDT arrays cannot be Variant — use ByRef Sub pattern
-6. Runtime controls use Controls(name) syntax
-
-## Mode Switching in OpenCode
-
-In the OpenCode CLI, switch modes:
-```
-/mode explore    → Codebase exploration agent
-/mode plan       → Architecture planner
-/mode build      → VBA builder (default)
-/mode debug      → VBA debugger
-/mode audit      → DSS auditor
-/mode auto       → Default mode
-```
-
-Or dispatch tasks via task tool with `subagent_type` parameter.
+1. Never modify .xlsm directly — fix .bas sources then rebuild
+2. Stale p-code cache — always rebuild from scratch
+3. UTF-8 em dashes → VBA syntax error (replace with -)
+4. Public Const before procedures, Property Get for cross-module
+5. 6 agents via `/mode` or task tool with `subagent_type`

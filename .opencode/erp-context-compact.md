@@ -79,13 +79,15 @@ F-001 ENAP Alger | F-002 Bureautique Oran | F-003 Bureau Plus
 | primary | Groq | Llama 3.3 70B | 32K | ~2s | free | VBA logic, prose, daily driver |
 | fast | Groq | Qwen3 32B | 32K | ~1s | free | explore, debug, audit |
 | gemini | Google | Gemini 2.5 Flash | 1M | ~2s | free | large context, thesis, images |
-| gemma | Google | Gemma 4 26B | 262K | ~2s | free | lightweight text fallback |
+| gemma | Google | Gemma 4 26B (A4B) | 256K | ~2s | free | multimodal, vision, open-weight (Apache 2.0) |
+| gemma-31b | Google | Gemma 4 31B | 32K | ~2s | free | stronger reasoning, dense model |
 | or-nemotron | OpenRouter | Nemotron 3 Super 120B | 1M | ~3s | free | massive ctx, full codebase |
 | or-coder | OpenRouter | Qwen3 Coder 480B | 1M | ~3s | free | VBA gen (often 429) |
 | local-7b | Ollama | Qwen2.5 Coder 7B | 8K | ~30s | free | offline debugging |
 | local-1.5b | Ollama | Qwen2.5 Coder 1.5B | 4K | ~95s | free | last-resort offline |
 | local-qwen3 | Ollama | Qwen3 1.7B | 16K | ~40s | free | CPU reasoning |
 | local-phi4 | Ollama | Phi4-mini 3.8B-q4_K_M | 16K | ~25s | free | CPU coding (best local) |
+| local-gemma4 | Ollama | Gemma 4 e2b | 128K | ~40-60s | free | Offline Gemma 4 (text+image) |
 
 > Note: VBA skills (vba-build, vba-debug) exist on disk at `.opencode/skills/` but aren't in OpenCode's global skill catalog. Load VBA context via instructions.md + XML files instead.
 | fcc-proxy | proxy→OR | Nemotron 120B (bridge) | 1M | ~3s | free | FCC via localhost:8082 |

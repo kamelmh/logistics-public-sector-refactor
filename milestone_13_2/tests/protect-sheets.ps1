@@ -3,7 +3,7 @@ $ErrorActionPreference = "Stop"
 $xl = New-Object -ComObject Excel.Application
 $xl.Visible = $false
 $xl.DisplayAlerts = $false
-$wb = $xl.Workbooks.Open("C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\ERP_Academie_v13_2.xlsm")
+$wb = $xl.Workbooks.Open("C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\ERP_v13.2.xlsm")
 
 $configPath = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\vbe-auto\config.json"
 if (Test-Path $configPath) {

@@ -71,6 +71,38 @@ jobs:
           }
           Write-Host "All build scripts present" -ForegroundColor Green
 
+      - name: Validate Python DOCX tools
+        shell: pwsh
+        run: |
+          $pyTools = @(
+            "style/docx-analyze.py",
+            "style/docx-style-fix.py",
+            "style/docx-style-apply.py",
+            "style/docx-master-build.py",
+            "style/format-tables.py",
+            "style/format-cover.py"
+          ) | ForEach-Object { "Thesis_Surgical_Edit/$_" }
+          $missing = $pyTools | Where-Object { -not (Test-Path $_) }
+          if ($missing.Count -gt 0) {
+            Write-Host "Missing Python tools: $($missing -join ', ')" -ForegroundColor Red
+            exit 1
+          }
+          Write-Host "All Python DOCX tools present" -ForegroundColor Green
+
+      - name: Validate OpenCode DOCX skills
+        shell: pwsh
+        run: |
+          $skills = @(
+            ".opencode/skills/thesis-docx/SKILL.md",
+            ".opencode/skills/python-docx-tools/SKILL.md"
+          )
+          $missing = $skills | Where-Object { -not (Test-Path $_) }
+          if ($missing.Count -gt 0) {
+            Write-Host "Missing: $($missing -join ', ')" -ForegroundColor Red
+            exit 1
+          }
+          Write-Host "All OpenCode DOCX skills present" -ForegroundColor Green
+
       - name: Check no stale files in active dirs
         shell: pwsh
         run: |
@@ -80,6 +112,107 @@ jobs:
           if ($staleVba) { Write-Host "ARCHIVED/ in VBA_Modules: $($staleVba.Count) files" -ForegroundColor DarkYellow }
           Write-Host "No stale files leaked into active source dirs" -ForegroundColor Green
 
+  harness:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate harness infrastructure
+        shell: pwsh
+        run: |
+          $paths = @(
+            "scripts/harness.ps1",
+            "scripts/bg-worker.ps1",
+            ".tasks",
+            ".team/config.json",
+            ".team/inbox",
+            ".worktrees/index.json",
+            ".opencode/memory/transcripts",
+            ".opencode/skills/engineering-harness/SKILL.md",
+            ".opencode/agents/engineering-harness.md"
+          )
+          $missing = $paths | Where-Object { -not (Test-Path $_) }
+          if ($missing.Count -gt 0) {
+            Write-Host "FAIL: Missing harness paths: $($missing -join ', ')" -ForegroundColor Red
+            exit 1
+          }
+          Write-Host "All harness components present" -ForegroundColor Green
+
+      - name: Validate team config
+        shell: pwsh
+        run: |
+          $cfg = Get-Content .team/config.json | ConvertFrom-Json
+          if ($cfg.team_name -ne "academix-engineering") {
+            Write-Host "FAIL: Wrong team name" -ForegroundColor Red; exit 1
+          }
+          $expected = @("explore","plan","build","debug","audit","test")
+          $actual = $cfg.members.name
+          $missing = $expected | Where-Object { $_ -notin $actual }
+          if ($missing.Count -gt 0) {
+            Write-Host "FAIL: Missing agents: $($missing -join ', ')" -ForegroundColor Red; exit 1
+          }
+          Write-Host "Team config valid: $($actual -join ', ')" -ForegroundColor Green
+
+      - name: Test task DAG (s07)
+        shell: pwsh
+        run: |
+          $root = (Resolve-Path ".").Path
+          $h = "$root/scripts/harness.ps1"
+          $t1 = pwsh -NoProfile -File $h task create "CI test task A"
+          $id1 = ($t1 | ConvertFrom-Json).id
+          $t2 = pwsh -NoProfile -File $h task create "CI test task B" "" "$id1"
+          $id2 = ($t2 | ConvertFrom-Json).id
+          $before = pwsh -NoProfile -File $h task list
+          if ($before -notmatch "blocked by: $id1") { Write-Host "FAIL: Dep not wired"; exit 1 }
+          pwsh -NoProfile -File $h task update $id1 completed | Out-Null
+          $after = pwsh -NoProfile -File $h task list
+          if ($after -match "blocked by: $id1") { Write-Host "FAIL: Dep not cleared"; exit 1 }
+          pwsh -NoProfile -File $h task update $id1 deleted | Out-Null
+          pwsh -NoProfile -File $h task update $id2 deleted | Out-Null
+          Write-Host "Task DAG: create, block, complete cascade, delete — OK" -ForegroundColor Green
+
+      - name: Test bg runner (s08)
+        shell: pwsh
+        run: |
+          $root = (Resolve-Path ".").Path
+          $h = "$root/scripts/harness.ps1"
+          $out = pwsh -NoProfile -File $h bg run "Write-Output harness-ci-ok"
+          $id = ($out -split ' ')[2]
+          Start-Sleep 3
+          $status = pwsh -NoProfile -File $h bg check $id
+          if ($status -notmatch "completed") { Write-Host "FAIL: bg did not complete: $status"; exit 1 }
+          Remove-Item ".tasks/bg/$id" -Recurse -Force -ErrorAction SilentlyContinue
+          Write-Host "Background runner: spawn, complete, check — OK" -ForegroundColor Green
+
+      - name: Test worktree isolation (s12)
+        shell: pwsh
+        run: |
+          $root = (Resolve-Path ".").Path
+          $h = "$root/scripts/harness.ps1"
+          $out = pwsh -NoProfile -File $h worktree create ci-test-wt
+          if ($out -notmatch "Created worktree") { Write-Host "FAIL: worktree create: $out"; exit 1 }
+          $listed = pwsh -NoProfile -File $h worktree list
+          if ($listed -notmatch "ci-test-wt") { Write-Host "FAIL: worktree not in list"; exit 1 }
+          git -C $root worktree remove ".worktrees/ci-test-wt" 2>&1 | Out-Null
+          Remove-Item ".worktrees/ci-test-wt" -Recurse -Force -ErrorAction SilentlyContinue
+          git -C $root branch -D wt/ci-test-wt 2>&1 | Out-Null
+          Write-Host "Worktree isolation: create, list, remove — OK" -ForegroundColor Green
+
+      - name: Validate harness commands
+        shell: pwsh
+        run: |
+          $expected = @(
+            "harness-compact", "task-create", "task-list", "task-update",
+            "task-get", "task-claim", "bg-run", "bg-check",
+            "worktree-create", "worktree-remove", "worktree-list"
+          )
+          $existing = Get-ChildItem ".opencode/commands/*.md" | ForEach-Object { $_.BaseName }
+          $missing = $expected | Where-Object { $_ -notin $existing }
+          if ($missing.Count -gt 0) {
+            Write-Host "FAIL: Missing commands: $($missing -join ', ')" -ForegroundColor Red; exit 1
+          }
+          Write-Host "All $($expected.Count) harness commands present" -ForegroundColor Green
+
       - name: Summary
         shell: pwsh
-        run: Write-Host "All structure checks passed." -ForegroundColor Green
+        run: Write-Host "All structure + harness checks passed." -ForegroundColor Green

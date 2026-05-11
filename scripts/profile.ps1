@@ -29,6 +29,7 @@ function cddesk  { Set-Location $script:Desktop; Write-Host "Desktop" -Foregroun
 # Rule of thumb:
 #   oc / ol  → Llama 3.3 70B (fast VBA + prose, zero rate limits, daily driver)
 #   og       → Qwen3 32B (fastest explore/debug/audit)
+#   ogg      → Gemma 4 26B (256K ctx, multimodal, via Google AI Studio)
 #   ogm      → Gemini 2.5 Flash (1M ctx, vision, deep analysis)
 #   on       → Nemotron 120B (1M ctx, OpenRouter free — may be 429 rate-limited)
 #   ophi4    → Phi4-mini 3.8B (CPU coding, offline)
@@ -36,6 +37,8 @@ function cddesk  { Set-Location $script:Desktop; Write-Host "Desktop" -Foregroun
 function oc     { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "groq/llama-3.3-70b-versatile"; Pop-Location }
 function ol     { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "groq/llama-3.3-70b-versatile"; Pop-Location }
 function og     { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "groq/qwen/qwen3-32b"; Pop-Location }
+function ogg    { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "google/gemma-4-26b-a4b-it"; Pop-Location }
+function oggl   { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "ollama/gemma4:e2b"; Pop-Location }
 function ogm    { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "google/gemini-2.5-flash"; Pop-Location }
 function on     { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "openrouter/nvidia/nemotron-3-super-120b-a12b:free"; Pop-Location }
 function ophi4  { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "ollama/phi4-mini:3.8b-q4_K_M"; Pop-Location }
@@ -85,6 +88,8 @@ Write-Host "verify  137 checks" -ForegroundColor Cyan
 Write-Host "health  System test" -ForegroundColor Cyan
 Write-Host "oc/ol   Llama 3.3 70B (fast VBA/prose)" -ForegroundColor Green
 Write-Host "og      Qwen 3 32B (coding, fast)" -ForegroundColor Green
+Write-Host "ogg     Gemma 4 26B (256K ctx, multimodal)" -ForegroundColor Cyan
+Write-Host "oggl    Gemma 4 e2b local (128K ctx, offline)" -ForegroundColor DarkCyan
 Write-Host "ogm     Gemini 2.5 Flash (1M ctx, vision)" -ForegroundColor Cyan
 Write-Host "on      Nemotron 120B (1M ctx  429-limited)" -ForegroundColor DarkYellow
 Write-Host "oo      Ollama Qwen 1.5B (slow fallback)" -ForegroundColor Yellow

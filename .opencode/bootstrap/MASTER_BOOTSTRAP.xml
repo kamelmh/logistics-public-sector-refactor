@@ -8,7 +8,8 @@
     <step order="4">Read `C:\Users\Administrator\.opencode\notepad.md` for session memory</step>
     <step order="5">Run `/memory list` to recall previous session state</step>
     <step order="6">Check `C:\Users\Administrator\Desktop\handoff*.txt` for pending debug tasks</step>
-    <step order="7">Begin work. Save progress: `/memory save "Done: X | Next: Y"`</step>
+    <step order="7">Run harness health check: `pwsh -NoProfile -File scripts/harness.ps1 status` — verify all 5 layers (s06/s07/s08/s09/s12) are operational</step>
+    <step order="8">Begin work. Save progress: `/memory save "Done: X | Next: Y"`</step>
   </bootstrap>
 
   <!-- ===== PROJECT IDENTITY ===== -->
@@ -43,12 +44,12 @@
        VBA domain knowledge is loaded via instructions.md + XML context files instead. -->
   <skills-map>
     <agent type="build"  skills="naming-cheatsheet,humanizer" />
-    <agent type="plan"   skills="plan,planning-and-task-breakdown,idea-refine" />
+    <agent type="plan"   skills="plan,planning-and-task-breakdown,idea-refine,engineering-harness" />
     <agent type="explore" skills="" note="Read-only, no skills needed" />
     <agent type="debug"  skills="verify" />
     <agent type="audit"  skills="verify" />
     <agent type="test"   skills="project,verify" />
-    <agent type="general" skills="naming-cheatsheet,humanizer" />
+    <agent type="general" skills="naming-cheatsheet,humanizer,engineering-harness" />
     <agent type="ralph"  skills="ralph,verify" />
     <always-load>naming-cheatsheet,verify</always-load>
   </skills-map>
@@ -61,7 +62,8 @@
     <file key="admin-paths" path="Software_Surgical_Edit\erp-admin-paths.xml" priority="medium" desc="All file paths, AI backends, launchers (295 lines)" />
     <file key="skills-proj" path="Software_Surgical_Edit\erp-skills-projection.xml" priority="low" desc="Skill-to-code-region mapping (91 lines)" />
     <file key="rag-context" path="milestone_13_2\rag\lsm-rag-context.xml" priority="low" desc="RAG education for LLM (122 lines)" />
-    <file key="engineering" path=".opencode\agents\engineering-harness.md" priority="medium" desc="Multi-agent system registry (82 lines)" />
+    <file key="engineering" path=".opencode\agents\engineering-harness.md" priority="medium" desc="Full agent harness spectrum s01-s12 (82 lines)" />
+    <file key="harness-skill" path=".opencode\skills\engineering-harness\SKILL.md" priority="high" desc="LCC s01-s12 cross-reference + deploy map" />
     <file key="instructions" path="C:\Users\Administrator\.config\opencode\instructions.md" priority="always" desc="Auto-loaded every session (107 lines)" />
   </context-files>
 
@@ -73,7 +75,7 @@
     <build-toolkit>vbe-auto\</build-toolkit>
     <milestone>milestone_13_2\</milestone>
     <workbook active="C:\Users\Administrator\Dropbox\ERP_v13.2.xlsm" />
-    <workbook compiled="Software_Surgical_Edit\ERP_Academie_v13_2.xlsm" />
+    <workbook compiled="ERP_v13.2.xlsm" />
     <opencode-config>C:\Users\Administrator\.config\opencode\</opencode-config>
     <opencode-skills>C:\Users\Administrator\.opencode\skills\</opencode-skills>
     <memory-notepad>C:\Users\Administrator\.opencode\notepad.md</memory-notepad>
@@ -110,6 +112,10 @@
     <mode name="gui"     model="gui" desc="Desktop GUI v1.14.42" />
     <mode name="groq"    model="groq/llama-3.3-70b-versatile" desc="AI backend primary" />
     <mode name="gemini"  model="google/gemini-2.5-flash" desc="1M context" />
+    <mode name="gemma"   model="google/gemma-4-26b-a4b-it" desc="256K context, multimodal, own key" />
+    <mode name="ogg"     model="google/gemma-4-26b-a4b-it" desc="Alias for gemma" />
+    <mode name="gemma-local" model="ollama/gemma4:e2b" desc="128K ctx, offline, 7.2GB" />
+    <mode name="ogg-local" model="ollama/gemma4:e2b" desc="Alias for gemma-local" />
     <mode name="ollama"  model="ollama" desc="Ollama model picker (4 models)" />
     <mode name="phi4"    model="ollama/phi4-mini:3.8b-q4_K_M" desc="CPU coding" />
     <mode name="qwen3"   model="ollama/qwen3:1.7b" desc="CPU reasoning" />
@@ -143,14 +149,16 @@
   <ai-backends>
     <backend name="Groq Llama 3.3 70B"   ctx="32K"  speed="~2s"  cost="free" role="Daily driver" />
     <backend name="Groq Qwen3 32B"        ctx="32K"  speed="~1s"  cost="free" role="Explore/debug" />
-    <backend name="Google Gemini 2.5 Flash" ctx="1M" speed="~2s"  cost="free" role="Large context, multimodal" />
-    <backend name="Google Gemma 4 26B"    ctx="262K" speed="~2s"  cost="free" role="Lightweight hosted" />
+    <backend name="Google Gemini 2.5 Flash" ctx="1M" speed="~2s" cost="free" role="Large context, multimodal" />
+    <backend name="Google Gemma 4 26B"    ctx="256K" speed="~2s" cost="free" role="Multimodal, vision, open-weight (Apache 2.0)" />
+    <backend name="Google Gemma 4 31B"    ctx="32K" speed="~2s" cost="free" role="Stronger reasoning, dense model" />
     <backend name="OpenRouter Nemotron 120B" ctx="1M" speed="~3s" cost="free" role="Massive context, FCC proxy" />
     <backend name="OpenRouter Qwen3 Coder 480B" ctx="1M" speed="~3s" cost="free" role="Code generation" note="429-limited" />
     <backend name="Ollama Qwen 1.5B"      ctx="32K"  speed="~95s" cost="free" role="Offline emergency" />
     <backend name="Ollama Qwen 7B"        ctx="32K"  speed="~30s" cost="free" role="Offline moderate" />
     <backend name="Ollama Qwen3 1.7B"     ctx="16K"  speed="~40s" cost="free" role="CPU reasoning" />
     <backend name="Ollama Phi4-mini 3.8B"  ctx="16K"  speed="~25s" cost="free" role="CPU coding (best quality)" />
+    <backend name="Ollama Gemma 4 e2b"     ctx="128K" speed="~40-60s" cost="free" role="Offline Gemma 4 (text+image)" />
   </ai-backends>
 
   <!-- ===== RALPH LOOP (self-referential improvement) ===== -->

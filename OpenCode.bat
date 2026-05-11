@@ -1,5 +1,5 @@
 @echo off
-title OpenCode Launcher v3.4 ^| Academix v13.2
+title OpenCode Launcher v3.5 ^| CrossFlow ^| Academix v13.2
 :: ==============================================================
 :: Portable OpenCode Launcher — Academix v13.2
 :: Mahi Kamel Abdelghani | Direction de l'Education El Bayadh
@@ -16,6 +16,8 @@ title OpenCode Launcher v3.4 ^| Academix v13.2
 ::   OpenCode nemotron / on      CLI with Nemotron 120B (1M ctx, OpenRouter free)
 ::   OpenCode fcc                CLI via free-claude-code proxy (Nemotron 120B)
 ::   OpenCode gemini             CLI with Google Gemini 2.5 Flash (1M ctx)
+::   OpenCode gemma / ogg        CLI with Google Gemma 4 26B (256K ctx, multimodal)
+::   OpenCode gemma-local / ogg-local  CLI with Ollama Gemma 4 e2b (128K ctx, offline, 7.2GB)
 ::   OpenCode phi4               CLI with phi4-mini:3.8b (CPU coding, offline)
 ::   OpenCode qwen3              CLI with qwen3:1.7b (CPU reasoning, offline)
 ::   OpenCode ollama             CLI with Ollama server + model menu
@@ -33,6 +35,8 @@ title OpenCode Launcher v3.4 ^| Academix v13.2
 ::   OpenCode autolog <mode>     Run any mode with timestamped log output
 ::   OpenCode automenu           Interactive mode picker (TUI)
 ::   OpenCode autoclean          Purge old logs, results, temp files (30-day)
+::   OpenCode crossflow          CrossFlow status + handoff overview
+::   OpenCode crossflow-sync     Sync CROSSFLOW block to all CLAUDE.md files
 ::   OpenCode status             Quick project health overview
 ::   OpenCode <mode> <name>      Launch with named session (multi-session)
 ::   OpenCode help               Show this help
@@ -71,10 +75,12 @@ set "GROQ_MODEL=groq/qwen/qwen3-32b"
 set "LLAMA_MODEL=groq/llama-3.3-70b-versatile"
 set "NEMOTRON_MODEL=openrouter/nvidia/nemotron-3-super-120b-a12b:free"
 set "GEMINI_MODEL=google/gemini-2.5-flash"
+set "GEMMA4_MODEL=google/gemma-4-26b-a4b-it"
 set "OLLAMA_MODEL=ollama/qwen2.5-coder:1.5b"
 set "OLLAMA_FAST_MODEL=ollama/qwen2.5-coder:7b"
 set "OLLAMA_QWEN3=ollama/qwen3:1.7b"
 set "OLLAMA_PHI4=ollama/phi4-mini:3.8b-q4_K_M"
+set "OLLAMA_GEMMA4_LOCAL=ollama/gemma4:e2b"
 set "FCC_DIR=%USERPROFILE%\.opencode\plugins\fcc-proxy"
 set "FCC_PORT=8082"
 set "MEMORY_DIR=%USERPROFILE%\.opencode\memory"
@@ -82,6 +88,10 @@ set "MEMORY_FILE=%MEMORY_DIR%\session.log"
 set "LAST_SESSION=%MEMORY_DIR%\last-session.txt"
 set "OLLAMA_EXE=%LOCALAPPDATA%\Programs\Ollama\ollama.exe"
 set "HANDOFF_DIR=%USERPROFILE%\Desktop"
+set "CROSSFLOW_DIR=%PROJECT_ROOT%\.crossflow"
+set "CROSSFLOW_HANDOFF=%CROSSFLOW_DIR%\HANDOFF.md"
+set "CROSSFLOW_LOG=%CROSSFLOW_DIR%\SESSION_LOG.md"
+set "CROSSFLOW_CONTEXT=%CROSSFLOW_DIR%\MASTER_CONTEXT.md"
 set "LOG_DIR=%PROJECT_ROOT%\logs"
 
 :: ---- Pipeline Script Paths (all relative to PROJECT_ROOT) ----
@@ -123,6 +133,10 @@ if /i "%MODE%"=="gemini" goto :gemini
 if /i "%MODE%"=="ollama" goto :ollama-menu
 if /i "%MODE%"=="phi4" goto :phi4
 if /i "%MODE%"=="qwen3" goto :qwen3
+if /i "%MODE%"=="gemma" goto :gemma
+if /i "%MODE%"=="ogg" goto :gemma
+if /i "%MODE%"=="gemma-local" goto :gemma-local
+if /i "%MODE%"=="ogg-local" goto :gemma-local
 if /i "%MODE%"=="proxy" goto :proxy
 if /i "%MODE%"=="academix" goto :academix
 if /i "%MODE%"=="restore" goto :restore
@@ -138,6 +152,8 @@ if /i "%MODE%"=="autolog" goto :autolog
 if /i "%MODE%"=="automenu" goto :automenu
 if /i "%MODE%"=="autoclean" goto :autoclean
 if /i "%MODE%"=="status" goto :status
+if /i "%MODE%"=="crossflow" goto :crossflow
+if /i "%MODE%"=="crossflow-sync" goto :crossflow-sync
 echo Unknown mode: %MODE%
 goto :help
 
@@ -266,6 +282,25 @@ echo.
 "%OC_EXE%" --model "%GEMINI_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
+:gemma
+title %WINDOW_TITLE%
+echo [OpenCode] Launching with Google Gemma 4 26B — Session: %SESSION_NAME%
+echo   Model: %GEMMA4_MODEL% (256K context, multimodal)
+echo.
+"%OC_EXE%" --model "%GEMMA4_MODEL%" "%PROJECT_ROOT%"
+goto :end
+
+:gemma-local
+call :ensure-ollama
+:mode-dispatch-gemma-local
+title %WINDOW_TITLE%
+echo [OpenCode] Launching with Ollama Gemma 4 e2b — Session: %SESSION_NAME%
+echo   Model: %OLLAMA_GEMMA4_LOCAL% (128K context, 7.2GB, offline fallback)
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "%OLLAMA_GEMMA4_LOCAL%" "%PROJECT_ROOT%"
+goto :end
+
 :phi4
 call :ensure-ollama
 :mode-dispatch-phi4
@@ -367,6 +402,10 @@ if /i "%MODE%"=="nemotron" goto :nemotron
 if /i "%MODE%"=="on" goto :nemotron
 if /i "%MODE%"=="fcc" goto :fcc
 if /i "%MODE%"=="gemini" goto :gemini
+if /i "%MODE%"=="gemma" goto :gemma
+if /i "%MODE%"=="ogg" goto :gemma
+if /i "%MODE%"=="gemma-local" goto :gemma-local
+if /i "%MODE%"=="ogg-local" goto :gemma-local
 if /i "%MODE%"=="phi4" goto :phi4
 if /i "%MODE%"=="qwen3" goto :qwen3
 if /i "%MODE%"=="ollama" goto :ollama-menu
@@ -549,28 +588,34 @@ echo    [1]  cli        big-pickle (default)
 echo    [2]  groq       Qwen3 32B (fast)
 echo    [3]  llama      Llama 3.3 70B (VBA + prose)
 echo    [4]  gemini     Gemini 2.5 Flash (1M ctx)
-echo    [5]  phi4       Phi4-mini 3.8B (CPU coding)
-echo    [6]  qwen3      Qwen3 1.7B (CPU reasoning)
-echo    [7]  nemotron   Nemotron 120B (1M ctx)
-echo    [8]  ollama     Ollama model menu
+echo    [5]  gemma      Gemma 4 26B (256K ctx, multimodal)
+echo    [6]  gemma-local Gemma 4 e2b (Ollama, 128K ctx, offline)
+echo    [7]  phi4       Phi4-mini 3.8B (CPU coding)
+echo    [8]  qwen3      Qwen3 1.7B (CPU reasoning)
+echo    [9]  nemotron   Nemotron 120B (1M ctx)
+echo    [10] ollama     Ollama model menu
 echo.
 echo  AUTO PIPELINE MODES:
-echo    [9]  autobuild   Build + verify
-echo    [10] autoverify  137 verification checks
-echo    [11] autotest    Macro test suite
-echo    [12] autoaudit   5-phase DSS audit
-echo    [13] autofix     Full pipeline
-echo    [14] autocheck   System health
+echo    [11] autobuild   Build + verify
+echo    [12] autoverify  137 verification checks
+echo    [13] autotest    Macro test suite
+echo    [14] autoaudit   5-phase DSS audit
+echo    [15] autofix     Full pipeline
+echo    [16] autocheck   System health
+echo.
+echo  CROSSFLOW:
+echo    [17] crossflow      CrossFlow status
+echo    [18] crossflow-sync Sync CLAUDE.md blocks
 echo.
 echo  OTHER:
-echo    [15] academix   Project dashboard
-echo    [16] gui        Desktop GUI
-echo    [17] autoclean  Purge old files (30-day)
-echo    [18] status     Project health overview
-echo    [19] help       Show help
+echo    [19] academix   Project dashboard
+echo    [20] gui        Desktop GUI
+echo    [21] autoclean  Purge old files (30-day)
+echo    [22] status     Project health overview
+echo    [23] help       Show help
 echo    [0]  Exit
 echo.
-set /p MENU_CHOICE="Select mode [0-19]: "
+set /p MENU_CHOICE="Select mode [0-23]: "
 if "%MENU_CHOICE%"=="" goto :menu-loop
 if "%MENU_CHOICE%"=="0" exit /b
 set "MENU_MODE="
@@ -578,21 +623,25 @@ if "%MENU_CHOICE%"=="1" set "MENU_MODE=cli"
 if "%MENU_CHOICE%"=="2" set "MENU_MODE=groq"
 if "%MENU_CHOICE%"=="3" set "MENU_MODE=llama"
 if "%MENU_CHOICE%"=="4" set "MENU_MODE=gemini"
-if "%MENU_CHOICE%"=="5" set "MENU_MODE=phi4"
-if "%MENU_CHOICE%"=="6" set "MENU_MODE=qwen3"
-if "%MENU_CHOICE%"=="7" set "MENU_MODE=nemotron"
-if "%MENU_CHOICE%"=="8" set "MENU_MODE=ollama"
-if "%MENU_CHOICE%"=="9" set "MENU_MODE=autobuild"
-if "%MENU_CHOICE%"=="10" set "MENU_MODE=autoverify"
-if "%MENU_CHOICE%"=="11" set "MENU_MODE=autotest"
-if "%MENU_CHOICE%"=="12" set "MENU_MODE=autoaudit"
-if "%MENU_CHOICE%"=="13" set "MENU_MODE=autofix"
-if "%MENU_CHOICE%"=="14" set "MENU_MODE=autocheck"
-if "%MENU_CHOICE%"=="15" set "MENU_MODE=academix"
-if "%MENU_CHOICE%"=="16" set "MENU_MODE=gui"
-if "%MENU_CHOICE%"=="17" set "MENU_MODE=autoclean"
-if "%MENU_CHOICE%"=="18" set "MENU_MODE=status"
-if "%MENU_CHOICE%"=="19" goto :help
+if "%MENU_CHOICE%"=="5" set "MENU_MODE=gemma"
+if "%MENU_CHOICE%"=="6" set "MENU_MODE=gemma-local"
+if "%MENU_CHOICE%"=="7" set "MENU_MODE=phi4"
+if "%MENU_CHOICE%"=="8" set "MENU_MODE=qwen3"
+if "%MENU_CHOICE%"=="9" set "MENU_MODE=nemotron"
+if "%MENU_CHOICE%"=="10" set "MENU_MODE=ollama"
+if "%MENU_CHOICE%"=="11" set "MENU_MODE=autobuild"
+if "%MENU_CHOICE%"=="12" set "MENU_MODE=autoverify"
+if "%MENU_CHOICE%"=="13" set "MENU_MODE=autotest"
+if "%MENU_CHOICE%"=="14" set "MENU_MODE=autoaudit"
+if "%MENU_CHOICE%"=="15" set "MENU_MODE=autofix"
+if "%MENU_CHOICE%"=="16" set "MENU_MODE=autocheck"
+if "%MENU_CHOICE%"=="17" set "MENU_MODE=crossflow"
+if "%MENU_CHOICE%"=="18" set "MENU_MODE=crossflow-sync"
+if "%MENU_CHOICE%"=="19" set "MENU_MODE=academix"
+if "%MENU_CHOICE%"=="20" set "MENU_MODE=gui"
+if "%MENU_CHOICE%"=="21" set "MENU_MODE=autoclean"
+if "%MENU_CHOICE%"=="22" set "MENU_MODE=status"
+if "%MENU_CHOICE%"=="23" goto :help
 if not defined MENU_MODE goto :menu-loop
 set "MODE=%MENU_MODE%"
 goto :%MENU_MODE%
@@ -614,6 +663,10 @@ echo   nemotron   CLI with Nemotron 120B (OpenRouter free)
 echo   on         Alias for nemotron
 echo   fcc        CLI via FCC proxy (auto-start)
 echo   gemini     CLI with Google Gemini 2.5 Flash
+echo   gemma      CLI with Google Gemma 4 26B (256K ctx, multimodal)
+echo   ogg        Alias for gemma
+echo   gemma-local CLI with Ollama Gemma 4 e2b (128K ctx, offline)
+echo   ogg-local  Alias for gemma-local
 echo   phi4       CLI with phi4-mini:3.8b (CPU, offline)
 echo   qwen3      CLI with qwen3:1.7b (CPU, offline)
 echo   ollama     CLI with model menu + auto-start server
@@ -631,11 +684,91 @@ echo   autoplan   CLI with Llama 3.3 (planning)
 echo   autolog    Run any mode with logging
 echo   automenu   Interactive mode selector
 echo   autoclean  Purge old files (30-day)
+echo   crossflow  CrossFlow status + handoff overview
+echo   crossflow-sync Sync CROSSFLOW block to CLAUDE.md files
 echo   status     Project health overview
 echo   help       This screen
 echo.
 echo Multi-Session: OpenCode groq thesis  -- named session "thesis"
 echo.
+goto :end
+
+:: ==============================================================
+:: CrossFlow Modes
+:: ==============================================================
+:crossflow
+title OpenCode [CROSSFLOW] - %SESSION_NAME%
+echo   === CROSSFLOW STATUS ===
+echo.
+if not exist "%CROSSFLOW_DIR%" (
+    echo  [WARN] .crossflow/ directory not found.
+    echo  Run in project root or initialize with: mkdir .crossflow
+    pause
+    goto :end
+)
+echo  CrossFlow Directory: %CROSSFLOW_DIR%
+echo.
+if exist "%CROSSFLOW_HANDOFF%" (
+    echo  --- Last Handoff ---
+    for /f "tokens=*" %%a in ('findstr /i "Last action" "%CROSSFLOW_HANDOFF%"') do echo  %%a
+    for /f "tokens=*" %%a in ('findstr /i "Next step" "%CROSSFLOW_HANDOFF%"') do echo  %%a
+    for /f "tokens=*" %%a in ('findstr /i "Current phase" "%CROSSFLOW_HANDOFF%"') do echo  %%a
+) else (
+    echo  [INFO] No handoff file yet.
+)
+echo.
+if exist "%CROSSFLOW_LOG%" (
+    for /f %%s in ('powershell -Command "(Get-Item '%CROSSFLOW_LOG%').Length"') do set "LOG_SIZE=%%s"
+    echo  Session log: %LOG_SIZE% bytes
+    for /f "tokens=*" %%a in ('powershell -Command "Get-Content '%CROSSFLOW_LOG%' | Select-Object -Last 3"') do echo  %%a
+)
+echo.
+echo  CLAUDE.md files:
+if exist "%USERPROFILE%\.claude\CLAUDE.md" (findstr "CROSSFLOW:START" "%USERPROFILE%\.claude\CLAUDE.md" >nul && echo   ~/.claude/CLAUDE.md:   SYNCED || echo   ~/.claude/CLAUDE.md:   MISSING)
+if exist "%USERPROFILE%\.agentic-hub\CLAUDE.md" (findstr "CROSSFLOW:START" "%USERPROFILE%\.agentic-hub\CLAUDE.md" >nul && echo   ~/.agentic-hub/CLAUDE.md: SYNCED || echo   ~/.agentic-hub/CLAUDE.md: MISSING)
+if exist "%PROJECT_ROOT%\CLAUDE.md" (findstr "CROSSFLOW:START" "%PROJECT_ROOT%\CLAUDE.md" >nul && echo   project/CLAUDE.md:        SYNCED || echo   project/CLAUDE.md:        MISSING)
+echo.
+echo  Commands: /crossflow sync ^| /crossflow handoff "msg"
+pause
+goto :end
+
+:crossflow-sync
+title OpenCode [CROSSFLOW-SYNC] - %SESSION_NAME%
+echo   === CROSSFLOW SYNC ===
+echo.
+if not exist "%CROSSFLOW_DIR%" (
+    echo  [ERROR] .crossflow/ directory not found.
+    pause
+    goto :end
+)
+echo  Syncing CROSSFLOW block to all CLAUDE.md files...
+echo.
+if exist "%USERPROFILE%\.claude\CLAUDE.md" (
+    findstr "CROSSFLOW:START" "%USERPROFILE%\.claude\CLAUDE.md" >nul
+    if errorlevel 1 (
+        echo  [WARN] ~/.claude/CLAUDE.md missing CROSSFLOW block — add manually
+    ) else (
+        echo   ~/.claude/CLAUDE.md: block present
+    )
+)
+if exist "%USERPROFILE%\.agentic-hub\CLAUDE.md" (
+    findstr "CROSSFLOW:START" "%USERPROFILE%\.agentic-hub\CLAUDE.md" >nul
+    if errorlevel 1 (
+        echo  [WARN] ~/.agentic-hub/CLAUDE.md missing CROSSFLOW block
+    ) else (
+        echo   ~/.agentic-hub/CLAUDE.md: block present
+    )
+)
+if exist "%PROJECT_ROOT%\CLAUDE.md" (
+    echo   project/CLAUDE.md: present
+)
+echo.
+echo  MASTER_CONTEXT.md: %CROSSFLOW_CONTEXT%
+echo  HANDOFF:           %CROSSFLOW_HANDOFF%
+echo  SESSION_LOG:       %CROSSFLOW_LOG%
+echo.
+echo  CrossFlow sync check complete.
+pause
 goto :end
 
 :: ==============================================================
