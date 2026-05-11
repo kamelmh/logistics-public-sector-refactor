@@ -115,6 +115,7 @@ Check "OLLAMA" ([bool]$ollamaProc) "Ollama running (PID $($ollamaProc.Id))" "Oll
 
 $models = ollama list 2>$null
 if ($models) {
+    $modelGemma4  = $models -match "gemma4:e2b"
     $model7b   = $models -match "qwen2.5-coder:7b"
     $model15b  = $models -match "qwen2.5-coder:1.5b"
     $modelQwen3 = $models -match "qwen3:1.7b"
@@ -123,6 +124,7 @@ if ($models) {
     Check "1.5B"  ([bool]$model15b)   "qwen2.5-coder:1.5b (986 MB) — Available" "1.5b model not found"
     Check "QWEN3" ([bool]$modelQwen3) "qwen3:1.7b (1.4 GB, CPU reasoning) — Available" "qwen3:1.7b not found"
     Check "PHI4"  ([bool]$modelPhi4)  "phi4-mini:3.8b (2.5 GB, CPU coding) — Available" "phi4-mini not found"
+    Check "GEMMA4LOCAL" ([bool]$modelGemma4) "gemma4:e2b (7.2 GB, 128K ctx, offline) — Available" "gemma4:e2b not found"
 } else { Warn "MODELS" "Could not list Ollama models" }
 
 # ─── 5. WORKBOOK INTEGRITY ────────────────────────────────────
@@ -167,7 +169,7 @@ Check "SKL2" ($skillCount -ge 60) "$skillCount skills in .opencode/skills/" "Onl
 Write-Host "  Agents: explore | plan | build | debug | audit | test" -ForegroundColor Gray
 Write-Host "  Modes:  /mode explore|plan|build|debug|audit" -ForegroundColor Gray
 Write-Host "  Tasks:  .\orchestrator.ps1 status|next|run T003|build|audit|test" -ForegroundColor Gray
-Write-Host "  Stack:  Llama 3.3 70B (primary) | Qwen3 32B (fast) | Ollama local (4 models) | Gemini 1M ctx | Gemma 4 26B (256K, multimodal)" -ForegroundColor Gray
+  Write-Host "  Stack:  Llama 3.3 70B (primary) | Qwen3 32B (fast) | Ollama local (5 models) | Gemini 1M ctx | Gemma 4 26B (256K, multimodal) | Gemma 4 e2b (128K, offline)" -ForegroundColor Gray
 
 # ─── OUTPUT SUMMARY ──────────────────────────────────────────
 Write-Host "`n═══════════════════════════════════════════════════" -ForegroundColor Cyan
@@ -175,7 +177,7 @@ Write-Host @"
   Platform:    Windows 10, Celeron, 8GB RAM, HDD
   AI Primary:  Groq $GROQ_MODEL (free, open-source)
   AI Fast:     Groq $GROQ_FAST_MODEL (free, open-source)
-  AI Local:    Ollama 7B / 1.5B / Qwen3 1.7B / Phi4-mini 3.8B
+  AI Local:    Ollama 7B / 1.5B / Qwen3 1.7B / Phi4-mini 3.8B / Gemma 4 e2b
   AI Cloud:    Gemini 2.5 Flash 1M + Gemma 4 26B 256K (free, multimodal) + OpenRouter 30+ models
   Workbook:    $WORKBOOK ($([math]::Round($wb.Length/1KB)) KB)
   VBA Source:  $basCount .bas | $frmCount .frm | $clsCount .cls = $($basCount+$frmCount+$clsCount) files | $totalLines lines
@@ -203,6 +205,7 @@ Write-Host @"
   ║  LOCAL:    Qwen2.5 7B / 1.5B      (offline fallback)      ║
   ║  LOCAL:    Qwen3 1.7B             (CPU reasoning)          ║
   ║  LOCAL:    Phi4-mini 3.8B         (CPU coding)             ║
+  ║  LOCAL:    Gemma 4 e2b 128K ctx    (offline, text+image)        ║
   ║  CLOUD:    Gemini 2.5 Flash 1M ctx(Google, free tier)      ║
   ║  CLOUD:    Gemma 4 26B 256K ctx   (Google, multimodal)     ║
   ║  CLOUD:    Nemotron 120B 1M ctx   (OpenRouter free)        ║
@@ -225,7 +228,7 @@ Write-Host @"
   ✅ Model landscape — .opencode/model-landscape-2026.md
   ✅ API keys fixed — Anthropic, OpenRouter, OpenAI, DeepSeek
   ✅ System cheatsheet — .opencode/system-context-cheatsheet.md
-  ✅ Ollama models — Qwen3 1.7B + Phi4-mini 3.8B installed
+  ✅ Ollama models — Qwen3 1.7B + Phi4-mini 3.8B + Gemma 4 e2b installed
 
 [ REMAINING — YOUR ACTION ]
   [ ] Defense practice — jury Q&A from DEFENSE_QA_GUIDE.md
@@ -260,6 +263,7 @@ do {
     OpenCode groq            Groq Llama 3.3 70B (fastest, primary)
     OpenCode gemini          Gemini 2.5 Flash (1M context)
     OpenCode gemma / ogg     Gemma 4 26B (256K ctx, multimodal)
+    OpenCode gemma-local     Gemma 4 e2b (Ollama, 128K ctx, offline)
     OpenCode phi4            Ollama Phi4-mini 3.8B (offline CPU coding)
     OpenCode qwen3           Ollama Qwen3 1.7B (offline CPU reasoning)
     OpenCode ollama          Ollama model picker (all 4 local models)
@@ -307,6 +311,7 @@ do {
     OpenCode groq                                   Groq Llama 3.3 70B
     OpenCode gemini                                 Gemini 2.5 Flash (1M ctx)
     OpenCode gemma / ogg                            Gemma 4 26B (256K ctx, multimodal)
+    OpenCode gemma-local                            Gemma 4 e2b (128K ctx, offline, 7.2GB)
     OpenCode phi4                                   Ollama Phi4-mini 3.8B (CPU)
     OpenCode qwen3                                  Ollama Qwen3 1.7B (CPU)
     OpenCode ollama                                 Ollama model selection menu

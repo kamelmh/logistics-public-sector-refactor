@@ -87,6 +87,10 @@ set "CLI_MODES=cli groq llama gemini gemma gemma-local phi4 qwen3 nemotron ollam
 set "OLLAMA_MODES=phi4 qwen3 gemma-local"
 set "PIPELINE_MODES=autobuild autoverify autotest autoaudit autothesis autocheck autofix autoplan autolog automenu autoclean status crossflow crossflow-sync"
 set "SPECIAL_MODES=gui fcc proxy academix restore help"
+:: Menu display categories
+set "MENU_AUTO=autobuild autoverify autotest autoaudit autofix autocheck"
+set "MENU_CROSS=crossflow crossflow-sync"
+set "MENU_OTHER=academix gui autoclean status help"
 set "FCC_DIR=%USERPROFILE%\.opencode\plugins\fcc-proxy"
 set "FCC_PORT=8082"
 set "MEMORY_DIR=%USERPROFILE%\.opencode\memory"
@@ -127,39 +131,17 @@ echo %MODE% > "%LAST_SESSION%"
 (echo %MODE% & echo %SESSION_NAME% & echo %DATE% & echo %TIME%) > "%MEMORY_DIR%\last-session-%SESSION_NAME%.txt" 2>nul
 
 :: ---- Mode Dispatch ----
-if /i "%MODE%"=="help" goto :help
-if /i "%MODE%"=="gui" goto :gui
-if /i "%MODE%"=="cli" goto :cli
-if /i "%MODE%"=="groq" goto :groq
-if /i "%MODE%"=="llama" goto :llama
-if /i "%MODE%"=="nemotron" goto :nemotron
+:: CLI modes (single loop — add once, works everywhere)
+for %%m in (%CLI_MODES%) do if /i "!MODE!"=="%%m" goto :%%m
+:: Aliases
 if /i "%MODE%"=="on" goto :nemotron
-if /i "%MODE%"=="fcc" goto :fcc
-if /i "%MODE%"=="gemini" goto :gemini
-if /i "%MODE%"=="ollama" goto :ollama-menu
-if /i "%MODE%"=="phi4" goto :phi4
-if /i "%MODE%"=="qwen3" goto :qwen3
-if /i "%MODE%"=="gemma" goto :gemma
 if /i "%MODE%"=="ogg" goto :gemma
-if /i "%MODE%"=="gemma-local" goto :gemma-local
 if /i "%MODE%"=="ogg-local" goto :gemma-local
-if /i "%MODE%"=="proxy" goto :proxy
-if /i "%MODE%"=="academix" goto :academix
-if /i "%MODE%"=="restore" goto :restore
-if /i "%MODE%"=="autobuild" goto :autobuild
-if /i "%MODE%"=="autoverify" goto :autoverify
-if /i "%MODE%"=="autotest" goto :autotest
-if /i "%MODE%"=="autoaudit" goto :autoaudit
-if /i "%MODE%"=="autothesis" goto :autothesis
-if /i "%MODE%"=="autocheck" goto :autocheck
-if /i "%MODE%"=="autofix" goto :autofix
-if /i "%MODE%"=="autoplan" goto :autoplan
-if /i "%MODE%"=="autolog" goto :autolog
-if /i "%MODE%"=="automenu" goto :automenu
-if /i "%MODE%"=="autoclean" goto :autoclean
-if /i "%MODE%"=="status" goto :status
-if /i "%MODE%"=="crossflow" goto :crossflow
-if /i "%MODE%"=="crossflow-sync" goto :crossflow-sync
+:: Pipeline modes
+for %%m in (%PIPELINE_MODES%) do if /i "!MODE!"=="%%m" goto :%%m
+:: Special modes
+for %%m in (%SPECIAL_MODES%) do if /i "!MODE!"=="%%m" goto :%%m
+:: Unknown
 echo Unknown mode: %MODE%
 goto :help
 
@@ -329,7 +311,7 @@ cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%OLLAMA_QWEN3%" "%PROJECT_ROOT%"
 goto :end
 
-:ollama-menu
+:ollama
 call :ensure-ollama
 :mode-dispatch-ollama-menu
 title %WINDOW_TITLE%
@@ -401,21 +383,18 @@ if not exist "%LAST_SESSION%" (
 set /p LAST_MODE=<"%LAST_SESSION%"
 echo   Restoring mode: %LAST_MODE%
 set "MODE=%LAST_MODE%"
-if /i "%MODE%"=="cli" goto :cli
-if /i "%MODE%"=="groq" goto :groq
-if /i "%MODE%"=="llama" goto :llama
-if /i "%MODE%"=="nemotron" goto :nemotron
-if /i "%MODE%"=="on" goto :nemotron
-if /i "%MODE%"=="fcc" goto :fcc
-if /i "%MODE%"=="gemini" goto :gemini
-if /i "%MODE%"=="gemma" goto :gemma
-if /i "%MODE%"=="ogg" goto :gemma
-if /i "%MODE%"=="gemma-local" goto :gemma-local
-if /i "%MODE%"=="ogg-local" goto :gemma-local
-if /i "%MODE%"=="phi4" goto :phi4
-if /i "%MODE%"=="qwen3" goto :qwen3
-if /i "%MODE%"=="ollama" goto :ollama-menu
-if /i "%MODE%"=="academix" goto :academix
+:: Resolve aliases
+if /i "%MODE%"=="on" set "MODE=nemotron"
+if /i "%MODE%"=="ogg" set "MODE=gemma"
+if /i "%MODE%"=="ogg-local" set "MODE=gemma-local"
+:: Validate against known mode lists, then goto directly
+set "VALID="
+for %%m in (%CLI_MODES%) do if /i "!MODE!"=="%%m" set "VALID=1"
+for %%m in (%PIPELINE_MODES%) do if /i "!MODE!"=="%%m" set "VALID=1"
+for %%m in (%SPECIAL_MODES%) do if /i "!MODE!"=="%%m" set "VALID=1"
+if defined VALID goto :!MODE!
+:: Fallback
+echo   Unknown mode, falling back to CLI.
 goto :cli
 
 :: ==============================================================
@@ -590,67 +569,75 @@ echo    Academix v13.2 ^| El Bayadh
 echo  ===========================================
 echo.
 echo  OPENCODE CLI MODES:
-echo    [1]  cli        big-pickle (default)
-echo    [2]  groq       Qwen3 32B (fast)
-echo    [3]  llama      Llama 3.3 70B (VBA + prose)
-echo    [4]  gemini     Gemini 2.5 Flash (1M ctx)
-echo    [5]  gemma      Gemma 4 26B (256K ctx, multimodal)
-echo    [6]  gemma-local Gemma 4 e2b (Ollama, 128K ctx, offline)
-echo    [7]  phi4       Phi4-mini 3.8B (CPU coding)
-echo    [8]  qwen3      Qwen3 1.7B (CPU reasoning)
-echo    [9]  nemotron   Nemotron 120B (1M ctx)
-echo    [10] ollama     Ollama model menu
+set /a _n=1
+for %%m in (%CLI_MODES%) do (
+    set "_d="
+    if "%%m"=="cli" set "_d=big-pickle (default)"
+    if "%%m"=="groq" set "_d=Qwen3 32B (fast)"
+    if "%%m"=="llama" set "_d=Llama 3.3 70B (VBA + prose)"
+    if "%%m"=="gemini" set "_d=Gemini 2.5 Flash (1M ctx)"
+    if "%%m"=="gemma" set "_d=Gemma 4 26B (256K ctx, multimodal)"
+    if "%%m"=="gemma-local" set "_d=Gemma 4 e2b (Ollama, 128K, offline)"
+    if "%%m"=="phi4" set "_d=Phi4-mini 3.8B (CPU coding)"
+    if "%%m"=="qwen3" set "_d=Qwen3 1.7B (CPU reasoning)"
+    if "%%m"=="nemotron" set "_d=Nemotron 120B (1M ctx)"
+    if "%%m"=="ollama" set "_d=Ollama model menu"
+    echo    [!_n!]  %%m  !_d!
+    set /a _n+=1
+)
 echo.
 echo  AUTO PIPELINE MODES:
-echo    [11] autobuild   Build + verify
-echo    [12] autoverify  137 verification checks
-echo    [13] autotest    Macro test suite
-echo    [14] autoaudit   5-phase DSS audit
-echo    [15] autofix     Full pipeline
-echo    [16] autocheck   System health
+for %%p in (%MENU_AUTO%) do (
+    set "_d="
+    if "%%p"=="autobuild" set "_d=Build + verify"
+    if "%%p"=="autoverify" set "_d=137 verification checks"
+    if "%%p"=="autotest" set "_d=Macro test suite"
+    if "%%p"=="autoaudit" set "_d=5-phase DSS audit"
+    if "%%p"=="autofix" set "_d=Full pipeline"
+    if "%%p"=="autocheck" set "_d=System health"
+    echo    [!_n!]  %%p  !_d!
+    set /a _n+=1
+)
 echo.
 echo  CROSSFLOW:
-echo    [17] crossflow      CrossFlow status
-echo    [18] crossflow-sync Sync CLAUDE.md blocks
+for %%c in (%MENU_CROSS%) do (
+    set "_d="
+    if "%%c"=="crossflow" set "_d=CrossFlow status"
+    if "%%c"=="crossflow-sync" set "_d=Sync CLAUDE.md blocks"
+    echo    [!_n!]  %%c  !_d!
+    set /a _n+=1
+)
 echo.
 echo  OTHER:
-echo    [19] academix   Project dashboard
-echo    [20] gui        Desktop GUI
-echo    [21] autoclean  Purge old files (30-day)
-echo    [22] status     Project health overview
-echo    [23] help       Show help
+for %%o in (%MENU_OTHER%) do (
+    set "_d="
+    if "%%o"=="academix" set "_d=Project dashboard"
+    if "%%o"=="gui" set "_d=Desktop GUI"
+    if "%%o"=="autoclean" set "_d=Purge old files (30-day)"
+    if "%%o"=="status" set "_d=Project health overview"
+    if "%%o"=="help" set "_d=Show help"
+    echo    [!_n!]  %%o  !_d!
+    set /a _n+=1
+)
 echo    [0]  Exit
 echo.
-set /p MENU_CHOICE="Select mode [0-23]: "
+set /p MENU_CHOICE="Select mode [0]: "
 if "%MENU_CHOICE%"=="" goto :menu-loop
 if "%MENU_CHOICE%"=="0" exit /b
+:: Map number to mode (same order as display: CLI→AUTO→CROSS→OTHER)
 set "MENU_MODE="
-if "%MENU_CHOICE%"=="1" set "MENU_MODE=cli"
-if "%MENU_CHOICE%"=="2" set "MENU_MODE=groq"
-if "%MENU_CHOICE%"=="3" set "MENU_MODE=llama"
-if "%MENU_CHOICE%"=="4" set "MENU_MODE=gemini"
-if "%MENU_CHOICE%"=="5" set "MENU_MODE=gemma"
-if "%MENU_CHOICE%"=="6" set "MENU_MODE=gemma-local"
-if "%MENU_CHOICE%"=="7" set "MENU_MODE=phi4"
-if "%MENU_CHOICE%"=="8" set "MENU_MODE=qwen3"
-if "%MENU_CHOICE%"=="9" set "MENU_MODE=nemotron"
-if "%MENU_CHOICE%"=="10" set "MENU_MODE=ollama"
-if "%MENU_CHOICE%"=="11" set "MENU_MODE=autobuild"
-if "%MENU_CHOICE%"=="12" set "MENU_MODE=autoverify"
-if "%MENU_CHOICE%"=="13" set "MENU_MODE=autotest"
-if "%MENU_CHOICE%"=="14" set "MENU_MODE=autoaudit"
-if "%MENU_CHOICE%"=="15" set "MENU_MODE=autofix"
-if "%MENU_CHOICE%"=="16" set "MENU_MODE=autocheck"
-if "%MENU_CHOICE%"=="17" set "MENU_MODE=crossflow"
-if "%MENU_CHOICE%"=="18" set "MENU_MODE=crossflow-sync"
-if "%MENU_CHOICE%"=="19" set "MENU_MODE=academix"
-if "%MENU_CHOICE%"=="20" set "MENU_MODE=gui"
-if "%MENU_CHOICE%"=="21" set "MENU_MODE=autoclean"
-if "%MENU_CHOICE%"=="22" set "MENU_MODE=status"
-if "%MENU_CHOICE%"=="23" goto :help
+set /a _n=1
+for %%x in (%CLI_MODES% %MENU_AUTO% %MENU_CROSS% %MENU_OTHER%) do (
+    if "!MENU_CHOICE!"=="!_n!" set "MENU_MODE=%%x"
+    set /a _n+=1
+)
 if not defined MENU_MODE goto :menu-loop
-set "MODE=%MENU_MODE%"
-goto :%MENU_MODE%
+set "MODE=!MENU_MODE!"
+:: Resolve aliases for goto
+if /i "!MODE!"=="on" set "MODE=nemotron"
+if /i "!MODE!"=="ogg" set "MODE=gemma"
+if /i "!MODE!"=="ogg-local" set "MODE=gemma-local"
+goto :!MODE!
 
 :: ==============================================================
 :help

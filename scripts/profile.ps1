@@ -21,7 +21,7 @@ if ($add) {
 # ── Navigation ──────────────────────────────────────────────────────────────
 function cdproj  { Set-Location $script:ProjRoot; Write-Host "ProjRoot: $script:ProjRoot" -ForegroundColor Cyan }
 function cdsrc   { Set-Location "$script:ProjRoot\Software_Surgical_Edit\VBA_Modules"; Write-Host "VBA Modules" -ForegroundColor Cyan }
-function cdthesis{ Set-Location "$script:ProjRoot\Thesis_Surgical_Edit"; Write-Host "Thesis" -ForegroundColor Cyan }
+function cdthesis { Set-Location "$script:ProjRoot\Thesis_Surgical_Edit"; Write-Host "Thesis" -ForegroundColor Cyan }
 function cdbuild { Set-Location "$script:ProjRoot\Software_Surgical_Edit"; Write-Host "Build folder" -ForegroundColor Cyan }
 function cddesk  { Set-Location $script:Desktop; Write-Host "Desktop" -ForegroundColor Cyan }
 
