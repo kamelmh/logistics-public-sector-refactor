@@ -123,6 +123,8 @@
     <mode name="proxy"   desc="FCC server only (background)" />
     <mode name="academix" desc="Interactive dashboard" />
     <mode name="restore" desc="Restore last session mode" />
+    <mode name="picker" desc="Interactive model picker TUI (14 models, arrow-key nav, live Ollama status)" />
+    <mode name="op" desc="Alias for picker" />
     <session-naming>OpenCode &lt;mode&gt; &lt;session-name&gt; for multi-session</session-naming>
   </launcher>
 

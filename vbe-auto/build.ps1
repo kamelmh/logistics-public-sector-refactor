@@ -177,34 +177,31 @@ try {
 }
 
 # ============================================================================
-# STEP 5b: Protect Sheets
+# STEP 6: Generate Demo Data
 # ============================================================================
 
-Write-Host "[6/9] Protecting sheets..." -ForegroundColor Yellow
-$pwd = $config.protection.sheet_password
-$protCount = 0
-foreach ($ws in $wb.Sheets) {
-    if (-not $ws.ProtectContents) {
-        try {
-            $ws.Protect($pwd, $true, $true, $true, $true, $false, $false, $false, $false, $false, $false, $false, $false, $true, $true, $true)
-            $protCount++
-        } catch {
-            Write-Host "  Warning: Could not protect $($ws.Name)" -ForegroundColor Gray
-        }
-    }
-}
-Write-Host "  Protected $protCount sheets" -ForegroundColor Gray
-
-# ============================================================================
-# STEP 7: Generate Demo Data
-# ============================================================================
-
-Write-Host "[7/9] Generating demo data..." -ForegroundColor Yellow
+Write-Host "[6/9] Generating demo data..." -ForegroundColor Yellow
 try {
     $null = $xl.Run("GenerateDemoData")
     Write-Host "  GenerateDemoData: OK" -ForegroundColor Green
 } catch {
     Write-Host "  GenerateDemoData: FAILED - $($_.Exception.Message)" -ForegroundColor Red
+    $wb.Close($false)
+    $xl.Quit()
+    exit 1
+}
+
+# ============================================================================
+# STEP 7: Finalize protection via VBA macro
+# (GenerateDemoData uses UserInterfaceOnly which doesn't survive save)
+# ============================================================================
+
+Write-Host "[7/9] Finalizing sheet protection..." -ForegroundColor Yellow
+try {
+    $null = $xl.Run("FinalizeBuildProtection")
+    Write-Host "  FinalizeBuildProtection: OK" -ForegroundColor Green
+} catch {
+    Write-Host "  FinalizeBuildProtection: FAILED - $($_.Exception.Message)" -ForegroundColor Red
     $wb.Close($false)
     $xl.Quit()
     exit 1

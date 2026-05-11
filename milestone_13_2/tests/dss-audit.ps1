@@ -82,8 +82,8 @@ Write-Host "`n[Phase 2] Security Audit" -ForegroundColor Yellow
 # 2.1 Sheet protection
 $protectedCount = 0
 foreach ($ws in $wb.Sheets) { try { if ($ws.ProtectContents) { $protectedCount++ } } catch {} }
-if ($protectedCount -ge 20) { Audit-Record "Security" "Sheet protection ($protectedCount/$($wb.Sheets.Count))" "CRITICAL" "PASS" "Majority sheets protected" }
-else { Audit-Record "Security" "Sheet protection ($protectedCount/$($wb.Sheets.Count))" "CRITICAL" "FAIL" "Insufficient sheet protection" }
+if ($protectedCount -ge 25) { Audit-Record "Security" "Sheet protection ($protectedCount/$($wb.Sheets.Count))" "CRITICAL" "PASS" "All data sheets protected" }
+else { Audit-Record "Security" "Sheet protection ($protectedCount/$($wb.Sheets.Count))" "CRITICAL" "FAIL" "Insufficient sheet protection (need >=25)" }
 
 # 2.2 No hardcoded passwords in source (check .bas files)
 $sourceDir = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\VBA_Modules"

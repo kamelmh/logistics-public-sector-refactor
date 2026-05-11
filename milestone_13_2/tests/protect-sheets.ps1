@@ -13,24 +13,21 @@ if (Test-Path $configPath) {
     Write-Host "WARNING: config.json not found, using default password" -ForegroundColor Yellow
     $pwd = "erp_secure_pwd_2026"
 }
-$protected = 0
-$skipped = 0
+$protected = 0; $skipped = 0
 
 foreach ($ws in $wb.Sheets) {
     try {
-        if (-not $ws.ProtectContents) {
-            $ws.Protect($pwd, $true, $true, $true, $true, $false, $false, $false, $false, $false, $false, $false, $false, $true, $true, $true)
-            $protected++
-            Write-Host "  PROTECTED: $($ws.Name)" -ForegroundColor Green
-        } else {
-            Write-Host "  ALREADY: $($ws.Name)" -ForegroundColor Gray
-        }
+        if ($ws.ProtectContents) { $ws.Unprotect($pwd) }
+        $ws.Protect($pwd, $true, $true, $true, $true, $false, $false, $false, $false, $false, $false, $false, $false, $true, $true, $true)
+        $protected++
+        Write-Host "  PROTECTED: $($ws.Name)" -ForegroundColor Green
     } catch {
         Write-Host "  ERROR: $($ws.Name) - $_" -ForegroundColor Red
+        $skipped++
     }
 }
 
-Write-Host "`nProtected: $protected | Skipped: $skipped | Total: $($wb.Sheets.Count)" -ForegroundColor Cyan
+Write-Host "`nProtected: $protected/$($wb.Sheets.Count) | Failed: $skipped" -ForegroundColor Cyan
 
 $wb.Save()
 $wb.Close()

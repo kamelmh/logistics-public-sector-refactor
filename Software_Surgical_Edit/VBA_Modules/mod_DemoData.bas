@@ -422,5 +422,27 @@ Private Function RandomService() As String
 End Function
 
 '================================================================================
+' BUILD FINALIZE - Re-protect all sheets (build-time only, no UserInterfaceOnly)
+' Called by build.ps1 after GenerateDemoData
+'================================================================================
+
+Public Sub FinalizeBuildProtection()
+    Dim ws As Worksheet
+    Dim pwd As String
+    pwd = mod_Config.MASTER_PWD
+    
+    For Each ws In ThisWorkbook.Sheets
+        If ws.ProtectContents Then ws.Unprotect Password:=pwd
+        ws.Protect Password:=pwd, DrawingObjects:=True, Contents:=True, Scenarios:=True, _
+                   AllowFormattingCells:=False, AllowFormattingColumns:=False, _
+                   AllowFormattingRows:=False, AllowInsertingColumns:=False, _
+                   AllowInsertingRows:=False, AllowInsertingHyperlinks:=False, _
+                   AllowDeletingColumns:=False, AllowDeletingRows:=False, _
+                   AllowSorting:=False, AllowFiltering:=True, _
+                   AllowUsingPivotTables:=False
+    Next ws
+End Sub
+
+'================================================================================
 ' END -- mod_DemoData.bas
 '================================================================================

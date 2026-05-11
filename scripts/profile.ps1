@@ -44,6 +44,7 @@ function on     { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe"
 function ophi4  { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "ollama/phi4-mini:3.8b-q4_K_M"; Pop-Location }
 function oqwen3 { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "ollama/qwen3:1.7b"; Pop-Location }
 function oo     { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "ollama/qwen2.5-coder:1.5b"; Pop-Location }
+function opicker { Push-Location $script:ProjRoot; & $script:OcBat "picker"; Pop-Location }
 
 # ── Build & Verify ──────────────────────────────────────────────────────────
 function build  { & "$script:ProjRoot\vbe-auto\build.ps1" -ConfigPath "$script:ProjRoot\vbe-auto\config.json" }
@@ -92,6 +93,7 @@ Write-Host "ogg     Gemma 4 26B (256K ctx, multimodal)" -ForegroundColor Cyan
 Write-Host "oggl    Gemma 4 e2b local (128K ctx, offline)" -ForegroundColor DarkCyan
 Write-Host "ogm     Gemini 2.5 Flash (1M ctx, vision)" -ForegroundColor Cyan
 Write-Host "on      Nemotron 120B (1M ctx  429-limited)" -ForegroundColor DarkYellow
+Write-Host "opicker Model picker (TUI, interactive)" -ForegroundColor Cyan
 Write-Host "oo      Ollama Qwen 1.5B (slow fallback)" -ForegroundColor Yellow
 Write-Host "ophi4   Phi4-mini 3.8B (CPU coding)" -ForegroundColor DarkCyan
 Write-Host "oqwen3  Qwen3 1.7B (CPU reasoning)" -ForegroundColor DarkCyan

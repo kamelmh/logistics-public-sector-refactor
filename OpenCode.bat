@@ -24,6 +24,7 @@ title OpenCode Launcher v3.5 ^| CrossFlow ^| Academix v13.2
 ::   OpenCode proxy              Start FCC proxy only (background)
 ::   OpenCode academix           Interactive project dashboard
 ::   OpenCode restore            CLI with last-session model + memory restore
+::   OpenCode picker / op        Interactive model picker (TUI)
 ::   OpenCode autobuild          Build workbook + verify (full rebuild)
 ::   OpenCode autoverify         Run 137 verification checks
 ::   OpenCode autotest           Run macro test suite
@@ -86,11 +87,11 @@ set "OLLAMA_GEMMA4_LOCAL=ollama/gemma4:e2b"
 set "CLI_MODES=cli groq llama gemini gemma gemma-local phi4 qwen3 nemotron ollama"
 set "OLLAMA_MODES=phi4 qwen3 gemma-local"
 set "PIPELINE_MODES=autobuild autoverify autotest autoaudit autothesis autocheck autofix autoplan autolog automenu autoclean status crossflow crossflow-sync"
-set "SPECIAL_MODES=gui fcc proxy academix restore help"
+set "SPECIAL_MODES=gui fcc proxy academix restore picker help"
 :: Menu display categories
 set "MENU_AUTO=autobuild autoverify autotest autoaudit autofix autocheck"
 set "MENU_CROSS=crossflow crossflow-sync"
-set "MENU_OTHER=academix gui autoclean status help"
+set "MENU_OTHER=academix gui picker autoclean status help"
 set "FCC_DIR=%USERPROFILE%\.opencode\plugins\fcc-proxy"
 set "FCC_PORT=8082"
 set "MEMORY_DIR=%USERPROFILE%\.opencode\memory"
@@ -137,6 +138,7 @@ for %%m in (%CLI_MODES%) do if /i "!MODE!"=="%%m" goto :%%m
 if /i "%MODE%"=="on" goto :nemotron
 if /i "%MODE%"=="ogg" goto :gemma
 if /i "%MODE%"=="ogg-local" goto :gemma-local
+if /i "%MODE%"=="op" goto :picker
 :: Pipeline modes
 for %%m in (%PIPELINE_MODES%) do if /i "!MODE!"=="%%m" goto :%%m
 :: Special modes
@@ -398,6 +400,19 @@ echo   Unknown mode, falling back to CLI.
 goto :cli
 
 :: ==============================================================
+:picker
+title OpenCode [PICKER] - %SESSION_NAME%
+echo [OpenCode] Launching Model Picker...
+if not exist "%PROJECT_ROOT%\scripts\model-picker.ps1" (
+    echo ERROR: scripts\model-picker.ps1 not found
+    pause
+    exit /b 1
+)
+cd /d "%PROJECT_ROOT%"
+%PWSH% -File "%PROJECT_ROOT%\scripts\model-picker.ps1"
+goto :end
+
+:: ==============================================================
 :: AUTO Pipeline Modes
 :: ==============================================================
 :autobuild
@@ -612,6 +627,7 @@ echo  OTHER:
 for %%o in (%MENU_OTHER%) do (
     set "_d="
     if "%%o"=="academix" set "_d=Project dashboard"
+    if "%%o"=="picker" set "_d=Interactive model picker"
     if "%%o"=="gui" set "_d=Desktop GUI"
     if "%%o"=="autoclean" set "_d=Purge old files (30-day)"
     if "%%o"=="status" set "_d=Project health overview"
@@ -665,7 +681,8 @@ echo   qwen3      CLI with qwen3:1.7b (CPU, offline)
 echo   ollama     CLI with model menu + auto-start server
 echo   proxy      Start FCC proxy only (background)
 echo   academix   Interactive project dashboard
-echo   restore    Restore last session mode
+echo   picker     Interactive model picker (TUI)
+echo   op         Alias for picker
 echo   autobuild  Build + verify
 echo   autoverify 137 verification checks
 echo   autotest   Macro test suite
