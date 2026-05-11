@@ -76,6 +76,7 @@ End Sub
 ' GENERIC METRIC RETRIEVER - Reads specific metrics from the ARTICLES sheet.
 '--------------------------------------------------------------------------------------
 Public Function GetMetricFromLedger(ByVal artCode As String, ByVal metricName As String) As Variant
+    On Error GoTo MetricError
     Dim wsArt As Worksheet: Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
     Dim foundRow As Variant
     foundRow = Application.Match(artCode, wsArt.Range("A:A"), 0)
@@ -87,18 +88,22 @@ Public Function GetMetricFromLedger(ByVal artCode As String, ByVal metricName As
     
     Select Case LCase(metricName)
         Case "cmup"
-            GetMetricFromLedger = wsArt.Cells(foundRow, COL_ART_PU).Value ' Col H
+            GetMetricFromLedger = wsArt.Cells(foundRow, COL_ART_PU).Value
         Case "abc_class"
             GetMetricFromLedger = wsArt.Cells(foundRow, COL_ART_CLASSE_ABC).Value
         Case Else
             GetMetricFromLedger = "Unknown"
     End Select
+    Exit Function
+MetricError:
+    GetMetricFromLedger = "Unknown"
 End Function
 
 '--------------------------------------------------------------------------------------
 ' STOCK RETRIEVER - Reads the current stock level from the ARTICLES sheet.
 '--------------------------------------------------------------------------------------
 Public Function GetStockFromLedger(ByVal artCode As String) As Long
+    On Error GoTo StockError
     Dim wsArt As Worksheet: Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
     Dim foundRow As Variant
     foundRow = Application.Match(artCode, wsArt.Range("A:A"), 0)
@@ -106,8 +111,11 @@ Public Function GetStockFromLedger(ByVal artCode As String) As Long
     If IsError(foundRow) Then
         GetStockFromLedger = -1
     Else
-        GetStockFromLedger = CLng(wsArt.Cells(foundRow, COL_ART_STOCK).Value) ' Col C
+        GetStockFromLedger = CLng(wsArt.Cells(foundRow, COL_ART_STOCK).Value)
     End If
+    Exit Function
+StockError:
+    GetStockFromLedger = -1
 End Function
 
 '--------------------------------------------------------------------------------------
@@ -138,7 +146,14 @@ End Function
 '--- Legacy Compatibility Stubs (W009: Implemented) ---
 
 Public Function IsSyncComplete(ByVal triggerTime As String) As Boolean
-    IsSyncComplete = (m_LastSyncTime > CDate(triggerTime))
+    On Error Resume Next
+    Dim parsed As Date
+    parsed = CDate(triggerTime)
+    If Err.Number <> 0 Then
+        IsSyncComplete = False
+    Else
+        IsSyncComplete = (m_LastSyncTime > parsed)
+    End If
 End Function
 
 Public Function GetSyncProgress() As Integer

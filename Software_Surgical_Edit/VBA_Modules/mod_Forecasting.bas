@@ -44,6 +44,8 @@ Public Type PeriodData
     TransactionCount  As Long
 End Type
 
+Private Const SHEET_FORECAST As String = "FORECAST"
+
 '================================================================================
 ' PUBLIC API - Entry points
 '================================================================================
@@ -378,12 +380,12 @@ Public Sub RefreshForecastSheet()
     
     Dim ws As Worksheet
     On Error Resume Next
-    Set ws = ThisWorkbook.Sheets("FORECAST")
+    Set ws = ThisWorkbook.Sheets(SHEET_FORECAST)
     On Error GoTo 0
     
     If ws Is Nothing Then
         Set ws = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
-        ws.Name = "FORECAST"
+        ws.Name = SHEET_FORECAST
     End If
     
     ws.Cells.Clear
@@ -502,6 +504,7 @@ End Function
 
 '-- Get total critical articles (demand > stock within 30 days)
 Public Function GetCriticalForecastCount() As Long
+    On Error GoTo FnError
     Dim articles As Variant
     articles = GetAllArticles()
     
@@ -518,10 +521,13 @@ Public Function GetCriticalForecastCount() As Long
     End If
     
     GetCriticalForecastCount = count
+    Exit Function
+FnError:
+    GetCriticalForecastCount = 0
 End Function
 
-'-- Get average forecast accuracy (MAD) across all articles
 Public Function GetAverageForecastAccuracy() As Double
+    On Error GoTo AvgError
     Dim articles As Variant
     articles = GetAllArticles()
     
@@ -545,10 +551,13 @@ Public Function GetAverageForecastAccuracy() As Double
     Else
         GetAverageForecastAccuracy = 0
     End If
+    Exit Function
+AvgError:
+    GetAverageForecastAccuracy = 0
 End Function
 
-'-- Get article with lowest stock coverage (most urgent)
 Public Function GetMostUrgentArticle() As String
+    On Error GoTo UrgentError
     Dim articles As Variant
     articles = GetAllArticles()
     
@@ -571,6 +580,9 @@ Public Function GetMostUrgentArticle() As String
     End If
     
     GetMostUrgentArticle = urgentCode
+    Exit Function
+UrgentError:
+    GetMostUrgentArticle = ""
 End Function
 
 '================================================================================
@@ -578,15 +590,15 @@ End Function
 '================================================================================
 
 Public Sub ExportForecastToPDF()
+    On Error GoTo ExportError
     Dim ws As Worksheet
-    Set ws = ThisWorkbook.Sheets("FORECAST")
+    Set ws = ThisWorkbook.Sheets(SHEET_FORECAST)
     
     If ws Is Nothing Then
         Call RefreshForecastSheet
-        Set ws = ThisWorkbook.Sheets("FORECAST")
+        Set ws = ThisWorkbook.Sheets(SHEET_FORECAST)
     End If
     
-    ' Unprotect temporarily for export
     ws.Unprotect Password:=mod_Config.MASTER_PWD
     
     Dim exportPath As String
@@ -600,10 +612,11 @@ Public Sub ExportForecastToPDF()
         IgnorePrintAreas:=False, _
         OpenAfterPublish:=True
     
-    ' Re-protect
     ws.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
-    
     Debug.Print "[Forecast] PDF exported to: " & exportPath
+    Exit Sub
+ExportError:
+    MsgBox "Erreur export pr" & Chr(233) & "vision: " & Err.Description, vbCritical
 End Sub
 
 '================================================================================
@@ -611,15 +624,24 @@ End Sub
 '================================================================================
 
 Public Sub LogForecastCalculation()
+    On Error GoTo LogError
     If Not mod_AuditTrail.AuditLogInitialized Then Exit Sub
     
+    Dim articles As Variant
+    articles = GetAllArticles()
     Dim articleCount As Long
-    articleCount = UBound(GetAllArticles())
+    If IsArray(articles) Then
+        articleCount = UBound(articles)
+    Else
+        articleCount = 0
+    End If
     
     mod_AuditTrail.LogAction "FORECAST", _
         "Forecast calculated for " & articleCount & " articles", _
         "mod_Forecasting", _
         "ForecastEngine"
+    Exit Sub
+LogError:
 End Sub
 
 '==============================================================================

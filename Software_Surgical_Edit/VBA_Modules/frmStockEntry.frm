@@ -200,6 +200,22 @@ Private Sub BuildUI()
     End With
     
     '--------------------------------------------------------------------------
+    ' 9a. SHORTCUT HINTS LABEL
+    '--------------------------------------------------------------------------
+    Set ctrl = Me.Controls.Add("Forms.Label.1", "lblShortcutHints", True)
+    With ctrl
+        .Left = 10
+        .Top = 162
+        .Width = 840
+        .Height = 14
+        .Caption = "Raccourcis: [Enter]=Ajouter ligne   [Esc]=Annuler   [Ctrl+S]=Enregistrer"
+        .Font.Size = 7
+        .Font.Name = "Tahoma"
+        .ForeColor = RGB(150, 150, 150)
+        .BackStyle = fmBackStyleTransparent
+    End With
+
+    '--------------------------------------------------------------------------
     ' 10. GRID HEADER LABEL
     '--------------------------------------------------------------------------
     Set ctrl = Me.Controls.Add("Forms.Label.1", "lblGridHeader", True)
@@ -250,7 +266,43 @@ Private Sub BuildUI()
     End With
     
     '--------------------------------------------------------------------------
-    ' 13. UNIT PRICE FIELD
+    ' 13a. QUICK QTY BUTTONS
+    '--------------------------------------------------------------------------
+    Set ctrl = Me.Controls.Add("Forms.CommandButton.1", "btnQty1", True)
+    With ctrl
+        .Left = 740
+        .Top = 195
+        .Width = 30
+        .Height = 24
+        .Caption = "+1"
+        .Font.Size = 8
+        .Font.Name = "Tahoma"
+    End With
+
+    Set ctrl = Me.Controls.Add("Forms.CommandButton.1", "btnQty5", True)
+    With ctrl
+        .Left = 772
+        .Top = 195
+        .Width = 30
+        .Height = 24
+        .Caption = "+5"
+        .Font.Size = 8
+        .Font.Name = "Tahoma"
+    End With
+
+    Set ctrl = Me.Controls.Add("Forms.CommandButton.1", "btnQty10", True)
+    With ctrl
+        .Left = 804
+        .Top = 195
+        .Width = 36
+        .Height = 24
+        .Caption = "+10"
+        .Font.Size = 8
+        .Font.Name = "Tahoma"
+    End With
+
+    '--------------------------------------------------------------------------
+    ' 14. UNIT PRICE FIELD
     '--------------------------------------------------------------------------
     Set ctrl = Me.Controls.Add("Forms.TextBox.1", "txtPrixUnitaire", True)
     With ctrl
@@ -442,7 +494,25 @@ Private Sub BuildUI()
         .BackStyle = fmBackStyleOpaque
         .BackColor = RGB(200, 200, 200)
     End With
-    
+
+    '--------------------------------------------------------------------------
+    ' 26. STATUS BAR
+    '--------------------------------------------------------------------------
+    Set ctrl = Me.Controls.Add("Forms.Label.1", "lblStatusBar", True)
+    With ctrl
+        .Left = 10
+        .Top = 525
+        .Width = 840
+        .Height = 20
+        .Caption = "ERP Acad" & Chr(233) & "mie v13.2  |  Session: " & Format(Now, "DD/MM/YYYY HH:MM")
+        .Font.Size = 8
+        .Font.Name = "Tahoma"
+        .ForeColor = RGB(150, 150, 150)
+        .BackStyle = fmBackStyleOpaque
+        .BackColor = RGB(240, 240, 245)
+        .TextAlign = fmTextAlignCenter
+    End With
+
     Debug.Print "BuildUI complete - " & Me.Controls.count & " controls created"
     
     ' Apply professional theme
@@ -576,6 +646,26 @@ Private Sub ApplyProfessionalTheme()
         .ForeColor = RGB(70, 70, 70)
     End With
     
+    ' Quick qty buttons
+    ApplySmallButtonTheme "btnQty1", RGB(232, 245, 233), RGB(40, 100, 40)
+    ApplySmallButtonTheme "btnQty5", RGB(232, 245, 233), RGB(40, 100, 40)
+    ApplySmallButtonTheme "btnQty10", RGB(232, 245, 233), RGB(40, 100, 40)
+    
+    ' Status bar
+    With Me.Controls("lblStatusBar")
+        .Font.Name = "Calibri"
+        .Font.Size = 8
+        .ForeColor = RGB(120, 120, 120)
+        .BackColor = RGB(236, 236, 242)
+    End With
+    
+    ' Shortcut hints
+    With Me.Controls("lblShortcutHints")
+        .Font.Name = "Calibri"
+        .Font.Size = 7
+        .ForeColor = RGB(160, 160, 160)
+    End With
+    
     ' Separator
     With Me.Controls("lblSeparator")
         .BackColor = RGB(224, 224, 224)
@@ -615,6 +705,18 @@ Private Sub ApplyLabelTheme(ByVal ctrlName As String, ByVal foreColor As Long, B
         .Font.Name = "Calibri"
         .Font.Size = fontSize
         .Font.Bold = isBold
+    End With
+End Sub
+
+Private Sub ApplySmallButtonTheme(ByVal ctrlName As String, ByVal bgColor As Long, ByVal fgColor As Long)
+    On Error Resume Next
+    With Me.Controls(ctrlName)
+        .BackColor = bgColor
+        .ForeColor = fgColor
+        .Font.Name = "Calibri"
+        .Font.Size = 9
+        .Font.Bold = True
+        .BorderStyle = 0
     End With
 End Sub
 
@@ -665,6 +767,25 @@ End Sub
 '-- Enregistrer (commit transaction)
 Private Sub btnEnregistrer_Click()
     Call mod_StockEntry_Logic.CommitTransaction(m_State)
+End Sub
+
+'-- Quick qty buttons
+Private Sub btnQty1_Click()
+    Call SetQty(1)
+End Sub
+
+Private Sub btnQty5_Click()
+    Call SetQty(5)
+End Sub
+
+Private Sub btnQty10_Click()
+    Call SetQty(10)
+End Sub
+
+Private Sub SetQty(ByVal qty As Long)
+    Me.Controls("txtQuantite").Value = CStr(qty)
+    Call mod_StockEntry_Logic.OnQuantityChanged(m_State)
+    Me.Controls("txtQuantite").SetFocus
 End Sub
 
 '-- Cancel / Annuler
@@ -761,7 +882,8 @@ Private Sub UserForm_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, _
                               ByVal Shift As Integer)
     Select Case KeyCode
         Case 27: Call btnAnnuler_Click
-        Case 13: Call btnAjouterLigne_Click
+        Case 13: If Me.ActiveControl Is Me.Controls("lstGrid") Then Else Call btnAjouterLigne_Click
+        Case 83: If Shift = 2 Then Call btnEnregistrer_Click  ' Ctrl+S
     End Select
 End Sub
 
@@ -800,6 +922,18 @@ Private Sub btnImprimer_MouseMove(ByVal Button As Integer, ByVal Shift As Intege
     HoverButton Me.Controls("btnImprimer"), RGB(220, 220, 225), RGB(30, 30, 30)
 End Sub
 
+Private Sub btnQty1_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+    HoverButton Me.Controls("btnQty1"), RGB(200, 230, 200), RGB(20, 90, 40)
+End Sub
+
+Private Sub btnQty5_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+    HoverButton Me.Controls("btnQty5"), RGB(200, 230, 200), RGB(20, 90, 40)
+End Sub
+
+Private Sub btnQty10_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+    HoverButton Me.Controls("btnQty10"), RGB(200, 230, 200), RGB(20, 90, 40)
+End Sub
+
 Private Sub UserForm_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     ResetButtonHover Me.Controls("btnEnregistrer"), RGB(0, 102, 204), RGB(255, 255, 255)
     ResetButtonHover Me.Controls("btnAjouterLigne"), RGB(232, 245, 233), RGB(32, 120, 60)
@@ -807,6 +941,9 @@ Private Sub UserForm_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, 
     ResetButtonHover Me.Controls("btnAnnuler"), RGB(245, 245, 250), RGB(51, 51, 51)
     ResetButtonHover Me.Controls("btnAutoRef"), RGB(245, 245, 250), RGB(51, 51, 51)
     ResetButtonHover Me.Controls("btnImprimer"), RGB(245, 245, 250), RGB(51, 51, 51)
+    ResetButtonHover Me.Controls("btnQty1"), RGB(232, 245, 233), RGB(40, 100, 40)
+    ResetButtonHover Me.Controls("btnQty5"), RGB(232, 245, 233), RGB(40, 100, 40)
+    ResetButtonHover Me.Controls("btnQty10"), RGB(232, 245, 233), RGB(40, 100, 40)
 End Sub
 
 Private Sub HoverButton(ByRef ctrl As Object, ByVal hoverBg As Long, ByVal hoverFg As Long)

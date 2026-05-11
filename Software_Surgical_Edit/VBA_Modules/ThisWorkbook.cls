@@ -59,6 +59,13 @@ Private Sub Workbook_Open()
     On Error Resume Next
     Call mod_SharedEnvironment.AutoBackup
     On Error GoTo InitError
+
+    ' 9. Setup ACCUEIL navigation sheet
+    If Application.UserControl Then
+        On Error Resume Next
+        Call mod_UI_Setup.SetupAccueilSheet
+        On Error GoTo InitError
+    End If
     
 Cleanup:
     Application.EnableEvents = True
