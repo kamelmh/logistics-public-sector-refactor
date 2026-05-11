@@ -60,3 +60,6 @@ VBA_Modules/ARCHIVED/
 
 # Google Sheets link files
 *.gsheet
+
+# Embedded worktree (cloned repo inside repo)
+.worktrees/build-verify/
