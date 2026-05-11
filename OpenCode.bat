@@ -81,6 +81,12 @@ set "OLLAMA_FAST_MODEL=ollama/qwen2.5-coder:7b"
 set "OLLAMA_QWEN3=ollama/qwen3:1.7b"
 set "OLLAMA_PHI4=ollama/phi4-mini:3.8b-q4_K_M"
 set "OLLAMA_GEMMA4_LOCAL=ollama/gemma4:e2b"
+
+:: ---- Mode Registry (Single Source of Truth) ----
+set "CLI_MODES=cli groq llama gemini gemma gemma-local phi4 qwen3 nemotron ollama"
+set "OLLAMA_MODES=phi4 qwen3 gemma-local"
+set "PIPELINE_MODES=autobuild autoverify autotest autoaudit autothesis autocheck autofix autoplan autolog automenu autoclean status crossflow crossflow-sync"
+set "SPECIAL_MODES=gui fcc proxy academix restore help"
 set "FCC_DIR=%USERPROFILE%\.opencode\plugins\fcc-proxy"
 set "FCC_PORT=8082"
 set "MEMORY_DIR=%USERPROFILE%\.opencode\memory"
@@ -183,7 +189,7 @@ if errorlevel 1 (
 ) else (
     echo   Ollama server already running.
 )
-goto :mode-dispatch-%MODE%
+goto :eof
 
 :: ==============================================================
 :: CLI Modes

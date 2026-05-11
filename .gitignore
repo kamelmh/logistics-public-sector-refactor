@@ -63,3 +63,8 @@ VBA_Modules/ARCHIVED/
 
 # Embedded worktree (cloned repo inside repo)
 .worktrees/build-verify/
+
+# Generated thesis files
+Thesis_Surgical_Edit/cover-page.docx
+learn-claude-code/
+.tasks/
