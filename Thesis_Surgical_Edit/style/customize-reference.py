@@ -162,27 +162,66 @@ def main():
         styles_elem.insert(0, copy.deepcopy(dde))
         print("docDefaults: copied from user DOC")
     
-    # Override docDefaults line spacing to 1.5
+    # Override docDefaults: 1.5 line spacing + 14pt Traditional Arabic
     existing_dd = styles_elem.find(qn('w:docDefaults'))
     if existing_dd is not None:
         pPrDefault = existing_dd.find(f'{W}pPrDefault')
+        rPrDefault = existing_dd.find(f'{W}rPrDefault')
     else:
-        # Create docDefaults
         dd = docx.oxml.OxmlElement('w:docDefaults')
         styles_elem.insert(0, dd)
         pPrDef = docx.oxml.OxmlElement('w:pPrDefault')
         pPr = docx.oxml.OxmlElement('w:pPr')
         pPrDef.append(pPr)
         dd.append(pPrDef)
-        line = docx.oxml.OxmlElement('w:spacing')
-        line.set(qn('w:line'), '360')
-        line.set(qn('w:lineRule'), 'auto')
-        pPr.append(line)
         rPrDef = docx.oxml.OxmlElement('w:rPrDefault')
         rPr = docx.oxml.OxmlElement('w:rPr')
         rPrDef.append(rPr)
         dd.append(rPrDef)
-        print("docDefaults: created with 1.5 line spacing")
+        existing_dd = dd
+        pPrDefault = pPrDef
+        rPrDefault = rPrDef
+        print("docDefaults: created")
+
+    # Ensure 1.5 line spacing in pPrDefault
+    if pPrDefault is not None:
+        pPr = pPrDefault.find(f'{W}pPr')
+        if pPr is None:
+            pPr = docx.oxml.OxmlElement('w:pPr')
+            pPrDefault.append(pPr)
+        spacing = pPr.find(f'{W}spacing')
+        if spacing is None:
+            spacing = docx.oxml.OxmlElement('w:spacing')
+            pPr.append(spacing)
+        spacing.set(qn('w:line'), '360')
+        spacing.set(qn('w:lineRule'), 'auto')
+
+    # Ensure 14pt Traditional Arabic in rPrDefault
+    if rPrDefault is not None:
+        rPr = rPrDefault.find(f'{W}rPr')
+        if rPr is None:
+            rPr = docx.oxml.OxmlElement('w:rPr')
+            rPrDefault.append(rPr)
+        # Font size 14pt = 28 half-points
+        sz = rPr.find(f'{W}sz')
+        if sz is None:
+            sz = docx.oxml.OxmlElement('w:sz')
+            rPr.append(sz)
+        sz.set(qn('w:val'), '28')
+        szCs = rPr.find(f'{W}szCs')
+        if szCs is None:
+            szCs = docx.oxml.OxmlElement('w:szCs')
+            rPr.append(szCs)
+        szCs.set(qn('w:val'), '28')
+        # Font name: Traditional Arabic
+        rFonts = rPr.find(f'{W}rFonts')
+        if rFonts is None:
+            rFonts = docx.oxml.OxmlElement('w:rFonts')
+            rPr.append(rFonts)
+        rFonts.set(qn('w:ascii'), 'Traditional Arabic')
+        rFonts.set(qn('w:hAnsi'), 'Traditional Arabic')
+        rFonts.set(qn('w:cs'), 'Traditional Arabic')
+        print("docDefaults: 14pt Traditional Arabic, 1.5 line spacing")
     
     # Add Heading styles with proper Arabic formatting
     headings = [
@@ -194,7 +233,7 @@ def main():
         ensure_heading_style(doc, hname, hname, sz, clr, bold=True, outline_lvl=lvl)
         print(f"  Added {hname}: {sz}pt, #{clr}")
     
-    # Copy page setup from user DOC (A4, 4cm margins)
+    # Copy page setup from user DOC (A4, 2.5cm margins)
     body = droot.find(f'{W}body')
     user_sectPr = body.find(f'{W}sectPr')
     if user_sectPr is not None:
@@ -207,15 +246,12 @@ def main():
                 section.page_height = Emu(
                     int(int(pgSz.get(f'{W}h', '16838')) * 914400 / 1440)
                 )
-            pgMar = user_sectPr.find(f'{W}pgMar')
-            if pgMar is not None:
-                for margin, attr in [
-                    ('top_margin', 'top'), ('bottom_margin', 'bottom'),
-                    ('left_margin', 'left'), ('right_margin', 'right')
-                ]:
-                    val = pgMar.get(f'{W}{attr}', '2275')
-                    setattr(section, margin, Emu(int(int(val) * 914400 / 1440)))
-        print("Page setup: A4, 4cm margins")
+            # Override margins to 2.5cm all around (CNEPD standard)
+            section.top_margin = Cm(2.5)
+            section.bottom_margin = Cm(2.5)
+            section.left_margin = Cm(2.5)
+            section.right_margin = Cm(2.5)
+        print("Page setup: A4, 2.5cm margins (CNEPD standard)")
     
     doc.save(REF_OUT)
     print(f"Saved: {REF_OUT}")

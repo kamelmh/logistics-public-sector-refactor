@@ -1,117 +1,115 @@
-# Terminology Mapping: Tech → Administrative (BTS Compliant)
+# Terminology Mapping: Tech → Administrative (BTS CNEPD Compliant) — v13.2
 
 ## Purpose
-Replace technical terms in thesis with administrative terms suitable for BTS jury evaluation.
+Ensure all technical terms in the thesis use CNEPD-approved administrative Arabic terminology suitable for BTS jury evaluation. (Phase 4 completed — thesis is clean, this is the reference log.)
 
 ---
 
-## Core Term Replacements
+## Core Term Replacements (Applied in Phase 4)
 
-### System Architecture
+### Architecture Terms
+| Old (Technical) | New (CNEPD Administrative) | Status |
+|----------------|---------------------------|--------|
+| Offline-First | الاستقلالية عن شبكات الإنترنت | ✅ Replaced |
+| Bento Grid | *(removed — not part of thesis scope)* | ✅ Removed |
+| Cognitive Load Theory | نظرية الحمل المعرفي | ✅ Replaced |
+| Python Backend | وحدات المعالجة VBA | ✅ Done Phase 1 |
+| JSON Ledger | السجل الرقمي للمخزون | ✅ Done |
+| API Bridge | الربط المحلي | ✅ Done |
+| Automation Pipeline | سلسلة المسك المحاسبي | ✅ Done |
+| Database | قواعد البيانات المحلية | ✅ Done |
 
-| Old (Technical) | New (Administrative) | Example |
-|----------------|-------------------|---------|
-| **Python Backend** | وحدات المعالجة VBA | "وحدة المعالجة المحلية" |
-| **JSON Ledger** | السجل الرقمي | "سجل المخزون الإلكتروني" |
-| **API Bridge** | الربط المحلي | "آلية الربط الداخلي" |
-| **Automation Pipeline** | تدفق البيانات | "سلسلة المسك"
-| **Database** | قواعد البيانات | "دفاتر البيانات" |
-| **VBA UserForms** | نماذج الإدخال | "استمارات العمل" |
+### System-Specific Terms
+| Old (Technical) | New (CNEPD Administrative) |
+|----------------|---------------------------|
+| VBA UserForms | نماذج إدخال البيانات / استمارات العمل |
+| Macro-enabled Workbook | المصنف الإلكتروني للتسيير |
+| Stock Ledger / Log | السجل الرقمي للمخزون |
+| Reorder Point (ROP) | نقطة إعادة الطلب |
+| Safety Stock (SS) | مخزون الأمان |
+| EOQ | الكمية الاقتصادية المثلى للطلب |
+| CMUP | التكلفة المتوسطة المرجحة |
+| FIFO | أول دخول أول خروج |
+| KPI | مؤشر الأداء الرئيسي |
+| Alert / Trigger | تنبيه استباقي / إطلاق |
+| Guard / Watchdog | الحراسة المزدوجة / سلسلة الحراسة السداسية |
+| Dual Validation | بروتوكول الموافقة الثنائية |
 
-### Calculations
+### Chapter-Specific Terminology
 
-| Old (Technical) | New (Administrative) | Example |
-|----------------|-------------------|---------|
-| **Algorithm** | النموذج الرياضي | "نموذج ويلسون" |
-| **Computation** | الحساب | "حساب الكمية المثلى" |
-| **EOQ Calculation** | تحديد الكمية الاقتصادية | "تحديد كمية الطلب" |
-| **ROP Calculation** | تحديد نقطة الطلب | "عتبة إعادة الملء" |
+#### الفصل الأول (الإطار النظري)
+| Old | New |
+|-----|-----|
+| Stock Management Theory | الإطار النظري لتسيير المخزونات |
+| Inventory Models | النماذج الرياضية لتسيير المخزون |
+| Supply Chain Management | إدارة سلسلة التوريد |
+| Public Sector Procurement | التموين العمومي |
+| Warehouse Operations | الوظائف الرئيسية للمستودعات |
 
-### Workflow
+#### الفصل الثاني (التشخيص)
+| Old | New |
+|-----|-----|
+| Field Diagnosis | التشخيص الميداني |
+| Bottlenecks | الاختناقات / نقاط الضعف البنيوية |
+| Stockouts | انقطاعات التموين |
+| Phantom Stock / Ghost Inventory | ظاهرة المخزون الوهمي |
+| ABC-XYZ Matrix | المصفوفة المشتركة ABC-XYZ |
+| Four Simultaneous Conditions | الأربعة شروط المتزامنة |
 
-| Old (Technical) | New (Administrative) |
-|----------------|-------------------|
-| **Trigger** | إطلاق |
-| **Execute** | تشغيل |
-| **Deploy** | تفعيل |
-| **Sync** | مزامنة |
-| **Re-calculate** | إعادة الحساب |
+#### الفصل الثالث (التصميم)
+| Old | New |
+|-----|-----|
+| System Architecture | البنية المتكاملة للنظام |
+| Excel + VBA Solution | الحل المبني على Excel/VBA |
+| Guard Chain | سلسلة الحراسة السداسية |
+| Digital Ledger | السجل الرقمي المحلي |
+| VBA Engine | محرك الذكاء المحلي |
+| Zinc & Emerald Theme | لوحة الألوان Zinc و Emerald |
+| 12 Core Features | الميزات الوظيفية الأساسية |
+
+#### الفصل الرابع (النتائج)
+| Old | New |
+|-----|-----|
+| Implementation Results | نتائج التطبيق / التجريب |
+| Key Performance Indicators (KPIs) | مؤشرات الأداء المعتمدة |
+| Before / After Comparison | مقارنة قبل التطبيق / بعده |
+| Validation | التحقق الكمي / الميداني |
+| Recommendations | التوصيات والآفاق |
 
 ---
 
-## Phrases to Replace
-
-### In Thesis Text
-
-| Find | Replace With |
-|------|-------------|
-| "Python" | "وحدات VBA" or remove |
-| "process_data.py" | "محرك الحساب" |
-| "stock_ledger.json" | "سجل المخزون" |
-| "API Bridge" | "نظام الربط" |
-| "automated pipeline" | "التدفق البيانات" |
-| "backend engine" | "الوحدة الحسابية" |
-| "Machine Learning" | "النماذج الرياضية" |
-| "Mini-ERP" | "نظام تسيير المخزون" |
-| "Artificial Intelligence" |
+## Terms DELETED from Thesis (No longer present)
+| Term | Reason |
+|------|--------|
+| Python, Flask, JSON, API | Pure VBA-only requirement |
+| Bento Grid, Dashboard UI | Web concepts removed per directive |
+| Machine Learning, AI | Not used in VBA DSS |
+| Mini-ERP | Replaced with "نظام دعم القرار" |
+| Database Server, Client-Server | Offline-first Excel only |
+| XLOOKUP | Excel 2010 compatibility |
+| Cloud, Sync, Real-time | Decoupled/non-web scope |
 
 ---
 
-## Administrative Phrases (New)
-
-For describing the system in thesis:
-
-| Purpose | Phrase |
-|---------|-------|
-| **System Name** | "نظام تسيير المخزون الإلكتروني" (Electronic Stock Management System) |
-| **Interface** | "واجهة استخدام سهلة" (User-friendly interface) |
-| **Excel-based** | "مبنى على جدوليات Excel" |
-| **Digital Ledger** | "السجل الرقمي للمخزون" |
-| **Automated Calculation** | "الحساب الآلي للمؤشرات" |
-| **Data Entry Form** | "استمارة إدخال البيانات" |
-| **Stock Alert** | "تنبيه المخزون" |
-| **Reorder Alert** | "تنبيه إعادة الملء" |
-
----
-
-## Thesis Structure Phrases
-
-### Chapter 1: Theory
-
-| Old | New |
-|-----|-----|
-| "Stock Management Theory" | الإطار النظري لتسيير المخزون |
-| "Inventory Models" | النماذج الرياضية |
-
-### Chapter 2: Diagnosis
-
-| Old | New |
-|-----|-----|
-| "Field Diagnosis" | التشخيص الميداني |
-| "Current Problems" | الاختلالات المكتشفة |
-| "Stockouts" | انقطاعات التموين |
-
-### Chapter 3: Design
-
-| Old | New |
-|-----|-----|
-| "System Architecture" | البنية التقنية للنظام |
-| "Excel + VBA Solution" | الحل المبني على Excel |
-| "UserForms" | نماذج إدخال البيانات |
-
-### Chapter 4: Results
-
-| Old | New |
-|-----|-----|
-| "Implementation Results" | نتائج التطبيق |
-| "KPIs" | المؤشرات الرئيسية للأداء |
-| "Before/After" | قبل التطبيق / بعده |
+## Footnotes Terminology Templates (CNEPD Standard)
+| Context | Template |
+|---------|----------|
+| Arabic book (first cite) | اسم المؤلف الكامل، **عنوان الكتاب**، دار النشر، مكان النشر، سنة النشر، الجزء، الطبعة، ص. رقم. |
+| French book (first cite) | Prénom Nom, *Titre de l'ouvrage*, Éditeur, Lieu, Année, p. XX. |
+| Immediate repeat | المرجع نفسه، ص.XX. (or Ibid., p.XX) |
+| Later repeat | اسم المؤلف، المرجع السابق، ص.XX. (or Nom, Op.cit., p.XX) |
 
 ---
 
 ## Status
-- **VBA Patching**: Complete
-- **Terminology Mapping**: Created
-- **Thesis Update**: Pending
+| Item | Status |
+|------|--------|
+| Phase 1: ART-001/005 label swap | ✅ Fixed (10 locations) |
+| Phase 4: CNEPD terminology | ✅ Applied (Offline-First, Bento Grid, CLT) |
+| Bento Grid removal | ✅ Complete (0 references remain) |
+| Abstracts (99.7%) | ✅ Corrected (Arabic, English, French) |
+| Footnotes format | ✅ Converted to Pandoc `[^n]` syntax |
+| All redundant tech terms | ✅ Purged from thesis |
 
-**Created**: 2026-04-27
+**آخر تحديث**: 2026-05-11
+**الحالة**: مكتمل — جميع المصطلحات مطابقة لمعايير CNEPD
