@@ -1,0 +1,12 @@
+{
+  "team_name": "academix-engineering",
+  "version": "13.2",
+  "members": [
+    {"name": "explore", "role": "codebase-recon", "status": "idle"},
+    {"name": "plan", "role": "architecture-planner", "status": "idle"},
+    {"name": "build", "role": "vba-builder", "status": "idle"},
+    {"name": "debug", "role": "vba-debugger", "status": "idle"},
+    {"name": "audit", "role": "dss-auditor", "status": "idle"},
+    {"name": "test", "role": "macro-tester", "status": "idle"}
+  ]
+}
