@@ -13,3 +13,6 @@
 | 8 | 2026-05-11 | OpenCode (big-pickle) | Initialized .tasks/, .team/inbox/, .worktrees/, .opencode/memory/transcripts/ | ✅ |
 | 9 | 2026-05-11 | OpenCode (big-pickle) | Updated MASTER_BOOTSTRAP.xml skills-map + context-files with engineering-harness | ✅ |
 | 12 | 2026-05-11 | OpenCode (big-pickle) | Wired AUTO pipeline + cleanup + sync to harness. All layers operational | ✅ |
+| 13 | 2026-05-12 | OpenCode (big-pickle) | Fixed ComputeEOQ test (3→2 args), ComputeROP test (numeric→string SKU). Test suite: 20/20 PASS. Build: OK. Verify: 174/174 PASS. Audit: 16 PASS, 0 CRITICAL. | ✅ |
+| 14 | 2026-05-12 | OpenCode (big-pickle) | Created defense-demo-checklists.md (6 sections: prep, demo flow, metrics, compliance, tough Qs, backup). | ✅ |
+| 15 | 2026-05-12 | OpenCode (big-pickle) | Activated CrossFlow multi-window orchestration (براءة اختراع). Updated MASTER_CONTEXT with Claude Desktop + Gemini windows. Created crossflow-orchestrator skill at `.opencode/skills/crossflow-orchestrator/SKILL.md`. Updated HANDOFF + SESSION_LOG + CROSSFLOW_BLOCK. | ✅ |

@@ -3,8 +3,8 @@
 # Usage: .\build-thesis.ps1 [-SourceMD] [-OutputName]
 
 param(
-    [string]$SourceMD = "Final_Thesis_Academix_v13_2_FIXED.md",
-    [string]$OutputName = "Memoire_Academix_v13_2_Final"
+    [string]$SourceMD = "Final_Thesis_DSS_Logistique_ElBayadh.md",
+    [string]$OutputName = "Memoire_DSS_Logistique_ElBayadh"
 )
 
 $ErrorActionPreference = "Stop"
@@ -63,6 +63,15 @@ try {
 } catch {
     Write-Host "[ERROR] Pandoc failed: $_" -ForegroundColor Red
     exit 1
+}
+
+# Step 2.5: Prepend cover-page.docx
+Write-Host "[2.5/10] Prepending cover-page.docx..." -ForegroundColor Yellow
+try {
+    python (Join-Path $style "prepend-cover.py") $docx 2>&1
+    Write-Host "  Cover page prepended from cover-page.docx" -ForegroundColor Green
+} catch {
+    Write-Host "  [WARN] Cover prepend failed: $_" -ForegroundColor Yellow
 }
 
 # Step 3: Post-process tables (header coloring, alternating rows)

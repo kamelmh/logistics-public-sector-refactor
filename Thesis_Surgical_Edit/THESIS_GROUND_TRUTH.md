@@ -25,7 +25,7 @@
 | ROP | 205.6 | units | (1546/250)×2 + 200 |
 | SS | 200 | units | (MaxDaily − AvgDaily)×2 |
 | LT | 2 | days | Default delivery lead time |
-| S | 500 | DZD | Fixed order cost |
+| S | 801.45 | DZD | Fixed order cost (field data: 801.45) |
 | I | 20% | - | Annual holding rate |
 | PU (ART-001) | 400 | DZD/unit | Unit price |
 | Observation Period | 38 | days | MOUVEMENTS data collection |

@@ -2,8 +2,8 @@ Attribute VB_Name = "mod_SharedEnvironment"
 '==============================================================================
 ' mod_SharedEnvironment.bas  -  ERP Académie v13.2
 
-' Depends: mod_Config, mod_Database, mod_AuditTrail
-' Note: mod_ExportEngine dependency removed to break circular reference
+' Depends: mod_Config, mod_Database, mod_AuditTrail, mod_Utilities
+' Circular dependency with mod_ExportEngine broken — shared path funcs moved to mod_Utilities
 '
 ' Features:
 '   - Configurable shared export directory (network or local)
@@ -35,55 +35,17 @@ Private m_CurrentUser As UserSession
 ' SHARED PATHS - Configurable directories
 '================================================================================
 
-' Returns the shared export directory (network or local)
+' Delegates to mod_Utilities to break circular dependency with mod_ExportEngine
 Public Function GetSharedExportPath() As String
-    Dim sharedPath As String
-    
-    ' Try to read from STAGING_BUFFER first (configurable by admin)
-    On Error Resume Next
-    Dim wsStaging As Worksheet
-    Set wsStaging = ThisWorkbook.Sheets("STAGING_BUFFER")
-    sharedPath = wsStaging.Range("Y1").Value
-    On Error GoTo 0
-    
-    If Len(sharedPath) > 0 And Dir(sharedPath, vbDirectory) <> "" Then
-        GetSharedExportPath = sharedPath
-        Exit Function
-    End If
-    
-    ' Fallback: User-specific Documents folder (more reliable than Desktop)
-    GetSharedExportPath = Environ("USERPROFILE") & "\Documents\ACADEMIX_Export\"
-    
-    ' Create folder if it doesn't exist
-    If Dir(GetSharedExportPath, vbDirectory) = "" Then
-        MkDir GetSharedExportPath
-    End If
+    GetSharedExportPath = mod_Utilities.GetSharedExportPath()
 End Function
 
-' Returns the shared backup directory
 Public Function GetSharedBackupPath() As String
-    GetSharedBackupPath = Environ("USERPROFILE") & "\Documents\ACADEMIX_Backup\"
-    
-    If Dir(GetSharedBackupPath, vbDirectory) = "" Then
-        MkDir GetSharedBackupPath
-    End If
+    GetSharedBackupPath = mod_Utilities.GetSharedBackupPath()
 End Function
 
-' Set shared export path (for admin use)
 Public Sub SetSharedExportPath(ByVal newPath As String)
-    On Error Resume Next
-    Dim wsStaging As Worksheet
-    Set wsStaging = ThisWorkbook.Sheets("STAGING_BUFFER")
-    
-    If Dir(newPath, vbDirectory) <> "" Then
-        wsStaging.Unprotect Password:=mod_Config.MASTER_PWD
-        wsStaging.Range("Y1").Value = newPath
-        wsStaging.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
-        Debug.Print "[SharedEnv] Export path set to: " & newPath
-    Else
-        MsgBox "Le dossier n'existe pas: " & newPath, vbExclamation
-    End If
-    On Error GoTo 0
+    Call mod_Utilities.SetSharedExportPath(newPath)
 End Sub
 
 ' Initialize user session (called on Workbook_Open)
@@ -260,7 +222,7 @@ Public Sub BatchExportPDFs(ByVal startDate As Date, ByVal endDate As Date)
     
     ' Export each document
     Dim exportPath As String
-    exportPath = GetSharedExportPath()
+    exportPath = mod_Utilities.GetSharedExportPath()
     
     Dim successCount As Long
     Dim failCount As Long
@@ -377,7 +339,7 @@ End Sub
 ' Perform automatic backup
 Public Sub AutoBackup()
     Dim backupPath As String
-    backupPath = GetSharedBackupPath()
+    backupPath = mod_Utilities.GetSharedBackupPath()
     
     Dim fileName As String
     fileName = "ACADEMIX_Backup_" & Format(Now, "yyyymmdd_hhmmss") & ".xlsm"

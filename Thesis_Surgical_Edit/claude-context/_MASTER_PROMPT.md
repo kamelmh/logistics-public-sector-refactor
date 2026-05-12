@@ -19,7 +19,7 @@
 | ROP | 205.6 units | Reorder point |
 | SS | 200 units | Safety stock |
 | LT | 2 days | Lead time |
-| S | 500 DZD | Order cost per command |
+| S | 801.45 DZD | Order cost per command (field-refined 2026-05-12) |
 | I | 20% | Annual holding rate |
 | PU (ART-001) | 400 DZD/unit | Unit price |
 | Modules | 37 .bas + 1 .frm | 7 dead removed |

@@ -104,6 +104,46 @@ End Function
 Public Function Test_GetAllArticles() As Variant
     Test_GetAllArticles = mod_Forecasting.GetAllArticles()
 End Function
+
+Public Function Test_ComputeEOQ() As Double
+    Test_ComputeEOQ = mod_StockEngine.ComputeEOQ(1546, 4500)
+End Function
+
+Public Function Test_ComputeROP() As Double
+    Test_ComputeROP = mod_StockEngine.ComputeROP(1546 / 250, "ART-001")
+End Function
+
+Public Function Test_CalculateCMUP() As Double
+    Test_CalculateCMUP = mod_StockEngine.CalculateCMUP("ART-001")
+End Function
+
+Public Function Test_GetArticleField() As String
+    Test_GetArticleField = mod_Utilities.GetArticleField("ART-001", "DESIG")
+End Function
+
+Public Function Test_IsValidDate() As Boolean
+    Test_IsValidDate = mod_Utilities.IsValidDate("15/03/2026")
+End Function
+
+Public Function Test_GetDocumentVerifyCode() As String
+    Test_GetDocumentVerifyCode = mod_QRCode.GetDocumentVerifyCode("BR-2026-0001")
+End Function
+
+Public Function Test_GetSupplierName() As String
+    Test_GetSupplierName = mod_SupplierRegistry.GetSupplierName("F-001")
+End Function
+
+Public Function Test_GetStockFromLedger() As Long
+    Test_GetStockFromLedger = mod_SyncBridge.GetStockFromLedger("ART-001")
+End Function
+
+Public Function Test_AuditLogInitialized() As Boolean
+    Test_AuditLogInitialized = mod_AuditTrail.AuditLogInitialized()
+End Function
+
+Public Function Test_GetSharedExportPath() As String
+    Test_GetSharedExportPath = mod_Utilities.GetSharedExportPath()
+End Function
 "@
 
 $tm.CodeModule.AddFromString($code)
@@ -119,7 +159,17 @@ $tests = @(
     @{Name="GenerateVerifyCode"; Macro="Test_GenerateVerifyCode"; Timeout=10000},
     @{Name="SafeVal"; Macro="Test_SafeVal"; Timeout=10000},
     @{Name="RestoreHeaders"; Macro="Test_RestoreHeaders"; Timeout=10000},
-    @{Name="GetAllArticles"; Macro="Test_GetAllArticles"; Timeout=15000}
+    @{Name="GetAllArticles"; Macro="Test_GetAllArticles"; Timeout=15000},
+    @{Name="ComputeEOQ"; Macro="Test_ComputeEOQ"; Timeout=10000},
+    @{Name="ComputeROP"; Macro="Test_ComputeROP"; Timeout=10000},
+    @{Name="CalculateCMUP"; Macro="Test_CalculateCMUP"; Timeout=15000},
+    @{Name="GetArticleField"; Macro="Test_GetArticleField"; Timeout=10000},
+    @{Name="IsValidDate"; Macro="Test_IsValidDate"; Timeout=10000},
+    @{Name="GetDocumentVerifyCode"; Macro="Test_GetDocumentVerifyCode"; Timeout=10000},
+    @{Name="GetSupplierName"; Macro="Test_GetSupplierName"; Timeout=10000},
+    @{Name="GetStockFromLedger"; Macro="Test_GetStockFromLedger"; Timeout=15000},
+    @{Name="AuditLogInitialized"; Macro="Test_AuditLogInitialized"; Timeout=10000},
+    @{Name="GetSharedExportPath"; Macro="Test_GetSharedExportPath"; Timeout=10000}
 )
 
 foreach ($t in $tests) {

@@ -209,6 +209,80 @@ CleanUpBarcode:
     On Error GoTo 0
 End Sub
 
+Public Sub ScanBarcodeStockIn()
+    Dim barcode As String
+    Dim articleCode As String
+    Dim articleDesig As String
+    Dim qty As Variant
+
+    barcode = InputBox("Scanner l'article a entrer (ENTREE):" & vbCrLf & _
+                       "Placez le curseur puis scannez le code-barres.", _
+                       "ENTREE par Code-Barres", "")
+    If Len(Trim(barcode)) = 0 Then Exit Sub
+
+    articleCode = LookupBarcode(Trim(barcode))
+    If Len(articleCode) = 0 Then
+        MsgBox "Code-barres non reconnu: " & barcode, vbExclamation
+        Exit Sub
+    End If
+
+    articleDesig = mod_Utilities.GetArticleField(articleCode, "DESIG")
+    qty = InputBox("Article: " & articleCode & " - " & articleDesig & vbCrLf & vbCrLf & _
+                   "Quantite a entrer (ENTREE):", "ENTREE Stock", "1")
+    If Not IsNumeric(qty) Or qty <= 0 Then Exit Sub
+
+    Call mod_Database.SecureWriteTransaction( _
+        docDate:=Date, _
+        typeSign:="IN", _
+        refDoc:="SCAN-" & Format(Now, "YYMMDD-HHMMSS"), _
+        codeArticle:=articleCode, _
+        designation:=articleDesig, _
+        quantity:=CLng(qty), _
+        unitPrice:=mod_Utilities.SafeVal(mod_Utilities.GetArticleField(articleCode, "PU")), _
+        lineValue:=0, _
+        thirdParty:="SCAN")
+
+    MsgBox "ENTREE enregistree: " & qty & " x " & articleCode & " (" & articleDesig & ")", _
+           vbInformation, "Scan Stock IN"
+End Sub
+
+Public Sub ScanBarcodeStockOut()
+    Dim barcode As String
+    Dim articleCode As String
+    Dim articleDesig As String
+    Dim qty As Variant
+
+    barcode = InputBox("Scanner l'article a sortir (SORTIE):" & vbCrLf & _
+                       "Placez le curseur puis scannez le code-barres.", _
+                       "SORTIE par Code-Barres", "")
+    If Len(Trim(barcode)) = 0 Then Exit Sub
+
+    articleCode = LookupBarcode(Trim(barcode))
+    If Len(articleCode) = 0 Then
+        MsgBox "Code-barres non reconnu: " & barcode, vbExclamation
+        Exit Sub
+    End If
+
+    articleDesig = mod_Utilities.GetArticleField(articleCode, "DESIG")
+    qty = InputBox("Article: " & articleCode & " - " & articleDesig & vbCrLf & vbCrLf & _
+                   "Quantite a sortir (SORTIE):", "SORTIE Stock", "1")
+    If Not IsNumeric(qty) Or qty <= 0 Then Exit Sub
+
+    Call mod_Database.SecureWriteTransaction( _
+        docDate:=Date, _
+        typeSign:="OUT", _
+        refDoc:="SCAN-" & Format(Now, "YYMMDD-HHMMSS"), _
+        codeArticle:=articleCode, _
+        designation:=articleDesig, _
+        quantity:=CLng(qty), _
+        unitPrice:=mod_Utilities.SafeVal(mod_Utilities.GetArticleField(articleCode, "PU")), _
+        lineValue:=0, _
+        thirdParty:="SCAN")
+
+    MsgBox "SORTIE enregistree: " & qty & " x " & articleCode & " (" & articleDesig & ")", _
+           vbInformation, "Scan Stock OUT"
+End Sub
+
 Private Function GetDefaultBarcodeMapping(ByVal barcode As String) As String
     Select Case Trim(UCase(barcode))
         Case "001": GetDefaultBarcodeMapping = "ART-001"

@@ -67,7 +67,7 @@ Format: Markdown + grid_tables
 | ROP | 205.6 |
 | SS | 200 |
 | LT | 2 days |
-| S | 500 DZD |
+| S | 801.45 DZD |
 | I | 20% |
 | Pw | erp_secure_pwd_2026 |
 

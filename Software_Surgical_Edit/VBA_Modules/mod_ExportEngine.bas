@@ -79,7 +79,7 @@ Private Function ExportTransactionToPDF_Internal(ByVal docRef As String, ByVal s
     
     ' 4. Determine save path
     If silent Then
-        fullPath = IIf(Len(outputPath) > 0, outputPath, mod_SharedEnvironment.GetSharedExportPath() & docRef & "_" & Format(Date, "yyyy-mm-dd") & ".pdf")
+        fullPath = IIf(Len(outputPath) > 0, outputPath, mod_Utilities.GetSharedExportPath() & docRef & "_" & Format(Date, "yyyy-mm-dd") & ".pdf")
     Else
         savePath = SelectPDFSavePath(docRef)
         If savePath = "" Then
@@ -696,7 +696,7 @@ Private Function SelectPDFSavePath(ByVal docRef As String) As String
     
     With dlg
         .Title = "Enregistrer le document PDF -- " & docRef
-        .InitialFileName = mod_SharedEnvironment.GetSharedExportPath() & fileName
+        .InitialFileName = mod_Utilities.GetSharedExportPath() & fileName
         .Filters.Clear
         .Filters.Add "PDF Files", "*.pdf"
         .FilterIndex = 1
@@ -715,7 +715,7 @@ Private Function SelectPDFSavePath(ByVal docRef As String) As String
     Exit Function
 
 FallbackDesktop:
-    desktopPath = mod_SharedEnvironment.GetSharedExportPath()
+    desktopPath = mod_Utilities.GetSharedExportPath()
     SelectPDFSavePath = desktopPath & docRef & "_" & Format(Date, "yyyy-mm-dd") & ".pdf"
     Set dlg = Nothing
 End Function
@@ -749,7 +749,7 @@ Public Sub ExportToExcel(Optional sheetName As String = "ARTICLES")
     Dim wb As Workbook
     On Error GoTo ExportError2
     Set ws = ThisWorkbook.Sheets(sheetName)
-    desktopPath = mod_SharedEnvironment.GetSharedExportPath()
+    desktopPath = mod_Utilities.GetSharedExportPath()
     fileName = sheetName & "_Export_" & Format(Date, "yyyy-mm-dd") & ".xlsx"
     fullPath = desktopPath & fileName
     ws.Copy
@@ -767,7 +767,7 @@ Public Sub ExportDashboardPDF()
     Dim desktopPath As String, fileName As String, fullPath As String
     On Error GoTo ExportError3
     Set wsDash = ThisWorkbook.Sheets("DASHBOARD")
-    desktopPath = mod_SharedEnvironment.GetSharedExportPath()
+    desktopPath = mod_Utilities.GetSharedExportPath()
     fileName = "Dashboard_Report_" & Format(Date, "yyyy-mm-dd") & ".pdf"
     fullPath = desktopPath & fileName
     

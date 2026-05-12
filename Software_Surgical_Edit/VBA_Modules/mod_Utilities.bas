@@ -323,3 +323,60 @@ Public Function GenerateVerifyCode(ByVal rawData As String) As String
 
     GenerateVerifyCode = "V-" & hexPart1 & "-" & hexPart2 & "-" & hexPart3
 End Function
+
+'=======================================================================================
+' FUNCTION: GetSharedExportPath
+' Returns the shared export directory (network or local)
+'=======================================================================================
+Public Function GetSharedExportPath() As String
+    Dim sharedPath As String
+    
+    On Error Resume Next
+    Dim wsStaging As Worksheet
+    Set wsStaging = ThisWorkbook.Sheets("STAGING_BUFFER")
+    sharedPath = wsStaging.Range("Y1").Value
+    On Error GoTo 0
+    
+    If Len(sharedPath) > 0 And Dir(sharedPath, vbDirectory) <> "" Then
+        GetSharedExportPath = sharedPath
+        Exit Function
+    End If
+    
+    GetSharedExportPath = Environ("USERPROFILE") & "\Documents\ACADEMIX_Export\"
+    
+    If Dir(GetSharedExportPath, vbDirectory) = "" Then
+        MkDir GetSharedExportPath
+    End If
+End Function
+
+'=======================================================================================
+' FUNCTION: GetSharedBackupPath
+' Returns the shared backup directory
+'=======================================================================================
+Public Function GetSharedBackupPath() As String
+    GetSharedBackupPath = Environ("USERPROFILE") & "\Documents\ACADEMIX_Backup\"
+    
+    If Dir(GetSharedBackupPath, vbDirectory) = "" Then
+        MkDir GetSharedBackupPath
+    End If
+End Function
+
+'=======================================================================================
+' SUB: SetSharedExportPath
+' Sets the shared export path (for admin use)
+'=======================================================================================
+Public Sub SetSharedExportPath(ByVal newPath As String)
+    On Error Resume Next
+    Dim wsStaging As Worksheet
+    Set wsStaging = ThisWorkbook.Sheets("STAGING_BUFFER")
+    
+    If Dir(newPath, vbDirectory) <> "" Then
+        wsStaging.Unprotect Password:=mod_Config.MASTER_PWD
+        wsStaging.Range("Y1").Value = newPath
+        wsStaging.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
+        Debug.Print "[SharedEnv] Export path set to: " & newPath
+    Else
+        MsgBox "Le dossier n'existe pas: " & newPath, vbExclamation
+    End If
+    On Error GoTo 0
+End Sub

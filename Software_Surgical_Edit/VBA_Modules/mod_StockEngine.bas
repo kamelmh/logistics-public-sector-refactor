@@ -9,7 +9,7 @@ Option Explicit
 ' ================================================================================
 ' CONSTANTS � Synchronized with Unité de traitement VBA GROUND_TRUTH
 ' ================================================================================
-Private Const ORDER_COST_S  As Double = 500    ' DZD � full order cycle cost
+Private Const ORDER_COST_S  As Double = 801.45 ' DZD � full order cycle cost (field-refined from 500)
 Private Const HOLDING_RATE  As Double = 0.2    ' 20% of unit price per year
 Private Const LEAD_TIME_DEFAULT As Integer = 2 ' Default delivery days
 
