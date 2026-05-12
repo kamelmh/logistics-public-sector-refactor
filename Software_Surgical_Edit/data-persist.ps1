@@ -1,6 +1,6 @@
 param(
     [string]$Action = "save",
-    [string]$WorkbookPath = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\ERP_Academie_v13_2.xlsm",
+    [string]$WorkbookPath = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\ERP_v13.2.xlsm",
     [string]$DataPath = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\data-persist.json"
 )
 
@@ -51,7 +51,8 @@ function Save-Data {
         $data | ConvertTo-Json -Depth 5 | Out-File $DataPath -Encoding UTF8
         Write-Host "  Saved: ARTICLES ($($data.ARTICLES.Count) rows), MOUVEMENTS ($($data.MOUVEMENTS.Count) rows)" -ForegroundColor Green
     } finally {
-        $wb.Close($false); $xl.Quit(); [System.Runtime.Interopservices.Marshal]::ReleaseComObject($xl) | Out-Null
+        if ($null -ne $wb) { $wb.Close($false) }
+        if ($null -ne $xl) { $xl.Quit(); [System.Runtime.Interopservices.Marshal]::ReleaseComObject($xl) | Out-Null }
     }
 }
 
@@ -112,7 +113,8 @@ function Load-Data {
         $wb.Save()
         Write-Host "  Data loaded and saved" -ForegroundColor Green
     } finally {
-        $wb.Close($false); $xl.Quit(); [System.Runtime.Interopservices.Marshal]::ReleaseComObject($xl) | Out-Null
+        if ($null -ne $wb) { $wb.Close($false) }
+        if ($null -ne $xl) { $xl.Quit(); [System.Runtime.Interopservices.Marshal]::ReleaseComObject($xl) | Out-Null }
     }
 }
 

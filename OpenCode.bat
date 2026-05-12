@@ -182,6 +182,8 @@ goto :eof
 title %WINDOW_TITLE%
 echo [OpenCode] Launching CLI (big-pickle) — Session: %SESSION_NAME%
 echo.
+cd /d "%BASEDIR%"
+if exist "%MEMORY_DIR%\last-session-%SESSION_NAME%.txt" del "%MEMORY_DIR%\last-session-%SESSION_NAME%.txt"
 "%OC_EXE%" --model "%DEFAULT_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
@@ -200,6 +202,7 @@ title %WINDOW_TITLE%
 echo [OpenCode] Launching with Groq Qwen3 32B — Session: %SESSION_NAME%
 echo   Model: %GROQ_MODEL%
 echo.
+cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%GROQ_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
@@ -208,6 +211,7 @@ title %WINDOW_TITLE%
 echo [OpenCode] Launching with Groq Llama 3.3 70B — Session: %SESSION_NAME%
 echo   Model: %LLAMA_MODEL%
 echo.
+cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%LLAMA_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
@@ -216,6 +220,7 @@ title %WINDOW_TITLE%
 echo [OpenCode] Launching with Nemotron 3 Super 120B — Session: %SESSION_NAME%
 echo   Model: %NEMOTRON_MODEL% (1M context)
 echo.
+cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%NEMOTRON_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
@@ -261,6 +266,7 @@ echo.
 set "ANTHROPIC_BASE_URL=http://localhost:%FCC_PORT%"
 set "ANTHROPIC_AUTH_TOKEN=freecc"
 title %WINDOW_TITLE%
+cd /d "%BASEDIR%"
 "%OC_EXE%" "%PROJECT_ROOT%"
 goto :end
 
@@ -269,6 +275,7 @@ title %WINDOW_TITLE%
 echo [OpenCode] Launching with Google Gemini 2.5 Flash — Session: %SESSION_NAME%
 echo   Model: %GEMINI_MODEL%
 echo.
+cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%GEMINI_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
@@ -277,6 +284,7 @@ title %WINDOW_TITLE%
 echo [OpenCode] Launching with Google Gemma 4 26B — Session: %SESSION_NAME%
 echo   Model: %GEMMA4_MODEL% (256K context, multimodal)
 echo.
+cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%GEMMA4_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
@@ -489,6 +497,7 @@ goto :end
 :autoplan
 title OpenCode [AUTOPLAN] - %SESSION_NAME%
 echo   === AUTO PLAN ===
+cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%LLAMA_MODEL%" "%PROJECT_ROOT%"
 goto :end
 

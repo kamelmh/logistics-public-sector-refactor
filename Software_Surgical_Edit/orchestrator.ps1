@@ -21,7 +21,7 @@ if (Test-Path $configFile) {
 $personalDir = $config.AgentSystem.ProjectState.Personal.Path
 $publicDir = $config.AgentSystem.ProjectState.Public.Path
 $buildScript = Join-Path $personalDir "build.ps1"
-$auditScript = Join-Path $personalDir "milestone_13_2\tests\dss-audit.ps1"
+$auditScript = Join-Path (Split-Path $personalDir -Parent) "milestone_13_2\tests\dss-audit.ps1"
 $testScript = Join-Path $personalDir "test-macros.ps1"
 $sanitizeScript = Join-Path $publicDir "sanitize.ps1"
 $publicRepo = $publicDir

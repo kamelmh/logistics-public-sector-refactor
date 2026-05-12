@@ -34,16 +34,16 @@ function cddesk  { Set-Location $script:Desktop; Write-Host "Desktop" -Foregroun
 #   on       → Nemotron 120B (1M ctx, OpenRouter free — may be 429 rate-limited)
 #   ophi4    → Phi4-mini 3.8B (CPU coding, offline)
 #   oo       → Qwen 1.5B (offline fallback, slow)
-function oc     { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "groq/llama-3.3-70b-versatile"; Pop-Location }
-function ol     { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "groq/llama-3.3-70b-versatile"; Pop-Location }
-function og     { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "groq/qwen/qwen3-32b"; Pop-Location }
-function ogg    { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "google/gemma-4-26b-a4b-it"; Pop-Location }
-function oggl   { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "ollama/gemma4:e2b"; Pop-Location }
-function ogm    { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "google/gemini-2.5-flash"; Pop-Location }
-function on     { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "openrouter/nvidia/nemotron-3-super-120b-a12b:free"; Pop-Location }
-function ophi4  { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "ollama/phi4-mini:3.8b-q4_K_M"; Pop-Location }
-function oqwen3 { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "ollama/qwen3:1.7b"; Pop-Location }
-function oo     { Push-Location $script:ProjRoot; & "$script:OcBin\opencode.exe" -m "ollama/qwen2.5-coder:1.5b"; Pop-Location }
+function oc     { Push-Location $script:ProjRoot; OpenCode llama; Pop-Location }
+function ol     { Push-Location $script:ProjRoot; OpenCode llama; Pop-Location }
+function og     { Push-Location $script:ProjRoot; OpenCode groq; Pop-Location }
+function ogg    { Push-Location $script:ProjRoot; OpenCode gemma; Pop-Location }
+function oggl   { Push-Location $script:ProjRoot; OpenCode gemma-local; Pop-Location }
+function ogm    { Push-Location $script:ProjRoot; OpenCode gemini; Pop-Location }
+function on     { Push-Location $script:ProjRoot; OpenCode nemotron; Pop-Location }
+function ophi4  { Push-Location $script:ProjRoot; OpenCode phi4; Pop-Location }
+function oqwen3 { Push-Location $script:ProjRoot; OpenCode qwen3; Pop-Location }
+function oo     { Push-Location $script:ProjRoot; OpenCode ollama; Pop-Location }
 function opicker { Push-Location $script:ProjRoot; & $script:OcBat "picker"; Pop-Location }
 
 # ── Build & Verify ──────────────────────────────────────────────────────────
