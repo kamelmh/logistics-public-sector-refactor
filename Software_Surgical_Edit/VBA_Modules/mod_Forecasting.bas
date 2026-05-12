@@ -1,13 +1,12 @@
 Attribute VB_Name = "mod_Forecasting"
-'==============================================================================
-' mod_Forecasting.bas  -  ERP Académie v13.2
-' Purpose: Demand forecasting engine using Moving Average methods
-' Author : Mahi Kamel Abdelghani | CNEPD 2026
-'
-' Methods:
-'   - 3-Day Moving Average (short-term sensitivity)
-'   - 7-Day Moving Average (weekly cycle)
-'   - 14-Day Moving Average (medium-term trend)
+' ============================================================================
+' Academix v13.2 - DSS Logistique El Bayadh
+' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
+' Direction de l'Éducation - Wilaya d'El Bayadh
+' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
+' All rights reserved. Unauthorized reproduction or distribution prohibited.
+' ============================================================================
+
 '   - Projected Demand (next 30 days)
 '   - Stock Coverage Days (how long until stockout)
 '

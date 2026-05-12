@@ -1,9 +1,12 @@
 Attribute VB_Name = "mod_Localization"
-'=======================================================================================
-' MODULE: mod_Localization.bas
-' PROJECT: ERP Acad�mie v13
-' Localized strings for Arabic RTL support
-'=======================================================================================
+' ============================================================================
+' Academix v13.2 - DSS Logistique El Bayadh
+' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
+' Direction de l'Éducation - Wilaya d'El Bayadh
+' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
+' All rights reserved. Unauthorized reproduction or distribution prohibited.
+' ============================================================================
+
 Option Explicit
 
 ' ================================================================================

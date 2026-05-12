@@ -16,7 +16,7 @@ Generates `style/reference.docx` with user's original formatting.
 
 ### Step 2: Generate DOCX from Markdown
 ```bash
-pandoc Final_Thesis_Academix_v13_2_FIXED.md \
+pandoc Memoire_DSS_Logistique_ElBayadh.md \
   --from markdown+grid_tables-yaml_metadata_block \
   --to docx \
   --reference-doc style/reference.docx \
@@ -57,7 +57,7 @@ If generating directly via python-docx (recommended for precision):
 ## File Locations
 | Path | Purpose |
 |------|---------|
-| `Thesis_Surgical_Edit/Final_Thesis_Academix_v13_2_FIXED.md` | Source markdown |
+| `Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md` | Source markdown |
 | `Thesis_Surgical_Edit/style/reference.docx` | Style template |
 | `Thesis_Surgical_Edit/style/thesis-metadata.yaml` | Metadata |
 | `Thesis_Surgical_Edit/cover-page.docx` | Cover page (user's design) |

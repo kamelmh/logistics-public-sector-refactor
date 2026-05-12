@@ -5,7 +5,7 @@
 ## PROJECT: Academix v13.2
 - VBA/Excel DSS for inventory management | El Bayadh Education Directorate
 - Thesis: BTS CNEPD — 4 chapters, 17 مباحث, 52 مطالب
-- Source: `Dropbox/Logistics.Public.Sector.Refactor/Thesis_Surgical_Edit/Final_Thesis_Academix_v13_2_FIXED.md`
+- Source: `Dropbox/Logistics.Public.Sector.Refactor/Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md`
 - Context pack: `Dropbox/.../Thesis_Surgical_Edit/claude-context/`
 
 ## MULTI-WINDOW TOPOLOGY (براءة اختراع)

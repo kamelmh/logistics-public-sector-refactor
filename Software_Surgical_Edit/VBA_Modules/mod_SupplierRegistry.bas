@@ -1,13 +1,12 @@
 Attribute VB_Name = "mod_SupplierRegistry"
-'==============================================================================
-' mod_SupplierRegistry.bas  -  ERP Académie v13.2
-' Purpose: Supplier catalog with Algerian DGI tax IDs and procurement metadata
-' Author : Mahi Kamel Abdelghani | CNEPD 2026
-'
-' Suppliers:
-'   F-001: ENAP Alger (Entreprise Nationale des Arts Plastiques)
-'   F-002: Bureautique Oran (Supplier de fournitures de bureau)
-'   F-003: Bureau Plus (Chaîne nationale de papeterie)
+' ============================================================================
+' Academix v13.2 - DSS Logistique El Bayadh
+' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
+' Direction de l'Éducation - Wilaya d'El Bayadh
+' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
+' All rights reserved. Unauthorized reproduction or distribution prohibited.
+' ============================================================================
+
 '
 ' Tax IDs per Algerian DGI requirements:
 '   NIF  - Numéro d'Identification Fiscale (15 digits)

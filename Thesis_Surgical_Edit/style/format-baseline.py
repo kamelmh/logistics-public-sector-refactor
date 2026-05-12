@@ -118,6 +118,93 @@ def fix_spacing(doc):
     print(f"  Line spacing: {fixed} paragraphs set to 1.5")
 
 
+def demote_headings(doc):
+    """Demote body paragraphs that got heading styles by accident.
+    Uses length heuristic: real headings are short (< 100 chars),
+    body paragraphs promoted to heading style are long."""
+    LONG_THRESHOLD = 100
+    demoted = 0
+    for p in doc.paragraphs:
+        if not p.style or not p.style.name.startswith('Heading'):
+            continue
+        txt = p.text.strip()
+        if not txt:
+            continue
+        if len(txt) > LONG_THRESHOLD:
+            p.style = doc.styles['Normal']
+            demoted += 1
+    print(f"  Long body-text headings demoted to Normal: {demoted}")
+    return demoted
+
+
+def fix_page_breaks(doc):
+    """Enforce page break hierarchy:
+    Level 1 — الفصل (chapter) headings: page break before
+    Level 2 — المبحث headings: keepNext + keepLines
+    Level 3 — المطلب / أولاً headings: keepNext
+    Level 4 — Body paragraphs: orphan/widow control
+    """
+    ch1_set = 0
+    mb_set = 0
+    mt_set = 0
+    body_set = 0
+
+    for p in doc.paragraphs:
+        if is_in_table(p):
+            continue
+        txt = p.text.strip()
+        if not txt:
+            continue
+        pf = p.paragraph_format
+        pPr = p._element.find(qn('w:pPr'))
+
+        if re.match(r'^الفصل\s+(الأول|الثاني|الثالث|الرابع|الخامس|السادس)', txt):
+            pf.page_break_before = True
+            ch1_set += 1
+
+        elif re.match(r'^المبحث\s+(الأول|الثاني|الثالث|الرابع|الخامس|السادس)', txt):
+            add_keep_next(pPr, p._element)
+            add_keep_lines(pPr, p._element)
+            mb_set += 1
+
+        elif re.match(r'^(المطلب\s+|أولاً|ثانياً|ثالثاً|رابعاً|خامساً|سادساً)[:：]', txt):
+            add_keep_next(pPr, p._element)
+            mt_set += 1
+
+        elif p.style.name in BODY_STYLES or p.style.name == 'Compact':
+            add_widow_orphan(pPr, p._element)
+            body_set += 1
+
+    print(f"  Page breaks: {ch1_set} chapters (new page), {mb_set} مباحث (keep+next), {mt_set} مطالب (keep), {body_set} body (widow/orphan)")
+
+
+def add_keep_next(pPr, p_el):
+    if pPr is None:
+        pPr = OxmlElement('w:pPr')
+        p_el.insert(0, pPr)
+    if pPr.find(qn('w:keepNext')) is None:
+        pPr.append(OxmlElement('w:keepNext'))
+
+
+def add_keep_lines(pPr, p_el):
+    if pPr is None:
+        pPr = OxmlElement('w:pPr')
+        p_el.insert(0, pPr)
+    if pPr.find(qn('w:keepLines')) is None:
+        pPr.append(OxmlElement('w:keepLines'))
+
+
+def add_widow_orphan(pPr, p_el):
+    if pPr is None:
+        pPr = OxmlElement('w:pPr')
+        p_el.insert(0, pPr)
+    widow = pPr.find(qn('w:widowControl'))
+    if widow is None:
+        widow = OxmlElement('w:widowControl')
+        pPr.append(widow)
+    widow.set(qn('w:val'), '1')
+
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: python format-baseline.py <docx_path>")
@@ -130,9 +217,11 @@ def main():
 
     fix_fonts(doc)
     fix_margins(doc)
-    a = fix_headings(doc)
+    a =     fix_headings(doc)
+    demote_headings(doc)
     fix_alignment(doc)
     fix_spacing(doc)
+    fix_page_breaks(doc)
 
     doc.save(path)
     print(f"Saved: {path}")

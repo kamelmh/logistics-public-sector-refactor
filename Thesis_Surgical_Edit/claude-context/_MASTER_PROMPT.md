@@ -59,7 +59,7 @@ Execute in order to minimize token usage:
 3. Read `_FORMAT_GUIDE.md` — formatting + cover integration
 4. Open `cover-page.docx` — understand the cover design
 5. Read `THESIS_GROUND_TRUTH.md` — full reference table
-6. Read `Final_Thesis_Academix_v13_2_FIXED.md` — full thesis source
+6. Read `Memoire_DSS_Logistique_ElBayadh.md` — full thesis source
 
 **Phase B — Polish** (per chapter, token-efficient)
 For each chapter:

@@ -1,13 +1,12 @@
 Attribute VB_Name = "mod_StockEntry_Logic"
-'==============================================================================
-' mod_StockEntry_Logic.bas  -  ERP Academie v13.2 (Refactored)
-' Author   : Mahi Kamel Abdelghani | TAG1801 GSL | CNEPD 2026
-' Depends  : mod_SyncBridge | mod_StockEngine | mod_Database | mod_AuditTrail
-'            mod_ExportEngine | mod_Utilities | mod_Config
-'
-' Architecture (Decoupled):
-'   UI Layer       - frmStockEntry (thin view, delegates to controller)
-'   Controller     - mod_StockEntry_Logic (business logic, parameter-based)
+' ============================================================================
+' Academix v13.2 - DSS Logistique El Bayadh
+' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
+' Direction de l'Éducation - Wilaya d'El Bayadh
+' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
+' All rights reserved. Unauthorized reproduction or distribution prohibited.
+' ============================================================================
+
 '   Data Layer     - mod_Database.SecureWriteTransaction()
 '   Sync           - mod_SyncBridge.CommitStaging()
 '

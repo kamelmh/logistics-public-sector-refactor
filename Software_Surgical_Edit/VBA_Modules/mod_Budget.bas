@@ -1,13 +1,12 @@
 Attribute VB_Name = "mod_Budget"
-'==============================================================================
-' mod_Budget.bas  -  ERP Académie v13.2
-' Purpose: Budget tracking and validation for Algerian public sector
-' Author : Mahi Kamel Abdelghani | CNEPD 2026
-'
-' Features:
-'   - Auto-initializes BUDGET sheet on first use (no silent guards)
-'   - Budget availability check before transaction save
-'   - Automatic spent amount tracking
+' ============================================================================
+' Academix v13.2 - DSS Logistique El Bayadh
+' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
+' Direction de l'Éducation - Wilaya d'El Bayadh
+' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
+' All rights reserved. Unauthorized reproduction or distribution prohibited.
+' ============================================================================
+
 '   - Remaining budget calculation with formulas
 '   - Dashboard KPI hooks (total allocated, total spent, over-budget count)
 '   - 623xxx budget codes (public sector chart of accounts)

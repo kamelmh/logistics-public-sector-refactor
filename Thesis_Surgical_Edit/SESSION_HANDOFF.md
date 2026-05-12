@@ -27,8 +27,8 @@
 
 ### Source File
 ```
-Final_Thesis_Academix_v13_2_FIXED.md
-Path: Thesis_Surgical_Edit/Final_Thesis_Academix_v13_2_FIXED.md
+Memoire_DSS_Logistique_ElBayadh.md
+Path: Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md
 Lines: ~2,247
 Tables: 46 (34 original + 12 from new annexes)
 Images: 1 (Ch3 interface screenshot)
@@ -129,7 +129,7 @@ Then:
 ## Key Files Reference
 ```
 Thesis_Surgical_Edit/
-├── Final_Thesis_Academix_v13_2_FIXED.md    ← SOURCE (edit this)
+├── Memoire_DSS_Logistique_ElBayadh.md      ← SOURCE (edit this)
 ├── build-thesis.ps1                         ← BUILD PIPELINE
 ├── SESSION_HANDOFF.md                       ← THIS FILE
 ├── THESIS_CHAPTER_OUTLINE.md                ← Original outline

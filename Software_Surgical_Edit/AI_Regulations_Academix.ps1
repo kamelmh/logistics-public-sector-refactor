@@ -86,7 +86,7 @@ if (Test-Path (Join-Path $ROOT "CLAUDE.md")) {
 
 # ─── SECTION 3: THESIS REGULATORY FRAMEWORK ───────────────────
 Write-Host "`n[3/5] REGULATORY FRAMEWORK" -ForegroundColor Magenta
-$thesisPath = Join-Path $ROOT "Thesis_Surgical_Edit\Final_Thesis_Academix_v13_2_FIXED.md"
+$thesisPath = Join-Path $ROOT "Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md"
 if (Test-Path $thesisPath) {
     $t = Get-Content $thesisPath -Raw
     $t -match "Law 23-12|القانون.*23.*12" | Out-Null

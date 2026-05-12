@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 parse_md.py — Academix v13.2 Markdown Parser
-Converts Final_Thesis_Academix_v13_2_FIXED.md into block dicts
+Converts Memoire_DSS_Logistique_ElBayadh.md into block dicts
 for python-docx rendering.
 """
 

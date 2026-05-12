@@ -2,7 +2,7 @@
 
 ## Task: Add ground truth data table to Chapter 2
 
-Edit `Final_Thesis_Academix_v13_2_FIXED.md` in `Thesis_Surgical_Edit\`:
+Edit `Memoire_DSS_Logistique_ElBayadh.md` in `Thesis_Surgical_Edit\`:
 
 **Replace** lines 238-240 (the sentence "سيتم عرض الجداول التفصيلية...") with:
 

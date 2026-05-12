@@ -26,7 +26,7 @@
 | Resource | Path |
 |----------|------|
 | Project root | `C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\` |
-| Thesis source | `...\Thesis_Surgical_Edit\Final_Thesis_Academix_v13_2_FIXED.md` |
+| Thesis source | `...\Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md` |
 | Thesis PDF | `...\Thesis_Surgical_Edit\output\Memoire_Academix_v13_2_Final.pdf` |
 | Thesis DOCX | `...\Thesis_Surgical_Edit\output\Memoire_Academix_v13_2_Final.docx` |
 | Cover page | `...\Thesis_Surgical_Edit\cover-page.docx` |

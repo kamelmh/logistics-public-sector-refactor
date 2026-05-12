@@ -4,49 +4,53 @@
 | Field | Value |
 |-------|-------|
 | **Date** | 2026-05-12 |
-| **Last action** | Thesis complete at 47 pages/775KB — cover-page.docx now prepended seamlessly via build step 2.5, redundant cover text removed from MD source. AGENTS.md handoff rule switched to .crossflow\HANDOFF.md. |
+| **Last action** | Ultimate audit complete — all checks pass |
 | **Active agent** | OpenCode big-pickle (main-hub) |
 | **Other windows** | gemini-thesis (Gemini Flash), gemma-4 (Gemma 4 26B), claude-project (Claude Desktop) |
-| **Pending files** | None |
+| **Pending files** | Stale ref PDFs in output dir (ask user) |
 | **Blockers** | None |
-| **Next up** | Jem: Defense demo prep — build 1-page defense talking-points sheet mapped to 7-segment demo flow, suggest Q&A responses for 8+ questions |
-| **Skill to load** | `crossflow-orchestrator` for multi-window awareness |
+| **Next up** | Defense demo prep |
 
-## Handoff: main-hub → Jem (Gemma 4)
+### Change Log (session 2026-05-12)
+| Change | File | Before | After |
+|--------|------|--------|-------|
+| Blank lines in source | `Memoire_DSS_Logistique_ElBayadh.md` | 6 bold captions merged with preceding text | Blank lines separate text from captions |
+| Caption for table 4 | `Memoire_DSS_Logistique_ElBayadh.md` | Missing bold caption | Added `**الجدول رقم 05...**` |
+| Caption extraction | `add-toc.py` | Matched `جدول` anywhere in text | Matches `الجدول رقم` specifically, extracts caption portion |
+| verify thresholds | `verify-thesis.ps1` | LOT=7, SEQ=7 | LOT>=22, SEQ=22 |
+| TOC audit | N/A | — | 107 entries, monotonic ascending, p.2-65 |
+| LOT audit | N/A | — | 22 clean captions with page numbers |
 
-### Status: ALL 5 review points resolved
+### Current Metrics
+| Metric | Value |
+|--------|-------|
+| Thesis PDF | 933 KB, 31/31 PASS (0 FAIL/0 WARN) |
+| Thesis DOCX | 131 KB, 22 tables, clean LOT |
+| VBA Workbook | 810 KB, 174/174 PASS |
+| VBA Modules | 37 .bas + 1 .frm |
+| VBA Sheets | 26 sheets |
+| Source MD | 764 lines, 74,753 chars |
 
-| Point | Verdict | Action Taken |
-|-------|---------|-------------|
-| Academic Coherence | ✅ Pass | No changes needed |
-| Formatting | ✅ Pass | No changes needed |
-| **Cover Page** | **⚠️ → ✅** | `cover-page.docx` (11 paragraphs) now prepended via build step 2.5, formatted by `format-cover.py` with proper colors/fonts |
-| Content Gaps | ✅ Fixed | Added "أمن البيانات والسلامة" subsection in Ch4 — Six-Guard chain, Audit Trail, password protection |
-| **Citations** | **⚠️ → ✅** | 4 refs now cited in Ch1 body: Chopra & Meindl (SCM section), Silver et al. + Zipkin (EOQ foundations), Vollmann et al. (ERP definition) |
+### Audit Findings
+1. **TOC**: 107 entries, pages 2-65, monotonic ascending ✓
+2. **LOT**: 22 entries with clean captions + page numbers ✓
+3. **Ground truth**: D=1546, Q*=176, ROP=205.6, SS=200, S=801.45 DZD all present ✓
+4. **Forbidden terms** (فرع, Python, Flask, database): None found ✓
+5. **Heading hierarchy**: 9 H1, 36 H2, 62 H3, 5 H4, no level skips ✓
+6. **Structure**: 4 chapters, 18 مباحث, 60 مطالب ✓
+7. **Citations**: 9 inline → 7 footnotes ✓
+8. **Sections**: 2 (Abjad + Arabic numbering) ✓
+9. **Stale PDFs (pending)**: `Mimoire_Academix_v13.2-colored.pdf` 1MB, `Memoire_Academix_v13_2_Final.docx` 63KB in output dir
 
-### Current metrics
-- **PDF:** 775 KB, **47 pages**, 22 tables
-- **DOCX:** 92 KB (cover added 30 KB)
-- **Source:** 1,006 lines, 71,775 chars + cover (11 paragraphs)
+### Known Issues
+- TOC includes "فهرس المحتويات" and "قائمة الجداول" (at Abjad pages 2,8)
+- Cover shows Abjad page number (standard Algerian format)
+- VBA build kills Excel (p-code cache on in-place save)
 
-### What's next
-
-**Defense demo prep** — `milestone_13_2/defense-demo-checklists.md` has a 99-item checklist in 4 sections:
-- A: Pre-defense system prep (14 items) — workbook build, verify, tests, audit
-- B: Demo flow (7 segments, 8-12 min) — ACCUEIL → ARTICLES → Stock Entry → MOUVEMENTS → Decision Support → RAPPORTS → Backup
-- C: Thesis defense (10+ min) — 4 chapters walkthrough with screen recordings
-- D: Q&A prep (8+ questions) — hypotheses, S=500 vs 801.45, Excel security, ABC classification, comparison with existing systems
-
-**If you want to help:**
-1. Review the rendered cover in `output/Memoire_Academix_v13_2_Final.docx` for CNEPD compliance
-2. Build a 1-page defense talking-points sheet mapped to the demo flow
-3. Suggest Q&A responses for the 8+ questions in section D
-
-### Bootstrap reminder
-Since you have no persistent memory, paste `GEMMA4_BOOTSTRAP.md` + this HANDOFF at the start of your next session. End each response with `[SESSION_MEMORY]`.
+### Build Commands
+- Thesis: `pwsh -NoProfile -File Thesis_Surgical_Edit/build-thesis.ps1`
+- Verify: `pwsh -NoProfile -File Thesis_Surgical_Edit/verify-thesis.ps1`
+- VBA: `pwsh -NoProfile -File vbe-auto/build.ps1`
 
 ### Ground truth (locked)
 D=1546 | Q*=176 | ROP=205.6 | SS=200 | S=801.45 DZD | I=20% | LT=2 days | PU=400 DZD
-
-### Chapter structure (current)
-1. General Introduction (8 sections) → Ch1 (5 مباحث) → Ch2 (3 مباحث) → Ch3 (4 مباحث) → Ch4 (2 مباحث) → Conclusion → References (23 entries) → Abbreviations (22) → Glossary (39) → Annexes (6) → Cover (prepended)

@@ -34,11 +34,13 @@ $models = @(
     [PSCustomObject]@{ Name="big-pickle (default)";  ModelId="opencode/big-pickle";                                 Provider="Built-in";  Ctx="—";    Speed="instant";   Group="Default"; Mode="cli";          IsCloud=$true;  IsOllama=$false; IsPaid=$false; Pulled=$true }
     [PSCustomObject]@{ Name="Llama 3.3 70B";         ModelId="groq/llama-3.3-70b-versatile";                       Provider="Groq";      Ctx="32K";  Speed="~2s";       Group="Cloud";   Mode="llama";       IsCloud=$true;  IsOllama=$false; IsPaid=$false; Pulled=$true }
     [PSCustomObject]@{ Name="Qwen3 32B (fast)";      ModelId="groq/qwen/qwen3-32b";                                Provider="Groq";      Ctx="32K";  Speed="~1s";       Group="Cloud";   Mode="groq";        IsCloud=$true;  IsOllama=$false; IsPaid=$false; Pulled=$true }
-    [PSCustomObject]@{ Name="Gemini 2.5 Flash";       ModelId="google/gemini-2.5-flash";                            Provider="Google";    Ctx="1M";   Speed="~2s";       Group="Cloud";   Mode="gemini";      IsCloud=$true;  IsOllama=$false; IsPaid=$false; Pulled=$true }
-    [PSCustomObject]@{ Name="Gemma 4 26B";            ModelId="google/gemma-4-26b-a4b-it";                         Provider="Google";    Ctx="256K"; Speed="~2s";       Group="Cloud";   Mode="gemma";       IsCloud=$true;  IsOllama=$false; IsPaid=$false; Pulled=$true }
-    [PSCustomObject]@{ Name="Nemotron 120B";           ModelId="openrouter/nvidia/nemotron-3-super-120b-a12b:free"; Provider="OpenRouter"; Ctx="1M";   Speed="~3s (429)"; Group="Cloud";   Mode="nemotron";    IsCloud=$true;  IsOllama=$false; IsPaid=$false; Pulled=$true }
+    [PSCustomObject]@{ Name="Gemini 3 Flash";         ModelId="google/gemini-3-flash-preview";                      Provider="Google";    Ctx="1M";   Speed="~2s";       Group="Cloud";   Mode="gemini3";     IsCloud=$true;  IsOllama=$false; IsPaid=$false; Pulled=$true }
+    [PSCustomObject]@{ Name="Gemma 4 26B (256K)";     ModelId="google/gemma-4-26b-a4b-it";                         Provider="Google";    Ctx="256K"; Speed="~2s";       Group="Cloud";   Mode="gemma";       IsCloud=$true;  IsOllama=$false; IsPaid=$false; Pulled=$true }
+    [PSCustomObject]@{ Name="Gemma 4 31B IT";         ModelId="google/gemma-4-31b-it";                             Provider="Google";    Ctx="32K";  Speed="~2s";       Group="Cloud";   Mode="gemma-31b";   IsCloud=$true;  IsOllama=$false; IsPaid=$false; Pulled=$true }
+    [PSCustomObject]@{ Name="Ring 2.6 1T (Kimi)";     ModelId="openrouter/inclusionai/ring-2.6-1t:free";           Provider="OpenRouter"; Ctx="262K"; Speed="~3s";       Group="Cloud";   Mode="ring";        IsCloud=$true;  IsOllama=$false; IsPaid=$false; Pulled=$true }
+    [PSCustomObject]@{ Name="Nemotron 120B 1M";       ModelId="openrouter/nvidia/nemotron-3-super-120b-a12b:free"; Provider="OpenRouter"; Ctx="1M";   Speed="~3s";       Group="Cloud";   Mode="nemotron";    IsCloud=$true;  IsOllama=$false; IsPaid=$false; Pulled=$true }
 
-    [PSCustomObject]@{ Name="Gemma 4 e2b";            ModelId="ollama/gemma4:e2b";                                 Provider="Ollama";    Ctx="128K"; Speed="~40-60s";  Group="Local";   Mode="gemma-local"; IsCloud=$false; IsOllama=$true;  IsPaid=$false; Pulled=$false }
+    [PSCustomObject]@{ Name="Gemma 4 e2b (128K)";     ModelId="ollama/gemma4:e2b";                                 Provider="Ollama";    Ctx="128K"; Speed="~40-60s";  Group="Local";   Mode="gemma-local"; IsCloud=$false; IsOllama=$true;  IsPaid=$false; Pulled=$false }
     [PSCustomObject]@{ Name="Phi4-mini 3.8B";          ModelId="ollama/phi4-mini:3.8b-q4_K_M";                     Provider="Ollama";    Ctx="16K";  Speed="~25s";     Group="Local";   Mode="phi4";        IsCloud=$false; IsOllama=$true;  IsPaid=$false; Pulled=$false }
     [PSCustomObject]@{ Name="Qwen3 1.7B";              ModelId="ollama/qwen3:1.7b";                                Provider="Ollama";    Ctx="16K";  Speed="~40s";     Group="Local";   Mode="qwen3";       IsCloud=$false; IsOllama=$true;  IsPaid=$false; Pulled=$false }
     [PSCustomObject]@{ Name="Qwen2.5 Coder 7B";        ModelId="ollama/qwen2.5-coder:7b";                          Provider="Ollama";    Ctx="8K";   Speed="~30s";     Group="Local";   Mode="ollama";      IsCloud=$false; IsOllama=$true;  IsPaid=$false; Pulled=$false }
@@ -47,46 +49,6 @@ $models = @(
     [PSCustomObject]@{ Name="Claude 4 Sonnet";          ModelId="anthropic/claude-4-sonnet-20250514";                Provider="Anthropic"; Ctx="200K"; Speed="~3s";      Group="Paid";    Mode="cli";         IsCloud=$true;  IsOllama=$false; IsPaid=$true;  Pulled=$true }
     [PSCustomObject]@{ Name="GPT-4o";                   ModelId="openai/gpt-4o";                                    Provider="OpenAI";    Ctx="128K"; Speed="~2s";      Group="Paid";    Mode="cli";         IsCloud=$true;  IsOllama=$false; IsPaid=$true;  Pulled=$true }
 )
-
-# ─── State ────────────────────────────────────────────────────
-$ocExe = Find-OpenCodeExe
-$selected = 0
-$groups = @("Default", "Cloud", "Local", "Paid")
-$groupStart = @{}
-$gIdx = 0; foreach ($g in $groups) { $groupStart[$g] = $gIdx; $gIdx += ($models | Where-Object Group -eq $g).Count }
-
-# ─── Check Ollama ─────────────────────────────────────────────
-$ollamaOk = Get-OllamaStatus
-$installedOllama = if ($ollamaOk) { Get-OllamaModelNames } else { @() }
-$installedNames = $installedOllama | ForEach-Object { $_ -replace ':.*', '' }
-
-foreach ($m in $models) {
-    if ($m.IsOllama) {
-        $shortName = $m.ModelId -replace '^ollama/', '' -replace ':.*', ''
-        $m.Pulled = $ollamaOk -and ($installedNames -contains $shortName)
-    }
-}
-
-# ─── State ────────────────────────────────────────────────────
-$ocExe = Find-OpenCodeExe
-$selected = 0
-$groups = @("Default", "Cloud", "Local", "Paid")
-$groupStart = @{}  # first index of each group
-$gIdx = 0; foreach ($g in $groups) { $groupStart[$g] = $gIdx; $gIdx += ($models | Where-Object Group -eq $g).Count }
-
-# ─── Check Ollama ─────────────────────────────────────────────
-$ollamaOk = Get-OllamaStatus
-$installedOllama = if ($ollamaOk) { Get-OllamaModelNames } else { @() }
-$installedNames = $installedOllama | ForEach-Object { $_ -replace ':.*', '' }
-
-foreach ($m in $models) {
-    if ($m.IsOllama) {
-        $shortName = $m.ModelId -replace '^ollama/', '' -replace ':.*', ''
-        $m.Pulled = $ollamaOk -and ($installedNames -contains $shortName)
-    } else {
-        $m.Pulled = $true  # cloud models assumed available
-    }
-}
 
 # ─── Render ───────────────────────────────────────────────────
 try { $W = [Math]::Max(60, $Host.UI.RawUI.WindowSize.Width) } catch { $W = 80 }

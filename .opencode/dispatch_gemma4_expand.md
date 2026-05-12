@@ -2,7 +2,7 @@
 
 ## Task: Expand thesis chapters for academic depth
 
-Edit `Final_Thesis_Academix_v13_2_FIXED.md`. Current version (459 lines) is concise — each مبحث needs expansion to **5-7 paragraphs** with proper academic depth. Keep all ground truth values locked (S=801.45, Q*=176, ROP=205.6, SS=200).
+Edit `Memoire_DSS_Logistique_ElBayadh.md`. Current version (459 lines) is concise — each مبحث needs expansion to **5-7 paragraphs** with proper academic depth. Keep all ground truth values locked (S=801.45, Q*=176, ROP=205.6, SS=200).
 
 ### Expansion targets:
 

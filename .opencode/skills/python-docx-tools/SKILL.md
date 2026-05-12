@@ -64,7 +64,7 @@ python style\docx-master-build.py --from-docx "file.docx"
 
 ### Full build from markdown
 ```powershell
-python style\docx-master-build.py --source Final_Thesis_Academix_v13_2_FIXED.md
+python style\docx-master-build.py --source Memoire_DSS_Logistique_ElBayadh.md
 python style\docx-master-build.py --source thesis.md --output MyThesis --no-pdf
 ```
 

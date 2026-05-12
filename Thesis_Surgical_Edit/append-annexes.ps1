@@ -1,6 +1,6 @@
 # Extract and append missing sections from original DOCX to thesis
 $src = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\original-extracted.md"
-$thesis = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\Final_Thesis_Academix_v13_2_FIXED.md"
+$thesis = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md"
 $tmp = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\append-content.md"
 
 $content = Get-Content -Path $src -Raw

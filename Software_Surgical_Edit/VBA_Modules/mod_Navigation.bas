@@ -1,8 +1,12 @@
 Attribute VB_Name = "mod_Navigation"
-'==============================================================================
-' modNavigation.bas - ERP Académie v13.2
-' Sheet navigation and form launching
-'==============================================================================
+' ============================================================================
+' Academix v13.2 - DSS Logistique El Bayadh
+' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
+' Direction de l'Éducation - Wilaya d'El Bayadh
+' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
+' All rights reserved. Unauthorized reproduction or distribution prohibited.
+' ============================================================================
+
 Option Explicit
 
 Public Sub OpenStockForm()

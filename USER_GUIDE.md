@@ -184,7 +184,7 @@ git push                                     # Upload to GitHub
  │    ├── *.xml                          ← Context files for AI
  │    └── *.xlsm                         ← Compiled workbooks (don't touch)
  ├── 📁 Thesis_Surgical_Edit\            ← Thesis files
- │    ├── Final_Thesis_Academix_v13_2_FIXED.md  ← Thesis source
+ │    ├── Memoire_DSS_Logistique_ElBayadh.md    ← Thesis source
  │    ├── build-thesis.ps1               ← Build thesis PDF
  │    └── 📁 output\                     ← Generated PDFs
  ├── 📁 vbe-auto\                        ← Build toolkit

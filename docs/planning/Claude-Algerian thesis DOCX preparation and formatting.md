@@ -14,7 +14,7 @@ I am preparing my BTS CNEPD thesis (Algerian vocational training) for final subm
 MISSION: Produce a publication-ready Algerian Arabic DOCX of the thesis using these steps:
 1. READ all context files you received (_MASTER_PROMPT, _STRUCTURE_GUIDE, _FORMAT_GUIDE, _BUILD_PIPELINE, THESIS_GROUND_TRUTH)
 2. OPEN cover-page.docx to understand the cover design
-3. READ the full thesis source (Final_Thesis_Academix_v13_2_FIXED.md)
+3. READ the full thesis source (Memoire_DSS_Logistique_ElBayadh.md)
 4. POLISH each chapter in order:
    - Fix any remaining grammar/flow issues in Arabic-prose Algerian-thesis
    - Verify all ART codes match ground truth (ART-001=Toner G030, NOT رزم الورق)
@@ -70,7 +70,7 @@ Let me check what's available and start working on this.
 The thesis is very long. Let me think about the approach:
 
 1. The cover page content is already in the documents context
-2. The thesis body is in Final_Thesis_Academix_v13_2_FIXED.md
+2. The thesis body is in Memoire_DSS_Logistique_ElBayadh.md
 3. I need to generate a DOCX with:
    - Cover page (from cover-page.docx)
    - Pre-chapter pages (إهداء, شكر, ملخصات, etc.) numbered أ ب ج...

@@ -1,6 +1,6 @@
 Attribute VB_Name = "ThisWorkbook"
 '==============================================================================
-' ThisWorkbook.cls — ERP Académie v13.2
+' ThisWorkbook.cls - ERP Académie v13.2
 ' Workbook-level event handlers
 ' Created: 2026-05-06 (W010: Add Workbook_Open event handler)
 '==============================================================================
@@ -38,7 +38,7 @@ Private Sub Workbook_Open()
     
     If Application.UserControl Then
         welcomeMsg = "ERP Académie " & versionStr & vbCrLf & _
-                     "Direction de l'Éducation — El Bayadh" & vbCrLf & vbCrLf & _
+                     "Direction de l'Éducation - El Bayadh" & vbCrLf & vbCrLf & _
                      "D=1,546  |  ROP=205.6  |  Q*=176  |  SS=200"
         MsgBox welcomeMsg, vbInformation, titleStr
     End If

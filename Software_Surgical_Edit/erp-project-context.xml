@@ -6,8 +6,8 @@
     <compliance>CNEPD BTS Public Sector Standards</compliance>
     <architecture>Offline-First, Pure VBA, Zero External Dependencies</architecture>
     <sheets count="25" />
-    <modules count="36">29 .bas + 1 .frm + MAIN_MACROS.bas + ThisWorkbook.cls</modules>
-    <total-lines>10130</total-lines>
+    <modules count="38">37 .bas + 1 .frm</modules>
+    <total-lines>12535</total-lines>
     <compile-errors>0</compile-errors>
     <ground-truth>
       <param name="D" value="1546" desc="Annual Demand (38-day observation)" />
@@ -73,6 +73,11 @@
       <consumers>MAIN_MACROS, mod_Navigation</consumers>
       <api>InitializeForm, cmbTypeDoc_Change, cmbArticle_Change, cmbCategorie_Change, txtQuantite_Change, GenerateAutoRef, btnAjouterLigne_Click, btnSupprimerLigne_Click, btnEnregistrer_Click, btnAnnuler_Click</api>
     </module>
+    <module name="frmStockEntry" priority="critical" deps="mod_StockEntry_Logic" sheets="FORM_INPUT">
+      <purpose>Stock entry user form — multi-line document entry, input masking, auto-ref prefix, category pre-selection</purpose>
+      <consumers>User (direct interaction)</consumers>
+      <api>UserForm_Initialize, txtRefDoc_Change (input masking + auto-prefix BS-), cmbCategorie_Change (pre-select), btnAjouterLigne_Click, btnEnregistrer_Click</api>
+    </module>
     <module name="mod_SyncBridge" priority="high" deps="mod_Config, mod_StockEngine" sheets="ARTICLES">
       <purpose>Transaction-to-metrics bridge — syncs stock balances, CMUP, ABC classifications</purpose>
       <consumers>mod_Analysis, mod_StockEntry_Logic, mod_UI_Setup, mod_LogViewer</consumers>
@@ -80,7 +85,7 @@
     </module>
     <module name="mod_Dashboard" priority="high" deps="mod_Config, mod_StockEngine" sheets="ARTICLES, DASHBOARD">
       <purpose>Dashboard refresh — KPIs, critical stock table, ABC/XYZ summary</purpose>
-      <api>RefreshDashboard; Private: UpdateKPIs, UpdateCriticalTable, UpdateABCXYZSummary</api>
+      <api>RefreshDashboard; Private: UpdateKPIs, UpdateCriticalTable, UpdateABCXYZSummary, UpdateProjection</api>
     </module>
     <module name="mod_QRCode" priority="high" deps="mod_Config" sheets="any">
       <purpose>QR code generation — 3-tier fallback (Google Charts -> QRServer API -> offline verification block)</purpose>
@@ -90,7 +95,7 @@
     <module name="mod_ExportEngine" priority="high" deps="mod_Config, mod_Utilities, mod_QRCode" sheets="TEMPLATE_BON, MOUVEMENTS, ARTICLES, DASHBOARD">
       <purpose>PDF export — Algerian public sector compliance (TVA exemption, 4 signatures, NIF/NIS/RC/Art tax IDs, QR code)</purpose>
       <consumers>mod_StockEntry_Logic</consumers>
-      <api>ExportTransactionToPDF, ExportToExcel, ExportDashboardPDF</api>
+      <api>ExportTransactionToPDF, ExportTransactionToPDF_Compact, ExportToExcel, ExportDashboardPDF; PopulateTemplateBon(Optional compact)</api>
     </module>
     <module name="mod_Utilities" priority="high" deps="mod_Config" sheets="MOUVEMENTS, ARTICLES">
       <purpose>Shared utilities — safe value parsing, article lookup, date validation, dropdown setup, heatmap</purpose>
@@ -104,6 +109,11 @@
     <module name="mod_Database" priority="high" deps="mod_Config" sheets="all data sheets">
       <purpose>Low-level sheet read/write with protection, type safety, staging support</purpose>
       <api>SecureReadCell, SecureWriteTransaction, FindLastRow, FindLastCol, tableExists</api>
+    </module>
+    <module name="mod_DataValidator" priority="critical" deps="mod_Config, mod_Utilities" sheets="VALIDATION_INTEGRITE, ARTICLES, MOUVEMENTS">
+      <purpose>Data validation suite + fuzzy search — orphan detection, article matching, SoundexFR, Levenshtein distance</purpose>
+      <consumers>MAIN_MACROS</consumers>
+      <api>RunDataValidation; Private: ValidateMouvements, ValidateArticles, ValidateSuppliers; Fuzzy: LevenshteinDistance, SoundexFR, FuzzySearchArticle(threshold), SuggestSimilarArticles</api>
     </module>
     <module name="mod_AuditTrail" priority="high" deps="mod_Config" sheets="AUDIT_LOG">
       <purpose>Audit logging — write, query, clear (protected operations)</purpose>
@@ -235,7 +245,12 @@
     <node name="mod_TransactionSafety">depends on mod_SharedEnvironment</node>
     <node name="mod_ExportEngine">depends on mod_Config, mod_Utilities, mod_QRCode</node>
     <node name="mod_StockEntry_Logic">depends on 8 modules: Config, Utilities, Localization, Database, SyncBridge, AuditTrail, ExportEngine, TransactionSafety</node>
+    <node name="mod_DataValidator">depends on mod_Config, mod_Utilities</node>
+    <node name="frmStockEntry">depends on mod_StockEntry_Logic</node>
     <node name="mod_Dashboard">depends on mod_Config, mod_StockEngine</node>
+    <node name="mod_StockOutPredictor">depends on mod_Config, mod_StockEngine</node>
+    <node name="mod_InventoryReconciliation">depends on mod_Config, mod_AuditTrail</node>
+    <node name="mod_SupplierScorecard">depends on mod_Config, mod_SupplierRegistry</node>
     <node name="mod_Reports">depends on mod_Config, mod_StockEngine</node>
     <node name="mod_SheetSetup">depends on mod_Config</node>
     <node name="mod_Procurement">depends on mod_Config, mod_StockEngine</node>

@@ -188,4 +188,37 @@
     <issue active="true">Venice-routed models (qwen3-coder, llama-3.3, gemma-4 on OpenRouter) → 429 rate-limited</issue>
     <issue active="true">Anthropic API key may be truncated in opencode.json → regenerate if paid needed</issue>
   </known-issues>
+
+  <!-- ===== DECISION HISTORY & EVOLUTION ===== -->
+  <decision-history>
+    <phase name="Architectural Foundations (Pre-v12)" desc="Core design and setup">
+      <decision factor="Offline-First" rationale="Education sector constraints, zero cost, zero external dependencies." source="Gemini Knowledge System" />
+      <decision factor="Pure VBA" rationale="Excel 2010 compatibility and extreme ease of deployment." source="Gemini Knowledge System" />
+      <decision factor="Single Source of Truth" rationale="Eliminate the 'Black Hole' of unrecorded movements by enforcing mandatory 'Bon' numbers at the entry point." source="Gemini Knowledge System" />
+      <decision factor="VBScript Launcher" rationale="Portable USB deployment — no installers, no admin rights needed for field use." source="Gemini Hub Discussion (6)" />
+    </phase>
+    <phase name="UX & Data Integrity (v12-v13)" desc="Refining the interface and safety">
+      <decision factor="RTL/Arabic UI" rationale="Professionalizing the interface for native users via TextAlign and logical TabIndex/Cascading dropdowns." source="Gemini Knowledge System" />
+      <decision factor="Cascading Dropdowns" rationale="Eliminate free-text naming errors (e.g., 'Rame A4' vs 'Rame papier A4') using category-driven item selection." source="Gemini Knowledge System" />
+      <decision factor="Transaction Safety (ACID)" rationale="Using Begin/Commit/Rollback patterns in VBA to prevent partial updates during crashes/errors." source="Gemini Knowledge System" />
+    </phase>
+    <phase name="Knowledge System Architecture (Personal)" desc="Structuring AI-assisted workflow across models">
+      <decision factor="PKS Folder Hierarchy" rationale="Organized /01_Chat_Exports, /02_Lessons, /03_Thesis, /04_Practical, /05_Processed_Knowledge for structured ingestion." source="Gemini Knowledge System" />
+      <decision factor="Multi-Model Ingestion" rationale="Gemini exports (MD) + ChatGPT exports (MD) + Claude exports (MD) all funneled into a single Personal Knowledge System." source="Gemini Knowledge System" />
+      <decision factor="Claude as Lead Brain" rationale="Claude Desktop as the central synthesizer and thesis assistant, with Gemini/GPT as secondary sources." source="Gemini Knowledge System" />
+    </phase>
+    <phase name="ABC-Wilson Dynamic Integration" desc="Real-time feedback loop between classification and EOQ">
+      <decision factor="Simulateur Paramétrique de Wilson" rationale="Class A items get interactive EOQ simulator with live market price input, ROP recalculation, and ABC re-weighting." source="Gemini Hub Discussion (6)" />
+      <decision factor="Feedback Loop Mécanisme" rationale="Price change → ROP update → ABC re-classification → Dashboard redraw — all in one click." source="Gemini Hub Discussion (6)" />
+      <decision factor="Market Shock Simulation" rationale="Demonstrates system responsiveness: simulate PU spike (400→600 DZD), see ABC weight shift (72%→81%), prove DSS value." source="Gemini Hub Discussion (6)" />
+    </phase>
+    <phase name="Intelligence & Visualization (v13.2 Roadmap)" desc="Transforming from logging to decision support (4 pillars)">
+      <decision factor="Print Engineering (Pillar 1)" rationale="Convert UI-bleeding full A4 prints into compact half-A5 official Algerian administrative forms. Add ORIGINAL/COPIE watermark, strip all UI chrome (buttons, sidebars), 2-per-page layout." source="Claude Roadmap + Gemini Hub (6)" />
+      <decision factor="UX Preload & Input Masking (Pillar 2)" rationale="Auto-format reference fields (prefix, dashes), live validation on _Change, category-driven article pre-selection. Replace manual 'auto-ref' button with proactive formatting." source="Claude Roadmap" />
+      <decision factor="Stockout Projection (Pillar 3)" rationale="Consumption velocity banner showing 'Days until ROP' per article. SVG sparklines for management. Proactive alerts before stockout occurs." source="Claude Roadmap + Gemini Hub (6)" />
+      <decision factor="Fuzzy Search / Offline AI (Pillar 4)" rationale="Levenshtein distance + Soundex FR for duplicate article prevention. Prevents typo variants (e.g., 'Rame A4' vs 'Rame papier A4') without cloud API." source="Claude Roadmap + Gemini Hub (6)" />
+    </phase>
+  </decision-history>
+
 </master-bootstrap>
+```

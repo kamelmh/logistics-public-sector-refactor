@@ -74,7 +74,7 @@
     </Task>
     <Task id="T003" priority="HIGH" agent="documenter" status="completed">
       <Name>Write Thesis Chapter 4 (Arabic)</Name>
-      <Description>Complete in Final_Thesis_Academix_v13_2.md (lines 1230-1507)</Description>
+      <Description>Complete in Memoire_DSS_Logistique_ElBayadh.md (Ch3/4 content)</Description>
     </Task>
     <!-- Priority 2: Public Release Polish -->
     <Task id="T004" priority="HIGH" agent="sanitizer" status="pending">

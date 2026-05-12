@@ -827,7 +827,7 @@ End Sub
 '==============================================================================
 
 '==============================================================================
-' FOCUS EVENTS — highlight active input
+' FOCUS EVENTS - highlight active input
 '==============================================================================
 Private Sub TxtDate_Enter()
     Call mod_ThemingEngine.ApplyInputFocus(Me.Controls("TxtDate"))
@@ -840,6 +840,64 @@ Private Sub txtRefDoc_Enter()
 End Sub
 Private Sub txtRefDoc_Exit(ByVal Cancel As MSForms.ReturnBoolean)
     Call mod_ThemingEngine.ApplyInputBlur(Me.Controls("txtRefDoc"))
+End Sub
+Private Sub txtRefDoc_Change()
+    Dim tb As MSForms.TextBox
+    Set tb = Me.Controls("txtRefDoc")
+    
+    Static prevVal As String
+    If tb.Value = prevVal Then Exit Sub
+    
+    Dim raw As String
+    raw = tb.Value
+    
+    ' Auto-prefix "BS-" if missing and user typed something
+    If Len(raw) > 0 And Left(raw, 3) <> "BS-" Then
+        raw = "BS-" & raw
+    End If
+    
+    ' Strip everything except digits and dashes
+    Dim cleaned As String
+    cleaned = ""
+    Dim i As Integer
+    For i = 1 To Len(raw)
+        Dim ch As String
+        ch = Mid(raw, i, 1)
+        If ch Like "[0-9]" Or ch = "-" Then
+            cleaned = cleaned & ch
+        End If
+    Next i
+    
+    ' Reconstruct: BS-YYYY-NNNN
+    Dim prefix As String: prefix = "BS-"
+    Dim digitPart As String
+    digitPart = Replace(cleaned, "BS-", "", , , vbTextCompare)
+    digitPart = Replace(digitPart, "-", "")
+    
+    Dim formatted As String
+    formatted = prefix
+    If Len(digitPart) >= 1 Then
+        formatted = formatted & Left(digitPart, 4)
+        If Len(digitPart) > 4 Then
+            formatted = formatted & "-" & Mid(digitPart, 5, 4)
+        End If
+    End If
+    
+    ' Limit to max length
+    If Len(formatted) > 13 Then formatted = Left(formatted, 13)
+    
+    prevVal = formatted
+    If tb.Value <> formatted Then
+        tb.Value = formatted
+        tb.SelStart = Len(tb.Value)
+    End If
+    
+    ' Live format hint via tag color
+    If Len(tb.Value) = 13 Then
+        tb.BackColor = RGB(220, 255, 220)
+    ElseIf Len(tb.Value) > 3 Then
+        tb.BackColor = RGB(255, 252, 196)
+    End If
 End Sub
 Private Sub txtQuantite_Enter()
     Call mod_ThemingEngine.ApplyInputFocus(Me.Controls("txtQuantite"))

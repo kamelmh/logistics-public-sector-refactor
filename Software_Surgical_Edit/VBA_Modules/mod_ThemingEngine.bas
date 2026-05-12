@@ -1,13 +1,12 @@
 Attribute VB_Name = "mod_ThemingEngine"
-'==============================================================================
-' mod_ThemingEngine.bas  -  ERP Académie v13.2
-' Purpose: Professional UI theming engine for frmStockEntry
-' Author : Mahi Kamel Abdelghani | CNEPD 2026
-'
-' Features:
-'   - Consistent color palette (government/enterprise theme)
-'   - Flat modern design (no sunken 3D effects)
-'   - Accessible contrast ratios
+' ============================================================================
+' Academix v13.2 - DSS Logistique El Bayadh
+' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
+' Direction de l'Éducation - Wilaya d'El Bayadh
+' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
+' All rights reserved. Unauthorized reproduction or distribution prohibited.
+' ============================================================================
+
 '   - Hover effects on buttons
 '   - Placeholder text for inputs
 '   - Tab order optimization
@@ -524,7 +523,7 @@ Public Sub SetPlaceholderText(ByRef frm As Object)
 End Sub
 
 '==============================================================================
-' VALIDATION FEEDBACK — inline error styling
+' VALIDATION FEEDBACK - inline error styling
 '==============================================================================
 Public Sub HighlightFieldError(ByRef ctrl As Object)
     On Error Resume Next
@@ -557,7 +556,7 @@ Public Sub ClearAllFieldErrors(ByRef frm As Object)
 End Sub
 
 '==============================================================================
-' FOCUS EFFECTS — highlight active input border
+' FOCUS EFFECTS - highlight active input border
 '==============================================================================
 Public Sub ApplyInputFocus(ByRef ctrl As Object)
     On Error Resume Next

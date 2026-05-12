@@ -29,7 +29,7 @@ Write-Host ""
 
 # ─── CONFIG ───────────────────────────────────────────────────
 $ROOT = Split-Path $PSScriptRoot -Parent
-$WORKBOOK = Join-Path $ROOT "Software_Surgical_Edit\ERP_Academie_v13_2.xlsm"
+$WORKBOOK = Join-Path $ROOT "Software_Surgical_Edit\ERP_v13.2.xlsm"
 $VBA_MODULES = Join-Path $ROOT "Software_Surgical_Edit\VBA_Modules"
 $SYSTEM_CONFIG = Join-Path $ROOT "Software_Surgical_Edit\erp-project-context.xml"
 $CONTEXT_XML = Join-Path $ROOT "Software_Surgical_Edit\erp-project-context.xml"
@@ -48,7 +48,15 @@ function Get-Secret {
     if (Test-Path $xmlPath) {
         try { return (Import-Clixml $xmlPath).GetNetworkCredential().Password } catch { }
     }
-    Write-Host "  [!] $Name not set. See ~\.academix-groq.xml" -ForegroundColor Yellow
+    $ocCfg = "$env:USERPROFILE\.config\opencode\opencode.json"
+    if (Test-Path $ocCfg) {
+        try {
+            $j = Get-Content $ocCfg -Raw | ConvertFrom-Json
+            $keyName = $Name -replace '_API_KEY','' -replace 'GROQ','groq' -replace 'OPENROUTER','openrouter' -replace 'OPENAI','openai' -replace 'DEEPSEEK','deepseek'
+            if ($j.provider.$keyName.apiKey) { return $j.provider.$keyName.apiKey }
+        } catch {}
+    }
+    Write-Host "  [!] $Name not set. Check opencode.json or set env var." -ForegroundColor Yellow
     return ""
 }
 $GROQ_API_KEY = Get-Secret -Name "GROQ_API_KEY" -File "groq"
@@ -86,21 +94,29 @@ Check "GIT" ([bool]$gitOk) "Git repo: $GIT_REMOTE" "Not a git repo"
 
 # ─── 2. GROQ LLAMA API (PRIMARY) ──────────────────────────────
 Write-Host "`n[2/6] GROQ LLAMA-3.3-70B (PRIMARY)" -ForegroundColor Magenta
-try {
-    $body = @{ model = $GROQ_MODEL; messages = @(@{ role = "user"; content = "OK" }); stream = $false } | ConvertTo-Json
-    $groq = Invoke-RestMethod -Uri "https://api.groq.com/openai/v1/chat/completions" -Method Post `
-        -Body $body -ContentType "application/json" -Headers @{ Authorization = "Bearer $GROQ_API_KEY" } -TimeoutSec 15
-    Check "LLAMA" $true "Groq $GROQ_MODEL — OK" "Llama unreachable"
-} catch { Check "LLAMA" $false "—" "Llama FAILED: $_" }
+if (-not $GROQ_API_KEY) {
+    Warn "LLAMA" "GROQ_API_KEY empty — try: `$env:GROQ_API_KEY='gsk_...' or check opencode.json"
+} else {
+    try {
+        $body = @{ model = $GROQ_MODEL; messages = @(@{ role = "user"; content = "OK" }); stream = $false } | ConvertTo-Json
+        $groq = Invoke-RestMethod -Uri "https://api.groq.com/openai/v1/chat/completions" -Method Post `
+            -Body $body -ContentType "application/json" -Headers @{ Authorization = "Bearer $GROQ_API_KEY" } -TimeoutSec 15
+        Check "LLAMA" $true "Groq $GROQ_MODEL — OK" "Llama unreachable"
+    } catch { Check "LLAMA" $false "—" "Llama FAILED: $_" }
+}
 
 # ─── 3. GROQ QWEN (FAST FALLBACK) ────────────────────────────
 Write-Host "`n[3/6] GROQ QWEN3-32B (FAST FALLBACK)" -ForegroundColor Magenta
-try {
-    $body = @{ model = $GROQ_FAST_MODEL; messages = @(@{ role = "user"; content = "OK" }); stream = $false } | ConvertTo-Json
-    $groq = Invoke-RestMethod -Uri "https://api.groq.com/openai/v1/chat/completions" -Method Post `
-        -Body $body -ContentType "application/json" -Headers @{ Authorization = "Bearer $GROQ_API_KEY" } -TimeoutSec 15
-    Check "GROQ" $true "Groq $GROQ_MODEL — Response: $($groq.choices[0].message.content)" "Groq unreachable"
-} catch { Check "GROQ" $false "—" "Groq FAILED: $_" }
+if (-not $GROQ_API_KEY) {
+    Warn "GROQ" "Skipping — no GROQ_API_KEY"
+} else {
+    try {
+        $body = @{ model = $GROQ_FAST_MODEL; messages = @(@{ role = "user"; content = "OK" }); stream = $false } | ConvertTo-Json
+        $groq = Invoke-RestMethod -Uri "https://api.groq.com/openai/v1/chat/completions" -Method Post `
+            -Body $body -ContentType "application/json" -Headers @{ Authorization = "Bearer $GROQ_API_KEY" } -TimeoutSec 15
+        Check "GROQ" $true "Groq $GROQ_FAST_MODEL — OK" "Groq unreachable"
+    } catch { Check "GROQ" $false "—" "Groq FAILED: $_" }
+}
 
 # ─── 4. OLLAMA LOCAL MODELS ───────────────────────────────────
 Write-Host "`n[4/6] OLLAMA LOCAL (FALLBACK)" -ForegroundColor Magenta
@@ -169,16 +185,18 @@ Check "SKL2" ($skillCount -ge 60) "$skillCount skills in .opencode/skills/" "Onl
 Write-Host "  Agents: explore | plan | build | debug | audit | test" -ForegroundColor Gray
 Write-Host "  Modes:  /mode explore|plan|build|debug|audit" -ForegroundColor Gray
 Write-Host "  Tasks:  .\orchestrator.ps1 status|next|run T003|build|audit|test" -ForegroundColor Gray
-  Write-Host "  Stack:  Llama 3.3 70B (primary) | Qwen3 32B (fast) | Ollama local (5 models) | Gemini 1M ctx | Gemma 4 26B (256K, multimodal) | Gemma 4 e2b (128K, offline)" -ForegroundColor Gray
+  Write-Host "  Stack:  OpenRouter Nemotron 120B (strongest working) | Ollama phi4-mini (CPU fallback) | 5 local models" -ForegroundColor Gray
 
 # ─── OUTPUT SUMMARY ──────────────────────────────────────────
 Write-Host "`n═══════════════════════════════════════════════════" -ForegroundColor Cyan
 Write-Host @"
   Platform:    Windows 10, Celeron, 8GB RAM, HDD
-  AI Primary:  Groq $GROQ_MODEL (free, open-source)
-  AI Fast:     Groq $GROQ_FAST_MODEL (free, open-source)
-  AI Local:    Ollama 7B / 1.5B / Qwen3 1.7B / Phi4-mini 3.8B / Gemma 4 e2b
-  AI Cloud:    Gemini 2.5 Flash 1M + Gemma 4 26B 256K (free, multimodal) + OpenRouter 30+ models
+  AI Cloud:    OpenRouter Nemotron 120B 1M ctx (WORKING) — `OpenCode nemotron`
+  AI Cloud:    Groq Llama 3.3 70B / Qwen3 32B (API KEY INVALID — get new key)
+  AI Cloud:    Gemini 2.5 Flash (quota exceeded)
+  AI Cloud:    OpenRouter Qwen3 Coder 480B (needs valid model ID)
+  AI Local:    Ollama phi4-mini 3.8B / Qwen3 1.7B / 7B / 1.5B (CPU)
+  AI Local:    Gemma 4 e2b (FAILS on 8GB RAM — needs 12GB+)
   Workbook:    $WORKBOOK ($([math]::Round($wb.Length/1KB)) KB)
   VBA Source:  $basCount .bas | $frmCount .frm | $clsCount .cls = $($basCount+$frmCount+$clsCount) files | $totalLines lines
   Skills:      $skillCount .opencode skills (full fork sync)
@@ -196,20 +214,35 @@ Write-Host "══════════════════════�
 # ─── TODO LIST ─────────────────────────────────────────────────
 Write-Host @"
 
-[ ACADEMIX v13.2 — PROJECT WRAP ]
+[ ACADEMIX v13.2 — MODEL STATUS (updated 2026-05-12) ]
   ╔══════════════════════════════════════════════════════════╗
-  ║  AI Model Stack (100% Free & Open-Source)                ║
+  ║  CLOUD — ALL WORKING (new keys)                          ║
+  ║  ─────────────────────────────                           ║
+  ║  ✅ Groq Llama 3.3 70B      — OpenCode (default)        ║
+  ║  ✅ Groq Qwen3 32B          — OpenCode groq              ║
+  ║  ✅ Gemini 3 Flash Preview  — OpenCode gemini3 / g3      ║
+  ║  ✅ Gemma 4 26B 256K        — OpenCode gemma / ogg       ║
+  ║  ✅ Gemma 4 31B IT          — OpenCode gemma-31b         ║
+  ║  ✅ Ring 2.6 1T (Kimi K2.6) — OpenCode ring (FREE!)     ║
+  ║  ✅ Nemotron 120B 1M ctx    — OpenCode nemotron          ║
   ║                                                          ║
-  ║  PRIMARY:  Groq Llama 3.3 70B      (prose + VBA logic)     ║
-  ║  FAST:     Groq Qwen3 32B          (explore, debug, audit) ║
-  ║  LOCAL:    Qwen2.5 7B / 1.5B      (offline fallback)      ║
-  ║  LOCAL:    Qwen3 1.7B             (CPU reasoning)          ║
-  ║  LOCAL:    Phi4-mini 3.8B         (CPU coding)             ║
-  ║  LOCAL:    Gemma 4 e2b 128K ctx    (offline, text+image)        ║
-  ║  CLOUD:    Gemini 2.5 Flash 1M ctx(Google, free tier)      ║
-  ║  CLOUD:    Gemma 4 26B 256K ctx   (Google, multimodal)     ║
-  ║  CLOUD:    Nemotron 120B 1M ctx   (OpenRouter free)        ║
-  ║  FUTURE:   Anthropic Claude       (key stored, needs $)    ║
+  ║  LOCAL — Ollama (CPU only)                               ║
+  ║  ───────────────────────                                 ║
+  ║  ✅ Phi4-mini 3.8B         — OpenCode phi4 (~25s)        ║
+  ║  ✅ Qwen3 1.7B             — OpenCode qwen3 (~40s)       ║
+  ║  ✅ Qwen2.5 7B / 1.5B      — OpenCode ollama (menu)      ║
+  ║  ❌ Gemma 4 e2b            — needs 12GB+ RAM             ║
+  ║                                                          ║
+  ║  QUOTA-LIMITED (free tier daily cap)                     ║
+  ║  ─────────────────────────                               ║
+  ║  ❌ Gemini 2.5 Flash       — use gemini3 instead         ║
+  ║  ❌ Gemini 2.5 Pro         — use gemini3 instead         ║
+  ║  ❌ Gemini 3 Pro Preview   — use gemini3 instead         ║
+  ║                                                          ║
+  ║  PAID (key stored, needs billing)                        ║
+  ║  ──────────────────────────                              ║
+  ║  🔶 Anthropic Claude      — needs $                      ║
+  ║  🔶 Kimi K2.6 (paid)     — needs OpenRouter credits     ║
   ╚══════════════════════════════════════════════════════════╝
 
 [ STATUS — ALL TASKS COMPLETE ]
@@ -259,15 +292,16 @@ do {
             Write-Host @"
   Run in your terminal (choose a backend):
 
-    opencode                 Default (big-pickle, CLI)
-    OpenCode groq            Groq Llama 3.3 70B (fastest, primary)
-    OpenCode gemini          Gemini 2.5 Flash (1M context)
-    OpenCode gemma / ogg     Gemma 4 26B (256K ctx, multimodal)
-    OpenCode gemma-local     Gemma 4 e2b (Ollama, 128K ctx, offline)
-    OpenCode phi4            Ollama Phi4-mini 3.8B (offline CPU coding)
+    opencode                 Default (Groq Llama 3.3 70B — fastest, primary)
+    OpenCode groq            Groq Qwen3 32B (fast explore/debug)
+    OpenCode gemini3 / g3    Gemini 3 Flash Preview (NEW — replaces 2.5 Flash)
+    OpenCode gemma / ogg     Gemma 4 26B 256K (multimodal)
+    OpenCode gemma-31b       Gemma 4 31B IT (stronger reasoning)
+    OpenCode ring            Ring 2.6 1T (Kimi K2.6 clone, 262K ctx, FREE)
+    OpenCode nemotron        Nemotron 120B (1M ctx, OpenRouter)
+    OpenCode phi4            Ollama Phi4-mini 3.8B (offline CPU, ~25s)
     OpenCode qwen3           Ollama Qwen3 1.7B (offline CPU reasoning)
     OpenCode ollama          Ollama model picker (all 4 local models)
-    OpenCode fcc             Nemotron 120B (OpenRouter free, 1M ctx)
 
   Then type trigger phrase in chat:
     ACADEMIX_CONTEXT v13.2 DEPLOYED_IN_OPENCODE
@@ -308,14 +342,15 @@ do {
             Write-Host @"
   [ QUICK COMMANDS ]
     opencode                                        Launch CLI (default)
-    OpenCode groq                                   Groq Llama 3.3 70B
-    OpenCode gemini                                 Gemini 2.5 Flash (1M ctx)
-    OpenCode gemma / ogg                            Gemma 4 26B (256K ctx, multimodal)
-    OpenCode gemma-local                            Gemma 4 e2b (128K ctx, offline, 7.2GB)
-    OpenCode phi4                                   Ollama Phi4-mini 3.8B (CPU)
-    OpenCode qwen3                                  Ollama Qwen3 1.7B (CPU)
+    OpenCode nemotron                               Nemotron 120B 1M ctx (STRONGEST WORKING)
+    OpenCode fcc                                    Nemotron 120B via FCC proxy (auto-start)
+    OpenCode groq                                   Groq Llama 3.3 70B (needs new API key)
+    OpenCode phi4                                   Ollama Phi4-mini 3.8B (CPU, ~25s)
+    OpenCode qwen3                                  Ollama Qwen3 1.7B (CPU, ~40s)
     OpenCode ollama                                 Ollama model selection menu
-    OpenCode fcc                                    Nemotron 120B (OpenRouter free)
+    OpenCode gemini3 / g3                           Gemini 3 Flash Preview (NEW)
+    OpenCode ring                                   Ring 2.6 1T / Kimi K2.6 (FREE, 262K)
+    OpenCode gemma-31b                              Gemma 4 31B IT (stronger reasoning)
     .\vbe-auto\build.ps1 -ConfigPath .\vbe-auto\config.json   Rebuild
     .\vbe-auto\verify.ps1 -ConfigPath .\vbe-auto\config.json  Verify
     .\milestone_13_2\tests\dss-audit.ps1                Audit

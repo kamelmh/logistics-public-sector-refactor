@@ -1,13 +1,12 @@
 Attribute VB_Name = "mod_SharedEnvironment"
-'==============================================================================
-' mod_SharedEnvironment.bas  -  ERP Académie v13.2
+' ============================================================================
+' Academix v13.2 - DSS Logistique El Bayadh
+' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
+' Direction de l'Éducation - Wilaya d'El Bayadh
+' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
+' All rights reserved. Unauthorized reproduction or distribution prohibited.
+' ============================================================================
 
-' Depends: mod_Config, mod_Database, mod_AuditTrail, mod_Utilities
-' Circular dependency with mod_ExportEngine broken — shared path funcs moved to mod_Utilities
-'
-' Features:
-'   - Configurable shared export directory (network or local)
-'   - User session tracking (login/logout with role)
 '   - File lock detection (warn if opened by another user)
 '   - Batch PDF export (all pending documents)
 '   - Bulk movement import from Excel/CSV

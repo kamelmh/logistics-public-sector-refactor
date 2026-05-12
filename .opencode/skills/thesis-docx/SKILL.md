@@ -10,7 +10,7 @@ Manage the thesis DOCX document: styles, heading structure, formatting, and buil
 |------|------|---------|
 | Master DOCX | `Thesis_Surgical_Edit\Memoire_Academix_v13_2_Final_Master_Generation.docx` | Primary editable DOCX (168 KB, 305 paragraphs, 15 tables) |
 | Cover page | `Thesis_Surgical_Edit\cover-page.docx` | Standalone cover (64 KB) |
-| Source markdown | `Thesis_Surgical_Edit\Final_Thesis_Academix_v13_2_FIXED.md` | Pandoc source (142 KB) |
+| Source markdown | `Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md` | Pandoc source (142 KB) |
 | Build script | `Thesis_Surgical_Edit\build-thesis.ps1` | Legacy pipeline |
 | Style tools | `Thesis_Surgical_Edit\style\*.py` | Python post-processing tools |
 
@@ -73,7 +73,7 @@ Arabic headings detected by regex:
 ## Commands
 ```powershell
 # Full build from markdown
-python style\docx-master-build.py --source Final_Thesis_Academix_v13_2_FIXED.md
+python style\docx-master-build.py --source Memoire_DSS_Logistique_ElBayadh.md
 
 # Fix existing DOCX (style-fix + style-apply)
 python style\docx-master-build.py --from-docx "Memoire_Academix_v13_2_Final_Master_Generation.docx"

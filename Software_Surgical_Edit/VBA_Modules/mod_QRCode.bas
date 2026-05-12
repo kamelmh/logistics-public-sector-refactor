@@ -1,13 +1,12 @@
 Attribute VB_Name = "mod_QRCode"
-'==============================================================================
-' mod_QRCode.bas  |  ERP Académie v13.2
-' Author: Mahi Kamel Abdelghani | CNEPD 2026
-'
-' QR Code Generation - Offline-First, Zero External Dependencies
-'
-' ARCHITECTURE (3-tier fallback):
-'   1. Primary: Real QR code via Google Charts API (internet required)
-'   2. Secondary: Real QR code via QRServer API (alternative, more reliable)
+' ============================================================================
+' Academix v13.2 - DSS Logistique El Bayadh
+' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
+' Direction de l'Éducation - Wilaya d'El Bayadh
+' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
+' All rights reserved. Unauthorized reproduction or distribution prohibited.
+' ============================================================================
+
 '   3. Fallback: Offline verification code block with deterministic hash
 '      (not scannable but provides audit trail)
 '

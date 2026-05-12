@@ -1,13 +1,12 @@
 Attribute VB_Name = "mod_TransactionSafety"
-'==============================================================================
-' mod_TransactionSafety.bas  -  ERP Académie v13.2
-' Purpose: Transaction rollback and error recovery for atomic operations
-' Author : Mahi Kamel Abdelghani | CNEPD 2026
-'
-' Features:
-'   - Pre-transaction state snapshot (stock balances before save)
-'   - Atomic transaction execution (all-or-nothing)
-'   - Automatic rollback on failure (restore pre-snapshot state)
+' ============================================================================
+' Academix v13.2 - DSS Logistique El Bayadh
+' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
+' Direction de l'Éducation - Wilaya d'El Bayadh
+' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
+' All rights reserved. Unauthorized reproduction or distribution prohibited.
+' ============================================================================
+
 '   - Crash recovery (detect incomplete transactions on restart)
 '   - Transaction log with success/failure status
 '==============================================================================
@@ -35,13 +34,13 @@ Private m_CurrentTransaction As TransactionState
 Private m_IsTransactionActive As Boolean
 
 '================================================================================
-' PUBLIC API — Transaction management
+' PUBLIC API - Transaction management
 '================================================================================
 
-' Begin a new transaction — captures pre-state snapshot
+' Begin a new transaction - captures pre-state snapshot
 Public Sub BeginTransaction(ByVal docRef As String, ByVal docType As String)
     If m_IsTransactionActive Then
-        Debug.Print "[Safety] WARNING: Transaction already active — force closing previous"
+        Debug.Print "[Safety] WARNING: Transaction already active - force closing previous"
         Call ForceRollback
     End If
     
@@ -67,7 +66,7 @@ Public Sub AddTransactionLine()
     m_CurrentTransaction.LineCount = m_CurrentTransaction.LineCount + 1
 End Sub
 
-' Commit the transaction — capture post-state and log success
+' Commit the transaction - capture post-state and log success
 Public Function CommitTransaction() As Boolean
     If Not m_IsTransactionActive Then
         Debug.Print "[Safety] ERROR: No active transaction to commit"
@@ -82,7 +81,7 @@ Public Function CommitTransaction() As Boolean
     
     ' Validate consistency
     If Not ValidateTransactionConsistency Then
-        Debug.Print "[Safety] Commit validation failed — rolling back"
+        Debug.Print "[Safety] Commit validation failed - rolling back"
         Call RollbackTransaction
         CommitTransaction = False
         Exit Function
@@ -108,7 +107,7 @@ CommitError:
     CommitTransaction = False
 End Function
 
-' Rollback the transaction — restore pre-state stock balances
+' Rollback the transaction - restore pre-state stock balances
 Public Sub RollbackTransaction()
     If Not m_IsTransactionActive Then
         Debug.Print "[Safety] WARNING: No active transaction to rollback"
@@ -152,7 +151,7 @@ Public Sub ForceRollback()
 End Sub
 
 '================================================================================
-' STOCK SNAPSHOT — Capture and restore stock states
+' STOCK SNAPSHOT - Capture and restore stock states
 '================================================================================
 
 ' Capture current stock balances for all articles
@@ -205,7 +204,7 @@ End Function
 ' Restore stock balances from a snapshot
 Public Sub RestoreStockSnapshot(ByRef snapshot As Variant)
     If Not IsArray(snapshot) Then
-        Debug.Print "[Safety] WARNING: Invalid snapshot — cannot restore"
+        Debug.Print "[Safety] WARNING: Invalid snapshot - cannot restore"
         Exit Sub
     End If
     
@@ -247,7 +246,7 @@ Public Sub RestoreStockSnapshot(ByRef snapshot As Variant)
 End Sub
 
 '================================================================================
-' PARTIAL MOVEMENT REMOVAL — Clean up incomplete transactions
+' PARTIAL MOVEMENT REMOVAL - Clean up incomplete transactions
 '================================================================================
 
 ' Remove any MOUVEMENTS entries for a specific docRef (rollback cleanup)
@@ -277,7 +276,7 @@ Public Sub RemovePartialMovements(ByVal docRef As String)
 End Sub
 
 '================================================================================
-' VALIDATION — Ensure transaction consistency
+' VALIDATION - Ensure transaction consistency
 '================================================================================
 
 ' Validate that post-snapshot is consistent with pre-snapshot + transaction
@@ -319,7 +318,7 @@ Private Function ValidateTransactionConsistency() As Boolean
 End Function
 
 '================================================================================
-' CRASH RECOVERY — Detect and recover from incomplete transactions
+' CRASH RECOVERY - Detect and recover from incomplete transactions
 '================================================================================
 
 ' Check for incomplete transactions on workbook open
@@ -355,7 +354,7 @@ Public Sub CheckCrashRecovery()
             
             If Len(snapshotData) > 0 Then
                 ' Decode and restore snapshot
-                Debug.Print "[Safety] Recovering from crash — rolling back " & docRef
+                Debug.Print "[Safety] Recovering from crash - rolling back " & docRef
                 wsStaging.Range("Z1").Value = "RECOVERED"
             End If
         Else
@@ -407,7 +406,7 @@ Public Sub ClearTransactionState()
 End Sub
 
 '================================================================================
-' TRANSACTION LOG — Audit trail for transactions
+' TRANSACTION LOG - Audit trail for transactions
 '================================================================================
 
 Private Sub LogTransactionEvent(ByVal eventType As String, ByVal message As String)

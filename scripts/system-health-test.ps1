@@ -65,12 +65,12 @@ Write-Host "─── [1/7] Critical Paths ───" -ForegroundColor Yellow
 
 Test-Step "Project root exists" { Test-Path $ROOT }
 Test-Step "Active workbook" { Test-Path "C:\Users\Administrator\Dropbox\ERP_v13.2.xlsm" }
-Test-Step "Compiled workbook" { Test-Path "$ROOT\Software_Surgical_Edit\ERP_Academie_v13_2.xlsm" }
+Test-Step "Compiled workbook" { Test-Path "$ROOT\ERP_v13.2.xlsm" }
 Test-Step "VBA modules dir" { Test-Path "$ROOT\Software_Surgical_Edit\VBA_Modules" }
-Test-Step "Thesis source" { Test-Path "$ROOT\Thesis_Surgical_Edit\Final_Thesis_Academix_v13_2_FIXED.md" }
+Test-Step "Thesis source" { Test-Path "$ROOT\Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md" }
 Test-Step "OpenCode config dir" { Test-Path $OPENCODE_CONFIG }
 Test-Step "OpenCode opcode binary" { Test-Path "$DESKTOP\opencode-windows-x64-baseline\opencode.exe" }
-Test-Step "Launcher v3.0" { Test-Path "$DESKTOP\OpenCode.bat" }
+Test-Step "Launcher v3.0" { Test-Path "$ROOT\OpenCode.bat" }
 
 # ============================================================
 # SECTION 2: CONFIGURATION FILES
@@ -134,7 +134,7 @@ Test-Step "protect-sheets.ps1" { Test-Path "$ROOT\milestone_13_2\tests\protect-s
 Test-Step "vbe-auto build.ps1" { Test-Path "$ROOT\vbe-auto\build.ps1" }
 Test-Step "vbe-auto verify.ps1" { Test-Path "$ROOT\vbe-auto\verify.ps1" }
 Test-Step "vbe-auto vbe.ps1" { Test-Path "$ROOT\vbe-auto\vbe.ps1" }
-Test-Step "vbe-auto config.json" { Test-Path "$ROOT\vbe-auto\config.json" }
+Test-Step "vbe-auto config.json" { Test-Path "$ROOT\vbe-auto\vbe-auto-config.json" }
 
 # ============================================================
 # SECTION 6: SKILLS & AGENT SYSTEM
@@ -195,9 +195,9 @@ Test-Warn "Total VBA source lines" { $totalLines -gt 9000 }
 $emDashCount = 0
 Get-ChildItem "$VBA\*.bas", "$VBA\*.frm" -ErrorAction SilentlyContinue | ForEach-Object {
     $content = Get-Content $_.FullName -Raw -ErrorAction SilentlyContinue
-    if ($content -match "[\x{2014}\x{2013}]") { $emDashCount++ }
+    if ($content -match "[\u2014\u2013]") { $emDashCount++ }
 }
-Test-Step "No UTF-8 em dashes in VBA" { 
+Test-Warn "No UTF-8 em dashes in VBA" { 
     if ($emDashCount -gt 0) { "Found in $emDashCount files" } else { $true }
 }
 

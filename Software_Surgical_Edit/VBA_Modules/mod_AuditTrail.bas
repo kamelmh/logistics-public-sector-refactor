@@ -1,9 +1,12 @@
 Attribute VB_Name = "mod_AuditTrail"
-'=======================================================================================
-' MODULE: mod_AuditTrail.bas
-' PROJECT: ERP Acad" & Chr(233) & "mie v13
-' DESCRIPTION: Handles secure, immutable logging of all system transactions.
-'=======================================================================================
+' ============================================================================
+' Academix v13.2 - DSS Logistique El Bayadh
+' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
+' Direction de l'Éducation - Wilaya d'El Bayadh
+' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
+' All rights reserved. Unauthorized reproduction or distribution prohibited.
+' ============================================================================
+
 Option Explicit
 
 ' Records a system event to the audit trail.

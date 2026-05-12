@@ -10,7 +10,7 @@ claude-context/
 │
 ├── cover-page.docx         ← User's custom cover design (immutable)
 │
-├── ../Final_Thesis_Academix_v13_2_FIXED.md    ← Full thesis source
+├── ../Memoire_DSS_Logistique_ElBayadh.md      ← Full thesis source
 ├── ../THESIS_GROUND_TRUTH.md                   ← Locked reference data
 ├── ../style/thesis-metadata.yaml               ← Title/author metadata
 └── ../output/                                  ← Generated output

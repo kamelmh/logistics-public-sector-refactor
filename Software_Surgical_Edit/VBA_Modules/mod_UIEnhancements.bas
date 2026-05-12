@@ -1,13 +1,12 @@
 Attribute VB_Name = "mod_UIEnhancements"
-'==============================================================================
-' mod_UIEnhancements.bas  -  ERP Académie v13.2
-' Purpose: Professional UI styling and visual enhancements for VBA forms
-' Author : Mahi Kamel Abdelghani | CNEPD 2026
-'
-' Standards Applied:
-'   - Calibri font family, 10pt default
-'   - RGB(70,70,70) for primary text
-'   - Flat borders (fmBorderStyleSingle)
+' ============================================================================
+' Academix v13.2 - DSS Logistique El Bayadh
+' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
+' Direction de l'Éducation - Wilaya d'El Bayadh
+' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
+' All rights reserved. Unauthorized reproduction or distribution prohibited.
+' ============================================================================
+
 '   - Light gray hover states
 '   - Consistent 8px/12px spacing grid
 '   - Semantic color palette (success/warning/error)
@@ -16,40 +15,40 @@ Attribute VB_Name = "mod_UIEnhancements"
 Option Explicit
 
 '================================================================================
-' COLOR CONSTANTS — Professional Palette
+' COLOR CONSTANTS - Professional Palette
 '================================================================================
 
 '-- Text colors
-Public Const CLR_TEXT_PRIMARY    As Long = 4592690      ' RGB(70,70,70) — Main text
-Public Const CLR_TEXT_SECONDARY  As Long = 8421504      ' RGB(128,128,128) — Labels, hints
-Public Const CLR_TEXT_HEADING    As Long = 3289650      ' RGB(51,51,51) — Headers, titles
-Public Const CLR_TEXT_LINK       As Long = 11393215     ' RGB(0,102,204) — Hyperlinks
+Public Const CLR_TEXT_PRIMARY    As Long = 4592690      ' RGB(70,70,70) - Main text
+Public Const CLR_TEXT_SECONDARY  As Long = 8421504      ' RGB(128,128,128) - Labels, hints
+Public Const CLR_TEXT_HEADING    As Long = 3289650      ' RGB(51,51,51) - Headers, titles
+Public Const CLR_TEXT_LINK       As Long = 11393215     ' RGB(0,102,204) - Hyperlinks
 
 '-- Background colors
-Public Const CLR_BG_FORM         As Long = 15724527     ' RGB(240,240,245) — Form background
-Public Const CLR_BG_INPUT        As Long = 16777215     ' RGB(255,255,255) — Input fields
-Public Const CLR_BG_HEADER       As Long = 14474460     ' RGB(220,230,240) — Panel headers
-Public Const CLR_BG_HOVER        As Long = 14737632     ' RGB(224,234,244) — Hover state
+Public Const CLR_BG_FORM         As Long = 15724527     ' RGB(240,240,245) - Form background
+Public Const CLR_BG_INPUT        As Long = 16777215     ' RGB(255,255,255) - Input fields
+Public Const CLR_BG_HEADER       As Long = 14474460     ' RGB(220,230,240) - Panel headers
+Public Const CLR_BG_HOVER        As Long = 14737632     ' RGB(224,234,244) - Hover state
 
 '-- Semantic colors
 Public Const CLR_SUCCESS         As Long = 3289650      ' RGB(51,51,51) → Actually green below
-Public Const CLR_SUCCESS_BG      As Long = 13631502     ' RGB(211,240,224) — Success background
-Public Const CLR_SUCCESS_TEXT    As Long = 2580992      ' RGB(40,100,40) — Success text
-Public Const CLR_WARNING_BG      As Long = 13762047     ' RGB(255,243,224) — Warning background
+Public Const CLR_SUCCESS_BG      As Long = 13631502     ' RGB(211,240,224) - Success background
+Public Const CLR_SUCCESS_TEXT    As Long = 2580992      ' RGB(40,100,40) - Success text
+Public Const CLR_WARNING_BG      As Long = 13762047     ' RGB(255,243,224) - Warning background
 Public Const CLR_WARNING_TEXT    As Long = 3407872      ' RGB(52,73,94) → Actually amber below
-Public Const CLR_ERROR_BG        As Long = 14409216     ' RGB(255,220,220) — Error background
+Public Const CLR_ERROR_BG        As Long = 14409216     ' RGB(255,220,220) - Error background
 Public Const CLR_ERROR_TEXT      As Long = 2236991      ' RGB(34,34,139) → Actually red below
 
 '-- Border colors
-Public Const CLR_BORDER          As Long = 13421772     ' RGB(204,204,204) — Input borders
-Public Const CLR_BORDER_LIGHT    As Long = 15395562     ' RGB(234,234,234) — Subtle borders
-Public Const CLR_BORDER_FOCUS    As Long = 11393215     ' RGB(0,102,204) — Focus border
+Public Const CLR_BORDER          As Long = 13421772     ' RGB(204,204,204) - Input borders
+Public Const CLR_BORDER_LIGHT    As Long = 15395562     ' RGB(234,234,234) - Subtle borders
+Public Const CLR_BORDER_FOCUS    As Long = 11393215     ' RGB(0,102,204) - Focus border
 
 '-- Button colors
-Public Const CLR_BTN_PRIMARY     As Long = 11393215     ' RGB(0,102,204) — Primary button
-Public Const CLR_BTN_PRIMARY_HOVER As Long = 9109504    ' RGB(0,82,164) — Primary hover
-Public Const CLR_BTN_SECONDARY   As Long = 15724527     ' RGB(240,240,245) — Secondary
-Public Const CLR_BTN_SECONDARY_HOVER As Long = 14737632 ' RGB(224,234,244) — Secondary hover
+Public Const CLR_BTN_PRIMARY     As Long = 11393215     ' RGB(0,102,204) - Primary button
+Public Const CLR_BTN_PRIMARY_HOVER As Long = 9109504    ' RGB(0,82,164) - Primary hover
+Public Const CLR_BTN_SECONDARY   As Long = 15724527     ' RGB(240,240,245) - Secondary
+Public Const CLR_BTN_SECONDARY_HOVER As Long = 14737632 ' RGB(224,234,244) - Secondary hover
 Public Const CLR_BTN_DANGER      As Long = 2236991      ' RGB(34,34,139) → Actually red below
 
 '================================================================================
@@ -63,7 +62,7 @@ Public Const FONT_SIZE_HEADING   As Integer = 12
 Public Const FONT_SIZE_TITLE     As Integer = 14
 
 '================================================================================
-' APPLY THEME TO FORM — delegated to mod_ThemingEngine
+' APPLY THEME TO FORM - delegated to mod_ThemingEngine
 '================================================================================
 
 '================================================================================
@@ -94,7 +93,7 @@ Private Sub StyleControl(ByRef ctrl As Object)
 End Sub
 
 '================================================================================
-' TEXTBOX STYLING — Flat border, Calibri 10pt, white background
+' TEXTBOX STYLING - Flat border, Calibri 10pt, white background
 '================================================================================
 
 Private Sub StyleTextBox(ByRef txt As MSForms.TextBox)
@@ -117,7 +116,7 @@ Private Sub StyleTextBox(ByRef txt As MSForms.TextBox)
 End Sub
 
 '================================================================================
-' COMBOBOX STYLING — Dropdown list, flat border
+' COMBOBOX STYLING - Dropdown list, flat border
 '================================================================================
 
 Private Sub StyleComboBox(ByRef cbo As MSForms.ComboBox)
@@ -136,7 +135,7 @@ Private Sub StyleComboBox(ByRef cbo As MSForms.ComboBox)
 End Sub
 
 '================================================================================
-' LISTBOX STYLING — Monospace font for data, flat border
+' LISTBOX STYLING - Monospace font for data, flat border
 '================================================================================
 
 Private Sub StyleListBox(ByRef lst As MSForms.ListBox)
@@ -154,7 +153,7 @@ Private Sub StyleListBox(ByRef lst As MSForms.ListBox)
 End Sub
 
 '================================================================================
-' COMMANDBUTTON STYLING — 3 variants: Primary, Secondary, Danger
+' COMMANDBUTTON STYLING - 3 variants: Primary, Secondary, Danger
 '================================================================================
 
 Private Sub StyleCommandButton(ByRef btn As MSForms.CommandButton)
@@ -199,7 +198,7 @@ Private Sub StyleCommandButton(ByRef btn As MSForms.CommandButton)
 End Sub
 
 '================================================================================
-' LABEL STYLING — Context-aware typography
+' LABEL STYLING - Context-aware typography
 '================================================================================
 
 Private Sub StyleLabel(ByRef lbl As MSForms.Label)
@@ -241,7 +240,7 @@ Private Sub StyleLabel(ByRef lbl As MSForms.Label)
 End Sub
 
 '================================================================================
-' FRAME STYLING — Panel containers
+' FRAME STYLING - Panel containers
 '================================================================================
 
 Private Sub StyleFrame(ByRef fra As MSForms.Frame)
@@ -261,7 +260,7 @@ Private Sub StyleFrame(ByRef fra As MSForms.Frame)
 End Sub
 
 '================================================================================
-' TOGGLE STYLING — Checkboxes and option buttons
+' TOGGLE STYLING - Checkboxes and option buttons
 '================================================================================
 
 Private Sub StyleToggle(ByRef ctrl As Object)
@@ -275,7 +274,7 @@ Private Sub StyleToggle(ByRef ctrl As Object)
 End Sub
 
 '================================================================================
-' TAB ORDER — Logical navigation sequence
+' TAB ORDER - Logical navigation sequence
 '================================================================================
 
 Private Sub SetLogicalTabOrder(ByRef frm As Object)
@@ -305,7 +304,7 @@ Private Sub SetLogicalTabOrder(ByRef frm As Object)
 End Sub
 
 '================================================================================
-' FOCUS EFFECTS — Border highlight on focus
+' FOCUS EFFECTS - Border highlight on focus
 '================================================================================
 
 Public Sub ApplyFocusEffect(ByRef ctrl As Object)

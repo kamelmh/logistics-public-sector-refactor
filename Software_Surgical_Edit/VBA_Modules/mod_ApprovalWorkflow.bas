@@ -1,6 +1,11 @@
 Attribute VB_Name = "mod_ApprovalWorkflow"
-' CNEPD PUBLIC SECTOR FIX: 3-Step Approval Workflow
-' Algerian Directorate of Education approval chain
+' ============================================================================
+' Academix v13.2 - DSS Logistique El Bayadh
+' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
+' Direction de l'Éducation - Wilaya d'El Bayadh
+' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
+' All rights reserved. Unauthorized reproduction or distribution prohibited.
+' ============================================================================
 
 Public Enum ApprovalLevel
     magasinier = 1

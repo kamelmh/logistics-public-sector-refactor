@@ -146,7 +146,7 @@ Workflows: feature (explore→plan→build) | fix (debug→build→test) | quali
 - Ch3 (Field diagnosis + ABC/Wilson/CMUP): DONE | Ch4 (Mini ERP + results): DONE
 - Front matter: DONE (intro, abstract AR+FR, glossary, dedication)
 - Supervisor: دهيني ميمونة (مصلحة الميزانيات والاقتصاد)
-- Thesis source: `Thesis_Surgical_Edit\Final_Thesis_Academix_v13_2_FIXED.md`
+- Thesis source: `Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md`
 - Build: `& "Thesis_Surgical_Edit\build-thesis.ps1"` → output DOCX + PDF in `Thesis_Surgical_Edit\output\`
 - Pipeline: pandoc MD→DOCX → Python table/cover formatting → Word COM → PDF
 - Terminology: ❌ "Database"/"Python"/"Hybrid System"/"فرع" → "السجل الرقمي"/"وحدات المعالجة VBA"/"نظام إلكتروني متكامل" instead

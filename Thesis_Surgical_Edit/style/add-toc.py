@@ -105,6 +105,150 @@ def upgrade_to_heading(p, heading_id='3'):
     pStyle.set(f'{W}val', f'Heading{heading_id}')
 
 
+def make_seq_paragraph(seq_name, caption_text='', start_num=None):
+    """Create a paragraph with a Word SEQ field for table/figure captions."""
+    p = OxmlElement('w:p')
+    pPr = OxmlElement('w:pPr')
+    jc = OxmlElement('w:jc')
+    jc.set(f'{W}val', 'right')
+    pPr.append(jc)
+    spacing = OxmlElement('w:spacing')
+    spacing.set(f'{W}before', '120')
+    spacing.set(f'{W}after', '60')
+    pPr.append(spacing)
+    p.append(pPr)
+
+    def styled_run():
+        r = OxmlElement('w:r')
+        rPr = OxmlElement('w:rPr')
+        b = OxmlElement('w:b')
+        rPr.append(b)
+        sz = OxmlElement('w:sz')
+        sz.set(f'{W}val', '24')
+        rPr.append(sz)
+        szCs = OxmlElement('w:szCs')
+        szCs.set(f'{W}val', '24')
+        rPr.append(szCs)
+        r.append(rPr)
+        return r
+
+    r1 = styled_run()
+    fld1 = OxmlElement('w:fldChar')
+    fld1.set(f'{W}fldCharType', 'begin')
+    r1.append(fld1)
+    p.append(r1)
+
+    r2 = styled_run()
+    instr = OxmlElement('w:instrText')
+    instr.set('{http://www.w3.org/XML/1998/namespace}space', 'preserve')
+    instr.text = f' SEQ {seq_name} \\* ARABIC' + (f' \\r {start_num}' if start_num else '') + ' '
+    r2.append(instr)
+    p.append(r2)
+
+    r3 = styled_run()
+    fld2 = OxmlElement('w:fldChar')
+    fld2.set(f'{W}fldCharType', 'separate')
+    r3.append(fld2)
+    p.append(r3)
+
+    r4 = styled_run()
+    tnum = OxmlElement('w:t')
+    tnum.set('{http://www.w3.org/XML/1998/namespace}space', 'preserve')
+    tnum.text = '1'
+    r4.append(tnum)
+    p.append(r4)
+
+    r5 = styled_run()
+    fld3 = OxmlElement('w:fldChar')
+    fld3.set(f'{W}fldCharType', 'end')
+    r5.append(fld3)
+    p.append(r5)
+
+    if caption_text:
+        r6 = styled_run()
+        sep = OxmlElement('w:t')
+        sep.set('{http://www.w3.org/XML/1998/namespace}space', 'preserve')
+        sep.text = f': {caption_text}'
+        r6.append(sep)
+        p.append(r6)
+
+    return p
+
+
+def get_para_text(p):
+    return ''.join(t.text or '' for t in p.iter(f'{W}t')).strip()
+
+def get_para_style(p):
+    pPr = p.find(f'{W}pPr')
+    if pPr is None:
+        return None
+    pStyle = pPr.find(f'{W}pStyle')
+    if pStyle is None:
+        return None
+    return pStyle.get(f'{W}val')
+
+
+def extract_table_caption(text):
+    """Extract just the table caption portion from a paragraph.
+    Looks for patterns like 'الجدول رقم رابعاً:' or 'الجدول رقم 05.' and
+    returns everything from that point onward. Falls back to full text."""
+    import re
+    # Match patterns: الجدول رقم (any text) followed by --- or :
+    m = re.search(r'(الجدول رقم[^:]*?:?\s*-{2,}\s*.+)', text)
+    if m:
+        return m.group(1).strip()
+    # Fallback: match الجدول رقم ... up to ---
+    m = re.search(r'(الجدول رقم.+?(?:---|–|—))', text)
+    if m:
+        return m.group(1).strip()
+    return text.strip()
+
+
+def add_table_captions(body):
+    """Insert SEQ caption fields before each table for LOT capture."""
+    children = list(body)
+    tbl_indices = [i for i, c in enumerate(children) if c.tag == f'{W}tbl']
+    print(f"  Found {len(tbl_indices)} tables, adding SEQ captions...")
+
+    inserted = 0
+    for table_num, idx in enumerate(tbl_indices):
+        actual_idx = idx + table_num
+        children = list(body)
+
+        caption_text = None
+        fallback_heading = None
+        for j in range(actual_idx - 1, max(actual_idx - 5, -1), -1):
+            prev = children[j]
+            if prev.tag == f'{W}tbl':
+                break
+            if prev.tag != f'{W}p':
+                continue
+            prev_text = get_para_text(prev)
+            if not prev_text:
+                continue
+            style = get_para_style(prev)
+            if 'الجدول رقم' in prev_text:
+                caption_text = extract_table_caption(prev_text)
+                break
+            if 'جدول' in prev_text and caption_text is None:
+                caption_text = extract_table_caption(prev_text)
+            if style and style.startswith('Heading') and fallback_heading is None:
+                fallback_heading = prev_text
+            # If we find the SEQ paragraph itself (starts with number + ':'), stop
+            if prev_text and prev_text[0].isdigit() and ':' in prev_text[:5]:
+                break
+
+        if not caption_text:
+            caption_text = fallback_heading or ''
+
+        caption_p = make_seq_paragraph('جدول', caption_text, start_num=table_num + 1)
+        body.insert(actual_idx, caption_p)
+        inserted += 1
+
+    print(f"  {inserted} SEQ caption fields inserted")
+    return inserted
+
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: python add-toc.py <docx_path>")
@@ -148,6 +292,9 @@ def main():
         print(f"  LOT field inserted after قائمة الجداول (P{idx2})")
     else:
         print("  [WARN] قائمة الجداول not found")
+
+    # 3. Add SEQ caption fields before each table (so LOT can capture them)
+    add_table_captions(body)
 
     doc.save(path)
     print(f"Saved: {path}")

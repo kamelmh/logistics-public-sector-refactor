@@ -1,13 +1,12 @@
 Attribute VB_Name = "mod_DemoData"
-'==============================================================================
-' mod_DemoData.bas  -  ERP Academie v13.2
-' Purpose: Generate realistic 38-day test dataset for thesis defense demo
-' Author : Mahi Kamel Abdelghani | CNEPD 2026
-'
-' Data Model:
-'   - 38 observation days (2026-03-01 to 2026-04-07)
-'   - 12 articles (ART-001 to ART-012)
-'   - 3 suppliers (F-001 to F-003)
+' ============================================================================
+' Academix v13.2 - DSS Logistique El Bayadh
+' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
+' Direction de l'Éducation - Wilaya d'El Bayadh
+' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
+' All rights reserved. Unauthorized reproduction or distribution prohibited.
+' ============================================================================
+
 '   - ~150 movements (mix of IN/OUT across all articles)
 '   - Canonical values: D=1546, ROP=205.6, SS=200, Q*=176, LT=2
 '==============================================================================

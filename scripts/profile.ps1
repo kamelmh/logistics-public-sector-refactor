@@ -27,19 +27,23 @@ function cddesk  { Set-Location $script:Desktop; Write-Host "Desktop" -Foregroun
 
 # ── OpenCode Launcher Shortcuts ─────────────────────────────────────────────
 # Rule of thumb:
-#   oc / ol  → Llama 3.3 70B (fast VBA + prose, zero rate limits, daily driver)
+#   oc / ol  → Llama 3.3 70B (fast VBA + prose, daily driver)
 #   og       → Qwen3 32B (fastest explore/debug/audit)
-#   ogg      → Gemma 4 26B (256K ctx, multimodal, via Google AI Studio)
-#   ogm      → Gemini 2.5 Flash (1M ctx, vision, deep analysis)
-#   on       → Nemotron 120B (1M ctx, OpenRouter free — may be 429 rate-limited)
+#   ogg      → Gemma 4 26B (256K ctx, multimodal)
+#   ogg31b   → Gemma 4 31B IT (stronger reasoning)
+#   og3      → Gemini 3 Flash Preview (replaces 2.5 Flash)
+#   oring    → Ring 2.6 1T (Kimi K2.6, 262K ctx, FREE OpenRouter)
+#   on       → Nemotron 120B (1M ctx, OpenRouter free)
 #   ophi4    → Phi4-mini 3.8B (CPU coding, offline)
 #   oo       → Qwen 1.5B (offline fallback, slow)
 function oc     { Push-Location $script:ProjRoot; OpenCode llama; Pop-Location }
 function ol     { Push-Location $script:ProjRoot; OpenCode llama; Pop-Location }
 function og     { Push-Location $script:ProjRoot; OpenCode groq; Pop-Location }
 function ogg    { Push-Location $script:ProjRoot; OpenCode gemma; Pop-Location }
+function ogg31b { Push-Location $script:ProjRoot; OpenCode gemma-31b; Pop-Location }
 function oggl   { Push-Location $script:ProjRoot; OpenCode gemma-local; Pop-Location }
-function ogm    { Push-Location $script:ProjRoot; OpenCode gemini; Pop-Location }
+function og3    { Push-Location $script:ProjRoot; OpenCode gemini3; Pop-Location }
+function oring  { Push-Location $script:ProjRoot; OpenCode ring; Pop-Location }
 function on     { Push-Location $script:ProjRoot; OpenCode nemotron; Pop-Location }
 function ophi4  { Push-Location $script:ProjRoot; OpenCode phi4; Pop-Location }
 function oqwen3 { Push-Location $script:ProjRoot; OpenCode qwen3; Pop-Location }
@@ -47,8 +51,8 @@ function oo     { Push-Location $script:ProjRoot; OpenCode ollama; Pop-Location 
 function opicker { Push-Location $script:ProjRoot; & $script:OcBat "picker"; Pop-Location }
 
 # ── Build & Verify ──────────────────────────────────────────────────────────
-function build  { & "$script:ProjRoot\vbe-auto\build.ps1" -ConfigPath "$script:ProjRoot\vbe-auto\config.json" }
-function verify { & "$script:ProjRoot\vbe-auto\verify.ps1" -ConfigPath "$script:ProjRoot\vbe-auto\config.json" }
+function build  { & "$script:ProjRoot\vbe-auto\build.ps1" -ConfigPath "$script:ProjRoot\vbe-auto\vbe-auto-config.json" }
+function verify { & "$script:ProjRoot\vbe-auto\verify.ps1" -ConfigPath "$script:ProjRoot\vbe-auto\vbe-auto-config.json" }
 function health { & "$script:ProjRoot\scripts\system-health-test.ps1" }
 function thesis { & "$script:ProjRoot\Thesis_Surgical_Edit\build-thesis.ps1" }
 
@@ -90,9 +94,11 @@ Write-Host "health  System test" -ForegroundColor Cyan
 Write-Host "oc/ol   Llama 3.3 70B (fast VBA/prose)" -ForegroundColor Green
 Write-Host "og      Qwen 3 32B (coding, fast)" -ForegroundColor Green
 Write-Host "ogg     Gemma 4 26B (256K ctx, multimodal)" -ForegroundColor Cyan
+Write-Host "ogg31b  Gemma 4 31B IT (stronger reasoning)" -ForegroundColor Cyan
 Write-Host "oggl    Gemma 4 e2b local (128K ctx, offline)" -ForegroundColor DarkCyan
-Write-Host "ogm     Gemini 2.5 Flash (1M ctx, vision)" -ForegroundColor Cyan
-Write-Host "on      Nemotron 120B (1M ctx  429-limited)" -ForegroundColor DarkYellow
+Write-Host "og3     Gemini 3 Flash Preview (replaces 2.5)" -ForegroundColor Cyan
+Write-Host "oring   Ring 2.6 1T / Kimi K2.6 (262K ctx, FREE)" -ForegroundColor Cyan
+Write-Host "on      Nemotron 120B (1M ctx, OpenRouter)" -ForegroundColor DarkYellow
 Write-Host "opicker Model picker (TUI, interactive)" -ForegroundColor Cyan
 Write-Host "oo      Ollama Qwen 1.5B (slow fallback)" -ForegroundColor Yellow
 Write-Host "ophi4   Phi4-mini 3.8B (CPU coding)" -ForegroundColor DarkCyan

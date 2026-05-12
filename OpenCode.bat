@@ -76,6 +76,9 @@ set "GROQ_MODEL=groq/qwen/qwen3-32b"
 set "LLAMA_MODEL=groq/llama-3.3-70b-versatile"
 set "NEMOTRON_MODEL=openrouter/nvidia/nemotron-3-super-120b-a12b:free"
 set "GEMINI_MODEL=google/gemini-2.5-flash"
+set "GEMINI3_MODEL=google/gemini-3-flash-preview"
+set "RING_MODEL=openrouter/inclusionai/ring-2.6-1t:free"
+set "GEMMA4_31B_MODEL=google/gemma-4-31b-it"
 set "GEMMA4_MODEL=google/gemma-4-26b-a4b-it"
 set "OLLAMA_MODEL=ollama/qwen2.5-coder:1.5b"
 set "OLLAMA_FAST_MODEL=ollama/qwen2.5-coder:7b"
@@ -84,7 +87,7 @@ set "OLLAMA_PHI4=ollama/phi4-mini:3.8b-q4_K_M"
 set "OLLAMA_GEMMA4_LOCAL=ollama/gemma4:e2b"
 
 :: ---- Mode Registry (Single Source of Truth) ----
-set "CLI_MODES=cli groq llama gemini gemma gemma-local phi4 qwen3 nemotron ollama"
+set "CLI_MODES=cli groq llama gemini gemini3 gemma gemma-31b gemma-local phi4 qwen3 nemotron ring ollama"
 set "OLLAMA_MODES=phi4 qwen3 gemma-local"
 set "PIPELINE_MODES=autobuild autoverify autotest autoaudit autothesis autocheck autofix autoplan autolog automenu autoclean status crossflow crossflow-sync"
 set "SPECIAL_MODES=gui fcc proxy academix restore picker help"
@@ -137,6 +140,8 @@ for %%m in (%CLI_MODES%) do if /i "!MODE!"=="%%m" goto :%%m
 :: Aliases
 if /i "%MODE%"=="on" goto :nemotron
 if /i "%MODE%"=="ogg" goto :gemma
+if /i "%MODE%"=="g3" goto :gemini3
+if /i "%MODE%"=="ogg-31b" goto :gemma-31b
 if /i "%MODE%"=="ogg-local" goto :gemma-local
 if /i "%MODE%"=="op" goto :picker
 :: Pipeline modes
@@ -279,6 +284,15 @@ cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%GEMINI_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
+:gemini3
+title %WINDOW_TITLE%
+echo [OpenCode] Launching with Google Gemini 3 Flash Preview — Session: %SESSION_NAME%
+echo   Model: %GEMINI3_MODEL%
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "%GEMINI3_MODEL%" "%PROJECT_ROOT%"
+goto :end
+
 :gemma
 title %WINDOW_TITLE%
 echo [OpenCode] Launching with Google Gemma 4 26B — Session: %SESSION_NAME%
@@ -286,6 +300,15 @@ echo   Model: %GEMMA4_MODEL% (256K context, multimodal)
 echo.
 cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%GEMMA4_MODEL%" "%PROJECT_ROOT%"
+goto :end
+
+:gemma-31b
+title %WINDOW_TITLE%
+echo [OpenCode] Launching with Google Gemma 4 31B IT — Session: %SESSION_NAME%
+echo   Model: %GEMMA4_31B_MODEL% (32K context, stronger reasoning)
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "%GEMMA4_31B_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
 :gemma-local
@@ -319,6 +342,15 @@ echo   Model: %OLLAMA_QWEN3%
 echo.
 cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%OLLAMA_QWEN3%" "%PROJECT_ROOT%"
+goto :end
+
+:ring
+title %WINDOW_TITLE%
+echo [OpenCode] Launching with Ring 2.6 1T (Kimi K2.6) — Session: %SESSION_NAME%
+echo   Model: %RING_MODEL% (262K context, free, OpenRouter)
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "%RING_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
 :ollama
@@ -600,8 +632,11 @@ for %%m in (%CLI_MODES%) do (
     if "%%m"=="groq" set "_d=Qwen3 32B (fast)"
     if "%%m"=="llama" set "_d=Llama 3.3 70B (VBA + prose)"
     if "%%m"=="gemini" set "_d=Gemini 2.5 Flash (1M ctx)"
+    if "%%m"=="gemini3" set "_d=Gemini 3 Flash (NEW — replaces 2.5 Flash)"
     if "%%m"=="gemma" set "_d=Gemma 4 26B (256K ctx, multimodal)"
+    if "%%m"=="gemma-31b" set "_d=Gemma 4 31B IT (stronger reasoning)"
     if "%%m"=="gemma-local" set "_d=Gemma 4 e2b (Ollama, 128K, offline)"
+    if "%%m"=="ring" set "_d=Ring 2.6 1T (Kimi K2.6, free, OpenRouter)"
     if "%%m"=="phi4" set "_d=Phi4-mini 3.8B (CPU coding)"
     if "%%m"=="qwen3" set "_d=Qwen3 1.7B (CPU reasoning)"
     if "%%m"=="nemotron" set "_d=Nemotron 120B (1M ctx)"
@@ -680,10 +715,15 @@ echo   llama      CLI with Groq Llama 3.3 70B
 echo   nemotron   CLI with Nemotron 120B (OpenRouter free)
 echo   on         Alias for nemotron
 echo   fcc        CLI via FCC proxy (auto-start)
-echo   gemini     CLI with Google Gemini 2.5 Flash
-echo   gemma      CLI with Google Gemma 4 26B (256K ctx, multimodal)
-echo   ogg        Alias for gemma
-echo   gemma-local CLI with Ollama Gemma 4 e2b (128K ctx, offline)
+  echo   gemini     CLI with Google Gemini 2.5 Flash (quota limited)
+  echo   gemini3    CLI with Google Gemini 3 Flash Preview (replaces 2.5 Flash)
+  echo   g3         Alias for gemini3
+  echo   gemma      CLI with Google Gemma 4 26B (256K ctx, multimodal)
+  echo   ogg        Alias for gemma
+  echo   gemma-31b  CLI with Google Gemma 4 31B IT (32K ctx, stronger reasoning)
+  echo   ogg-31b    Alias for gemma-31b
+  echo   gemma-local CLI with Ollama Gemma 4 e2b (128K ctx, offline)
+  echo   ring       CLI with Ring 2.6 1T (Kimi K2.6, 262K ctx, free OpenRouter)
 echo   ogg-local  Alias for gemma-local
 echo   phi4       CLI with phi4-mini:3.8b (CPU, offline)
 echo   qwen3      CLI with qwen3:1.7b (CPU, offline)

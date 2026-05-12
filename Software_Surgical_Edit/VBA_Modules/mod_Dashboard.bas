@@ -1,4 +1,12 @@
 Attribute VB_Name = "mod_Dashboard"
+' ============================================================================
+' Academix v13.2 - DSS Logistique El Bayadh
+' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
+' Direction de l'Éducation - Wilaya d'El Bayadh
+' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
+' All rights reserved. Unauthorized reproduction or distribution prohibited.
+' ============================================================================
+
 Option Explicit
 
 '=======================================================================================
@@ -30,7 +38,10 @@ Public Sub RefreshDashboard()
     ' 4. Update ABC-XYZ Summary
     Call UpdateABCXYZSummary(ws)
     
-    ' 5. Final Touch: Update timestamp
+    ' 5. Update Stockout Projection Table
+    Call UpdateProjection(ws)
+    
+    ' 6. Final Touch: Update timestamp
     ws.Range("B1").Value = "Derniere actualisation : " & Format(Now, "DD/MM/YYYY HH:MM:SS")
     ws.Range("B1").Font.Size = 8
     ws.Range("B1").Font.Italic = True
@@ -197,6 +208,100 @@ Private Sub UpdateABCXYZSummary(ws As Worksheet)
     
     ws.Range("I3:J" & rowNum - 1).Borders.LineStyle = xlContinuous
     ws.Columns("I:J").AutoFit
+End Sub
+
+'--------------------------------------------------------------------------------------
+' HELPER: Update Stockout Projection Table
+' Calculates consumption velocity, days to stockout, and projected date.
+' Outputs to columns L-O on the DASHBOARD sheet.
+'--------------------------------------------------------------------------------------
+Private Sub UpdateProjection(ws As Worksheet)
+    Dim wsMouv As Worksheet: Set wsMouv = ThisWorkbook.Sheets(mod_Config.SHEET_MOUVEMENTS)
+    Dim wsArt As Worksheet: Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
+    Dim lastMouv As Long: lastMouv = wsMouv.Cells(wsMouv.Rows.Count, COL_MOUV_DATE).End(xlUp).Row
+    Dim lastArt As Long: lastArt = wsArt.Cells(wsArt.Rows.Count, COL_ART_CODE).End(xlUp).Row
+    Dim i As Long, j As Long
+    
+    ' Step 1: Aggregate total OUT qty per article
+    Dim dict As Object: Set dict = CreateObject("Scripting.Dictionary")
+    For i = 2 To lastMouv
+        If Trim(wsMouv.Cells(i, COL_MOUV_TYPE).Value) = "OUT" Then
+            Dim artCode As String: artCode = Trim(wsMouv.Cells(i, COL_MOUV_CODE_ARTICLE).Value)
+            Dim qty As Double: qty = mod_Utilities.SafeVal(wsMouv.Cells(i, COL_MOUV_QTE).Value)
+            If dict.Exists(artCode) Then
+                dict(artCode) = CDbl(dict(artCode)) + qty
+            Else
+                dict.Add artCode, qty
+            End If
+        End If
+    Next i
+    
+    ' Step 2: Write projection table
+    Dim startCol As Long: startCol = 12
+    ws.Cells(1, startCol).Value = "Projection des Ruptures"
+    ws.Range(ws.Cells(1, startCol), ws.Cells(1, startCol + 3)).Merge
+    ws.Cells(1, startCol).Font.Bold = True
+    ws.Cells(1, startCol).Font.Size = 10
+    
+    ws.Range(ws.Cells(2, startCol), ws.Cells(2, startCol + 3)).Value = _
+        Array("Article", "Stock", "Cons./Jour", "Jours Rest.")
+    With ws.Range(ws.Cells(2, startCol), ws.Cells(2, startCol + 3))
+        .Interior.Color = RGB(0, 70, 127)
+        .Font.Color = RGB(255, 255, 255)
+        .Font.Bold = True
+        .HorizontalAlignment = xlCenter
+        .Font.Size = 8
+    End With
+    
+    Dim rowNum As Long: rowNum = 3
+    For i = 2 To lastArt
+        artCode = Trim(wsArt.Cells(i, COL_ART_CODE).Value)
+        If artCode <> "" Then
+            Dim stock As Double: stock = mod_Utilities.SafeVal(wsArt.Cells(i, COL_ART_STOCK).Value)
+            Dim totalOut As Double
+            If dict.Exists(artCode) Then totalOut = CDbl(dict(artCode)) Else totalOut = 0
+            
+            Dim dailyCons As Double
+            If mod_Config.OBSERVATION_DAYS > 0 Then
+                dailyCons = totalOut / mod_Config.OBSERVATION_DAYS
+            Else
+                dailyCons = 0
+            End If
+            
+            ws.Cells(rowNum, startCol).Value = artCode
+            ws.Cells(rowNum, startCol).Font.Size = 8
+            ws.Cells(rowNum, startCol + 1).Value = stock
+            ws.Cells(rowNum, startCol + 1).Font.Size = 8
+            
+            If dailyCons > 0 Then
+                Dim daysLeft As Double: daysLeft = stock / dailyCons
+                ws.Cells(rowNum, startCol + 2).Value = Round(dailyCons, 2)
+                ws.Cells(rowNum, startCol + 2).Font.Size = 8
+                ws.Cells(rowNum, startCol + 3).Value = Round(daysLeft, 0)
+                ws.Cells(rowNum, startCol + 3).Font.Size = 8
+                
+                If daysLeft < 30 Then
+                    ws.Range(ws.Cells(rowNum, startCol), ws.Cells(rowNum, startCol + 3)) _
+                        .Interior.Color = RGB(255, 200, 200)
+                ElseIf daysLeft < 60 Then
+                    ws.Range(ws.Cells(rowNum, startCol), ws.Cells(rowNum, startCol + 3)) _
+                        .Interior.Color = RGB(255, 243, 205)
+                End If
+            Else
+                ws.Cells(rowNum, startCol + 2).Value = 0
+                ws.Cells(rowNum, startCol + 2).Font.Size = 8
+                ws.Cells(rowNum, startCol + 3).Value = "N/A"
+                ws.Cells(rowNum, startCol + 3).Font.Size = 8
+            End If
+            
+            rowNum = rowNum + 1
+        End If
+    Next i
+    
+    If rowNum > 3 Then
+        ws.Range(ws.Cells(3, startCol), ws.Cells(rowNum - 1, startCol + 3)).Borders.LineStyle = xlContinuous
+    End If
+    ws.Columns("L:O").AutoFit
 End Sub
 
 '--------------------------------------------------------------------------------------
