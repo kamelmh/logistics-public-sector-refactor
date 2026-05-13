@@ -44,8 +44,19 @@ def measure_source(source_path):
         authors = c.split(',')[0].strip()
         found = False
         for ra in ref_authors:
-            if any(a.replace('.','').strip() in ra.replace('.','') for a in authors.replace(' & ', ', ').split(',') if len(a.strip()) > 2):
-                found = True
+            for a in authors.replace(' & ', ', ').split(','):
+                a_clean = a.replace('.', '').strip()
+                if len(a_clean) <= 2:
+                    continue
+                ra_clean = ra.replace('.', '')
+                if a_clean in ra_clean:
+                    found = True
+                    break
+                first_word = a_clean.split()[0] if a_clean.split() else ''
+                if len(first_word) > 2 and first_word in ra_clean:
+                    found = True
+                    break
+            if found:
                 break
         if not found and authors not in ['Harris']:
             missing_from_bib.append(c)

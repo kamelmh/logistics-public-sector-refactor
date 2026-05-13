@@ -152,7 +152,10 @@ if (Test-Path $coverDocx) {
 # === 3.5 REFERENCE INTEGRITY CHECK ===
 Heading "3.5. Reference Integrity"
 try {
+    $origRefDir = Get-Location
+    Set-Location -LiteralPath $root
     $refCheck = python (Join-Path $root "style" "inject-references.py") --check-only 2>&1
+    Set-Location -LiteralPath $origRefDir
     $refHasIssues = $refCheck | Select-String -Pattern "ERROR|WARNING"
     if (-not $refHasIssues) {
         Check "Reference integrity (master JSON matches .md)" { $true } "Reference validation failed"
@@ -164,7 +167,8 @@ try {
     $refCount = (Get-Content $refJson | ConvertFrom-Json).Count
     Check "Master JSON has 56 entries" { $refCount -eq 56 } "Has $refCount entries (expected 56)"
     $pdfMap = Join-Path $root "refs" "pdf-mapping.json"
-    $pdfCount = (Get-Content $pdfMap | ConvertFrom-Json | Measure-Object).Count
+    $pdfObj = (Get-Content $pdfMap | ConvertFrom-Json)
+    $pdfCount = ($pdfObj | Get-Member -MemberType NoteProperty).Count
     Check "PDF mapping has 30 entries" { $pdfCount -eq 30 } "Has $pdfCount entries (expected 30)"
 } catch {
     Warn "Reference integrity check failed: $_"

@@ -54,19 +54,22 @@ if (-not (Test-Path $refDocx)) {
 
 # Step 1.5: Build master-references.json from thesis .md
 Write-Host "[1.5/10] Building master reference index..." -ForegroundColor Yellow
+$origDir = Get-Location
 try {
+    Set-Location -LiteralPath $root
     python (Join-Path $root "tools" "build-master-refs.py") 2>&1
 } catch {
     Write-Host "  [WARN] Master reference build failed: $_" -ForegroundColor Yellow
-}
+} finally { Set-Location -LiteralPath $origDir }
 
 # Step 1.6: Validate reference integrity
 Write-Host "[1.6/10] Validating reference integrity..." -ForegroundColor Yellow
 try {
+    Set-Location -LiteralPath $root
     python (Join-Path $style "inject-references.py") --check-only 2>&1
 } catch {
     Write-Host "  [WARN] Reference validation failed: $_" -ForegroundColor Yellow
-}
+} finally { Set-Location -LiteralPath $origDir }
 
 # Step 2: Build DOCX with pandoc
 $sourcePath = Join-Path $root $SourceMD
@@ -273,6 +276,24 @@ try {
     }
     $manifest | ConvertTo-Json -Depth 4 | Set-Content $manifestPath -Encoding UTF8
     Write-Host "  Manifest: src=$($srcHash.Substring(0,12)) docx=$($docxHash.Substring(0,12)) pdf=$($pdfHash.Substring(0,12))" -ForegroundColor Green
+    # Also update thesis-state.json (tracked by git, survives sessions)
+    $statePath = Join-Path $root "thesis-state.json"
+    $state = if (Test-Path $statePath) { Get-Content $statePath | ConvertFrom-Json } else { @{} }
+    if (-not $state.PSObject.Properties.Name -contains "manifest_history") {
+        $state | Add-Member -NotePropertyName "manifest_history" -NotePropertyValue @() -Force
+    }
+    if ($state.PSObject.Properties.Name -contains "golden_baseline") {
+        $state.manifest_history += $state.golden_baseline
+    }
+    $state | Add-Member -NotePropertyName "golden_baseline" -NotePropertyValue @{
+        build_id  = $buildId
+        timestamp = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+        source    = @{ file = $SourceMD; md5 = $srcHash; size_kb = [math]::Round((Get-Item $sourcePath).Length/1KB, 1) }
+        outputs   = @{ docx = @{ md5 = $docxHash; size_kb = $docxSizeKb }; pdf = @{ md5 = $pdfHash; size_kb = $pdfSizeKb } }
+        verify    = $verifyBlock
+    } -Force
+    $state | ConvertTo-Json -Depth 5 | Set-Content $statePath -Encoding UTF8
+    Write-Host "  State: golden_baseline updated, $($state.manifest_history.Count) prior builds archived" -ForegroundColor Green
 } catch {
     Write-Host "  [WARN] Manifest write failed: $_" -ForegroundColor Yellow
 }
