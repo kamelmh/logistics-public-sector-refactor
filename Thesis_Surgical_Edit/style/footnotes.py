@@ -80,6 +80,9 @@ def create_footnote(footnotes_part, citation_text):
     pPr = etree.SubElement(p, qn('w:pPr'))
     pStyle = etree.SubElement(pPr, qn('w:pStyle'))
     pStyle.set(qn('w:val'), 'FootnoteText')
+    bidi = etree.SubElement(pPr, qn('w:bidi'))
+    jc = etree.SubElement(pPr, qn('w:jc'))
+    jc.set(qn('w:val'), 'right')
 
     r1 = etree.SubElement(p, qn('w:r'))
     rPr1 = etree.SubElement(r1, qn('w:rPr'))

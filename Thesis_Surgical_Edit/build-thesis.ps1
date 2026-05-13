@@ -52,6 +52,22 @@ if (-not (Test-Path $refDocx)) {
     exit 1
 }
 
+# Step 1.5: Build master-references.json from thesis .md
+Write-Host "[1.5/10] Building master reference index..." -ForegroundColor Yellow
+try {
+    python (Join-Path $root "tools" "build-master-refs.py") 2>&1
+} catch {
+    Write-Host "  [WARN] Master reference build failed: $_" -ForegroundColor Yellow
+}
+
+# Step 1.6: Validate reference integrity
+Write-Host "[1.6/10] Validating reference integrity..." -ForegroundColor Yellow
+try {
+    python (Join-Path $style "inject-references.py") --check-only 2>&1
+} catch {
+    Write-Host "  [WARN] Reference validation failed: $_" -ForegroundColor Yellow
+}
+
 # Step 2: Build DOCX with pandoc
 $sourcePath = Join-Path $root $SourceMD
 if (-not (Test-Path $sourcePath)) {
@@ -142,11 +158,19 @@ try {
     Write-Host "  [WARN] TOC insertion failed: $_" -ForegroundColor Yellow
 }
 
+# Step 4.8: Rebuild cover-page.docx from archive (python-docx native, Word-safe)
+Write-Host "[4.8/10] Rebuilding cover-page.docx from archive..." -ForegroundColor Yellow
+try {
+    python (Join-Path $style "build-cover-page.py") 2>&1
+} catch {
+    Write-Host "  [WARN] Cover rebuild failed: $_" -ForegroundColor Yellow
+}
+
 # Step 4.875: Prepend cover-page.docx (before page numbering — cover gets no page number)
 Write-Host "[4.875/10] Prepending cover-page.docx (as-is)..." -ForegroundColor Yellow
 try {
     python (Join-Path $style "prepend-cover.py") $docx 2>&1
-    Write-Host "  Cover page prepended from cover-page.docx (original formatting preserved)" -ForegroundColor Green
+    Write-Host "  Cover page prepended from cover-page.docx" -ForegroundColor Green
 } catch {
     Write-Host "  [WARN] Cover prepend failed: $_" -ForegroundColor Yellow
 }
@@ -163,22 +187,20 @@ try {
 # Step 5: Generate PDF via Word (with field update)
 $pdf = Join-Path $outDir "$OutputName.pdf"
 Write-Host "[5/10] Generating PDF via Word (updating fields)..." -ForegroundColor Yellow
+# Kill any stale Word instances BEFORE spawning COM (prevents orphan accumulation)
+Get-Process -Name WINWORD -ErrorAction SilentlyContinue | Stop-Process -Force
+Start-Sleep -Milliseconds 500
 try {
     $word = New-Object -ComObject Word.Application
     $word.Visible = $false
     $word.DisplayAlerts = 0
     $wdDoc = $word.Documents.Open((Resolve-Path $docx).Path)
-    # Update all fields — this updates SEQ fields to correct numbers
     $wdDoc.Fields.Update() | Out-Null
     $wdDoc.Fields.Update() | Out-Null
-    # Now update TOC and LOT specifically (they need fresh SEQ values)
     try { $wdDoc.TablesOfContents.Item(1).Update() } catch { }
     try { $wdDoc.TablesOfFigures.Item(1).Update() } catch { }
-    # One more full pass to lock all cross-references
     $wdDoc.Fields.Update() | Out-Null
-    # Save DOCX with resolved fields (for verification + next build reference)
     $wdDoc.Save()
-    # Export PDF
     $wdDoc.SaveAs2((Resolve-Path $outDir).Path + "\$OutputName.pdf", 17)
     $wdDoc.Close()
     $word.Quit()
@@ -187,6 +209,14 @@ try {
 } catch {
     Write-Host "  [WARN] PDF via Word failed: $_" -ForegroundColor Yellow
     Write-Host "  Open $docx in Word and save as PDF manually." -ForegroundColor Yellow
+} finally {
+    # Force cleanup of COM objects to prevent orphaned WINWORD processes
+    if ($wdDoc) { try { [System.Runtime.Interopservices.Marshal]::ReleaseComObject($wdDoc) } catch {} }
+    if ($word)  { try { [System.Runtime.Interopservices.Marshal]::ReleaseComObject($word)  } catch {} }
+    [System.GC]::Collect()
+    [System.GC]::WaitForPendingFinalizers()
+    Start-Sleep -Milliseconds 500
+    Get-Process -Name WINWORD -ErrorAction SilentlyContinue | Stop-Process -Force
 }
 
 # Step 6: Verify output (basic)
@@ -212,27 +242,43 @@ try {
     Write-Host "  [WARN] Deep verification error: $_" -ForegroundColor Yellow
 }
 
-# Step 8: Update build manifest with source hash
-Write-Host "[8/10] Updating build manifest..." -ForegroundColor Yellow
+# Step 8: Measure build metrics
+Write-Host "[8/10] Measuring build metrics..." -ForegroundColor Yellow
+try {
+    python (Join-Path $style "measure-thesis.py") $docx $sourcePath 2>&1
+    python (Join-Path $style "compare-thesis.py") 2>&1
+} catch {
+    Write-Host "  [WARN] Metrics step failed: $_" -ForegroundColor Yellow
+}
+
+# Step 9: Persist build manifest with source + output hashes + metrics
+Write-Host "[9/10] Persisting build manifest..." -ForegroundColor Yellow
 try {
     $manifestPath = Join-Path $outDir "build-manifest.json"
     $srcHash = (Get-FileHash $sourcePath -Algorithm MD5).Hash
-    if (Test-Path $manifestPath) {
-        $manifest = Get-Content $manifestPath | ConvertFrom-Json
-        $manifest | Add-Member -NotePropertyName $SourceMD -NotePropertyValue @{
-            md5 = $srcHash
-            size_kb = [math]::Round((Get-Item $sourcePath).Length/1KB, 1)
-            mtime = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
-        } -Force
-        $manifest | ConvertTo-Json | Set-Content $manifestPath -Encoding UTF8
+    $docxHash = if (Test-Path $docx) { (Get-FileHash $docx -Algorithm MD5).Hash } else { "N/A" }
+    $pdfHash  = if (Test-Path $pdf)  { (Get-FileHash $pdf  -Algorithm MD5).Hash } else { "N/A" }
+    $metricsPath = Join-Path $outDir "metrics" "latest.json"
+    $metrics = if (Test-Path $metricsPath) { Get-Content $metricsPath | ConvertFrom-Json } else { $null }
+    $buildId     = if ($metrics) { $metrics.build_id } else { "manual-$(Get-Date -Format 'yyyyMMdd-HHmmss')" }
+    $docxSizeKb  = if (Test-Path $docx) { [math]::Round((Get-Item $docx).Length/1KB) } else { 0 }
+    $pdfSizeKb   = if (Test-Path $pdf)  { [math]::Round((Get-Item $pdf).Length/1KB) }  else { 0 }
+    $verifyBlock = if ($metrics) { @{ total = $metrics.verify.total_checks; passed = $metrics.verify.passed; failed = $metrics.verify.failed } } else { @{} }
+    $manifest = @{
+        build_id  = $buildId
+        timestamp = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+        source    = @{ file = $SourceMD; md5 = $srcHash; size_kb = [math]::Round((Get-Item $sourcePath).Length/1KB, 1) }
+        outputs   = @{ docx = @{ md5 = $docxHash; size_kb = $docxSizeKb }; pdf = @{ md5 = $pdfHash; size_kb = $pdfSizeKb } }
+        verify    = $verifyBlock
     }
-    Write-Host "  Source MD5 saved to manifest: $($srcHash.Substring(0,12))..." -ForegroundColor Green
+    $manifest | ConvertTo-Json -Depth 4 | Set-Content $manifestPath -Encoding UTF8
+    Write-Host "  Manifest: src=$($srcHash.Substring(0,12)) docx=$($docxHash.Substring(0,12)) pdf=$($pdfHash.Substring(0,12))" -ForegroundColor Green
 } catch {
-    Write-Host "  [WARN] Manifest update: $_" -ForegroundColor Yellow
+    Write-Host "  [WARN] Manifest write failed: $_" -ForegroundColor Yellow
 }
 
-# Step 9: Done
-Write-Host "[9/10] Complete" -ForegroundColor Yellow
+# Step 10: Done
+Write-Host "[10/10] Complete" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "=== BUILD COMPLETE ===" -ForegroundColor Green
 Write-Host "DOCX: $docx" -ForegroundColor Cyan

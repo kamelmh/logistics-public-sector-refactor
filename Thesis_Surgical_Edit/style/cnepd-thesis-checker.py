@@ -38,7 +38,7 @@ def check_file(path):
 
 
 def check_constant(text, name, expected, context="document"):
-    pattern = re.compile(r'%s\s*[=:]\s*([\d,.%]+)' % re.escape(name))
+    pattern = re.compile(r'%s\s*[=:]\s*([\d,.%%%%]+)' % re.escape(name))
     matches = pattern.findall(text)
     if not matches:
         return f"⚠ {name}: not found in {context}"

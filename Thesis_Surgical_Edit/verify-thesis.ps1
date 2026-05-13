@@ -149,6 +149,27 @@ if (Test-Path $coverDocx) {
     Warn "Cover DOCX not found at $coverDocx"
 }
 
+# === 3.5 REFERENCE INTEGRITY CHECK ===
+Heading "3.5. Reference Integrity"
+try {
+    $refCheck = python (Join-Path $root "style" "inject-references.py") --check-only 2>&1
+    $refHasIssues = $refCheck | Select-String -Pattern "ERROR|WARNING"
+    if (-not $refHasIssues) {
+        Check "Reference integrity (master JSON matches .md)" { $true } "Reference validation failed"
+    } else {
+        Warn "Reference integrity issues found. Run inject-references.py --check-only for details."
+        foreach ($issue in $refHasIssues) { Write-Host "    $issue" -ForegroundColor Yellow }
+    }
+    $refJson = Join-Path $root "refs" "master-references.json"
+    $refCount = (Get-Content $refJson | ConvertFrom-Json).Count
+    Check "Master JSON has 56 entries" { $refCount -eq 56 } "Has $refCount entries (expected 56)"
+    $pdfMap = Join-Path $root "refs" "pdf-mapping.json"
+    $pdfCount = (Get-Content $pdfMap | ConvertFrom-Json | Measure-Object).Count
+    Check "PDF mapping has 30 entries" { $pdfCount -eq 30 } "Has $pdfCount entries (expected 30)"
+} catch {
+    Warn "Reference integrity check failed: $_"
+}
+
 # === 4. OLD vs NEW COMPARISON ===
 Heading "4. Old vs New Build Comparison"
 
@@ -292,7 +313,7 @@ if (Test-Path $currentManifestPath) {
 # === 8. METADATA CHECK ===
 Heading "8. Document Metadata"
 
-$metaYaml = Join-Path $PSScriptRoot "style" "thesis-metadata.yaml"
+$metaYaml = Join-Path (Join-Path $PSScriptRoot "style") "thesis-metadata.yaml"
 if (Test-Path $metaYaml) {
     $metaContent = Get-Content $metaYaml -Raw
     Check "Metadata has title" { $metaContent -match "title" } "Missing title in metadata"

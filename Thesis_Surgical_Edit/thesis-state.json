@@ -1,0 +1,28 @@
+{
+  "golden_baseline": {
+    "timestamp": "2026-05-13 18:56:03",
+    "build_id": "20260513-185602",
+    "source": {
+      "file": "Memoire_DSS_Logistique_ElBayadh.md",
+      "md5": "5BA2BD8F5CD76FE8BA6680F30BF24384",
+      "size_kb": 118.8,
+      "lines": 763
+    },
+    "outputs": {
+      "docx": {
+        "md5": "5E987B7A2263C9E6F56DCCE5F74D19CB",
+        "size_kb": 107
+      },
+      "pdf": {
+        "md5": "FBE729D62B76CE880A179EB9C5FAE103",
+        "size_kb": 969
+      }
+    },
+    "verify": {
+      "total": 32,
+      "passed": 31,
+      "failed": 0
+    }
+  },
+  "manifest_history": []
+}
