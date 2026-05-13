@@ -423,7 +423,7 @@ Public Function FuzzySearchArticle(ByVal inputText As String, Optional ByVal thr
     If count = 0 Then
         FuzzySearchArticle = Array()
     Else
-        Dim ret(1 To count, 1 To 3) As Variant
+        ReDim ret(1 To count, 1 To 3) As Variant
         For i = 1 To count
             ret(i, 1) = results(i, 1)
             ret(i, 2) = results(i, 2)

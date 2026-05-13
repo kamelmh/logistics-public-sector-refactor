@@ -82,6 +82,8 @@
     <omc-state>C:\Users\Administrator\.omc\state\</omc-state>
     <fcc-proxy>C:\Users\Administrator\free-claude-code\</fcc-proxy>
     <launcher>C:\Users\Administrator\Desktop\OpenCode.bat</launcher>
+    <freellm-gateway>C:\Users\Administrator\.opencode\plugins\freellm\</freellm-gateway>
+    <freellm-launcher>scripts\freellm-launcher.ps1</freellm-launcher>
     <handoff-dir>C:\Users\Administrator\Desktop\</handoff-dir>
   </paths>
 
@@ -107,7 +109,7 @@
   </pipeline>
 
   <!-- ===== LAUNCHER MODES (OpenCode.bat) ===== -->
-  <launcher path="C:\Users\Administrator\Desktop\OpenCode.bat" version="3.1">
+  <launcher path="C:\Users\Administrator\Desktop\OpenCode.bat" version="3.6">
     <mode name="cli"     model="opencode/big-pickle" desc="Default CLI" />
     <mode name="gui"     model="gui" desc="Desktop GUI v1.14.42" />
     <mode name="groq"    model="groq/llama-3.3-70b-versatile" desc="AI backend primary" />
@@ -117,9 +119,11 @@
     <mode name="gemma-local" model="ollama/gemma4:e2b" desc="128K ctx, offline, 7.2GB" />
     <mode name="ogg-local" model="ollama/gemma4:e2b" desc="Alias for gemma-local" />
     <mode name="ollama"  model="ollama" desc="Ollama model picker (4 models)" />
+    <mode name="freellm" model="freellm/free" desc="FreeLLM gateway (6 providers, 27 models, auto-failover)" />
     <mode name="phi4"    model="ollama/phi4-mini:3.8b-q4_K_M" desc="CPU coding" />
     <mode name="qwen3"   model="ollama/qwen3:1.7b" desc="CPU reasoning" />
     <mode name="fcc"     model="fcc-proxy" desc="Nemotron 120B via FCC" />
+    <mode name="completions" model="completions/claude-opus-4.6" desc="Completions.me — free Claude Opus 4.6, GPT-5.2" />
     <mode name="proxy"   desc="FCC server only (background)" />
     <mode name="academix" desc="Interactive dashboard" />
     <mode name="restore" desc="Restore last session mode" />
@@ -154,13 +158,18 @@
     <backend name="Google Gemini 2.5 Flash" ctx="1M" speed="~2s" cost="free" role="Large context, multimodal" />
     <backend name="Google Gemma 4 26B"    ctx="256K" speed="~2s" cost="free" role="Multimodal, vision, open-weight (Apache 2.0)" />
     <backend name="Google Gemma 4 31B"    ctx="32K" speed="~2s" cost="free" role="Stronger reasoning, dense model" />
-    <backend name="OpenRouter Nemotron 120B" ctx="1M" speed="~3s" cost="free" role="Massive context, FCC proxy" />
-    <backend name="OpenRouter Qwen3 Coder 480B" ctx="1M" speed="~3s" cost="free" role="Code generation" note="429-limited" />
+    <backend name="Cerebras Qwen3 235B"    ctx="128K" speed="~1s"  cost="free" role="Code generation (via FreeLLM)" />
+    <backend name="Cerebras GPT-OSS 120B"  ctx="128K" speed="~1s"  cost="free" role="General reasoning (via FreeLLM)" />
+    <backend name="Cloudflare Llama 3.3 70B" ctx="128K" speed="~2s" cost="free" role="Hosted Llama (via FreeLLM)" />
+    <backend name="GitHub Models GPT-4o-mini" ctx="128K" speed="~2s" cost="free" role="OpenAI models (via FreeLLM)" />
+    <backend name="Completions.me Claude Opus 4.6" ctx="200K" speed="~2s" cost="free" role="Free unlimited Claude/GPT (direct provider)" note="No rate limits, data logged" />
+    <backend name="OpenRouter Nemotron 120B" ctx="1M" speed="~3s" cost="free" role="FALLBACK — 1M context" note="Deprecated in favor of FreeLLM routes" />
     <backend name="Ollama Qwen 1.5B"      ctx="32K"  speed="~95s" cost="free" role="Offline emergency" />
     <backend name="Ollama Qwen 7B"        ctx="32K"  speed="~30s" cost="free" role="Offline moderate" />
     <backend name="Ollama Qwen3 1.7B"     ctx="16K"  speed="~40s" cost="free" role="CPU reasoning" />
     <backend name="Ollama Phi4-mini 3.8B"  ctx="16K"  speed="~25s" cost="free" role="CPU coding (best quality)" />
     <backend name="Ollama Gemma 4 e2b"     ctx="128K" speed="~40-60s" cost="free" role="Offline Gemma 4 (text+image)" />
+    <backend name="FreeLLM Gateway"        ctx="varies" speed="varies" cost="free" role="Local aggregator (6 providers): Groq, Gemini, Cerebras, Cloudflare, GitHub Models, Ollama — 27 models, auto-failover" />
   </ai-backends>
 
   <!-- ===== RALPH LOOP (self-referential improvement) ===== -->
@@ -185,7 +194,7 @@
     <issue fixed="true">MASTER_PWD cross-module → use Property Get</issue>
     <issue fixed="true">Comments between _ continuations → parser breaks</issue>
     <issue workaround="true">Stale p-code cache → always rebuild from scratch, never modify .xlsm</issue>
-    <issue active="true">Venice-routed models (qwen3-coder, llama-3.3, gemma-4 on OpenRouter) → 429 rate-limited</issue>
+    <issue fixed="true">Venice-routed models (qwen3-coder on OpenRouter) → 429 rate-limited — replaced by FreeLLM Cerebras Qwen3 235B</issue>
     <issue active="true">Anthropic API key may be truncated in opencode.json → regenerate if paid needed</issue>
   </known-issues>
 

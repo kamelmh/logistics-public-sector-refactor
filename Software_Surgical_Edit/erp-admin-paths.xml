@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<admin-paths version="13.2" date="2026-05-09">
+<admin-paths version="13.2" date="2026-05-12">
   <project-root>C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor</project-root>
   <source-directories>
     <dir key="vba-modules">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\VBA_Modules\</dir>
@@ -13,12 +13,12 @@
     <file key="master">C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\ERP_Academie_v13_Master.xlsm</file>
   </workbooks>
   <vba>
-    <modules count="36" source-files="29">29 .bas exported as source</modules>
-    <forms count="1">frmStockEntry.frm (553 lines, 16 controls)</forms>
+    <modules count="37" source-files="37">37 .bas exported as source</modules>
+    <forms count="1">frmStockEntry.frm (1008 lines, 16 controls)</forms>
     <classes count="1">ThisWorkbook.cls</classes>
-    <total-lines>10551</total-lines>
+    <total-lines>12535</total-lines>
     <compile-errors>0</compile-errors>
-    <sheets count="25">ACCUEIL, ARTICLES, FOURNISSEURS, CONVENTIONS, MOUVEMENTS, TABLEAU_DE_BORD, ALERTE_DASHBOARD, INVENTAIRE, RAPPORTS, CALCULS_EOQ, HISTORIQUE, BON_RECEPTION, BON_SORTIE, BON_COMMANDE, DA_DEMANDE_ACHAT, GUIDE, VBA_MODULES, AUDIT_LOG, DASHBOARD, FORM_INPUT, BORDEREAU_COMMANDE, STAGING_BUFFER, SYS_STRINGS, RECEIPT_TAG, TEMPLATE_BON</sheets>
+    <sheets count="26">ACCUEIL, ARTICLES, FOURNISSEURS, CONVENTIONS, MOUVEMENTS, TABLEAU_DE_BORD, ALERTE_DASHBOARD, INVENTAIRE, RAPPORTS, CALCULS_EOQ, HISTORIQUE, BON_RECEPTION, BON_SORTIE, BON_COMMANDE, DA_DEMANDE_ACHAT, GUIDE, VBA_MODULES, AUDIT_LOG, DASHBOARD, FORM_INPUT, BORDEREAU_COMMANDE, STAGING_BUFFER, SYS_STRINGS, RECEIPT_TAG, TEMPLATE_BON, System_Lists</sheets>
   </vba>
   <config-files>
     <file key="project-context">Software_Surgical_Edit\erp-project-context.xml</file>
@@ -106,66 +106,79 @@
     </backend>
 
     <!-- ======================================================================
-         Cloud — OpenRouter Free (Rate-limited upstream, no API cost)
-         Note: Venice-routed models (qwen3-coder:free, llama-3.3-70b:free,
-         gemma-4-31b-it:free) are often 429 rate-limited. Nemotron works reliably.
+         FreeLLM Gateway — 6 providers, 27 models, auto-failover
+         Active: Groq, Gemini, Cerebras, Cloudflare, GitHub Models, Ollama
+         Skipped: NVIDIA NIM (SMS), Mistral (no key)
+         Completions.me configured as direct provider in opencode.json.
          ====================================================================== -->
     <backend key="or-nemotron"
-             provider="OpenRouter"
-             model="nemotron-3-super-120b-a12b:free"
-             context="1M"
+             provider="FreeLLM (NVIDIA NIM)"
+             model="nim/nvidia/nemotron-4-70b"
+             context="128K"
              vision="no"
              pdf="no"
              xml-opt="high"
              speed="~3s"
              cost="free"
-             best-for="Massive context tasks, full codebase review, FCC proxy use">
-      Most reliable free OpenRouter model. Text-only. Reads: .bas, .frm, .cls,
-      .txt, .xml, .json, .md. 1M context can hold entire project history.
-      Excellent for XML processing (120B params = strong structure understanding).
-      Upstream: different from Venice, works reliably where others return 429.
+             best-for="Massive context tasks, full codebase review"
+             note="SKIPPED — SMS verification unavailable for NVIDIA NIM">
+      Requires NVIDIA NIM API key (SMS gate blocks registration).
+      Fall back to Completions.me for large-context reasoning.
     </backend>
     <backend key="or-coder"
-             provider="OpenRouter"
-             model="qwen/qwen3-coder:free"
-             context="1M"
+             provider="FreeLLM (Cerebras)"
+             model="cerebras/qwen-3-235b-a22b-instruct-2507"
+             context="128K"
              vision="no"
              pdf="no"
              xml-opt="high"
-             speed="~3s"
+             speed="~1s"
              cost="free"
-             best-for="Heavy VBA code generation, large XML analysis"
-             note="Venice upstream — often 429 rate-limited. Falls back to Nemotron.">
-      480B MoE model optimized for code. Text-only. Reads: same as Nemotron.
-      Best code understanding of any free model. When available, produces the
-      highest quality VBA code. 1M context. Unstable availability.
+             best-for="Heavy VBA code generation"
+             note="Cerebras key: ACTIVE. Qwen3 235B via FreeLLM gateway.">
+      235B MoE code model. Fast inference (~1s), no rate limits on Cerebras.
+      Replaces OpenRouter qwen3-coder (was 429-prone via Venice).
     </backend>
     <backend key="or-free"
-             provider="OpenRouter"
-             model="llama-3.3-70b-instruct:free"
-             context="32K"
+             provider="FreeLLM"
+             model="free"
+             context="128K"
              vision="no"
              pdf="no"
              xml-opt="medium"
-             speed="~3s"
+             speed="varies"
              cost="free"
-             best-for="Text generation, alternative to Groq Llama"
-             note="Venice upstream — often 429 rate-limited.">
-      Same architecture as Groq Llama but via OpenRouter. Text-only.
-      Redundant with Groq backend. Only useful if Groq is down.
+             best-for="Auto-routed general inference via FreeLLM gateway"
+             note="27 models across 11 providers. Keys active: Groq, Gemini, Cerebras, Cloudflare, GitHub Models.">
+      FreeLLM gateway on localhost:3000 aggregating all keyed providers.
+      Meta-model 'free' picks first available. Auto-failover across providers.
+    </backend>
+    <backend key="completions"
+             provider="Completions.me"
+             model="claude-opus-4.6"
+             context="200K"
+             vision="yes"
+             pdf="no"
+             xml-opt="high"
+             speed="~2s"
+             cost="free"
+             best-for="Claude Opus 4.6, GPT-5.2 unlimited"
+             note="Direct provider in opencode.json. Key: ACTIVE. Unlimited requests.">
+      Completions.me — free unlimited access to Claude Opus 4.6, Sonnet 4.6, GPT-5.2.
+      OpenAI-compatible API at completions.me/api/v1. Not routed through FreeLLM.
     </backend>
     <backend key="or-gemma"
-             provider="OpenRouter"
-             model="gemma-4-31b-it:free"
-             context="31K"
-             vision="no"
+             provider="Google (direct)"
+             model="gemma-4-26b-a4b-it"
+             context="256K"
+             vision="yes"
              pdf="no"
              xml-opt="low"
-             speed="~3s"
+             speed="~2s"
              cost="free"
-             best-for="Lightweight tasks, when Gemma 4 26B is unavailable"
-             note="Venice upstream — often 429 rate-limited.">
-      Text-only lightweight model. Limited utility. Falls back to other providers.
+             best-for="Multimodal tasks, Gemma 4 26B via Gemini API"
+             note="Direct Google AI Studio. Replaces deprecated OpenRouter Venice route.">
+      Gemma 4 26B hosted on Google's API — free tier, ~2s response, 256K context.
     </backend>
 
     <!-- ======================================================================
@@ -241,6 +254,7 @@
       <note>
         Routes Anthropic Messages API → OpenRouter. Currently uses Nemotron 3 Super
         120B for all tiers (Opus/Sonnet/Haiku). 1M context, free, text-only.
+        Note: FreeLLM + Completions.me now provide better alternatives without proxy.
         Reads: .bas, .frm, .cls, .txt, .xml, .json, .md.
         Start: uv run uvicorn server:app --host 0.0.0.0 --port 8082
         Use: OpenCode.bat fcc (auto-starts proxy) or OpenCode.bat proxy (server only).
@@ -287,16 +301,41 @@
   <desktop-launchers>
     <launcher key="default">OpenCode.lnk → OpenCode.bat → CLI big-pickle (default)</launcher>
     <launcher key="gui">OpenCode.bat gui → Desktop GUI v1.14.42</launcher>
-    <launcher key="groq">OpenCode.bat groq → Groq Llama 3.3 70B (AI backend)</launcher>
+    <launcher key="groq">OpenCode.bat groq → Groq Qwen3 32B (fast explore/debug)</launcher>
+    <launcher key="llama">OpenCode.bat llama → Groq Llama 3.3 70B (VBA + prose)</launcher>
+    <launcher key="nemotron">OpenCode.bat nemotron → Nemotron 120B (1M ctx, OpenRouter free)</launcher>
     <launcher key="gemini">OpenCode.bat gemini → Google Gemini 2.5 Flash (1M ctx)</launcher>
-    <launcher key="ollama">OpenCode.bat ollama → Ollama model picker (4 models)</launcher>
+    <launcher key="gemma">OpenCode.bat gemma → Google Gemma 4 26B (256K, multimodal)</launcher>
+    <launcher key="gemma-local">OpenCode.bat gemma-local → Ollama Gemma 4 e2b (128K, offline)</launcher>
     <launcher key="phi4">OpenCode.bat phi4 → Ollama Phi4-mini 3.8B (CPU coding)</launcher>
     <launcher key="qwen3">OpenCode.bat qwen3 → Ollama Qwen3 1.7B (CPU reasoning)</launcher>
+    <launcher key="ollama">OpenCode.bat ollama → Ollama server + interactive model picker</launcher>
     <launcher key="fcc">OpenCode.bat fcc → FCC proxy Nemotron 120B (auto-start)</launcher>
     <launcher key="proxy">OpenCode.bat proxy → Start FCC proxy only (background)</launcher>
     <launcher key="academix">OpenCode.bat academix → Interactive project dashboard</launcher>
+    <launcher key="restore">OpenCode.bat restore → Restore last session</launcher>
+    <launcher key="picker">OpenCode.bat picker → Interactive model picker (TUI)</launcher>
+    <launcher key="autobuild">OpenCode.bat autobuild → AUTO build pipeline</launcher>
+    <launcher key="autoverify">OpenCode.bat autoverify → AUTO 137 checks</launcher>
+    <launcher key="autotest">OpenCode.bat autotest → AUTO macro test suite</launcher>
+    <launcher key="autoaudit">OpenCode.bat autoaudit → AUTO 5-phase DSS audit</launcher>
+    <launcher key="autofix">OpenCode.bat autofix → AUTO full pipeline</launcher>
+    <launcher key="automenu">OpenCode.bat automenu → AUTO mode selector menu</launcher>
     <launcher key="legacy">Academix_Launch.bat → delegates to OpenCode.bat academix</launcher>
   </desktop-launchers>
+  <harness version="LCC-s06/s07/s08/s12">
+    <dirs>
+      <dir key="tasks">.tasks\</dir>
+      <dir key="worktrees">.worktrees\</dir>
+      <dir key="team">.team\</dir>
+      <dir key="transcripts">.opencode\memory\transcripts\</dir>
+    </dirs>
+    <backends>
+      <script>scripts\harness.ps1</script>
+      <worker>scripts\bg-worker.ps1</worker>
+    </backends>
+    <commands count="11">task-create, task-list, task-update, task-get, task-claim, bg-run, bg-check, worktree-create, worktree-remove, worktree-list, harness-compact</commands>
+  </harness>
   <git-repositories>
     <repo key="logistics" priority="CRITICAL">
       <path>C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor</path>
@@ -311,11 +350,13 @@
     </repo>
   </git-repositories>
   <tools>
-    <tool key="build">Software_Surgical_Edit\build.ps1</tool>
-    <tool key="verify">Software_Surgical_Edit\verify.ps1</tool>
+    <tool key="build">vbe-auto\build.ps1</tool>
+    <tool key="verify">vbe-auto\verify.ps1</tool>
     <tool key="test-macros">Software_Surgical_Edit\test-macros.ps1</tool>
     <tool key="vbe-control">Software_Surgical_Edit\vbe.ps1</tool>
-    <tool key="dss-audit">Software_Surgical_Edit\milestone_13_2\tests\dss-audit.ps1</tool>
+    <tool key="dss-audit">milestone_13_2\tests\dss-audit.ps1</tool>
+    <tool key="harness">scripts\harness.ps1</tool>
+    <tool key="bg-worker">scripts\bg-worker.ps1</tool>
   </tools>
   <omc version="4.9.3" cli="omc">
     <state>C:\Users\Administrator\.omc\state\</state>

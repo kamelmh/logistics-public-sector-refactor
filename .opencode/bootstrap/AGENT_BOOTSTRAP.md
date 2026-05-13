@@ -17,25 +17,25 @@
 | `debug` | Groq Qwen 32B | vba-debug, vba-build | handoffN.txt, project-context.xml |
 | `audit` | Groq Qwen 32B | verify | project-context.xml |
 | `test` | Groq Qwen 32B | project, verify | agent-handoff.xml |
-| `or-free` | Nemotron 120B | vba-build, naming-cheatsheet, humanizer | project-context.xml, AGENTS.md |
-| `or-oss` | GPT-OSS 120B | vba-build, naming-cheatsheet | project-context.xml |
-| `or-ring` | Ring 2.6 1T | (complex reasoning — all skills available) | all context files |
+| `or-free` | FreeLLM auto-route | vba-build, naming-cheatsheet, humanizer | project-context.xml, AGENTS.md |
+| `or-coder` | FreeLLM Cerebras Qwen3 235B | vba-build, naming-cheatsheet | project-context.xml |
+| `or-nemotron` | FreeLLM NVIDIA NIM | SKIPPED (SMS) | — |
+| `completions` | Completions.me Claude Opus 4.6 | vba-build, naming-cheatsheet, humanizer | project-context.xml (free unlimited) |
 | `gemini-flash` | Gemini 2.5 Flash | vba-build, external-context, humanizer | project-context.xml (large context) |
 | `gemma-4` | Gemma 4 26B | vba-build, naming-cheatsheet | project-context.xml |
 
-## Model Routing — Claude Alternatives
+## Model Routing — Free Tier Alternatives
 
-| Claude Model | Our Free Alternative | Provider | Status |
-|-------------|---------------------|----------|--------|
-| Opus (complex) | Nemotron 3 Super 120B | OpenRouter | ✅ Works, 1M ctx |
-| Opus (complex) | Ring 2.6 1T | OpenRouter | ✅ Works |
-| Sonnet (balanced) | GPT-OSS 120B | OpenRouter | ✅ Works |
-| Sonnet (balanced) | Llama 3.3 70B | Groq | ✅ Fast (~2s) |
-| Haiku (fast) | Qwen3 32B | Groq | ✅ Fast (~1s) |
-| Haiku (fast) | GPT-OSS 20B | OpenRouter | ✅ Works |
-| — | Gemma 4 26B | Google (free) | ✅ Hosted free |
+| Reference Model | Our Free Alternative | Provider | Status |
+|----------------|---------------------|----------|--------|
+| Opus-level | Cerebras Qwen3 235B | FreeLLM (Cerebras) | ✅ Active, ~1s |
+| Opus-level | Completions Claude Opus 4.6 | Completions.me | ✅ Unlimited, free |
+| Sonnet-level | Llama 3.3 70B | Groq | ✅ Fast (~2s) |
+| Sonnet-level | GPT-OSS 120B | FreeLLM (Cerebras) | ✅ Active |
+| Haiku-level | Qwen3 32B | Groq | ✅ Fast (~1s) |
+| — | Cloudflare Llama 3.3 70B | FreeLLM (Cloudflare) | ✅ Active |
 | — | Gemini 2.5 Flash | Google (free) | ✅ 1M ctx |
-| — | Qwen2.5-Coder:1.5B | Ollama local | ✅ Self-hosted (slow) |
+| — | GPT-4o-mini | FreeLLM (GitHub Models) | ✅ Active |
 
 ## Self-Hosted Mode (Ollama-Only)
 For offline use, `opencode.json` has `ollama-local` provider:

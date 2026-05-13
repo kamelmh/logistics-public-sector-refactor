@@ -45,8 +45,28 @@ function Invoke-Compact {
     Assert-Dir $TRANSCRIPTS_DIR
     $ts = Get-Date -Format "yyyyMMdd-HHmmss"
     $path = "$TRANSCRIPTS_DIR\transcript-$ts.jsonl"
-    "Transcript saved to $path"
-    if (-not $Auto) { "Manual compact triggered. Full session preserved at: $path" }
+
+    # Gather live session state
+    $session = @{
+        ts = (Get-Date -Format "o")
+        tasks = @(Get-ChildItem "$TASKS_DIR\task_*.json" -ErrorAction SilentlyContinue | ForEach-Object {
+            $t = Safe-Json $_.FullName
+            if ($t) { @{id=$t.id; subject=$t.subject; status=$t.status; blockedBy=$t.blockedBy} }
+        })
+        worktrees = @(Get-WorktreeList)
+        git = @{
+            branch = (git -C $ROOT rev-parse --abbrev-ref HEAD 2>$null)
+            commit = (git -C $ROOT log -1 --format="%h %s" 2>$null)
+            status = (git -C $ROOT status --short 2>$null)
+        }
+    }
+    $session | ConvertTo-Json -Depth 3 | Set-Content $path -ErrorAction Stop
+
+    "Transcript saved: $path ($((Get-Item $path).Length / 1KB) KB)"
+    if ($Auto) { "Auto-compact triggered" } else { "Manual compact triggered" }
+    # Clean old transcripts (keep last 10)
+    $old = Get-ChildItem "$TRANSCRIPTS_DIR\transcript-*.jsonl" -ErrorAction SilentlyContinue | Sort-Object Name -Descending | Select-Object -Skip 10
+    if ($old) { $old | Remove-Item -Force; "Purged $($old.Count) old transcripts" }
 }
 
 # ===== s07: Task DAG System =====
@@ -59,14 +79,15 @@ function Get-NextTaskId {
 }
 
 function New-Task {
-    param([string]$Subject, [string]$Description, [int[]]$BlockedBy)
+    param([string]$Subject, [string]$Description, [string]$BlockedBy)
     $Subject = "$Subject".Trim()
     if (-not $Subject) { return "Error: subject is required" }
+    $bIds = if ($BlockedBy -and $BlockedBy -match '\d') { @($BlockedBy -split ',' | ForEach-Object { [int]($_.Trim()) } | Where-Object { $_ -gt 0 }) } else { @() }
     Assert-Dir $TASKS_DIR
-    $id = Get-NextTaskId
+    $id = [int](Get-NextTaskId)
     $task = @{
         id = $id; subject = $Subject; description = "$Description".Trim()
-        status = "pending"; owner = $null; blockedBy = @($BlockedBy)
+        status = "pending"; owner = $null; blockedBy = $bIds
         worktree = $null; created = (Get-Date -Format "o")
     }
     $task | ConvertTo-Json | Set-Content "$TASKS_DIR\task_$id.json" -ErrorAction Stop
@@ -414,7 +435,7 @@ switch ($Layer) {
     }
     "task" {
         switch ($Action) {
-            "create" { New-Task -Subject $Args[0] -Description ($Args[1] ?? "") -BlockedBy ($Args[2] ?? @()) }
+            "create" { New-Task -Subject $Args[0] -Description ($Args[1] ?? "") -BlockedBy ($Args[2] ?? "") }
             "get"    { if ($Args[0]) { Get-Task -Id $Args[0] } else { "Usage: task get <id>" } }
             "update" { if ($Args[0] -and $Args[1]) { Set-Task -Id $Args[0] -Status $Args[1] } else { "Usage: task update <id> <status>" } }
             "list"   { Get-TaskList }

@@ -3,7 +3,7 @@ title OpenCode Launcher v3.5 ^| CrossFlow ^| Academix v13.2
 :: ==============================================================
 :: Portable OpenCode Launcher — Academix v13.2
 :: Mahi Kamel Abdelghani | Direction de l'Education El Bayadh
-:: Updated: 2026-05-10
+:: Updated: 2026-05-12 :: + Harness LCC-s06/s07/s08/s12
 :: ==============================================================
 :: Uses %~dp0 relative paths — copy project folder anywhere.
 :: Place opencode.exe in same dir, bin/, or have it on PATH.
@@ -87,16 +87,18 @@ set "OLLAMA_PHI4=ollama/phi4-mini:3.8b-q4_K_M"
 set "OLLAMA_GEMMA4_LOCAL=ollama/gemma4:e2b"
 
 :: ---- Mode Registry (Single Source of Truth) ----
-set "CLI_MODES=cli groq llama gemini gemini3 gemma gemma-31b gemma-local phi4 qwen3 nemotron ring ollama"
+set "CLI_MODES=cli groq llama gemini gemini3 gemma gemma-31b gemma-local phi4 qwen3 nemotron ring freellm completions ollama"
 set "OLLAMA_MODES=phi4 qwen3 gemma-local"
 set "PIPELINE_MODES=autobuild autoverify autotest autoaudit autothesis autocheck autofix autoplan autolog automenu autoclean status crossflow crossflow-sync"
 set "SPECIAL_MODES=gui fcc proxy academix restore picker help"
 :: Menu display categories
 set "MENU_AUTO=autobuild autoverify autotest autoaudit autofix autocheck"
 set "MENU_CROSS=crossflow crossflow-sync"
-set "MENU_OTHER=academix gui picker autoclean status help"
+set "MENU_OTHER=academix gui picker freellm autoclean status help"
 set "FCC_DIR=%USERPROFILE%\.opencode\plugins\fcc-proxy"
 set "FCC_PORT=8082"
+set "FREELM_DIR=%USERPROFILE%\.opencode\plugins\freellm"
+set "FREELM_PORT=3000"
 set "MEMORY_DIR=%USERPROFILE%\.opencode\memory"
 set "MEMORY_FILE=%MEMORY_DIR%\session.log"
 set "LAST_SESSION=%MEMORY_DIR%\last-session.txt"
@@ -112,7 +114,8 @@ set "LOG_DIR=%PROJECT_ROOT%\logs"
 set "VBE_AUTO=%PROJECT_ROOT%\vbe-auto"
 set "BUILD_SCRIPT=%VBE_AUTO%\build.ps1"
 set "VERIFY_SCRIPT=%VBE_AUTO%\verify.ps1"
-set "CONFIG_PATH=%VBE_AUTO%\config.json"
+set "CONFIG_PATH=%VBE_AUTO%\vbe-auto-config.json"
+set "HARNESS_SCRIPT=%PROJECT_ROOT%\scripts\harness.ps1"
 set "TEST_SCRIPT=%PROJECT_ROOT%\Software_Surgical_Edit\test-macros.ps1"
 set "AUDIT_SCRIPT=%PROJECT_ROOT%\milestone_13_2\tests\dss-audit.ps1"
 set "THESIS_SCRIPT=%PROJECT_ROOT%\Thesis_Surgical_Edit\build-thesis.ps1"
@@ -378,6 +381,58 @@ cd /d "%BASEDIR%"
 goto :end
 
 :: ==============================================================
+:freellm
+title %WINDOW_TITLE%
+echo [OpenCode] FreeLLM Gateway — Session: %SESSION_NAME%
+echo.
+if not exist "%FREELM_DIR%\packages\api-server\dist\index.mjs" (
+    echo [ERROR] FreeLLM not installed. Run: git clone https://github.com/marcosremar/freellm.git "%FREELM_DIR%"
+    pause
+    exit /b 1
+)
+:: Check if already running
+powershell -Command "try { $r = Invoke-RestMethod 'http://localhost:%FREELM_PORT%/v1/models' -TimeoutSec 2; exit 0 } catch { exit 1 }"
+if errorlevel 1 (
+    echo   Starting FreeLLM gateway on port %FREELM_PORT%...
+    start "FreeLLM" cmd /c "node --env-file=../../.env --enable-source-maps ./dist/index.mjs" > "%FREELM_DIR%\freellm.log" 2>&1
+    cd /d "%FREELM_DIR%\packages\api-server"
+    echo   Waiting for gateway...
+    ping 127.0.0.1 -n 8 >nul
+    powershell -Command "try { $r = Invoke-RestMethod 'http://localhost:%FREELM_PORT%/v1/models' -TimeoutSec 5; Write-Output ('   Models: ' + $r.data.Count + ' available') } catch { echo '   WARNING: Gateway may not be ready.' }"
+) else (
+    echo   FreeLLM already running on port %FREELM_PORT%.
+)
+echo.
+echo   Routes available:
+echo     free         — auto-route (max uptime)
+echo     free-fast    — lowest latency (Groq, Cerebras, Gemini)
+echo     free-smart   — best reasoning (Gemini, NIM, Groq)
+echo     groq/...     — direct Groq models
+echo     gemini/...   — direct Gemini models
+echo     nim/...      — NVIDIA NIM models (if key configured)
+echo     cerebras/... — Cerebras models (if key configured)
+echo.
+pause
+goto :end
+
+:: ==============================================================
+:completions
+title %WINDOW_TITLE%
+echo [OpenCode] Completions.me — Free Claude/GPT — Session: %SESSION_NAME%
+echo.
+echo   Models available:
+echo     completions/claude-opus-4.6   — Claude Opus 4.6
+echo     completions/claude-sonnet-4.6 — Claude Sonnet 4.6
+echo     completions/gpt-5.2           — GPT-5.2
+echo     completions/gemini-2.5-pro    — Gemini 2.5 Pro
+echo.
+echo   API: completions.me (no rate limits, data logged)
+echo.
+set "SELECTED_MODEL=completions/claude-opus-4.6"
+"%OC_EXE%" --model "%SELECTED_MODEL%" "%PROJECT_ROOT%"
+goto :end
+
+:: ==============================================================
 :proxy
 echo [OpenCode] Starting FCC proxy only (background)...
 echo.
@@ -458,6 +513,10 @@ goto :end
 :autobuild
 title OpenCode [AUTOBUILD] - %SESSION_NAME%
 echo   === AUTO BUILD ===
+echo  Harness: recording build task...
+if exist "%HARNESS_SCRIPT%" (
+    %PWSH% -Command "& '%HARNESS_SCRIPT%' task create 'AutoBuild: %DATE% %TIME%' 'Triggered from OpenCode.bat'"
+)
 if not exist "%BUILD_SCRIPT%" ( echo ERROR: build.ps1 not found & pause & exit /b 1 )
 %PWSH% -File "%BUILD_SCRIPT%" -ConfigPath "%CONFIG_PATH%"
 if errorlevel 1 ( echo   BUILD FAILED & pause & exit /b 1 ) else ( echo   BUILD OK )
@@ -465,6 +524,9 @@ echo.
 echo   Running verification...
 %PWSH% -File "%VERIFY_SCRIPT%" -ConfigPath "%CONFIG_PATH%"
 echo.
+if exist "%HARNESS_SCRIPT%" (
+    %PWSH% -Command "& '%HARNESS_SCRIPT%' compact auto"
+)
 echo  Build complete.
 pause
 goto :end
@@ -586,6 +648,14 @@ if exist "%MEMORY_DIR%" (
     popd
 )
 echo  Cleaned %CLEANED% categories. Files older than 30 days removed.
+echo.
+echo   === HARNESS CLEANUP ===
+if exist "%HARNESS_SCRIPT%" (
+    %PWSH% -File "%HARNESS_SCRIPT%" cleanup
+) else (
+    echo   Harness script not found — skip
+)
+echo.
 pause
 goto :end
 
@@ -606,10 +676,18 @@ echo.
 echo  Pipeline:
 if exist "%BUILD_SCRIPT%" ( echo  Build script:     OK ) else ( echo  Build script:     MISSING )
 if exist "%VERIFY_SCRIPT%" ( echo  Verify script:    OK ) else ( echo  Verify script:    MISSING )
+if exist "%HARNESS_SCRIPT%" ( echo  Harness script:   OK ) else ( echo  Harness script:   MISSING )
 echo.
 echo  Config: %CONFIG_PATH%
 echo  Binary: %OC_EXE%
 echo  Port:   %FCC_PORT%
+echo.
+echo   === HARNESS STATUS ===
+if exist "%HARNESS_SCRIPT%" (
+    %PWSH% -Command "& '%HARNESS_SCRIPT%' status"
+) else (
+    echo   Harness not available
+)
 echo.
 pause
 goto :end
@@ -640,6 +718,7 @@ for %%m in (%CLI_MODES%) do (
     if "%%m"=="phi4" set "_d=Phi4-mini 3.8B (CPU coding)"
     if "%%m"=="qwen3" set "_d=Qwen3 1.7B (CPU reasoning)"
     if "%%m"=="nemotron" set "_d=Nemotron 120B (1M ctx)"
+    if "%%m"=="freellm" set "_d=FreeLLM gateway (8 providers)"
     if "%%m"=="ollama" set "_d=Ollama model menu"
     echo    [!_n!]  %%m  !_d!
     set /a _n+=1
@@ -723,8 +802,9 @@ echo   fcc        CLI via FCC proxy (auto-start)
   echo   gemma-31b  CLI with Google Gemma 4 31B IT (32K ctx, stronger reasoning)
   echo   ogg-31b    Alias for gemma-31b
   echo   gemma-local CLI with Ollama Gemma 4 e2b (128K ctx, offline)
-  echo   ring       CLI with Ring 2.6 1T (Kimi K2.6, 262K ctx, free OpenRouter)
-echo   ogg-local  Alias for gemma-local
+   echo   ring       CLI with Ring 2.6 1T (Kimi K2.6, 262K ctx, free OpenRouter)
+   echo   freellm    FreeLLM gateway status (8 providers, auto-failover)
+   echo   ogg-local  Alias for gemma-local
 echo   phi4       CLI with phi4-mini:3.8b (CPU, offline)
 echo   qwen3      CLI with qwen3:1.7b (CPU, offline)
 echo   ollama     CLI with model menu + auto-start server

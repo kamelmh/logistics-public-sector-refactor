@@ -73,7 +73,7 @@ SyncBridge + Utilities + QRCode → ExportEngine
 ART-001 Toner G030 (noir) [case study], ART-002 Rame A4, ART-003 Rame A3, ART-004 Boîte archives, ART-005 Agrafeuse, ART-006 Stylos 50x, ART-007 Registre 5m, ART-008 Encre tampon, ART-009 Sous-chemise, ART-010 Chemise, ART-011 Rouleau fax, ART-012 Marqueur
 F-001 ENAP Alger | F-002 Bureautique Oran | F-003 Bureau Plus
 
-## AI Backends (7 providers, 10+ models)
+## AI Backends (14 providers, 35+ models)
 | Key | Provider | Model | Ctx | Speed | Cost | Best For |
 |-----|----------|-------|-----|-------|------|----------|
 | primary | Groq | Llama 3.3 70B | 32K | ~2s | free | VBA logic, prose, daily driver |
@@ -81,8 +81,10 @@ F-001 ENAP Alger | F-002 Bureautique Oran | F-003 Bureau Plus
 | gemini | Google | Gemini 2.5 Flash | 1M | ~2s | free | large context, thesis, images |
 | gemma | Google | Gemma 4 26B (A4B) | 256K | ~2s | free | multimodal, vision, open-weight (Apache 2.0) |
 | gemma-31b | Google | Gemma 4 31B | 32K | ~2s | free | stronger reasoning, dense model |
-| or-nemotron | OpenRouter | Nemotron 3 Super 120B | 1M | ~3s | free | massive ctx, full codebase |
-| or-coder | OpenRouter | Qwen3 Coder 480B | 1M | ~3s | free | VBA gen (often 429) |
+| or-free | FreeLLM (auto) | free (auto-route) | varies | varies | free | max uptime, 6 providers aggregated |
+| or-coder | FreeLLM (Cerebras) | Qwen3 235B | 128K | ~1s | free | VBA code gen (replaces 429-prone OpenRouter) |
+| or-nemotron | FreeLLM (NVIDIA NIM) | Nemotron 70B | 128K | ~3s | free | SKIPPED — SMS verification unavailable |
+| completions | Completions.me | Claude Opus 4.6 | 200K | ~2s | free | unlimited Claude/GPT/Gemini, no rate limits |
 | local-7b | Ollama | Qwen2.5 Coder 7B | 8K | ~30s | free | offline debugging |
 | local-1.5b | Ollama | Qwen2.5 Coder 1.5B | 4K | ~95s | free | last-resort offline |
 | local-qwen3 | Ollama | Qwen3 1.7B | 16K | ~40s | free | CPU reasoning |
@@ -90,7 +92,7 @@ F-001 ENAP Alger | F-002 Bureautique Oran | F-003 Bureau Plus
 | local-gemma4 | Ollama | Gemma 4 e2b | 128K | ~40-60s | free | Offline Gemma 4 (text+image) |
 
 > Note: VBA skills (vba-build, vba-debug) exist on disk at `.opencode/skills/` but aren't in OpenCode's global skill catalog. Load VBA context via instructions.md + XML files instead.
-| fcc-proxy | proxy→OR | Nemotron 120B (bridge) | 1M | ~3s | free | FCC via localhost:8082 |
+| fcc-proxy | proxy→OR | Nemotron 120B (bridge) | 1M | ~3s | free | FCC fallback via localhost:8082 |
 | claude | Anthropic | Claude Sonnet 4 | 200K | ~3s | paid | best overall (needs $) |
 | gpt-4o | OpenAI | GPT-4o | 128K | ~2s | paid | multimodal alt (needs $) |
 
@@ -103,6 +105,9 @@ F-001 ENAP Alger | F-002 Bureautique Oran | F-003 Bureau Plus
 | debug | Groq Qwen3 32B | Handoff VBA diagnosis |
 | audit | Groq Qwen3 32B | 5-phase DSS audit |
 | test | Groq Qwen3 32B | Macro test suite |
+| or-free | FreeLLM free | Auto-routed general inference (6 providers, 27 models) |
+| or-coder | FreeLLM Cerebras Qwen3 235B | Heavy code generation (active key) |
+| completions | Completions.me Claude Opus 4.6 | Unlimited free Claude/GPT (direct provider) |
 
 Workflows: feature (explore→plan→build) | fix (debug→build→test) | quality (audit→explore→build)
 

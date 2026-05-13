@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<agent-handoff version="13.2" date="2026-05-09">
+<agent-handoff version="13.2" date="2026-05-12">
   <ai-backends>
     <backend key="primary" provider="Groq" model="llama-3.3-70b-versatile" response="~2s" context="32K">Daily driver</backend>
     <backend key="fast-search" provider="Groq" model="qwen/qwen3-32b" response="~1s" context="32K">Explore/debug/audit</backend>
     <backend key="large-ctx" provider="Google" model="gemini-2.5-flash" response="~2s" context="1M">Large context reasoning</backend>
     <backend key="gemma-hosted" provider="Google" model="gemma-4-26b-a4b-it" response="~2s" context="262K">Free hosted Gemma 4</backend>
-    <backend key="or-nemotron" provider="OpenRouter" model="nemotron-3-super-120b-a12b:free" response="~3s" context="1M">Free 120B, 1M ctx</backend>
-    <backend key="or-coder" provider="OpenRouter" model="qwen/qwen3-coder:free" response="~3s">Free 480B coder</backend>
-    <backend key="or-gemma" provider="OpenRouter" model="gemma-4-31b-it:free" response="~3s">Free Gemma 4 31B</backend>
+    <backend key="or-free" provider="FreeLLM" model="free" response="varies" context="128K">Auto-routed: 6 providers, 27 models</backend>
+    <backend key="or-coder" provider="FreeLLM (Cerebras)" model="cerebras/qwen-3-235b-a22b-instruct-2507" response="~1s" context="128K">Qwen3 235B code model</backend>
+    <backend key="completions" provider="Completions.me" model="claude-opus-4.6" response="~2s" context="200K">Free unlimited Claude Opus 4.6</backend>
     <backend key="local-7b" provider="Ollama" model="qwen2.5-coder:7b" response="~30-60s" context="8K">Offline fallback</backend>
     <backend key="local-1.5b" provider="Ollama" model="qwen2.5-coder:1.5b" response="~95s" context="4K">Offline slow fallback</backend>
     <backend key="local-qwen3" provider="Ollama" model="qwen3:1.7b" response="~40s" context="16K">CPU reasoning</backend>
     <backend key="local-phi4" provider="Ollama" model="phi4-mini:3.8b-q4_K_M" response="~25s" context="16K">CPU coding</backend>
   </ai-backends>
   <session-context>
-    <last-action>2026-05-09: Mass update — AGENTS.md, MASTER_BOOTSTRAP.xml, instructions.md, erp-admin-paths.xml, erp-agent-handoff.xml: fixed stale skill refs (vba-build→available skills), added Qwen3 1.7B + Phi4-mini 3.8B models, launcher v3.1 (13 modes), corrected file sizes + paths, added note about VBA skills not in global catalog</last-action>
+    <last-action>2026-05-12: 7-stage execution complete — Compact Print, UX Preload, Stockout Projection, Fuzzy Search, Harvest+Cross-ref+Audit. Engineering harness activated (s06/s07/s08/s12). 2 bugs fixed (duplicate Dim, constant expression).</last-action>
     <warnings-status>ALL RESOLVED (W001-W010)</warnings-status>
     <modules>
-      <count>29 .bas + 1 .frm + 1 .cls + MAIN_MACROS.bas = 36 components</count>
-      <lines>~10130</lines>
+      <count>37 .bas + 1 .frm = 38 user components + ThisWorkbook.cls</count>
+      <lines>~12535</lines>
       <compile-errors>0</compile-errors>
     </modules>
-    <workbook active="ERP_v13.2.xlsm" compiled="ERP_Academie_v13_2.xlsm" sheets="25" />
+    <workbook active="ERP_v13.2.xlsm" compiled="ERP_Academie_v13_2.xlsm" sheets="26" />
   </session-context>
   <agents>
     <agent name="build" model="groq/llama-3.3-70b-versatile">
@@ -47,17 +47,24 @@
     <agent name="test" model="groq/qwen/qwen3-32b">
       <purpose>Macro test suite via test-macros.ps1</purpose>
     </agent>
-    <agent name="or-free" model="openrouter/nvidia/nemotron-3-super-120b-a12b:free">
-      <purpose>OpenRouter free tier - Nemotron 120B, 1M context</purpose>
+    <agent name="or-free" model="freellm/free">
+      <purpose>FreeLLM auto-route (max uptime) — aggregates Groq, Gemini, Cerebras, Cloudflare, GitHub Models, Ollama</purpose>
+      <note>27 models across 11 providers. Cerebras, Cloudflare, GitHub Models keys active. NVIDIA NIM skipped (SMS).</note>
     </agent>
-    <agent name="or-coder" model="openrouter/qwen/qwen3-coder:free">
-      <purpose>OpenRouter free coder - Qwen3 Coder 480B</purpose>
+    <agent name="or-coder" model="freellm/cerebras/qwen3-235b">
+      <purpose>FreeLLM via Cerebras — Qwen3 235B code model</purpose>
+      <note>Cerebras key: ACTIVE</note>
     </agent>
-    <agent name="or-gemma" model="openrouter/google/gemma-4-31b-it:free">
-      <purpose>OpenRouter free Gemma 4 31B</purpose>
+    <agent name="or-gemma" model="freellm/free-smart">
+      <purpose>FreeLLM smart route — picks strongest available model</purpose>
     </agent>
-    <agent name="or-nemotron" model="openrouter/nvidia/nemotron-3-super-120b-a12b:free">
-      <purpose>OpenRouter dedicated Nemotron 120B</purpose>
+    <agent name="or-nemotron" model="freellm/nim/nvidia/nemotron-4-70b">
+      <purpose>FreeLLM via NVIDIA NIM — Nemotron 70B</purpose>
+      <note>SKIPPED — SMS verification unavailable</note>
+    </agent>
+    <agent name="completions" model="completions/claude-opus-4.6">
+      <purpose>Completions.me — free unlimited Claude Opus 4.6, GPT-5.2</purpose>
+      <note>Direct OpenAI-compatible provider in opencode.json (not via FreeLLM). Key: active.</note>
     </agent>
   </agents>
   <workflows>
@@ -72,6 +79,14 @@
     <task id="T004" status="completed">Add demo data to public LSM</task>
     <task id="T005" status="completed">Fix 3 audit warnings (sheet protection, circular dep, EOQ cell read)</task>
     <task id="T006" status="completed">5 Analysis modules: InventoryReconciliation, StockOutPredictor, SupplierScorecard, StockAging, DataValidator</task>
+    <task id="T007" status="completed">Stage 1: Harvest decision history (MASTER_BOOTSTRAP.xml)</task>
+    <task id="T008" status="completed">Stage 2: Compact Print — mod_ExportEngine.bas</task>
+    <task id="T009" status="completed">Stage 3: UX Preload — frmStockEntry.frm</task>
+    <task id="T010" status="completed">Stage 4: Stockout Projection — mod_Dashboard.bas</task>
+    <task id="T011" status="completed">Stage 5: Fuzzy Search — mod_DataValidator.bas</task>
+    <task id="T012" status="completed">Stage 6: Cross-ref update — erp-project-context.xml</task>
+    <task id="T013" status="completed">Stage 7: Final build+verify+audit</task>
+    <task id="T014" status="completed">Engineering harness activation: s06 transcript, s07 task DAG, s08 bg-run, s12 worktree</task>
   </task-queue>
   <session-persistence>
     <problem>Session disconnects cause context loss. Model must re-learn project state on reconnect.</problem>
@@ -94,6 +109,9 @@
     <rule priority="4">Run build.ps1 after code changes, verify.ps1 to confirm</rule>
     <rule priority="5">Never modify mod_Config constants or CANON_* values</rule>
     <rule priority="6">Never commit without explicit user approval</rule>
+    <rule priority="7">Create task in .tasks/ before starting any pipeline - use .\scripts\harness.ps1 task create</rule>
+    <rule priority="8">Run .\scripts\harness.ps1 compact save before session end</rule>
+    <rule priority="9">Use .\scripts\harness.ps1 bg run for async builds/audits when working on other tasks</rule>
   </cross-agent-protocol>
   <agent-routing>
     <task type="vba-edit" agent="build" />

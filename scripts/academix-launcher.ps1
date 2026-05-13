@@ -179,7 +179,7 @@ Write-Host "`n[7] MULTI-AGENT SYSTEM" -ForegroundColor Magenta
 $omcVersion = omc --version 2>$null
 Check "OMC" ([bool]$omcVersion) "OMC v$omcVersion — Multi-agent orchestrator available" "OMC not found"
 Check "ORCH" (Test-Path (Join-Path $ROOT "Software_Surgical_Edit\orchestrator.ps1")) "Orchestrator: orchestrator.ps1 (6 agents)" "Orchestrator missing"
-Check "HARNESS" (Test-Path (Join-Path $ROOT ".opencode\agents\engineering-harness.md")) "Engineering harness: .opencode/agents/engineering-harness.md" "Harness missing"
+Check "HARNESS" (Test-Path (Join-Path $ROOT "scripts\harness.ps1")) "Engineering harness: scripts/harness.ps1 (LCC s06/s07/s08/s12)" "Harness missing"
 $skillCount = (Get-ChildItem $OPENCODE_SKILLS -Directory -ea 0).Count
 Check "SKL2" ($skillCount -ge 60) "$skillCount skills in .opencode/skills/" "Only $skillCount skills"
 Write-Host "  Agents: explore | plan | build | debug | audit | test" -ForegroundColor Gray
@@ -281,8 +281,9 @@ do {
   │  4) Run macro tests                               │
   │  5) Save workbook data to JSON                    │
   │  6) Show agent/orchestrator status                │
-  │  7) Show quick commands help                      │
-  │  8) Exit                                          │
+  │  7) Show harness status + save transcript         │
+  │  8) Show quick commands help                      │
+  │  9) Exit                                          │
   └──────────────────────────────────────────────────┘
 "@ -ForegroundColor Cyan
     $choice = Read-Host "  Choose [1-9]"
@@ -310,8 +311,8 @@ do {
             break
         }
         "2" {
-            Write-Host "  Rebuilding workbook..." -ForegroundColor Yellow
-            & "$ROOT\vbe-auto\build.ps1" -ConfigPath "$ROOT\vbe-auto\config.json"
+            Write-Host "  Building workbook..." -ForegroundColor Yellow
+            & "$ROOT\vbe-auto\build.ps1" -ConfigPath "$ROOT\vbe-auto\vbe-auto-config.json"
             Write-Host "  Press Enter to continue..." -ForegroundColor Gray
             $null = Read-Host
         }
@@ -339,6 +340,14 @@ do {
             $null = Read-Host
         }
         "7" {
+            Write-Host "  Harness status:" -ForegroundColor Yellow
+            & "$ROOT\scripts\harness.ps1" status
+            Write-Host "`n  Saving transcript..." -ForegroundColor Yellow
+            & "$ROOT\scripts\harness.ps1" compact save
+            Write-Host "`n  Press Enter to continue..." -ForegroundColor Gray
+            $null = Read-Host
+        }
+        "8" {
             Write-Host @"
   [ QUICK COMMANDS ]
     opencode                                        Launch CLI (default)
@@ -351,11 +360,13 @@ do {
     OpenCode gemini3 / g3                           Gemini 3 Flash Preview (NEW)
     OpenCode ring                                   Ring 2.6 1T / Kimi K2.6 (FREE, 262K)
     OpenCode gemma-31b                              Gemma 4 31B IT (stronger reasoning)
-    .\vbe-auto\build.ps1 -ConfigPath .\vbe-auto\config.json   Rebuild
-    .\vbe-auto\verify.ps1 -ConfigPath .\vbe-auto\config.json  Verify
+    .\vbe-auto\build.ps1 -ConfigPath .\vbe-auto\vbe-auto-config.json   Rebuild
+    .\vbe-auto\verify.ps1 -ConfigPath .\vbe-auto\vbe-auto-config.json  Verify
     .\milestone_13_2\tests\dss-audit.ps1                Audit
     .\Software_Surgical_Edit\test-macros.ps1        Tests
     .\Software_Surgical_Edit\data-persist.ps1 save  Backup data
+    .\scripts\harness.ps1 status                     Harness status
+    .\scripts\harness.ps1 compact save               Save transcript
     .\Software_Surgical_Edit\orchestrator.ps1 status  Agent status
     git -C "$ROOT" push                             Push to GitHub
 
@@ -369,12 +380,13 @@ do {
             Write-Host "`n  Press Enter to continue..." -ForegroundColor Gray
             $null = Read-Host
         }
-        "8" {
+        "9" {
+            & "$ROOT\scripts\harness.ps1" compact auto
             Write-Host "  Goodbye." -ForegroundColor Green
             break
         }
         default {
-            Write-Host "  Invalid choice. Enter 1-8." -ForegroundColor Red
+            Write-Host "  Invalid choice. Enter 1-9." -ForegroundColor Red
         }
     }
-} while ($choice -ne "1" -and $choice -ne "8")
+} while ($choice -ne "1" -and $choice -ne "9")
