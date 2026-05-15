@@ -32,7 +32,7 @@ These values are **locked** — derived from 38-day observation history and used
 |-----------|-------|-------------|
 | **D** (Annual Demand) | 1,546 units | Derived from MOUVEMENTS history |
 | **Q*** (EOQ) | 176 units | Wilson formula: √(2DS/Ih) |
-| **ROP** (Reorder Point) | 205.6 units | (D/250) × LT + SS |
+| **ROP** (Reorder Point) | 212.4 units | (D/250) × LT + SS |
 | **SS** (Safety Stock) | 200 units | (MaxDaily - AvgDaily) × LT |
 | **LT** (Lead Time) | 2 days | Default delivery time |
 | **S** (Order Cost) | 500 DZD | Fixed cost per order |
@@ -86,21 +86,50 @@ frmStockEntry → mod_StockEntry_Logic.btnEnregistrer_Click
   → mod_ExportEngine.ExportTransactionToPDF → TEMPLATE_BON → PDF
 ```
 
-## AI Integration
+## AI Integration & OS Spectrum
 
-| Backend | Model | Response Time | RAM |
-|---------|-------|---------------|-----|
-| **Groq (Primary)** | qwen/qwen3-32b | ~1 second | 0 GB (cloud) |
-| **Ollama (Fallback)** | qwen2.5-coder:1.5b | ~108 seconds | 1.2 GB (local) |
+The project is powered by a **Layered AI Operating System (AI OS Spectrum)**, moving from foundational logic to task-specific execution.
 
-### AI Skills Enabled
-- Context injection, optimization, ranking, retrieval
-- Refactoring, testing, security-audit, code-review
-- OMC multi-agent: team pipeline, routing, commit protocol
-- Workflow: autopilot, ralph, ccg, ultraqa, deepinit
+| Layer | Name | Purpose | Location |
+| :--- | :--- | :--- | :--- |
+| **L0** | `Core/` | **Kernel** (Identities, Cognitive Frameworks) | `.opencode\skills_spectrum\Core\` |
+| **L1** | `Drivers/` | **Skills** (Domain-specific functional modules) | `.opencode\skills_spectrum\Drivers\` |
+| **L2** | `Shell/` | **Interaction** (Templates, Toolkits) | `.opencode\skills_spectrum\Shell\` |
+| **L3** | `Apps/` | **Personas** (Composite roles for specific goals) | `.opencode\skills_spectrum\Apps\` |
+| **L4** | `Registry/` | **BIOS/Docs** (System documentation & inventory) | `.opencode\skills_spectrum\Registry\` |
+
+### Stable Model Stack
+| Role | Model | Backend | Context |
+| :--- | :--- | :--- | :--- |
+| **Primary** | Gemma 4 31B | Google AI Studio | 32K |
+| **Reasoning** | Llama 3.3 70B | Groq | 32K |
+| **Large Context**| Gemini 2.5 Flash | Google | 1M |
+| **Agentic** | Ring 2.6 1T | OpenRouter | 262K |
+
+### 🛡️ Certification Matrix
+The system is verified via a **Certification Matrix** that mathematically links every Thesis claim to a VBA implementation and a specific `verify.ps1` test case.
+- **Location**: `Software_Surgical_Edit\CERTIFICATION_MATRIX.md`
+- **Status**: 174/174 PASS (Golden State)
 
 ## Project Structure
 
+```
+Dropbox/Logistics.Public.Sector.Refactor/
+├── .opencode/
+│   ├── bootstrap/                ← Master system context & boot protocol
+│   ├── skills_spectrum/          ← AI OS Spectrum (L0-L4 Intelligence Layer)
+│   └── erp-context-compact.md    ← Token-optimized snapshot
+├── Software_Surgical_Edit/
+│   ├── erp-project-context.xml   ← Module intelligence map
+│   ├── erp-admin-paths.xml       ← All file paths
+│   ├── CERTIFICATION_MATRIX.md   ← Thesis-to-Code proof matrix
+│   ├── VBA_Modules/              ← 37 .bas source files
+│   └── build.ps1                 ← Workbook build script
+├── Thesis_Surgical_Edit/         ← Thesis chapters (Arabic)
+├── vbe-auto/                      ← Verification & Build toolkit
+├── docs/                         ← Requirements & User guides
+├── CLAUDE.md                     ← Source of truth for Claude
+└── README.md                     ← This file
 ```
 Dropbox/Logistics.Public.Sector.Refactor/
 ├── .opencode/
@@ -176,3 +205,4 @@ Dropbox/Logistics.Public.Sector.Refactor/
 ## License
 
 CNEPD BTS Public Sector Standards — Algerian Ministry of Education
+

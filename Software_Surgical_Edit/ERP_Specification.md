@@ -8,7 +8,7 @@
 
 ## Critical Constants (Ground Truth)
 - Annual Demand (D): 1,546 units
-- Reorder Point (ROP): 205.6 units
+- Reorder Point (ROP): 212.4 units
 - Safety Stock (SS): 200 units
 - Economic Order Quantity (Q*): 176 units
 - Lead Time (LT): 2 days
@@ -181,9 +181,9 @@
 ## VBA Modules
 
 ### mod_StockCalculations.bas
-- `CalculateROP(AnnualDemand, LeadTimeDays, SafetyStock)`: Returns 205.6 for D=1546, LT=2, SS=200
+- `CalculateROP(AnnualDemand, LeadTimeDays, SafetyStock)`: Returns 212.4 for D=1546, LT=2, SS=200
 - `CalculateEOQ(AnnualDemand, OrderCost, HoldingCostPerUnit)`: Returns 176
-- `UpdateStockLedger()`: Verifies ROP = 205.6
+- `UpdateStockLedger()`: Verifies ROP = 212.4
 
 ### mod_ExportEngine_Enhanced.bas
 - `ExportToPDF(sheetName, fileName)`: Desktop export with timestamp
@@ -228,9 +228,10 @@
 ## Verification Steps
 
 1. Open `Decision_Support_System.xlsm`
-2. Run `UpdateStockLedger` → Verify ROP = 205.6
+2. Run `UpdateStockLedger` → Verify ROP = 212.4
 3. Check ART-001 = "Toner imprimante G030 (noir)"
 4. Verify version displayed = "v13.2"
 5. Check NO "Academix" text in any sheet
 6. Test `ValidateStockEntry` for Toner G030
 7. Export PDF → Check file naming convention
+

@@ -12,7 +12,7 @@ Attribute VB_Name = "mod_StockEntry_Logic"
 '   Sync           - mod_SyncBridge.CommitStaging()
 '
 ' Canonical constants (locked - never change without updating CLAUDE.md):
-'   D=1,546  |  ROP=205.6  |  Q*=176  |  SS=200  |  LT=2 days
+'   D=1,546  |  ROP=212.4  |  Q*=176  |  SS=200  |  LT=2 days
 '
 ' Refactoring (2026-05-06):
 '   - Eliminated direct frmStockEntry.{control} references from logic module
@@ -29,7 +29,7 @@ Option Explicit
 '================================================================================
 
 '-- Canonical ERP constants (mirrors Unité de traitement VBA GROUND_TRUTH)
-Private Const CANON_ROP    As Double = 205.6
+Private Const CANON_ROP    As Double = 212.4
 Private Const CANON_SS     As Long = 200
 Private Const CANON_QSTAR  As Long = 176
 Private Const CANON_LT     As Integer = 2
@@ -1018,3 +1018,4 @@ End Function
 '==============================================================================
 ' END -- mod_StockEntry_Logic.bas
 '==============================================================================
+

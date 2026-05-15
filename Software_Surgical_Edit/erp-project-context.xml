@@ -12,7 +12,7 @@
     <ground-truth>
       <param name="D" value="1546" desc="Annual Demand (38-day observation)" />
       <param name="Q*" value="176" desc="EOQ (Wilson formula)" />
-      <param name="ROP" value="205.6" desc="Reorder Point" />
+      <param name="ROP" value="212.4" desc="Reorder Point" />
       <param name="SS" value="200" desc="Safety Stock" />
       <param name="LT" value="2" desc="Lead Time (days)" />
       <param name="S" value="500 DZD" desc="Order Cost" />
@@ -49,7 +49,7 @@
     <param name="MASTER_PWD" module="mod_Config" type="Property Get String" default="erp_secure_pwd_2026" />
     <param name="WORKING_DAYS_PER_YEAR" module="mod_Config" type="Const Integer" default="250" />
     <param name="OBSERVATION_DAYS" module="mod_Config" type="Const Integer" default="38" />
-    <param name="CANON_ROP" module="mod_StockEntry_Logic" type="Const Double" default="205.6" />
+    <param name="CANON_ROP" module="mod_StockEntry_Logic" type="Const Double" default="212.4" />
     <param name="CANON_SS" module="mod_StockEntry_Logic" type="Const Long" default="200" />
     <param name="CANON_QSTAR" module="mod_StockEntry_Logic" type="Const Long" default="176" />
     <param name="CANON_LT" module="mod_StockEntry_Logic" type="Const Integer" default="2" />
@@ -259,7 +259,7 @@
   <thesis-params>
     <param name="D" formula="SUM(MOUVEMENTS qty over 38 days) = 1546" />
     <param name="Q*" formula="SQRT(2*D*S/(I*unitPrice)) = 176" />
-    <param name="ROP" formula="(D/250)*LT + SS = 205.6" />
+    <param name="ROP" formula="(D/250)*LT + SS = 212.4" />
     <param name="SS" formula="(MaxDaily - AvgDaily)*LT = 200" />
     <param name="LT" value="2 days" />
     <param name="S" value="500 DZD" />
@@ -267,3 +267,4 @@
     <param name="article-case" value="ART-001 Toner G030 (HP LaserJet)" />
   </thesis-params>
 </project>
+

@@ -20,7 +20,7 @@
 | Parameter | Value | Module |
 |-----------|-------|--------|
 | D (Annual Demand) | 1,546 | mod_Config |
-| ROP (Reorder Point) | 205.6 | mod_Config / mod_StockEntry_Logic |
+| ROP (Reorder Point) | 212.4 | mod_Config / mod_StockEntry_Logic |
 | SS (Safety Stock) | 200 | mod_Config / mod_StockEntry_Logic |
 | Q* (EOQ) | 176 | mod_Analysis / mod_StockEntry_Logic |
 | LT (Lead Time) | 2 days | mod_Config / mod_StockEntry_Logic |
@@ -151,3 +151,4 @@ See `.opencode/agents/engineering-harness.md` for full agent definitions.
 5. Groq instantly knows: all paths, all modules, all ground truth, all agents
 6. Switch agents via `/mode explore|plan|build|debug|audit` or task tool
 7. Proceed with feature development
+

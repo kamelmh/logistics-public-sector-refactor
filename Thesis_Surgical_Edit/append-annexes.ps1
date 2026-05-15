@@ -189,11 +189,11 @@ $output = @"
 
 | الرمز | التسمية | الرصيد | ROP | التصنيف |
 | :--- | :--- | :--- | :--- | :--- |
-| ART-001 | Toner G030 | 289 | 205.6 | AX |
+| ART-001 | Toner G030 | 289 | 212.4 | AX |
 | ART-002 | Ramette A4 80g | 520 | 400.0 | AX |
 | ART-003 | Agrafe 24/6 | 1500 | 800.0 | BX |
 | ART-004 | Classeur | 300 | 200.0 | BY |
-| ART-005 | Agrafeuse de bureau | 1 | 205.6 | CX |
+| ART-005 | Agrafeuse de bureau | 1 | 212.4 | CX |
 | ART-006 | Trombone boîte | 1800 | 1000.0 | BX |
 | ART-007 | Enveloppe A4 | 2000 | 1200.0 | BX |
 | ART-008 | Stylo bleu | 4000 | 2000.0 | AX |
@@ -269,7 +269,7 @@ $output = @"
 | مفهوم أكاديمي (CNEPD) | وحدة VBA المناظرة | الوظيفة |
 | :--- | :--- | :--- |
 | EOQ / Q* | mod_StockEngine | حساب الكمية الاقتصادية بـ 176 وحدة |
-| ROP | mod_StockEngine | حساب نقطة إعادة الطلب بـ 205.6 وحدة |
+| ROP | mod_StockEngine | حساب نقطة إعادة الطلب بـ 212.4 وحدة |
 | CMUP | mod_StockEntry_Logic | حساب التكلفة المتوسطة المرجحة آنياً |
 | ABC Classification | mod_Analysis | تصنيف 12 صنفاً في مصفوفة ABC-XYZ |
 | Dual-Guard | mod_StockEngine | منع الأرصدة الوهمية (Phantom Stock) |
@@ -386,3 +386,4 @@ Add-Content -Path $thesis -Value "`n" -Encoding UTF8
 Get-Content -Path $tmp -Encoding UTF8 | Add-Content -Path $thesis -Encoding UTF8
 
 Write-Host "Done! Appended annexes to thesis." -ForegroundColor Green
+

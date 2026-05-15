@@ -21,7 +21,7 @@ Follow these constraints strictly to ensure compliance with CNEPD standards.
 *All formulas, code tests, and thesis chapters must align with these constants:*
 - **Item:** Toner G030 (ART-001)
 - **Annual Demand (D):** 1,546 units
-- **Reorder Point (ROP):** 205.6 units
+- **Reorder Point (ROP):** 212.4 units
 - **Safety Stock (SS):** 200 units
 - **EOQ (Q*):** 176 units
 - **Lead Time (LT):** 2 days
@@ -30,3 +30,4 @@ Follow these constraints strictly to ensure compliance with CNEPD standards.
 - **Ladder Logic:** Demonstrate professional progression. First prove the "Manual Math/Science", then show the "VBA Automation".
 - **Role Boundary:** The system *verifies* manual calculations and *proposes* values for validation. It does not replace the Storekeeper.
 - **Reference:** Always check `CLAUDE.md` and `AGENTIC_AI_ALIGNMENT_MANIFESTO.md` for deeper operational details.
+

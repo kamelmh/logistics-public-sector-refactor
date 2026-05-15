@@ -1,4 +1,4 @@
-﻿Attribute VB_Name = "ThisWorkbook"
+Attribute VB_Name = "ThisWorkbook"
 '==============================================================================
 ' ThisWorkbook.cls — ERP Académie v13.2
 ' Workbook-level event handlers
@@ -27,7 +27,7 @@ Private Sub Workbook_Open()
     
     welcomeMsg = "ERP Académie " & versionStr & vbCrLf & _
                  "Direction de l'Éducation — El Bayadh" & vbCrLf & vbCrLf & _
-                 "D=1,546  |  ROP=205.6  |  Q*=176  |  SS=200"
+                 "D=1,546  |  ROP=212.4  |  Q*=176  |  SS=200"
     MsgBox welcomeMsg, vbInformation, titleStr
     
     ' 2. Sync metrics from ledger
@@ -50,3 +50,4 @@ InitError:
     MsgBox "Erreur d'initialisation: " & Err.Description, vbCritical, titleStr
     GoTo Cleanup
 End Sub
+

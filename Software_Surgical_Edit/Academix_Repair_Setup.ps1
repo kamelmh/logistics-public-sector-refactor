@@ -112,7 +112,7 @@ if (Test-Path $ctxSource) {
     $minimal  = "# ACADEMIX_CONTEXT v13.2"
     $minimal += "`n# TRIGGER: ACADEMIX_CONTEXT v13.2 DEPLOYED_IN_OPENCODE"
     $minimal += "`n`n## Ground Truth"
-    $minimal += "`n- ART-001: Toner G030 | D=1546 | Q*=176 | ROP=205.6 | SS=200 | LT=2d"
+    $minimal += "`n- ART-001: Toner G030 | D=1546 | Q*=176 | ROP=212.4 | SS=200 | LT=2d"
     $minimal += "`n- MASTER_PWD: erp_secure_pwd_2026 | VERSION: v13.2"
     $minimal += "`n- 27 modules clean | W001-W010 resolved | Ch4 thesis PENDING"
     Set-Content $ctxDest $minimal -Encoding UTF8
@@ -191,3 +191,4 @@ if ($allOK) {
     Write-Host "  PARTIAL — review FAIL items above" -ForegroundColor Yellow
 }
 Write-Host ""
+

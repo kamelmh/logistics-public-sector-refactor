@@ -23,7 +23,7 @@
       <target module="mod_Utilities" reason="SafeVal, GetArticleField, IsValidDate - pure functions" />
     </targets>
     <actions>
-      <action>Test CalculateROP with D=1546, LT=2, SS=200 -> expect 205.6</action>
+      <action>Test CalculateROP with D=1546, LT=2, SS=200 -> expect 212.4</action>
       <action>Test CalculateEOQ with D=1546, S=500, H=0.2*unitPrice -> expect ~176</action>
       <action>Test SafeVal with Null, Empty, "", "abc", 123</action>
     </actions>
@@ -89,3 +89,4 @@
     </actions>
   </skill>
 </skills-projection>
+

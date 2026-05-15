@@ -71,9 +71,11 @@ set "PROJECT_ROOT=%SCRIPT_ROOT%"
 set "GUI_EXE=%LOCALAPPDATA%\Programs\@opencode-aidesktop\OpenCode.exe"
 set "CONFIG_DIR=%USERPROFILE%\.config\opencode"
 set "CONFIG_FILE=%CONFIG_DIR%\opencode.json"
-set "DEFAULT_MODEL=opencode/big-pickle"
-set "GROQ_MODEL=groq/qwen/qwen3-32b"
+set "DEFAULT_MODEL=google/gemma-4-31b-it"
+set "GROQ_MODEL=groq/llama-3.1-8b-instant"
 set "LLAMA_MODEL=groq/llama-3.3-70b-versatile"
+set "LLAMA_405B_MODEL=groq/llama-3.1-405b-reasoning"
+set "MIXTRAL_MODEL=groq/mixtral-8x7b-32768"
 set "NEMOTRON_MODEL=openrouter/nvidia/nemotron-3-super-120b-a12b:free"
 set "GEMINI_MODEL=google/gemini-2.5-flash"
 set "GEMINI3_MODEL=google/gemini-3-flash-preview"
@@ -85,9 +87,13 @@ set "OLLAMA_FAST_MODEL=ollama/qwen2.5-coder:7b"
 set "OLLAMA_QWEN3=ollama/qwen3:1.7b"
 set "OLLAMA_PHI4=ollama/phi4-mini:3.8b-q4_K_M"
 set "OLLAMA_GEMMA4_LOCAL=ollama/gemma4:e2b"
+set "DEEPSEEK_PRO_MODEL=deepseek/deepseek-v4-pro"
+set "DEEPSEEK_FLASH_MODEL=deepseek/deepseek-v4-flash"
+set "KIMI_MODEL=openrouter/moonshotai/kimi-k2.6"
+set "QUASAR_MODEL=openrouter/openrouter/quasar-alpha"
 
 :: ---- Mode Registry (Single Source of Truth) ----
-set "CLI_MODES=cli groq llama gemini gemini3 gemma gemma-31b gemma-local phi4 qwen3 nemotron ring freellm completions ollama"
+set "CLI_MODES=cli groq llama llama-405b mixtral gemini gemini3 gemma gemma-31b gemma-local phi4 qwen3 nemotron ring freellm completions deepseek deepseek-flash kimi quasar ollama"
 set "OLLAMA_MODES=phi4 qwen3 gemma-local"
 set "PIPELINE_MODES=autobuild autoverify autotest autoaudit autothesis autocheck autofix autoplan autolog automenu autoclean status crossflow crossflow-sync"
 set "SPECIAL_MODES=gui fcc proxy academix restore picker help"
@@ -147,6 +153,8 @@ if /i "%MODE%"=="g3" goto :gemini3
 if /i "%MODE%"=="ogg-31b" goto :gemma-31b
 if /i "%MODE%"=="ogg-local" goto :gemma-local
 if /i "%MODE%"=="op" goto :picker
+if /i "%MODE%"=="l405" goto :llama-405b
+if /i "%MODE%"=="mix" goto :mixtral
 :: Pipeline modes
 for %%m in (%PIPELINE_MODES%) do if /i "!MODE!"=="%%m" goto :%%m
 :: Special modes
@@ -207,11 +215,29 @@ goto :end
 
 :groq
 title %WINDOW_TITLE%
-echo [OpenCode] Launching with Groq Qwen3 32B — Session: %SESSION_NAME%
+echo [OpenCode] Launching with Groq Llama 3.1 8B Instant — Session: %SESSION_NAME%
 echo   Model: %GROQ_MODEL%
 echo.
 cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%GROQ_MODEL%" "%PROJECT_ROOT%"
+goto :end
+
+:llama-405b
+title %WINDOW_TITLE%
+echo [OpenCode] Launching with Groq Llama 3.1 405B Reasoning — Session: %SESSION_NAME%
+echo   Model: %LLAMA_405B_MODEL%
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "%LLAMA_405B_MODEL%" "%PROJECT_ROOT%"
+goto :end
+
+:mixtral
+title %WINDOW_TITLE%
+echo [OpenCode] Launching with Groq Mixtral 8x7B — Session: %SESSION_NAME%
+echo   Model: %MIXTRAL_MODEL%
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "%MIXTRAL_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
 :llama
@@ -225,7 +251,8 @@ goto :end
 
 :nemotron
 title %WINDOW_TITLE%
-echo [OpenCode] Launching with Nemotron 3 Super 120B — Session: %SESSION_NAME%
+echo [OpenCode] Launching with Nemotron 120B — Session: %SESSION_NAME%
+echo   (Note: If rate-limited, try 'OpenCode ring' or 'OpenCode gemini3')
 echo   Model: %NEMOTRON_MODEL% (1M context)
 echo.
 cd /d "%BASEDIR%"
@@ -418,18 +445,64 @@ goto :end
 :: ==============================================================
 :completions
 title %WINDOW_TITLE%
-echo [OpenCode] Completions.me — Free Claude/GPT — Session: %SESSION_NAME%
+echo [OpenCode] Completions.me — Free Unlimited API — Session: %SESSION_NAME%
+echo   (Note: If Opus is slow/limited, use 'OpenCode llama' or 'OpenCode gemini3')
 echo.
-echo   Models available:
-echo     completions/claude-opus-4.6   — Claude Opus 4.6
-echo     completions/claude-sonnet-4.6 — Claude Sonnet 4.6
-echo     completions/gpt-5.2           — GPT-5.2
-echo     completions/gemini-2.5-pro    — Gemini 2.5 Pro
+echo   Top models:
+echo     completions/claude-opus-4.6       — Claude Opus 4.6 (flagship)
+echo     completions/gpt-5.4               — GPT-5.4 (latest)
+echo     completions/gemini-3.1-pro-preview — Gemini 3.1 Pro (1M ctx)
+echo     completions/claude-sonnet-4       — Claude Sonnet 4
+echo     completions/gpt-5.3-codex         — GPT-5.3 Codex (coding)
+echo     completions/gemini-2.5-pro        — Gemini 2.5 Pro
+echo     (26 models total — probe: curl https://completions.me/api/v1/models)
 echo.
 echo   API: completions.me (no rate limits, data logged)
 echo.
 set "SELECTED_MODEL=completions/claude-opus-4.6"
+if not defined COMPLETIONS_API_KEY set "COMPLETIONS_API_KEY=sk-cp_16170d7114bd1c85ce580d4fce127bc0f51ebf6f8218f80a"
 "%OC_EXE%" --model "%SELECTED_MODEL%" "%PROJECT_ROOT%"
+goto :end
+
+:: ==============================================================
+:deepseek
+title %WINDOW_TITLE%
+echo [OpenCode] DeepSeek V4-Pro — Insufficient Balance — Session: %SESSION_NAME%
+echo.
+echo   DeepSeek credits exhausted. Redirecting to Nemotron 120B (1M ctx, free via OpenRouter)...
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "%NEMOTRON_MODEL%" "%PROJECT_ROOT%"
+goto :end
+
+:deepseek-flash
+title %WINDOW_TITLE%
+echo [OpenCode] DeepSeek V4-Flash — Insufficient Balance — Session: %SESSION_NAME%
+echo.
+echo   DeepSeek credits exhausted. Redirecting to Ring 2.6 1T (262K ctx, free via OpenRouter)...
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "%RING_MODEL%" "%PROJECT_ROOT%"
+goto :end
+
+:kimi
+title %WINDOW_TITLE%
+echo [OpenCode] Kimi K2.6 — Insufficient OpenRouter credits — Session: %SESSION_NAME%
+echo.
+echo   Paid Kimi unavailable. Redirecting to Ring 2.6 1T (free Kimi clone, 262K ctx)...
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "%RING_MODEL%" "%PROJECT_ROOT%"
+goto :end
+
+:quasar
+title %WINDOW_TITLE%
+echo [OpenCode] Quasar Alpha — Deprecated (revealed as GPT-4.1 preview) — Session: %SESSION_NAME%
+echo.
+echo   Quasar removed from OpenRouter. Redirecting to Nemotron 120B (1M ctx, free)...
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "%NEMOTRON_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
 :: ==============================================================
@@ -484,6 +557,8 @@ set "MODE=%LAST_MODE%"
 if /i "%MODE%"=="on" set "MODE=nemotron"
 if /i "%MODE%"=="ogg" set "MODE=gemma"
 if /i "%MODE%"=="ogg-local" set "MODE=gemma-local"
+if /i "%MODE%"=="ds" set "MODE=deepseek"
+if /i "%MODE%"=="dsf" set "MODE=deepseek-flash"
 :: Validate against known mode lists, then goto directly
 set "VALID="
 for %%m in (%CLI_MODES%) do if /i "!MODE!"=="%%m" set "VALID=1"
@@ -707,8 +782,10 @@ set /a _n=1
 for %%m in (%CLI_MODES%) do (
     set "_d="
     if "%%m"=="cli" set "_d=big-pickle (default)"
-    if "%%m"=="groq" set "_d=Qwen3 32B (fast)"
+    if "%%m"=="groq" set "_d=Llama 3.1 8B (fast)"
     if "%%m"=="llama" set "_d=Llama 3.3 70B (VBA + prose)"
+    if "%%m"=="llama-405b" set "_d=Llama 3.1 405B (reasoning)"
+    if "%%m"=="mixtral" set "_d=Mixtral 8x7B"
     if "%%m"=="gemini" set "_d=Gemini 2.5 Flash (1M ctx)"
     if "%%m"=="gemini3" set "_d=Gemini 3 Flash (NEW — replaces 2.5 Flash)"
     if "%%m"=="gemma" set "_d=Gemma 4 26B (256K ctx, multimodal)"
@@ -719,6 +796,11 @@ for %%m in (%CLI_MODES%) do (
     if "%%m"=="qwen3" set "_d=Qwen3 1.7B (CPU reasoning)"
     if "%%m"=="nemotron" set "_d=Nemotron 120B (1M ctx)"
     if "%%m"=="freellm" set "_d=FreeLLM gateway (8 providers)"
+    if "%%m"=="completions" set "_d=Completions.me (free, 26 models)"
+    if "%%m"=="deepseek" set "_d=→ Nemotron 120B (1M ctx, redirect)"
+    if "%%m"=="deepseek-flash" set "_d=→ Ring 2.6 1T (262K ctx, redirect)"
+    if "%%m"=="kimi" set "_d=→ Ring 2.6 1T (free Kimi, redirect)"
+    if "%%m"=="quasar" set "_d=→ Nemotron 120B (1M ctx, redirect)"
     if "%%m"=="ollama" set "_d=Ollama model menu"
     echo    [!_n!]  %%m  !_d!
     set /a _n+=1
@@ -789,12 +871,14 @@ echo.
 echo Modes:
 echo   (no arg)   CLI mode -- big-pickle (default)
 echo   gui        Desktop GUI v1.14.42
-echo   groq       CLI with Groq Qwen3 32B
-echo   llama      CLI with Groq Llama 3.3 70B
-echo   nemotron   CLI with Nemotron 120B (OpenRouter free)
+echo   groq       CLI with Groq Llama 3.1 8B (Fast)
+echo   llama      CLI with Groq Llama 3.3 70B (Versatile)
+echo   llama-405b CLI with Groq Llama 3.1 405B (Reasoning)
+echo   mixtral    CLI with Groq Mixtral 8x7B
+echo   nemotron   CLI with Nemotron 120B (OpenRouter free) [Fallback: ring, gemini3]
 echo   on         Alias for nemotron
 echo   fcc        CLI via FCC proxy (auto-start)
-  echo   gemini     CLI with Google Gemini 2.5 Flash (quota limited)
+  echo   gemini     CLI with Google Gemini 2.5 Flash [Fallback: gemini3]
   echo   gemini3    CLI with Google Gemini 3 Flash Preview (replaces 2.5 Flash)
   echo   g3         Alias for gemini3
   echo   gemma      CLI with Google Gemma 4 26B (256K ctx, multimodal)
@@ -804,6 +888,10 @@ echo   fcc        CLI via FCC proxy (auto-start)
   echo   gemma-local CLI with Ollama Gemma 4 e2b (128K ctx, offline)
    echo   ring       CLI with Ring 2.6 1T (Kimi K2.6, 262K ctx, free OpenRouter)
    echo   freellm    FreeLLM gateway status (8 providers, auto-failover)
+   echo   deepseek   [REDIRECT] → Nemotron 120B (1M ctx, DeepSeek balance exhausted)
+   echo   deepseek-flash [REDIRECT] → Ring 2.6 1T (262K ctx, free, DeepSeek balance exhausted)
+   echo   kimi       [REDIRECT] → Ring 2.6 1T (free Kimi clone, no credits needed)
+   echo   quasar     [REDIRECT] → Nemotron 120B (1M ctx, Quasar deprecated)
    echo   ogg-local  Alias for gemma-local
 echo   phi4       CLI with phi4-mini:3.8b (CPU, offline)
 echo   qwen3      CLI with qwen3:1.7b (CPU, offline)

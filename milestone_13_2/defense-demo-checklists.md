@@ -39,7 +39,7 @@
 - Show **CALCULS_EOQ**: EOQ, ROP, safety stock per article
 - Show **TABLEAU DE BORD**: KPIs, charts
 - Show **ALERTE_DASHBOARD**: low-stock alerts
-- Reference ground truth: ART-001 has Q*=176, ROP=205.6
+- Reference ground truth: ART-001 has Q*=176, ROP=212.4
 
 ### 6. RAPPORTS (Reports) — 1 min
 - Generate PDF report (via `mod_ExportEngine`)
@@ -67,7 +67,7 @@
 |--------|-------|---------|
 | Annual Demand (D) | 1,546 units | Data from ARTICLES |
 | EOQ (Q*) | 176 | SQRT(2DS/PI) |
-| ROP | 205.6 | (D/250)*LT + SS |
+| ROP | 212.4 | (D/250)*LT + SS |
 | Safety Stock | 200 units | Demand variability |
 | Service Level | 99.7% | Z=2.75 for SS/Demand |
 | Order Cost (S) | 801.45 DZD | Fixed order cycle cost (field value) |
@@ -97,3 +97,4 @@
 | Macro security blocks | Set trusted location: `C:\Users\...\Dropbox\...\` |
 | Jury asks obscure question | Say "Let me show you in the system" → navigate to relevant sheet |
 | Network down | All offline — no external dependencies |
+

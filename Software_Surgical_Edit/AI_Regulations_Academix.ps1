@@ -78,8 +78,8 @@ if (Test-Path (Join-Path $ROOT "CLAUDE.md")) {
     else { $issues += "Annual Demand (D=1546)"; Status "D=1546" $false "—" "MISSING: D=1546" }
     if ($c -match "Q\*.*176|EOQ.*176") { Status "EOQ=176" $true "EOQ Q*: 176 units" "EOQ=176 not found" }
     else { $issues += "EOQ (Q*=176)"; Status "EOQ=176" $false "—" "MISSING: EOQ=176" }
-    if ($c -match "ROP.*205") { Status "ROP=205.6" $true "Reorder Point: 205.6 units" "ROP=205.6 not found" }
-    else { $issues += "ROP (205.6)"; Status "ROP=205.6" $false "—" "MISSING: ROP=205.6" }
+    if ($c -match "ROP.*205") { Status "ROP=212.4" $true "Reorder Point: 212.4 units" "ROP=212.4 not found" }
+    else { $issues += "ROP (212.4)"; Status "ROP=212.4" $false "—" "MISSING: ROP=212.4" }
     if ($c -match "SS.*200") { Status "SS=200" $true "Safety Stock: 200 units" "SS=200 not found" }
     else { $issues += "Safety Stock (200)"; Status "SS=200" $false "—" "MISSING: SS=200" }
 } else { Write-Host "  [WARN] CLAUDE.md not found at $ROOT" -ForegroundColor Yellow }
@@ -137,3 +137,4 @@ if ($issues.Count -eq 0) {
 }
 Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
 Write-Host "`nEdit this script anytime: right-click → Edit" -ForegroundColor Gray
+

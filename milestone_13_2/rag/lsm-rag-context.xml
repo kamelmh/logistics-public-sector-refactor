@@ -17,7 +17,7 @@
       <Description>Economic Order Quantity = sqrt(2DS/H) where D=annual demand, S=order cost, H=holding cost</Description>
       <Constants>
         <Constant name="D" value="1546" unit="units/year"/>
-        <Constant name="ROP" value="205.6" unit="units"/>
+        <Constant name="ROP" value="212.4" unit="units"/>
         <Constant name="SS" value="200" unit="units"/>
         <Constant name="Q*" value="176" unit="units"/>
         <Constant name="LT" value="2" unit="days"/>
@@ -120,3 +120,4 @@
     </AntiPatterns>
   </LLMContext>
 </RAGEducation>
+

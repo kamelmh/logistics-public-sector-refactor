@@ -92,7 +92,7 @@ $ws.Cells.Item(1, 1).Font.Bold = $true
 $ws.Cells.Item(3, 1) = "ERP Académie v13.2"
 $ws.Cells.Item(3, 1).Font.Size = 14
 $ws.Cells.Item(3, 1).Font.Bold = $true
-$ws.Cells.Item(5, 1) = "D=1,546 | ROP=205.6 | Q*=176 | SS=200 | LT=2"
+$ws.Cells.Item(5, 1) = "D=1,546 | ROP=212.4 | Q*=176 | SS=200 | LT=2"
 $ws.Cells.Item(6, 1) = "12 Articles · 3 Suppliers · 27 Modules"
 Write-Host "✓ ACCUEIL configured" -ForegroundColor Green
 
@@ -106,7 +106,7 @@ for ($i = 0; $i -lt $headers.Length; $i++) {
 }
 
 $articles = @(
-    @("ART-001", "Toner imprimante G030 (noir)", "A", 1546, 205.6, 300, 2500),
+    @("ART-001", "Toner imprimante G030 (noir)", "A", 1546, 212.4, 300, 2500),
     @("ART-002", "Rame papier A4 80g/m²", "A", 1200, 180.5, 250, 450),
     @("ART-003", "Rame papier A3 80g/m²", "B", 800, 120.3, 150, 1800),
     @("ART-004", "Boîte archives carton", "B", 400, 60.2, 100, 500),
@@ -154,7 +154,7 @@ $eoaData = @(
     @("Taux de Possession (I)", 0.20, "20%"),
     @("Prix Unitaire (h)", 250, "DZD"),
     @("Quantité Économique (Q*)", 176, "unités"),
-    @("Point de Commande (ROP)", 205.6, "unités"),
+    @("Point de Commande (ROP)", 212.4, "unités"),
     @("Stock de Sécurité (SS)", 200, "unités"),
     @("Délai de Livraison (LT)", 2, "jours"),
     @("Coût Total Annuel", 395291, "DZD")
@@ -273,3 +273,4 @@ Write-Host "  25 sheets created" -ForegroundColor Green
 Write-Host "  $imported VBA modules imported" -ForegroundColor Green
 Write-Host "  Workbook saved to: $OutputPath" -ForegroundColor Green
 Write-Host ""
+

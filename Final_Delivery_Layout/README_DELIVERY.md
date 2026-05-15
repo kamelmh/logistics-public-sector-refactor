@@ -82,7 +82,7 @@
 | Constante | Valeur |
 |-----------|--------|
 | Demande Annuelle (D) | 1,546 unités |
-| Point de Réapprovisionnement (ROP) | 205.6 unités |
+| Point de Réapprovisionnement (ROP) | 212.4 unités |
 | Stock de Sécurité (SS) | 200 unités |
 | Quantité Économique (Q*) | 176 unités |
 | Délai de Livraison (LT) | 2 jours |
@@ -96,3 +96,4 @@
 | `Defense_Slides_Marp.md` | Source Marp pour les diapositives |
 | `Defense_Academix_v13_2.pptx` | Présentation de soutenance (16 diapositives) |
 | `USER_MANUAL_AR.md` | Manuel utilisateur en arabe (magasinier) |
+

@@ -30,7 +30,7 @@ All formulas, code tests, and thesis evaluation chapters must align perfectly wi
 - Institution: Directorate of Education, El Bayadh.
 - Case Study Article: Toner G030 (ART-001).
 - Annual Demand (D): 1,546 units
-- Reorder Point (ROP): 205.6 units
+- Reorder Point (ROP): 212.4 units
 - Safety Stock (SS): 200 units
 - Economic Order Quantity (Q):* 176 units
 - Lead Time (LT): 2 days
@@ -66,3 +66,4 @@ Whenever OpenCode, Claude, or Gemini is initialized with this document:
 2. Confirm the exact folder you are operating in (Thesis vs. Software).
 3. Do not suggest adding external libraries or modern web frameworks. Ensure all code outputs are pure, vanilla VBA compatible with standard Microsoft Office installations in a government setting.
 4. When writing the thesis, always bridge the gap between manual science and automation.
+

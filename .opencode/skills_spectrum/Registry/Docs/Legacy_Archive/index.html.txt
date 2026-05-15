@@ -1,0 +1,163 @@
+# Use Agent Development Kit to Build, Test, and Deploy Agents (public)
+
+DigitalOcean Gradient™ AI Platform lets you build fully-managed AI agents with knowledge bases for retrieval-augmented generation, multi-agent routing, guardrails, and more, or use serverless inference to make direct requests to popular foundation models.
+
+The Agent Development Kit (ADK) is an SDK to build, test, and deploy agent workflows from within your development environments.
+
+**Note**: This feature is in [public preview](https://docs.digitalocean.com/platform/product-lifecycle/index.html.md#public-preview). To use it, opt in from the [**Feature Preview** page](https://cloud.digitalocean.com/account/feature-preview).
+
+## Prerequisites
+
+You must have the following prerequisites to use the ADK:
+
+- Python version 3.10 or higher. Run `python --version` or `python3 --version` to check your Python version.
+
+  If your version is not 3.10 or higher, you can install it using one of these methods:
+
+  - Download from [python.org](https://www.python.org/downloads/).
+  - Run one of the following commands in your command line terminal:
+
+    - `pyenv install 3.13.0 && pyenv local 3.13.0`
+    - `conda create -n gradient python=3.13 && conda activate gradient`
+- ADK Feature Preview enabled. You can opt in from the [**Feature Preview** page](https://cloud.digitalocean.com/account/feature-preview). If you can’t see the option, contact your team owner to enable it for you.
+- API Access Keys. You need the following keys to use the ADK:
+
+  - Model access key to authenticate access to [open-source and commercial models](https://docs.digitalocean.com/products/gradient-ai-platform/details/models/index.html.md#foundation-models) for serverless inference on the Gradient AI Platform.
+
+    Go to the [Serverless Inference tab](https://cloud.digitalocean.com/gradient-ai-platform/serverless-inference) in the control panel and scroll down to the **Model Access Keys** section. Click **Create Access Key** or copy an existing one.
+
+    Add the model access key as the `GRADIENT_MODEL_ACCESS_KEY` environment variable to the `.env` file.
+
+    For running or testing your agent locally, you must also export the key so that it is accessible to the application. To do this, run the following command:
+
+    ```bash
+    export GRADIENT_MODEL_ACCESS_KEY="<your_model_key>"
+    ```
+  - [Your account’s personal access token](https://docs.digitalocean.com/reference/api/create-personal-access-token/index.html.md) to allow deploying agents to your DigitalOcean account.
+
+    Go to the [API Tokens page](https://cloud.digitalocean.com/account/api/tokens) in the control panel and click **Generate New Token**. Configure the following [CRUD scopes](https://docs.digitalocean.com/reference/api/create-personal-access-token/index.html.md#about-custom-scopes):
+
+    - Create, read, update, delete scopes for `genai`
+    - Read scope for `project`
+
+    Provide a descriptive name for your token such as `Gradient ADK - Production`.
+
+    Add the API key as the `DIGITALOCEAN_API_TOKEN` environment variable to the `.env` file.
+- An `.env` file with environment variables to use in agent deployment. Use the following command to create the `.env` file and add the model access key, `GRADIENT_MODEL_ACCESS_KEY`, and your account’s personal access token, `DIGITALOCEAN_API_TOKEN`, environment variables to enable agent deployment to your DigitalOcean account:
+
+  ```bash
+  cat > .env << EOF
+  GRADIENT_MODEL_ACCESS_KEY=<your_model_key>
+  DIGITALOCEAN_API_TOKEN=<your_api_token>
+  EOF
+  ```
+
+  **Warning**:
+
+    ```
+    Do not commit the `.env` file to Git. Make sure to add it to your `.gitignore` file.
+    ```
+- A `requirements.txt` file at the root of the folder or repo to deploy, listing your dependencies.
+
+## Build New Agent
+
+To build and deploy a new agent using the ADK, follow these steps:
+
+1. Initialize a new agent project using the following command:
+
+   ```
+   gradient agent init
+   ```
+
+   When prompted, specify an agent workspace name and an agent deployment name. For example, `my-first-agent` and `development`.
+
+   When you run this command, the following directory structure is created:
+
+   ```
+   my-agent/
+   ├── main.py              # Your entrypoint (modify this!)
+   ├── .gradient/
+   │   └── agent.yml        # Config (don't edit manually)
+   ├── requirements.txt     # Python packages (add dependencies here)
+   ├── .env                 # API keys (YOU create this)
+   ├── agents/              # Your agent code (optional)
+   └── tools/               # Custom tools (optional)
+   ```
+
+   To provide an easy way for you to create an agent, the command also:
+
+   - Creates a base template (`main.py`) for a simple LangGraph example agent that calls a `openai-gpt-oss-120b` model using [serverless inference](https://docs.digitalocean.com/products/gradient-ai-platform/how-to/use-serverless-inference/index.html.md)
+   - Creates a configuration file (`agents.yml`) required to run or deploy your agent
+   - Installs all necessary dependencies for agent development
+2. Run and test the example agent locally using the following command:
+
+   ```
+   gradient agent run
+   ```
+
+   The output looks like this:
+
+   ```
+   Entrypoint: main.py
+   Server: http://0.0.0.0:8080
+   Agent: my-first-agent
+   Entrypoint endpoint: http://0.0.0.0:8080/run
+   ```
+
+   You can then access the agent and interact with it at the `http://0.0.0.0:8080/run` endpoint.
+
+   To interact with the agent, send a `POST` request to this endpoint with a prompt in the request body. For example, your request body can be `'{"prompt": "How are you?"}'`:
+
+   ```bash
+   curl -X POST http://localhost:8080/run \
+     -H "Content-Type: application/json" \
+     -d '{"prompt": "Hello! How are you?"}'
+   ```
+
+   Your agent processes the request and returns a response:
+
+   ```json
+   {
+     "response": "Hello! I'm doing well, thank you for asking. How can I help you today?"
+   }
+   ```
+
+   To view more verbose logs, use:
+
+   ```bash
+   gradient agent run --verbose
+   ```
+3. Once you verify that your agent is working correctly locally, deploy it to your DigitalOcean account using the following commands:
+
+   ```bash
+   export DIGITALOCEAN_API_TOKEN="<your_api-token>"
+   gradient agent deploy
+   ```
+
+   The deployment takes between 1 to 5 minutes. After the deployment succeeds, you see a `Deployment completed successfully` message and the deployment URL that the agent is running on in your terminal.
+
+   ```bash
+   ✅ Deployment completed successfully! [01:23]
+   Agent deployed successfully! (my-first-agent/development)
+   Deployment URL:
+   https://agents.do-ai.run/v1/abc123-xxxx-xxxx/development/run
+   ```
+4. Test the deployed agent by sending a `POST` request with a prompt in the request body to the deployment endpoint URL. For example, the request body can be `'{"prompt": "hello"}`:
+
+   ```bash
+   curl -X POST \
+     -H "Authorization: Bearer $DIGITALOCEAN_API_TOKEN" \
+     -H "Content-Type: application/json" \
+     "https://agents.do-ai.run/v1/abc123-xxxx-xxxx/development/run" \
+     -d '{"prompt": "Hello deployed agent!"}'
+   ```
+
+   Your agent deployment processes the request and returns a response:
+
+   ```json
+   {
+     "response": "Hello! How can I assist you today?"
+   }
+   ```
+
+For more detailed information on building, testing, and deploying agents using the ADK, see [Build Agents Using Agent Development Kit](https://docs.digitalocean.com/products/gradient-ai-platform/how-to/build-agents-using-adk/index.html.md).

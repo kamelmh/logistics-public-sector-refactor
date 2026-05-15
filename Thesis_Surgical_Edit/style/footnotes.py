@@ -3,12 +3,14 @@ Phase 2: Convert inline (Author, Year) citations to Word footnotes (CNEPD format
 Creates the footnotes XML part if it doesn't exist.
 """
 import sys, re, os
+import json
 from lxml import etree
 from docx import Document
 from docx.opc.part import Part
 from docx.opc.constants import RELATIONSHIP_TYPE as RT
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
+
 
 W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
 R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
@@ -62,9 +64,36 @@ def get_footnotes_xml(footnotes_part):
     return footnotes_part._element
 
 
-def create_footnote(footnotes_part, citation_text):
-    """Create a footnote in the footnotes part. Returns the footnote ID."""
+def create_footnote(footnotes_part, citation_text, ref_map, cited_sources):
+    """Create a professional CNEPD footnote. Returns the footnote ID."""
     root = get_footnotes_xml(footnotes_part)
+    
+    # Identify the source key from the citation text (e.g., "Wilson, 1934")
+    source_key = None
+    for ref in ref_map:
+        # Handle both list and dict formats for safety
+        if isinstance(ref, dict):
+            author = ref.get('author', '')
+            year = str(ref.get('year', ''))
+            if author and author in citation_text and year and year in citation_text:
+                source_key = ref.get('key')
+                break
+    
+    # Determine footnote content based on CNEPD rules
+    if source_key:
+        # Find the full ref data again
+        ref_data = next((r for r in ref_map if r.get('key') == source_key), {})
+        if source_key not in cited_sources:
+            # FIRST MENTION: Full Bibliographic Entry
+            full_ref = f"{ref_data.get('author', '')}, {ref_data.get('title_full', ref_data.get('title', 'Untitled'))}, {ref_data.get('publisher', '')}, {ref_data.get('year', '')}"
+            footnote_content = full_ref
+            cited_sources.add(source_key)
+        else:
+            # SUBSEQUENT MENTION: op. cit.
+            author_last = ref_data.get('author', 'Author').split(',')[0].split(' ')[-1]
+            footnote_content = f"{author_last}, op. cit."
+    else:
+        footnote_content = citation_text
 
     max_id = 0
     for fn in root.findall(qn('w:footnote')):
@@ -98,9 +127,8 @@ def create_footnote(footnotes_part, citation_text):
     r3 = etree.SubElement(p, qn('w:r'))
     t3 = etree.SubElement(r3, qn('w:t'))
     t3.set('{http://www.w3.org/XML/1998/namespace}space', 'preserve')
-    t3.text = f"{CNEPD_PREFIX}{citation_text}"
+    t3.text = f"{CNEPD_PREFIX}{footnote_content}"
 
-    # Save back to part
     footnotes_part._blob = etree.tostring(root, xml_declaration=True, encoding='UTF-8', standalone=True)
     footnotes_part._element = root
 
@@ -130,6 +158,16 @@ def insert_footnote_reference(paragraph, fn_id):
 def process_docx(docx_path):
     doc = Document(docx_path)
     footnotes_part = ensure_footnotes_part(doc)
+    
+    # Load reference map for CNEPD full-cite logic
+    ref_map_path = os.path.join(os.path.dirname(os.path.dirname(docx_path)), 'refs', 'master-references.json')
+    try:
+        with open(ref_map_path, 'r', encoding='utf-8') as f:
+            ref_map = json.load(f)
+    except Exception:
+        ref_map = {}
+
+    cited_sources = set()
     changes = 0
 
     for para in doc.paragraphs:
@@ -142,7 +180,7 @@ def process_docx(docx_path):
             citation_text = f"{m.group(1)}, {m.group(2)}"
             full_citation = m.group(0)
 
-            fn_id = create_footnote(footnotes_part, citation_text)
+            fn_id = create_footnote(footnotes_part, citation_text, ref_map, cited_sources)
 
             # Remove citation from paragraph XML runs
             char_offset = m.start()

@@ -19,7 +19,7 @@
 | 7 | `ALERTE_DASHBOARD` | لوحة التنبيهات | Stock alert dashboard — ROP/SS breach visualization | `mod_Analysis.bas` | Monitors ARTICLES vs MOUVEMENTS |
 | 8 | `INVENTAIRE` | الجرد | Physical inventory count sheet | `mod_StockEngine.bas` | Comparison: physical vs system stock |
 | 9 | `RAPPORTS` | التقارير | Report generation hub — summary exports | `mod_Reports.bas` | Aggregates from all data sheets |
-| 10 | `CALCULS_EOQ` | حسابات EOQ | Economic Order Quantity calculations (Wilson formula) | `mod_Analysis.bas` | D=1,546, Q*=176, ROP=205.6, SS=200 |
+| 10 | `CALCULS_EOQ` | حسابات EOQ | Economic Order Quantity calculations (Wilson formula) | `mod_Analysis.bas` | D=1,546, Q*=176, ROP=212.4, SS=200 |
 | 11 | `HISTORIQUE` | السجل التاريخي | Archived movement history | `mod_Utilities.bas` | Long-term storage, read-only |
 | 12 | `BON_RECEPTION` | وصل الاستلام | Reception form template (BR) | `mod_ReceiptTag.bas` | PDF export on BR generation |
 | 13 | `BON_SORTIE` | وصل الخروج | Exit form template (BS) | `mod_ReceiptTag.bas` | PDF export on BS generation |
@@ -95,7 +95,7 @@
 | Constant | Value | Module | Sheet |
 |---|---|---|---|
 | Annual Demand (D) | 1,546 units | `mod_Config.bas` | `CALCULS_EOQ` |
-| Reorder Point (ROP) | 205.6 units | `mod_Config.bas` | `CALCULS_EOQ` |
+| Reorder Point (ROP) | 212.4 units | `mod_Config.bas` | `CALCULS_EOQ` |
 | Safety Stock (SS) | 200 units | `mod_Config.bas` | `CALCULS_EOQ` |
 | Economic Order Qty (Q*) | 176 units | `mod_Analysis.bas` | `CALCULS_EOQ` |
 | Lead Time (LT) | 2 days | `mod_Config.bas` | `CALCULS_EOQ` |
@@ -134,7 +134,7 @@ Execution order on **AJOUTER LIGNE** (Add Line):
 | 5 | Qty > 0 | `IsNumeric + CLng > 0` | Stop + focus | — |
 | 6 | PU for BR | `m_IsBRMode → PU > 0` | Stop + focus | CMUP accuracy |
 | 7 | Negative stock | `stock - gridQty - qty ≥ 0` | Stop + MsgBox detail | Core ERP guard |
-| 8 | ROP breach | `projected ≤ ROP=205.6` | YesNo confirm → continue/abort | Canonical ROP alert |
+| 8 | ROP breach | `projected ≤ ROP=212.4` | YesNo confirm → continue/abort | Canonical ROP alert |
 
 ---
 
@@ -148,4 +148,5 @@ Execution order on **AJOUTER LIGNE** (Add Line):
 | .bak file cleanup | ✅ Complete | `frmStockEntry.frm.bak`, `mod_StockEntry_Logic.bas.bak` removed |
 | Spec table update | ✅ Complete | `frmStockEntry_spec_table.html` — Python refs → Audit Trail |
 | Terminology mapping | ✅ Complete | Database → السجل الرقمي, Backend → وحدات المعالجة VBA |
-| Constants sync | ✅ Complete | D=1,546, ROP=205.6, SS=200, Q*=176, LT=2 |
+| Constants sync | ✅ Complete | D=1,546, ROP=212.4, SS=200, Q*=176, LT=2 |
+

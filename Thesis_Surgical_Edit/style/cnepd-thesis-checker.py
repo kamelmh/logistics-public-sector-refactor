@@ -9,7 +9,7 @@ import sys, os, re, json
 GROUND_TRUTH = {
     "D": "1,546",
     "Q*": "176",
-    "ROP": "205.6",
+    "ROP": "212.4",
     "SS": "200",
     "LT": "2",
     "S": "500",
@@ -145,7 +145,7 @@ def main():
 
     # Constants
     print("\n--- CONSTANTS ---")
-    constants = [("D", "1,546"), ("Q\\*", "176"), ("ROP", "205.6"),
+    constants = [("D", "1,546"), ("Q\\*", "176"), ("ROP", "212.4"),
                  ("SS", "200"), ("LT", "2"), ("S", "500"), ("I", "20%")]
     for name, expected in constants:
         print(f"  {check_constant(text, name, expected)}")
@@ -173,3 +173,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

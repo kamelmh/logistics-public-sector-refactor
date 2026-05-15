@@ -2,7 +2,7 @@
 
 ## Task: Expand thesis chapters for academic depth
 
-Edit `Memoire_DSS_Logistique_ElBayadh.md`. Current version (459 lines) is concise — each مبحث needs expansion to **5-7 paragraphs** with proper academic depth. Keep all ground truth values locked (S=801.45, Q*=176, ROP=205.6, SS=200).
+Edit `Memoire_DSS_Logistique_ElBayadh.md`. Current version (459 lines) is concise — each مبحث needs expansion to **5-7 paragraphs** with proper academic depth. Keep all ground truth values locked (S=801.45, Q*=176, ROP=212.4, SS=200).
 
 ### Expansion targets:
 
@@ -30,8 +30,9 @@ Edit `Memoire_DSS_Logistique_ElBayadh.md`. Current version (459 lines) is concis
 
 ### Rules:
 - Keep all existing content — only add, never remove or replace
-- Lock ground truth: S=801.45, Q*=176, ROP=205.6, SS=200 everywhere
+- Lock ground truth: S=801.45, Q*=176, ROP=212.4, SS=200 everywhere
 - Maintain Arabic academic tone
 - Add explicit table/figure references (الجدول رقم (XX))
 
 After completion, write handoff to `.crossflow\HANDOFF.md`.
+

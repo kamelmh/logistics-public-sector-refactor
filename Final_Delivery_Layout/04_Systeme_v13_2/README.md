@@ -59,8 +59,9 @@
 | Constante | Valeur |
 |-----------|--------|
 | Demande Annuelle (D) | 1,546 unités |
-| Point de Réapprovisionnement (ROP) | 205.6 unités |
+| Point de Réapprovisionnement (ROP) | 212.4 unités |
 | Stock de Sécurité (SS) | 200 unités |
 | Quantité Économique (Q*) | 176 unités |
 | Délai de Livraison (LT) | 2 jours |
 | Taux de Possession (I) | 20% (CNEPD) |
+

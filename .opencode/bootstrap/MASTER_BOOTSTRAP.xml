@@ -3,8 +3,9 @@
   <!-- ===== AUTO-LOAD PROTOCOL (READ FIRST, EVERY SESSION) ===== -->
   <bootstrap order="mandatory">
     <step order="1">Read this MASTER_BOOTSTRAP.xml — complete system context</step>
-    <step order="2">Read `.opencode\erp-context-compact.md` — token-optimized snapshot (covers all XMLs, backends, models)</step>
-    <step order="3">Call `skill` tool to load skills matching agent type (see skills-map)</step>
+    <step order="2">Read `.opencode\skills_spectrum\REGISTRY.md` — activate AI OS Intelligence Layer</step>
+    <step order="3">Read `.opencode\erp-context-compact.md` — token-optimized snapshot (covers all XMLs, backends, models)</step>
+    <step order="4">Call `skill` tool to load skills matching agent type (see skills-map)</step>
     <step order="4">Read `C:\Users\Administrator\.opencode\notepad.md` for session memory</step>
     <step order="5">Run `/memory list` to recall previous session state</step>
     <step order="6">Check `C:\Users\Administrator\Desktop\handoff*.txt` for pending debug tasks</step>
@@ -27,7 +28,7 @@
   <ground-truth>
     <param name="D" value="1546" desc="Annual Demand (38-day observation)" />
     <param name="Q_STAR" value="176" desc="EOQ via Wilson" />
-    <param name="ROP" value="205.6" desc="(D/250)*LT + SS" />
+    <param name="ROP" value="212.4" desc="(D/250)*LT + SS" />
     <param name="SS" value="200" desc="Safety Stock" />
     <param name="LT" value="2" desc="Lead Time (days)" />
     <param name="S" value="500" unit="DZD" desc="Order Cost" />
@@ -57,6 +58,7 @@
   <!-- ===== CONTEXT FILES (read on demand) ===== -->
   <context-files project-root="C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor">
     <file key="compact" path=".opencode\erp-context-compact.md" priority="always" desc="Token-optimized snapshot of all 4 XMLs + backends + models (9.6KB, ~2.5K tokens)" />
+    <file key="spectrum" path=".opencode\skills_spectrum\REGISTRY.md" priority="always" desc="AI OS Spectrum Registry — Global Intelligence Layer (L0-L4)" />
     <file key="project-arch" path="Software_Surgical_Edit\erp-project-context.xml" priority="high" desc="Modules, sheets, call graph, config params (253 lines)" />
     <file key="agent-handoff" path="Software_Surgical_Edit\erp-agent-handoff.xml" priority="high" desc="Agent routing, session state, backends (102 lines)" />
     <file key="admin-paths" path="Software_Surgical_Edit\erp-admin-paths.xml" priority="medium" desc="All file paths, AI backends, launchers (295 lines)" />
@@ -231,3 +233,4 @@
 
 </master-bootstrap>
 ```
+

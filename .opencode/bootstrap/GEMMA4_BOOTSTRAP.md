@@ -7,7 +7,7 @@ VBA/Excel DSS for inventory management | El Bayadh Education Directorate
 Thesis: BTS CNEPD — 4 chapters, 17 مباحث, 52 مطالب
 
 ## GROUND TRUTH (locked — never modify)
-- D=1546 | Q*=176 | ROP=205.6 | SS=200 | S=801.45 DZD | I=20% | LT=2 days | PU=400 DZD
+- D=1546 | Q*=176 | ROP=212.4 | SS=200 | S=801.45 DZD | I=20% | LT=2 days | PU=400 DZD
 - VERSION=v13.2 | MASTER_PWD=erp_secure_pwd_2026
 - ART-001 = Toner G030 (NOT رزم الورق A4), ART-005 = Agrafeuse (NOT Toner)
 - CNEPD TAG1801 — BTS GSL formation
@@ -47,7 +47,7 @@ The human will save this to `.opencode/gemma4-session-state.md` between sessions
 
 ## KEY PARAMETERS
 - EOQ: Q* = sqrt(2DS / IPU) = sqrt(2 × 1546 × 801.45 / 0.20 × 400) ≈ 176
-- ROP: D/365 × LT + SS = 1546/365 × 2 + 200 ≈ 205.6
+- ROP: D/365 × LT + SS = 1546/365 × 2 + 200 ≈ 212.4
 - CMUP: Weighted average cost (SCO compliant — used in Algerian public sector)
 - 37 VBA modules, 25 worksheets, ~8,100 lines
 - Build: OK | Verify: 174/174 | Tests: 20/20 | Audit: 16 PASS
@@ -58,3 +58,4 @@ The human will save this to `.opencode/gemma4-session-state.md` between sessions
 3. If writing: output clean markdown, use Arabic for body, French for technical terms
 4. Always end with [SESSION_MEMORY] block
 5. If context is too long: request the human to provide specific sections
+

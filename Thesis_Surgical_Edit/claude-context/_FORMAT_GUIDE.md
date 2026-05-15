@@ -69,3 +69,9 @@ Accent bg:  #EBF5FB (alternating table rows)
 - French books: Prénom Nom, *Title*, Éditeur, Year, p.X.
 - Immediate repeat: المرجع نفسه، ص.XX.
 - Later repeat: اسم المؤلف، المرجع السابق، ص.XX.
+
+## 7. Linguistic & Academic Tone
+- **Sovereign Register:** Use Traditional Academic Arabic. Avoid any "translated" phrasing.
+- **The Surgical Bracketing Rule:** Use technical terms in brackets ONLY on their first occurrence in a section to establish the academic anchor.
+- **The Flow Rule:** All subsequent mentions must use the Arabic term alone.
+- **Visual Clarity:** Eliminate redundant technical terms to ensure the prose flows naturally and professionally.

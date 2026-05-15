@@ -125,7 +125,7 @@
   <ground-truth>
     <param name="D" value="1546">Annual Demand (38-day observation)</param>
     <param name="Q*" value="176">EOQ (Wilson formula)</param>
-    <param name="ROP" value="205.6">Reorder Point</param>
+    <param name="ROP" value="212.4">Reorder Point</param>
     <param name="SS" value="200">Safety Stock</param>
     <param name="LT" value="2">Lead Time (days)</param>
     <param name="S" value="500 DZD">Order Cost</param>
@@ -134,3 +134,4 @@
     <param name="VERSION" value="v13.2" />
   </ground-truth>
 </agent-handoff>
+

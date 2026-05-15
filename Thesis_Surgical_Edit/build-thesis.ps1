@@ -140,8 +140,16 @@ try {
     Write-Host "  [WARN] Font fix failed: $_" -ForegroundColor Yellow
 }
 
-# Step 4: SKIPPED — user's cover-page.docx used AS IS (not reformatted)
-Write-Host "[4/10] Cover: using user's original AS IS (format-cover.py skipped)" -ForegroundColor Cyan
+# Step 4: Bismillah and Cover
+Write-Host "[4/10] Processing Bismillah and Cover pages..." -ForegroundColor Yellow
+try {
+    python (Join-Path $style "build-bismillah.py") 2>&1
+    python (Join-Path $style "prepend-bismillah.py") $docx (Join-Path $style "bismillah-page.docx") 2>&1
+    Write-Host "  Bismillah page prepended" -ForegroundColor Green
+} catch {
+    Write-Host "  [WARN] Bismillah page failed: $_" -ForegroundColor Yellow
+}
+
 
 # Step 4.5: Format baseline (comprehensive: fonts + margins + headings + alignment)
 Write-Host "[4.5/10] Applying format baseline..." -ForegroundColor Yellow

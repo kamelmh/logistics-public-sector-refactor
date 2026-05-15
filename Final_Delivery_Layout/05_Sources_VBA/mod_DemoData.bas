@@ -9,7 +9,7 @@ Attribute VB_Name = "mod_DemoData"
 '   - 12 articles (ART-001 to ART-012)
 '   - 3 suppliers (F-001 to F-003)
 '   - ~150 movements (mix of IN/OUT across all articles)
-'   - Canonical values: D=1546, ROP=205.6, SS=200, Q*=176, LT=2
+'   - Canonical values: D=1546, ROP=212.4, SS=200, Q*=176, LT=2
 '==============================================================================
 
 Option Explicit
@@ -422,3 +422,4 @@ End Function
 '================================================================================
 ' END -- mod_DemoData.bas
 '================================================================================
+

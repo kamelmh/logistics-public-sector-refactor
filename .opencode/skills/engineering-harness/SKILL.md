@@ -38,10 +38,20 @@ description: |
 | **s11** | Autonomous Agents | AUTO pipeline commands | ⚠️ Partial | idle/claim cycle + identity re-injection |
 | **s12** | Worktree Isolation | Not deployed | ❌ Gap | git worktree per task for parallel lanes |
 
-## Engineering Harness Architecture
+## Ruflo-Lite Orchestration (Symmetry Logic)
 
-```
-+====================================================================+
+The project uses a Ruflo-inspired orchestration layer to coordinate the CrossFlow Trio (Architect, Surgeon, Scout).
+
+### Core Commands:
+- `/ruflo-swarm-init`: Establish the coordination topology (e.g., `hierarchical-mesh`).
+- `/ruflo-agent-spawn`: Assign roles (Scout, Surgeon, Architect) to synchronize behavior.
+- `/ruflo-memory-store`: Save successful reasoning patterns to `.opencode/memory/patterns.json` (Self-Learning).
+- `/ruflo-memory-search`: Retrieve past successful patterns to avoid repeated errors.
+
+### The reporting rule:
+Whenever any window completes a meaningful step, it MUST broadcast using:
+`pwsh -NoProfile -File scripts/harness.ps1 sync "Message"`
+
 |                    ACADEMIX ENGINEERING HARNESS                      |
 +====================================================================+
 |                                                                      |

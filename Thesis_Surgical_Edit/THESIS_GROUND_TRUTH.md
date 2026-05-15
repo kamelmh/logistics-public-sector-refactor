@@ -1,4 +1,4 @@
-# Academix v13.2 — Thesis Ground Truth (LOCKED — DO NOT MODIFY)
+# Academix v13.2 — Thesis Ground Truth (GOLDEN STATE LOCKED — DO NOT MODIFY)
 # Reference for all chapter edits. Every article code, constant, and measure must match this table.
 
 ## 12 Articles (Source: instructions.md + VBA modules)
@@ -22,7 +22,7 @@
 |----------|-------|------|---------|
 | D (ART-001) | 1,546 | unit/year | Annual demand |
 | Q* (EOQ) | 176 | units | √(2×1546×500 / 0.20×PU) |
-| ROP | 205.6 | units | (1546/250)×2 + 200 |
+| ROP | 212.4 | units | (1546/250)×2 + 200 |
 | SS | 200 | units | (MaxDaily − AvgDaily)×2 |
 | LT | 2 | days | Default delivery lead time |
 | S | 801.45 | DZD | Fixed order cost (field data: 801.45) |

@@ -18,7 +18,7 @@ MISSION: Produce a publication-ready Algerian Arabic DOCX of the thesis using th
 4. POLISH each chapter in order:
    - Fix any remaining grammar/flow issues in Arabic-prose Algerian-thesis
    - Verify all ART codes match ground truth (ART-001=Toner G030, NOT رزم الورق)
-   - Verify constants are correct (Q*=176, ROP=205.6, SS=200)
+   - Verify constants are correct (Q*=176, ROP=212.4, SS=200)
    - Verify 99.7% in all three abstracts
    - Confirm مبحث→مطلب→أولاً/ثانياً/ثالثاً hierarchy is consistent
 

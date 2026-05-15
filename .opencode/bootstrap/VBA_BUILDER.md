@@ -22,7 +22,7 @@ test-macros.ps1 → automated macro test
 ```
 
 ## Ground Truth (NEVER modify)
-D=1546, Q*=176, ROP=205.6, SS=200, LT=2d, S=500DZD, I=20%
+D=1546, Q*=176, ROP=212.4, SS=200, LT=2d, S=500DZD, I=20%
 MASTER_PWD=erp_secure_pwd_2026, VERSION=v13.2
 
 ## Critical Rules
@@ -30,3 +30,4 @@ MASTER_PWD=erp_secure_pwd_2026, VERSION=v13.2
 - Fix .bas files, NEVER .xlsm directly
 - NO Python, NO Flask, NO databases, NO XLOOKUP
 - Arabic thesis: MSA academic register, فصل→مبحث→مطلب hierarchy
+

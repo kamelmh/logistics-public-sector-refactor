@@ -225,9 +225,9 @@ def main():
     
     # Add Heading styles with proper Arabic formatting
     headings = [
-        ("Heading 1", 22, C_HEADING_1, "0"),    # Chapter titles
-        ("Heading 2", 18, C_HEADING_2, "1"),    # Section titles
-        ("Heading 3", 16, C_HEADING_2, "2"),    # Subsection titles
+        ("Heading 1", 24, C_HEADING_1, "0"),    # Chapter titles - Standard 24pt
+        ("Heading 2", 18, C_HEADING_2, "1"),    # Section titles - Standard 18pt
+        ("Heading 3", 16, C_HEADING_2, "2"),    # Subsection titles - Standard 16pt
     ]
     for hname, sz, clr, lvl in headings:
         ensure_heading_style(doc, hname, hname, sz, clr, bold=True, outline_lvl=lvl)

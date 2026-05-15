@@ -48,30 +48,150 @@
         "passed": 31,
         "failed": 0
       }
+    },
+    {
+      "build_id": "20260513-202255",
+      "timestamp": "2026-05-13 20:22:56",
+      "outputs": {
+        "pdf": {
+          "md5": "C3FC063521555FA3AB1E7E04CDA1E1B0",
+          "size_kb": 969.0
+        },
+        "docx": {
+          "md5": "974B25BDE9AA01FFC86F61FB1B0F48DD",
+          "size_kb": 107.0
+        }
+      },
+      "source": {
+        "size_kb": 118.8,
+        "md5": "5BA2BD8F5CD76FE8BA6680F30BF24384",
+        "file": "Memoire_DSS_Logistique_ElBayadh.md"
+      },
+      "verify": {
+        "failed": 0,
+        "total": 32,
+        "passed": 31
+      }
+    },
+    {
+      "build_id": "20260514-181637",
+      "source": {
+        "md5": "57C97155B013568C6773E1EEC646C745",
+        "file": "Memoire_DSS_Logistique_ElBayadh.md",
+        "size_kb": 119.0
+      },
+      "outputs": {
+        "docx": {
+          "size_kb": 104.0,
+          "md5": "1BC32495597C39AD2E4A306842E0C922"
+        },
+        "pdf": {
+          "size_kb": 970.0,
+          "md5": "99816AB121258E7C70DE7C17CD900B9F"
+        }
+      },
+      "timestamp": "2026-05-14 18:16:38",
+      "verify": {
+        "total": 34,
+        "failed": 0,
+        "passed": 33
+      }
+    },
+    {
+      "timestamp": "2026-05-14 18:36:54",
+      "source": {
+        "size_kb": 117.6,
+        "md5": "D5181B9A823C2B144FD237E049E1A808",
+        "file": "Memoire_DSS_Logistique_ElBayadh.md"
+      },
+      "build_id": "20260514-183653",
+      "outputs": {
+        "pdf": {
+          "size_kb": 964.0,
+          "md5": "FFEA68F84FC63664D975F97FF2E813AA"
+        },
+        "docx": {
+          "size_kb": 107.0,
+          "md5": "A4958D39A1E2381561234FF621BDAAB6"
+        }
+      },
+      "verify": {
+        "failed": 1,
+        "passed": 32,
+        "total": 35
+      }
+    },
+    {
+      "source": {
+        "md5": "D5181B9A823C2B144FD237E049E1A808",
+        "size_kb": 117.6,
+        "file": "Memoire_DSS_Logistique_ElBayadh.md"
+      },
+      "verify": {
+        "passed": 32,
+        "failed": 1,
+        "total": 35
+      },
+      "timestamp": "2026-05-14 18:39:24",
+      "outputs": {
+        "docx": {
+          "size_kb": 106.0,
+          "md5": "8A433A7F810AB47E683918C427F96BBA"
+        },
+        "pdf": {
+          "size_kb": 961.0,
+          "md5": "04E63776597880A836D9DB5D50A329AB"
+        }
+      },
+      "build_id": "20260514-183923"
+    },
+    {
+      "timestamp": "2026-05-15 03:15:33",
+      "source": {
+        "md5": "80A6AF23DBAF58987973561A236EBBEE",
+        "size_kb": 121.2,
+        "file": "Memoire_DSS_Logistique_ElBayadh.md"
+      },
+      "build_id": "20260515-031532",
+      "verify": {
+        "total": 35,
+        "passed": 32,
+        "failed": 1
+      },
+      "outputs": {
+        "docx": {
+          "size_kb": 109.0,
+          "md5": "128FFE81CB089FA78844A551929C6EA0"
+        },
+        "pdf": {
+          "size_kb": 977.0,
+          "md5": "9D0380A5062E330784DCD163CA842282"
+        }
+      }
     }
   ],
   "golden_baseline": {
-    "build_id": "20260513-202255",
-    "timestamp": "2026-05-13 20:22:56",
     "outputs": {
-      "pdf": {
-        "md5": "C3FC063521555FA3AB1E7E04CDA1E1B0",
-        "size_kb": 969.0
-      },
       "docx": {
-        "md5": "974B25BDE9AA01FFC86F61FB1B0F48DD",
-        "size_kb": 107.0
+        "size_kb": 109.0,
+        "md5": "CC7D5BBCD583ECF4AE5D92F9E35D7DBE"
+      },
+      "pdf": {
+        "size_kb": 978.0,
+        "md5": "001098682749EBAFDA7061AE4396651F"
       }
     },
-    "source": {
-      "size_kb": 118.8,
-      "md5": "5BA2BD8F5CD76FE8BA6680F30BF24384",
-      "file": "Memoire_DSS_Logistique_ElBayadh.md"
-    },
+    "build_id": "20260515-062620",
     "verify": {
-      "failed": 0,
-      "total": 32,
-      "passed": 31
-    }
+      "passed": 32,
+      "total": 35,
+      "failed": 1
+    },
+    "source": {
+      "file": "Memoire_DSS_Logistique_ElBayadh.md",
+      "size_kb": 121.2,
+      "md5": "80A6AF23DBAF58987973561A236EBBEE"
+    },
+    "timestamp": "2026-05-15 06:26:21"
   }
 }

@@ -1,0 +1,55 @@
+{
+  "enabled": true,
+  "defaults": {
+    "fallbackOn": ["rate_limit", "quota_exceeded", "5xx", "timeout", "overloaded"],
+    "cooldownMs": 300000,
+    "retryOriginalAfterMs": 900000,
+    "maxFallbackDepth": 5
+  },
+  "agents": {
+    "*": {
+      "fallbackModels": [
+        "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
+        "openrouter/inclusionai/ring-2.6-1t:free",
+        "groq/llama-3.3-70b-versatile",
+        "groq/mixtral-8x7b-32768",
+        "google/gemma-4-31b-it"
+      ]
+    },
+    "explore": {
+      "fallbackModels": [
+        "openrouter/inclusionai/ring-2.6-1t:free",
+        "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
+        "groq/mixtral-8x7b-32768",
+        "groq/llama-3.3-70b-versatile"
+      ]
+    },
+    "build": {
+      "fallbackModels": [
+        "groq/llama-3.3-70b-versatile",
+        "openrouter/inclusionai/ring-2.6-1t:free",
+        "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
+        "groq/llama-3.1-405b-reasoning"
+      ]
+    },
+    "thesis": {
+      "fallbackModels": [
+        "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
+        "openrouter/inclusionai/ring-2.6-1t:free",
+        "google/gemma-4-31b-it",
+        "groq/llama-3.1-405b-reasoning"
+      ]
+    },
+    "debug": {
+      "fallbackModels": [
+        "openrouter/inclusionai/ring-2.6-1t:free",
+        "groq/llama-3.3-70b-versatile",
+        "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
+        "groq/mixtral-8x7b-32768"
+      ]
+    }
+  },
+  "logging": true,
+  "logLevel": "info",
+  "logPath": "C:\\Users\\Administrator\\.opencode\\logs\\model-fallback.log"
+}

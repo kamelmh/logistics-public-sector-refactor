@@ -9,7 +9,7 @@
 |-------|-------|-------------|
 | D | 1,546 | Annual demand (38-day observation) |
 | Q* (EOQ) | 176 | √(2DS / IPU) — Wilson formula |
-| ROP | 205.6 | (D/250)×LT + SS |
+| ROP | 212.4 | (D/250)×LT + SS |
 | SS | 200 | Safety Stock |
 | LT | 2 days | Lead Time |
 | S | 500 DZD | Order Cost |
@@ -181,3 +181,4 @@ Workflows: feature (explore→plan→build) | fix (debug→build→test) | quali
 | Context XMLs | Software_Surgical_Edit\erp-*.xml (4 files) |
 | Launcher | Desktop\OpenCode.bat (v3.3, 26 modes) |
 | Git remote | https://github.com/kamelmh/logistics-public-sector-refactor |
+

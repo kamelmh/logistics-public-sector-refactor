@@ -22,7 +22,7 @@ Phase 1: Content (gemini-thesis / gemma 4)
 Phase 2: Ground Truth Lock (main-hub)
   │
   ├─ 2a. Verify thesis S=801.45 matches VBA mod_StockEngine
-  ├─ 2b. Verify Q*=176, ROP=205.6, SS=200 throughout
+  ├─ 2b. Verify Q*=176, ROP=212.4, SS=200 throughout
   ├─ 2c. Flag any discrepancy → handoff back to Phase 1
   │
   ▼
@@ -79,7 +79,7 @@ After each phase, the active window MUST write to `.crossflow\HANDOFF.md`:
 | D | 1,546 | mod_Config | Chapter 2 field data table |
 | S (Order Cost) | 801.45 DZD | mod_StockEngine.ORDER_COST_S | Chapter 2 formula + table |
 | Q* (EOQ) | 176 | mod_Analysis.ComputeEOQ | Chapter 2 field data table |
-| ROP | 205.6 | mod_StockEntry_Logic | Chapter 2 field data table |
+| ROP | 212.4 | mod_StockEntry_Logic | Chapter 2 field data table |
 | SS (Safety Stock) | 200 | mod_Config | Chapter 2 field data table |
 | LT | 2 days | mod_Config | Chapter 2 |
 | I (Holding Rate) | 20% | mod_StockEngine | Chapter 2 formula |
@@ -106,3 +106,4 @@ After Phase 5 sign-off:
 cat milestone_13_2\defense-demo-checklists.md
 ```
 Handoff to claude-project for demo script generation.
+

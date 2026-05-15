@@ -1,0 +1,55 @@
+# 🗺️ Path-Orchestrator (The System Concierge)
+> **Role:** File System Intelligence Layer
+> **Objective:** Ensure 100% structural integrity by mapping every file to its correct architectural layer.
+
+## 🛠 Mapping Logic (The "Known" Paths)
+All paths are resolved relative to the `%PROJECT_ROOT%` detected at boot.
+
+### 1. VBA Layer (Technical)
+- **Pattern:** `*.bas`, `*.frm`, `*.cls`
+- **Destination:** `%PROJECT_ROOT%\Software_Surgical_Edit\VBA_Modules\`
+- **Validation:** Check `erp-admin-paths.xml` $\rightarrow$ `<dir key="vba-modules">`
+
+### 2. Thesis Layer (Academic)
+- **Pattern:** `*.md` (Arabic), `*.docx` (Thesis), `*.pdf` (Thesis)
+- **Destination:** `%PROJECT_ROOT%\Thesis_Surgical_Edit\`
+- **Validation:** Check `erp-admin-paths.xml` $\rightarrow$ `<dir key="thesis">`
+
+### 3. OS Spectrum Layer (Intelligence)
+- **Pattern:** `*.skill`, `REGISTRY.md`, `SOW.md`
+- **Destination:** `%PROJECT_ROOT%\.opencode\skills_spectrum\`
+- **Validation:** Check `erp-admin-paths.xml` $\rightarrow$ `<dir key="spectrum">`
+
+### 4. Infrastructure Layer (System)
+- **Pattern:** `*.ps1`, `*.bat`
+- **Destination:** `%PROJECT_ROOT%\scripts\` or `%PROJECT_ROOT%\vbe-auto\`
+- **Validation:** Check `erp-admin-paths.xml` $\rightarrow$ `<dir key="scripts">`
+
+### 5. Config Layer (Metadata)
+- **Pattern:** `*.xml` (Project Context), `opencode.json`
+- **Destination:** `%PROJECT_ROOT%\Software_Surgical_Edit\` or `.config\opencode\`
+- **Validation:** Check `erp-admin-paths.xml` $\rightarrow$ `<config-files>`
+
+---
+
+## 🛡️ BIOS Conflict Resolution (Priority Matrix)
+When a file is found in an incorrect location or a conflict arises:
+
+1. **Source Integrity**: Always prioritize the `.bas` source over the `.xlsm` compiled state.
+2. **Hierarchy of Truth**: 
+   `MASTER_BOOTSTRAP.xml` $\rightarrow$ `erp-admin-paths.xml` $\rightarrow$ `REGISTRY.md`.
+3. **Collision Strategy**:
+   - If `File A` exists in Root and `VBA_Modules`, move Root $\rightarrow$ `VBA_Modules` and overwrite if timestamp is newer.
+   - If `File B` is a Thesis draft, move to `Thesis_Surgical_Edit` and archive old version in `output\archive\`.
+
+---
+
+## 🚀 Proactive Push Protocol
+As the AI, I must monitor the root directory. If I detect a "stray" file:
+1. **Identify**: "I see `mod_New.bas` in the root."
+2. **Map**: "This belongs in `%PROJECT_ROOT%\Software_Surgical_Edit\VBA_Modules\`."
+3. **Notify**: "Moving `mod_New.bas` to maintain Certification Matrix integrity."
+4. **Execute**: `Move-Item` $\rightarrow$ Update `erp-project-context.xml` if necessary.
+
+---
+*Engineered for Academix v13.2 | OS Spectrum Driver*

@@ -46,7 +46,7 @@
 |----------|-------|---------|
 | D (ART-001) | 1,546 unit/year | Annual demand for Toner G030 |
 | Q* (EOQ) | 176 units | Optimal order quantity |
-| ROP | 205.6 units | Reorder point |
+| ROP | 212.4 units | Reorder point |
 | SS | 200 units | Safety stock |
 | LT | 2 days | Lead time |
 | S | 801.45 DZD | Order cost (field-refined from initial 500; VBA updated 2026-05-12) |
@@ -121,3 +121,4 @@ Load the `crossflow-orchestrator` skill in any OpenCode session to activate:
 | Public LSM | ✅ Pushed v1.4.0 |
 | Defense checklist | ✅ Created: `milestone_13_2\defense-demo-checklists.md` |
 | Next | Thesis polish (gemini-thesis) / Feature expansion (main-hub)
+

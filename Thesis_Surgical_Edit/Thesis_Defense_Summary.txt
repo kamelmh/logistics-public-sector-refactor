@@ -10,7 +10,7 @@ Student: Kamel Mehalhoul
 Institution: Directorate of Education, El Bayadh, Algeria
 Case Study: Toner G030 (ART-001)
 Annual Demand: 1,546 units
-Reorder Point (ROP): 205.6 units
+Reorder Point (ROP): 212.4 units
 Safety Stock (SS): 200 units
 
 --------------------------------------------------------------------------------
@@ -132,3 +132,4 @@ Defense Date: 2026-05-02
 Committee: Directorate of Education, El Bayadh
 Score Target: >15/20 (Previous: 11/20 due to "too advanced" Python approach)
 ================================================================================
+
