@@ -114,7 +114,7 @@
   <launcher path="C:\Users\Administrator\Desktop\OpenCode.bat" version="3.6">
     <mode name="cli"     model="opencode/big-pickle" desc="Default CLI" />
     <mode name="gui"     model="gui" desc="Desktop GUI v1.14.42" />
-    <mode name="groq"    model="groq/llama-3.3-70b-versatile" desc="AI backend primary" />
+    <mode name="groq"    model="groq/llama-3.1-8b-instant" desc="AI backend primary" />
     <mode name="gemini"  model="google/gemini-2.5-flash" desc="1M context" />
     <mode name="gemma"   model="google/gemma-4-26b-a4b-it" desc="256K context, multimodal, own key" />
     <mode name="ogg"     model="google/gemma-4-26b-a4b-it" desc="Alias for gemma" />

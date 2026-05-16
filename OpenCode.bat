@@ -12,7 +12,7 @@ title OpenCode Launcher v3.6 ^| CrossFlow ^| Academix v13.2
 ::   OpenCode                    CLI mode (big-pickle, default)
 ::   OpenCode gui                Desktop GUI (v1.14.42)
 ::   OpenCode groq               CLI with Groq Qwen3 32B (fast explore/debug)
-::   OpenCode llama              CLI with Groq Llama 3.3 70B (VBA + prose + reasoning)
+::   OpenCode llama              CLI with Google Gemini 2.5 Flash (VBA + prose + reasoning)
 ::   OpenCode nemotron / on      CLI with Nemotron 120B (1M ctx, OpenRouter free)
 ::   OpenCode fcc                CLI via free-claude-code proxy (Nemotron 120B)
 ::   OpenCode gemini             CLI with Google Gemini 2.5 Flash (1M ctx)
@@ -32,7 +32,7 @@ title OpenCode Launcher v3.6 ^| CrossFlow ^| Academix v13.2
 ::   OpenCode autothesis         Build thesis PDF
 ::   OpenCode autocheck          Run system health test
 ::   OpenCode autofix            Full pipeline: build -> verify -> test -> audit
-::   OpenCode autoplan           CLI with Llama 3.3 (optimized for planning)
+::   OpenCode autoplan           CLI with Google Gemini 2.5 Flash (planning)
 ::   OpenCode autolog <mode>     Run any mode with timestamped log output
 ::   OpenCode automenu           Interactive mode picker (TUI)
 ::   OpenCode autoclean          Purge old logs, results, temp files (30-day)
@@ -71,9 +71,9 @@ set "PROJECT_ROOT=%SCRIPT_ROOT%"
 set "GUI_EXE=%LOCALAPPDATA%\Programs\@opencode-aidesktop\OpenCode.exe"
 set "CONFIG_DIR=%USERPROFILE%\.config\opencode"
 set "CONFIG_FILE=%CONFIG_DIR%\opencode.json"
-set "DEFAULT_MODEL=groq/llama-3.3-70b-versatile"  // Use opencode default (big-pickle)
-set "GROQ_MODEL=groq/llama-3.1-8b-instant"
-set "LLAMA_MODEL=groq/llama-3.3-70b-versatile"
+set "DEFAULT_MODEL=google/gemini-2.5-flash"  // Use opencode default (big-pickle)
+set "GROQ_MODEL=groq/qwen3-32b-instant"
+set "LLAMA_MODEL=google/gemini-2.5-flash"
 set "LLAMA_405B_MODEL=groq/llama-3.1-405b-reasoning"
 set "MIXTRAL_MODEL=groq/mixtral-8x7b-32768"
 set "NEMOTRON_MODEL=openrouter/nvidia/nemotron-3-super-120b-a12b:free"
@@ -93,7 +93,7 @@ set "KIMI_MODEL=openrouter/moonshotai/kimi-k2.6"
 set "QUASAR_MODEL=openrouter/openrouter/quasar-alpha"
 
 :: ---- Mode Registry (Single Source of Truth) ----
-set "CLI_MODES=cli groq llama llama-405b mixtral gemini gemini3 gemma gemma-31b gemma-local phi4 qwen3 nemotron ring freellm completions deepseek deepseek-flash kimi quasar ollama"
+set "CLI_MODES=cli groq llama llama-405b mixtral gemini gemini3 gemma gemma-31b gemma-local phi4 qwen3 nemotron ring freellm completions deepseek deepseek-flash kimi quasar ollama windsurf windsurf-anthropic"
 set "OLLAMA_MODES=phi4 qwen3 gemma-local"
 set "PIPELINE_MODES=autobuild autoverify autotest autoaudit autothesis autocheck autofix autoplan autolog automenu autoclean status crossflow crossflow-sync sync mem sandbox"
 set "SPECIAL_MODES=gui fcc proxy academix restore picker help"
@@ -242,25 +242,112 @@ goto :end
 
 :llama
 title %WINDOW_TITLE%
-echo [OpenCode] Launching with Groq Llama 3.3 70B — Session: %SESSION_NAME%
+echo [OpenCode] Launching with Google Gemini 2.5 Flash — Session: %SESSION_NAME%
 echo   Model: %LLAMA_MODEL%
 echo.
 cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%LLAMA_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
-:nemotron
+:mixtral
 title %WINDOW_TITLE%
-echo [OpenCode] Launching with Nemotron 120B — Session: %SESSION_NAME%
-echo   Model: %NEMOTRON_MODEL% (1M context)
-echo   (Auto-fallback to 'ring' if error occurs)
+echo [OpenCode] Launching with Groq Mixtral 8x7B — Session: %SESSION_NAME%
+echo   Model: %MIXTRAL_MODEL%
 echo.
 cd /d "%BASEDIR%"
-"%OC_EXE%" --model "%NEMOTRON_MODEL%" "%PROJECT_ROOT%"
-if errorlevel 1 (
-    echo   [!] Nemotron failed or rate-limited. Attempting fallback to Ring 2.6...
-    "%OC_EXE%" --model "%RING_MODEL%" "%PROJECT_ROOT%"
+"%OC_EXE%" --model "%MIXTRAL_MODEL%" "%PROJECT_ROOT%"
+goto :end
+
+:llama-405b
+title %WINDOW_TITLE%
+echo [OpenCode] Launching with Groq Llama 3.1 405B Reasoning — Session: %SESSION_NAME%
+echo   Model: %LLAMA_405B_MODEL%
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "%LLAMA_405B_MODEL%" "%PROJECT_ROOT%"
+goto :end
+
+:windsurf
+title %WINDOW_TITLE%
+echo [OpenCode] Launching via WindsurfAPI — Session: %SESSION_NAME%
+echo   Target URL: http://localhost:3003/v1
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "http://localhost:3003/v1" "%PROJECT_ROOT%"
+goto :end
+
+:windsurf-anthropic
+title %WINDOW_TITLE%
+echo [OpenCode] Launching via WindsurfAPI (Anthropic) — Session: %SESSION_NAME%
+echo   Target URL: http://localhost:3003
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "http://localhost:3003" "%PROJECT_ROOT%"
+goto :end
+
+:fcc
+title %WINDOW_TITLE%
+echo [OpenCode] Launching via free-claude-code proxy — Session: %SESSION_NAME%
+echo.
+if not exist "%FCC_DIR%" (
+    echo ERROR: free-claude-code not found at:
+    echo %FCC_DIR%
+    echo.
+    echo Install: git clone https://github.com/Alishahryar1/free-claude-code.git
+    echo to: %FCC_DIR%
+    echo Then: cd %FCC_DIR% ^&^& uv sync
+    pause
+    exit /b 1
 )
+powershell -Command "try { $r = Invoke-RestMethod 'http://localhost:%FCC_PORT%/health' -TimeoutSec 2; exit 0 } catch { exit 1 }"
+if errorlevel 1 (
+    echo   Proxy not running. Starting on port %FCC_PORT%...
+    pushd "%FCC_DIR%"
+    start "FCC Proxy" cmd /c "uv run uvicorn server:app --host 0.0.0.0 --port %FCC_PORT% --timeout-graceful-shutdown 5"
+    popd
+    set "RETRY_COUNT=0"
+    :fcc-retry
+    set /a RETRY_COUNT+=1
+    ping 127.0.0.1 -n 4 >nul
+    powershell -Command "try { $r = Invoke-RestMethod 'http://localhost:%FCC_PORT%/health' -TimeoutSec 3; exit 0 } catch { exit 1 }"
+    if errorlevel 1 (
+        if !RETRY_COUNT! LSS 5 (
+            echo   Retry !RETRY_COUNT!/5...
+            goto :fcc-retry
+        )
+        echo   WARNING: Proxy may not have started.
+    ) else (
+        echo   Proxy is running.
+    )
+) else (
+    echo   Proxy already running on port %FCC_PORT%.
+)
+echo.
+echo   Model: Nemotron 3 Super 120B (free, 1M ctx, via OpenRouter)
+echo.
+set "ANTHROPIC_BASE_URL=http://localhost:%FCC_PORT%"
+set "ANTHROPIC_AUTH_TOKEN=freecc"
+title %WINDOW_TITLE%
+cd /d "%BASEDIR%"
+"%OC_EXE%" "%PROJECT_ROOT%"
+goto :end
+
+:windsurf
+title %WINDOW_TITLE%
+echo [OpenCode] Launching via WindsurfAPI — Session: %SESSION_NAME%
+echo   Target URL: http://localhost:3003/v1
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "http://localhost:3003/v1" "%PROJECT_ROOT%"
+goto :end
+
+:windsurf-anthropic
+title %WINDOW_TITLE%
+echo [OpenCode] Launching via WindsurfAPI (Anthropic) — Session: %SESSION_NAME%
+echo   Target URL: http://localhost:3003
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "http://localhost:3003" "%PROJECT_ROOT%"
 goto :end
 
 :fcc
@@ -368,14 +455,52 @@ cd /d "%BASEDIR%"
 goto :end
 
 :qwen3
-call :ensure-ollama
-:mode-dispatch-qwen3
 title %WINDOW_TITLE%
 echo [OpenCode] Launching with qwen3:1.7b — Session: %SESSION_NAME%
 echo   Model: %OLLAMA_QWEN3%
 echo.
 cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%OLLAMA_QWEN3%" "%PROJECT_ROOT%"
+goto :end
+
+:nemotron
+title %WINDOW_TITLE%
+echo [OpenCode] Launching with Nemotron 120B — Session: %SESSION_NAME%
+echo   Model: %NEMOTRON_MODEL% (1M context)
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "%NEMOTRON_MODEL%" "%PROJECT_ROOT%"
+if errorlevel 1 (
+    echo   [!] Nemotron failed or rate-limited. Chaining to Gemini...
+    "%OC_EXE%" --model "%GEMINI_MODEL%" "%PROJECT_ROOT%"
+)
+goto :end
+
+:ring
+title %WINDOW_TITLE%
+echo [OpenCode] Launching with Ring 2.6 1T (Kimi K2.6) — Session: %SESSION_NAME%
+echo   Model: %RING_MODEL% (262K context, free, OpenRouter)
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "%RING_MODEL%" "%PROJECT_ROOT%"
+goto :end
+
+:windsurf
+title %WINDOW_TITLE%
+echo [OpenCode] Launching via WindsurfAPI — Session: %SESSION_NAME%
+echo   Target URL: http://localhost:3003/v1
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "http://localhost:3003/v1" "%PROJECT_ROOT%"
+goto :end
+
+:windsurf-anthropic
+title %WINDOW_TITLE%
+echo [OpenCode] Launching via WindsurfAPI (Anthropic) — Session: %SESSION_NAME%
+echo   Target URL: http://localhost:3003
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "http://localhost:3003" "%PROJECT_ROOT%"
 goto :end
 
 :ring
@@ -787,7 +912,7 @@ for %%m in (%CLI_MODES%) do (
     set "_d="
     if "%%m"=="cli" set "_d=big-pickle (default)"
     if "%%m"=="groq" set "_d=Llama 3.1 8B (fast)"
-    if "%%m"=="llama" set "_d=Llama 3.3 70B (VBA + prose)"
+    if "%%m"=="llama" set "_d=Gemini 2.5 Flash (VBA + prose)"
     if "%%m"=="llama-405b" set "_d=Llama 3.1 405B (reasoning)"
     if "%%m"=="mixtral" set "_d=Mixtral 8x7B"
     if "%%m"=="gemini" set "_d=Gemini 2.5 Flash (1M ctx)"
@@ -875,8 +1000,8 @@ echo.
 echo Modes:
 echo   (no arg)   CLI mode -- big-pickle (default)
 echo   gui        Desktop GUI v1.14.42
-echo   groq       CLI with Groq Llama 3.1 8B (Fast)
-echo   llama      CLI with Groq Llama 3.3 70B (Versatile)
+echo   groq       CLI with Groq Qwen3 32B (Fast)
+echo    llama      CLI with Google Gemini 2.5 Flash (VBA + prose + reasoning)
 echo   llama-405b CLI with Groq Llama 3.1 405B (Reasoning)
 echo   mixtral    CLI with Groq Mixtral 8x7B
 echo   nemotron   CLI with Nemotron 120B (OpenRouter free) [Fallback: ring, gemini3]
@@ -911,7 +1036,7 @@ echo   autoaudit  5-phase DSS audit
 echo   autothesis Build thesis PDF
 echo   autocheck  System health test
 echo   autofix    Full pipeline
-echo   autoplan   CLI with Llama 3.3 (planning)
+echo   autoplan   CLI with Google Gemini 2.5 Flash (planning)
 echo   autolog    Run any mode with logging
 echo   automenu   Interactive mode selector
 echo   autoclean  Purge old files (30-day)

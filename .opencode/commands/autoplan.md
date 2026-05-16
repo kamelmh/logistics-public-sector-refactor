@@ -1,7 +1,7 @@
 ---
 description: Planning workflow — architecture, task breakdown, research
 agent: build
-model: groq/llama-3.3-70b-versatile
+model: google/gemini-2.5-flash
 ---
 
 Run a planning session for the current task or request $ARGUMENTS.
