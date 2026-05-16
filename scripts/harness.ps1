@@ -1,6 +1,6 @@
 param(
     [Parameter(Position=0)]
-    [ValidateSet("compact","task","bg","worktree","status","cleanup","sync")]
+    [ValidateSet("compact","task","bg","worktree","status","cleanup","sync","unlock")]
     [string]$Layer,
 
     [Parameter(Position=1)]
@@ -37,6 +37,26 @@ function Safe-Read {
 function Assert-Dir {
     param([string]$Path)
     $null = mkdir -Force $Path -ErrorAction SilentlyContinue
+}
+
+# ===== s02/s08: File Ownership & Lock Release =====
+function Invoke-Unlock {
+    param([string]$TargetDir = "$ROOT\Thesis_Surgical_Edit\output")
+    Write-Output "=== Harness Unlock & Ownership Phase ==="
+    
+    # 1. Kill Word to release locks
+    Write-Output "Releasing file locks (killing WINWORD)..."
+    Stop-Process -Name "WINWORD" -Force -ErrorAction SilentlyContinue
+    
+    # 2. Take ownership recursively
+    Write-Output "Taking ownership of $TargetDir..."
+    takeown /f "$TargetDir" /r /d y | Out-Null
+    
+    # 3. Grant full control to Administrator
+    Write-Output "Granting full control to Administrator..."
+    icacls "$TargetDir" /grant "Administrator:F" /t | Out-Null
+    
+    Write-Output "Unlock complete. Target: $TargetDir"
 }
 
 # ===== s06: Context Compression =====
@@ -467,5 +487,8 @@ switch ($Layer) {
     }
     "sync" {
         if ($Action) { Invoke-Sync -Message $Action } else { "Usage: sync <message text>" }
+    }
+    "unlock" {
+        Invoke-Unlock
     }
 }

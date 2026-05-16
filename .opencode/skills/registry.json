@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-05-15",
+  "categories": {
+    "core": {
+      "description": "System-wide utilities and orchestration tools",
+      "skills": {
+        "crossflow-orchestrator": { "version": "1.0", "description": "Multi-window session coordination" },
+        "crossflow": { "version": "1.0", "description": "Shared context and handoff" },
+        "python-docx-tools": { "version": "1.0", "description": "DOCX manipulation utilities" },
+        "ssd-tools": { "version": "1.0", "description": "System specific diagnostic tools" },
+        "vba-deployer": { "version": "1.0", "description": "VBA source to XLSM deployment" },
+        "workspace-setup": { "version": "1.0", "description": "Standard project environment configuration" },
+        "semantic-memory": { "version": "1.0", "description": "Persistent, compressed observation layer" }
+      }
+    },
+    "workspace": {
+      "description": "Project-specific logic and domain knowledge",
+      "skills": {
+        "autonomous-iteration": { "version": "1.0", "description": "Hypothesize-Implement-Measure-Learn loop" },
+        "auto-thesis": { "version": "1.0", "description": "Automated thesis generation and formatting" },
+        "cnepd-memoire": { "version": "1.0", "description": "CNEPD Thesis domain context" },
+        "engineering-harness": { "version": "1.0", "description": "Academix v13.2 ERP engineering pipeline" },
+        "thesis-docx": { "version": "1.0", "description": "Thesis structure in DOCX" },
+        "thesis-to-docx": { "version": "1.0", "description": "Markdown to DOCX conversion for thesis" }
+      }
+    }
+  }
+}

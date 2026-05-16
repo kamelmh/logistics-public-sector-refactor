@@ -1,0 +1,26 @@
+graph TD
+    %% Chapter 2: Diagnosis of the Logistics System at the Education Directorate
+    C2[Chapter 2: Diagnosis of the Existing System] --> C2_S1[Section 1: Presentation of the Directorate]
+    C2 --> C2_S2[Section 2: Analysis of Current Inventory Processes]
+    C2 --> C2_S3[Section 3: Critical Diagnosis & Gap Analysis]
+    C2 --> C2_S4[Section 4: Proposed Functional Improvements]
+
+    C2_S1 --> S1_1[Organizational Chart]
+    C2_S1 --> S1_2[Roles & Responsibilities]
+
+    C2_S2 --> S2_1[Physical Flow of Goods]
+    C2_S2 --> S2_2[Information Flow / Paperwork]
+    C2_S2 --> S2_3[Current Tools: Manual Excel/Paper]
+
+    C2_S3 --> S3_1[Problem 1: Data Fragmentation]
+    C2_S3 --> S3_2[Problem 2: Stockout Risks]
+    C2_S3 --> S3_3[Problem 3: Lack of Forecasts]
+
+    C2_S4 --> S4_1[Digitalization of Entry/Exit]
+    C2_S4 --> S4_2[Implementation of EOQ/ROP]
+    C2_S4 --> S4_3[Automated Reporting Dashboard]
+
+    %% Styling
+    style C2 fill:#f96,stroke:#333,stroke-width:4px
+    style C2_S3 fill:#ffcccc,stroke:#f00,stroke-width:2px
+    style C2_S4 fill:#ccffcc,stroke:#0f0,stroke-width:2px

@@ -2,16 +2,16 @@
 # Academix v13.2 — Portable Profile Module
 # Source this from your PowerShell $PROFILE to get all shortcuts + PATH setup
 # Location: Project root (move project anywhere, update one path in $PROFILE)
-# Updated: 2026-05-10 — Portable launcher paths, OpenCode wrapper function
+# Updated: 2026-05-16 — Fixed OcBin to bin/ and consolidated launcher logic
 # =============================================================================
 
 $script:ProjRoot = Split-Path $PSScriptRoot -Parent
 $script:Desktop   = "$env:USERPROFILE\Desktop"
-$script:OcBin     = "$Desktop\opencode-windows-x64-baseline"
-$script:OcBat     = "$ProjRoot\OpenCode.bat"
+$script:OcBin     = "$script:ProjRoot\bin"
+$script:OcBat     = "$script:ProjRoot\OpenCode.bat"
 
 # ── PATH Setup ──────────────────────────────────────────────────────────────
-$needed = @($Desktop, $OcBin)
+$needed = @($Desktop, $script:OcBin)
 $current = $env:Path -split ';'
 $add = $needed | Where-Object { $_ -and ($current -notcontains $_) }
 if ($add) {
@@ -36,19 +36,19 @@ function cddesk  { Set-Location $script:Desktop; Write-Host "Desktop" -Foregroun
 #   on       → Nemotron 120B (1M ctx, OpenRouter free)
 #   ophi4    → Phi4-mini 3.8B (CPU coding, offline)
 #   oo       → Qwen 1.5B (offline fallback, slow)
-function oc     { Push-Location $script:ProjRoot; OpenCode llama; Pop-Location }
-function ol     { Push-Location $script:ProjRoot; OpenCode llama; Pop-Location }
-function og     { Push-Location $script:ProjRoot; OpenCode groq; Pop-Location }
-function ogg    { Push-Location $script:ProjRoot; OpenCode gemma; Pop-Location }
-function ogg31b { Push-Location $script:ProjRoot; OpenCode gemma-31b; Pop-Location }
-function oggl   { Push-Location $script:ProjRoot; OpenCode gemma-local; Pop-Location }
-function og3    { Push-Location $script:ProjRoot; OpenCode gemini3; Pop-Location }
-function oring  { Push-Location $script:ProjRoot; OpenCode ring; Pop-Location }
-function on     { Push-Location $script:ProjRoot; OpenCode nemotron; Pop-Location }
-function ophi4  { Push-Location $script:ProjRoot; OpenCode phi4; Pop-Location }
-function oqwen3 { Push-Location $script:ProjRoot; OpenCode qwen3; Pop-Location }
-function oo     { Push-Location $script:ProjRoot; OpenCode ollama; Pop-Location }
-function opicker { Push-Location $script:ProjRoot; & $script:OcBat "picker"; Pop-Location }
+function oc     { Push-Location $script:ProjRoot; & $script:OcBat llama; Pop-Location }
+function ol     { Push-Location $script:ProjRoot; & $script:OcBat llama; Pop-Location }
+function og     { Push-Location $script:ProjRoot; & $script:OcBat groq; Pop-Location }
+function ogg    { Push-Location $script:ProjRoot; & $script:OcBat gemma; Pop-Location }
+function ogg31b { Push-Location $script:ProjRoot; & $script:OcBat gemma-31b; Pop-Location }
+function oggl   { Push-Location $script:ProjRoot; & $script:OcBat gemma-local; Pop-Location }
+function og3    { Push-Location $script:ProjRoot; & $script:OcBat gemini3; Pop-Location }
+function oring  { Push-Location $script:ProjRoot; & $script:OcBat ring; Pop-Location }
+function on     { Push-Location $script:ProjRoot; & $script:OcBat nemotron; Pop-Location }
+function ophi4  { Push-Location $script:ProjRoot; & $script:OcBat phi4; Pop-Location }
+function oqwen3 { Push-Location $script:ProjRoot; & $script:OcBat qwen3; Pop-Location }
+function oo     { Push-Location $script:ProjRoot; & $script:OcBat ollama; Pop-Location }
+function opicker { Push-Location $script:ProjRoot; & $script:OcBat picker; Pop-Location }
 
 # ── Build & Verify ──────────────────────────────────────────────────────────
 function build  { & "$script:ProjRoot\vbe-auto\build.ps1" -ConfigPath "$script:ProjRoot\vbe-auto\vbe-auto-config.json" }

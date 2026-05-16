@@ -6,24 +6,26 @@
 
 ## 1. Starting Your Work (Every Day)
 
-You have **one launcher**. Double-click this desktop shortcut:
+You have **portable launchers** directly in the project root. Double-click any `.bat` file to launch the corresponding mode.
 
 ```
-📌 Desktop → OpenCode.lnk
+📌 Project Root → OpenCode_*.bat
 ```
 
-This opens the CLI. The default model is `opencode/big-pickle`.
+**The Default Launcher**: `OpenCode_BigPickle.bat` (Llama 3.3 70B) is your daily driver.
 
-**To choose a different model**, use Windows Terminal (or CMD):
+**Common Launchers**:
 
-| What you want | Type this in terminal |
+| Launcher | What it does |
 |---|---|
-| AI-powered coding | `OpenCode groq` |
-| Large documents (1M context) | `OpenCode gemini` |
-| Work offline (no internet) | `OpenCode ollama` |
-| Open the pretty GUI app | `OpenCode gui` |
-| Restore last session | `OpenCode restore` |
-| Two sessions at once | `OpenCode groq thesis` + `OpenCode ollama debug` |
+| `OpenCode_BigPickle.bat` | **Default** (Llama 3.3 70B) |
+| `OpenCode_Groq.bat` | Fastest coding/audit (Qwen 32B) |
+| `OpenCode_Gemini.bat` | Large documents (1M context) |
+| `OpenCode_Ollama.bat` | Work offline (Local models) |
+| `OpenCode_Nemotron.bat` | Large docs (1M context, Auto-fallback to Ring if limited) |
+| `OpenCode_Academix.bat` | Interactive Project Dashboard |
+| `OpenCode_Picker.bat` | Interactive Model Selection (TUI) |
+| `OpenCode_FCC.bat` | Claude-like experience via proxy |
 
 ---
 
@@ -34,6 +36,7 @@ Every time you start a session, the system **automatically loads**:
 1. `instructions.md` — your project blueprint (auto-loaded, always)
 2. `MASTER_BOOTSTRAP.xml` — everything the AI needs to know
 3. `notepad.md` — remembers what you did last time
+4. `.crossflow/HANDOFF.md` — the current state of multi-agent coordination
 
 **You don't need to do anything.** Just start typing.
 
@@ -42,35 +45,23 @@ Every time you start a session, the system **automatically loads**:
 ## 3. Daily Workflow
 
 ### To write VBA code:
-```
 Just ask me. For example:
 "Add a new button to the stock form that prints a label"
-```
 
 ### To rebuild the workbook after code changes:
-```
-Run: .\vbe-auto\build.ps1 -ConfigPath .\vbe-auto\config.json
-```
+Run: `OpenCode_Autobuild.bat`
 
 ### To check the workbook is correct:
-```
-Run: .\vbe-auto\verify.ps1 -ConfigPath .\vbe-auto\config.json
-```
+Run: `OpenCode_Autoverify.bat`
 
 ### To run the full test suite:
-```
-Run: .\Software_Surgical_Edit\test-macros.ps1
-```
+Run: `OpenCode_Autotest.bat`
 
 ### To build the thesis PDF:
-```
-Run: .\Thesis_Surgical_Edit\build-thesis.ps1
-```
+Run: `OpenCode_Autothesis.bat`
 
 ### To save your progress when stopping:
-```
-Tell me: /memory save "Done: fixed bug X | Next: add feature Y"
-```
+Tell me: `/memory save "Done: fixed bug X | Next: add feature Y"`
 
 ---
 
@@ -83,6 +74,8 @@ Tell me: /memory save "Done: fixed bug X | Next: add feature Y"
 | Thesis source | `Project\Thesis_Surgical_Edit\` |
 | Build scripts | `Project\Software_Surgical_Edit\` |
 | This guide | `Project\USER_GUIDE.md` |
+| **Launcher Binaries** | `Project\bin\` |
+| **Handoff/Context** | `Project\.crossflow\` |
 
 *(Project = `C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor`)*
 
@@ -96,14 +89,14 @@ Tell me: /memory save "Done: fixed bug X | Next: add feature Y"
 |---|---|---|
 | Em dashes (—) in VBA code | Compile error | I fix this automatically. Just tell me |
 | Comments between `_` line breaks | Syntax error | I fix this. Rare now |
-| Stale p-code cache | False compile errors | Run `build.ps1` (not just save .xlsm) |
+| Stale p-code cache | False compile errors | Run `OpenCode_Autobuild.bat` |
 
 ### 🟡 Medium impact
 
 | Issue | What happens | What to do |
 |---|---|---|
 | Session disconnects | I forget what we were doing | Type `OpenCode restore` to relaunch. I read `notepad.md` and resume |
-| Venue models 429 (Qwen3 Coder, Gemma 4 on OpenRouter) | Model fails to respond | Switch to Groq or Nemotron. Try `OpenCode groq` |
+| Venue models 429 (Rate limited) | Model fails to respond | Switch to Groq or Nemotron. If using Nemotron, it now auto-falls back to Ring. |
 | Ollama not started | `OpenCode ollama` hangs | Wait 10-15s — launcher v3.0 auto-starts it |
 
 ### 🔴 High impact (rare)
@@ -111,7 +104,7 @@ Tell me: /memory save "Done: fixed bug X | Next: add feature Y"
 | Issue | What happens | What to do |
 |---|---|---|
 | API key expired | "Authentication failed" | Regenerate key at the provider's website, update `opencode.json` |
-| Excel crash during build | Corrupted workbook | Run `build.ps1` again (clean-slate rebuild) |
+| Excel crash during build | Corrupted workbook | Run `OpenCode_Autobuild.bat` again (clean-slate rebuild) |
 | Git conflict | Can't push changes | Run `git pull --rebase` then push again |
 
 ---
@@ -119,14 +112,14 @@ Tell me: /memory save "Done: fixed bug X | Next: add feature Y"
 ## 6. Anticipated Issues (Prepare Now)
 
 ### 🔮 If internet goes down
-- Use offline mode: `OpenCode ollama`
+- Use offline mode: `OpenCode_Ollama.bat`
 - Ollama uses Qwen 1.5B (~95 seconds per response)
 - Good for: simple VBA edits, code review
 - Bad for: large tasks, thesis writing, complex reasoning
 
 ### 🔮 If Groq goes down
-- Switch to: `OpenCode gemini` (Gemini 2.5 Flash, 1M context)
-- Or: `OpenCode fcc` (Nemotron 120B via proxy)
+- Switch to: `OpenCode_Gemini.bat` (Gemini 2.5 Flash, 1M context)
+- Or: `OpenCode_FCC.bat` (Nemotron 120B via proxy)
 
 ### 🔮 If your hard drive fills up
 - Old workbooks in `Software_Surgical_Edit/*.xlsm` (~5 files, ~50 MB total)
@@ -144,10 +137,10 @@ Tell me: /memory save "Done: fixed bug X | Next: add feature Y"
 
 ### 🃏 Build & Verify
 ```powershell
-.\Software_Surgical_Edit\build.ps1          # Rebuild workbook
-.\Software_Surgical_Edit\verify.ps1         # 97 checks
-.\milestone_13_2\tests\dss-audit.ps1       # Full audit
-.\Software_Surgical_Edit\test-macros.ps1    # Macro tests
+OpenCode_Autobuild.bat          # Rebuild workbook
+OpenCode_Autoverify.bat         # 137 checks
+OpenCode_Autofix.bat            # Full pipeline (Build+Verify+Test+Audit)
+OpenCode_Autotest.bat           # Macro tests
 ```
 
 ### 🃏 Git
@@ -160,14 +153,13 @@ git push                                     # Upload to GitHub
 
 ### 🃏 Thesis
 ```powershell
-.\Thesis_Surgical_Edit\build-thesis.ps1      # Generate PDF
-# Output: Thesis_Surgical_Edit/output/Memoire_Academix_v13_2_Final.pdf
+OpenCode_Autothesis.bat          # Generate PDF
 ```
 
 ### 🃏 Project Dashboard (menu-based)
 ```powershell
-.\scripts\academix-launcher.ps1               # Interactive menu
-# Or: OpenCode academix
+OpenCode_Academix.bat               # Interactive menu
+# Or: OpenCode_Main.bat
 ```
 
 ---
@@ -176,21 +168,24 @@ git push                                     # Upload to GitHub
 
 ```
 📂 C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\
- ├── 📁 Software_Surgical_Edit\          ← Main project folder
- │    ├── 📁 VBA_Modules\                ← VBA source code (.bas files)
- │    ├── build.ps1                      ← Rebuild workbook
- │    ├── verify.ps1                     ← Check workbook
- │    ├── test-macros.ps1                ← Run tests
- │    ├── *.xml                          ← Context files for AI
- │    └── *.xlsm                         ← Compiled workbooks (don't touch)
- ├── 📁 Thesis_Surgical_Edit\            ← Thesis files
+ ├── 📁 bin\                         ← opencode.exe
+ ├── 📁 launchers\                   ← (Hidden/Internal)
+ ├── 📁 Software_Surgical_Edit\      ← Main project folder
+ │    ├── 📁 VBA_Modules\            ← VBA source code (.bas files)
+ │    ├── build.ps1                  ← Rebuild workbook
+ │    ├── verify.ps1                 ← Check workbook
+ │    ├── test-macros.ps1            ← Run tests
+ │    ├── *.xml                      ← Context files for AI
+ │    └── *.xlsm                     ← Compiled workbooks (don't touch)
+ ├── 📁 Thesis_Surgical_Edit\        ← Thesis files
  │    ├── Memoire_DSS_Logistique_ElBayadh.md    ← Thesis source
- │    ├── build-thesis.ps1               ← Build thesis PDF
- │    └── 📁 output\                     ← Generated PDFs
- ├── 📁 vbe-auto\                        ← Build toolkit
- ├── 📁 milestone_13_2\                  ← Tests & configs
- ├── 📁 .opencode\                       ← AI memory & skills
- └── USER_GUIDE.md                       ← This guide
+ │    ├── build-thesis.ps1           ← Build thesis PDF
+ │    └── 📁 output\                 ← Generated PDFs
+ ├── 📁 vbe-auto\                    ← Build toolkit
+ ├── 📁 milestone_13_2\              ← Tests & configs
+ ├── 📁 .opencode\                   ← AI memory & skills
+ ├── 📁 .crossflow\                  ← Multi-agent context & handoff
+ └── USER_GUIDE.md                   ← This guide
 ```
 
 ---
@@ -201,3 +196,4 @@ git push                                     # Upload to GitHub
 - **To check system status**: Ask me "run the health check"
 - **To save progress**: `/memory save "Done: X | Next: Y"`
 - **To restart clean**: `/session reset`
+

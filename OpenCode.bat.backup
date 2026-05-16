@@ -71,7 +71,7 @@ set "PROJECT_ROOT=%SCRIPT_ROOT%"
 set "GUI_EXE=%LOCALAPPDATA%\Programs\@opencode-aidesktop\OpenCode.exe"
 set "CONFIG_DIR=%USERPROFILE%\.config\opencode"
 set "CONFIG_FILE=%CONFIG_DIR%\opencode.json"
-set "DEFAULT_MODEL=groq/llama-3.3-70b-versatile"  // Use opencode default (big-pickle)
+set "DEFAULT_MODEL=google/gemma-4-31b-it"
 set "GROQ_MODEL=groq/llama-3.1-8b-instant"
 set "LLAMA_MODEL=groq/llama-3.3-70b-versatile"
 set "LLAMA_405B_MODEL=groq/llama-3.1-405b-reasoning"
@@ -109,7 +109,7 @@ set "MEMORY_DIR=%USERPROFILE%\.opencode\memory"
 set "MEMORY_FILE=%MEMORY_DIR%\session.log"
 set "LAST_SESSION=%MEMORY_DIR%\last-session.txt"
 set "OLLAMA_EXE=%LOCALAPPDATA%\Programs\Ollama\ollama.exe"
-set "HANDOFF_DIR=%PROJECT_ROOT%\.crossflow"
+set "HANDOFF_DIR=%USERPROFILE%\Desktop"
 set "CROSSFLOW_DIR=%PROJECT_ROOT%\.crossflow"
 set "CROSSFLOW_HANDOFF=%CROSSFLOW_DIR%\HANDOFF.md"
 set "CROSSFLOW_LOG=%CROSSFLOW_DIR%\SESSION_LOG.md"
@@ -252,15 +252,11 @@ goto :end
 :nemotron
 title %WINDOW_TITLE%
 echo [OpenCode] Launching with Nemotron 120B — Session: %SESSION_NAME%
+echo   (Note: If rate-limited, try 'OpenCode ring' or 'OpenCode gemini3')
 echo   Model: %NEMOTRON_MODEL% (1M context)
-echo   (Auto-fallback to 'ring' if error occurs)
 echo.
 cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%NEMOTRON_MODEL%" "%PROJECT_ROOT%"
-if errorlevel 1 (
-    echo   [!] Nemotron failed or rate-limited. Attempting fallback to Ring 2.6...
-    "%OC_EXE%" --model "%RING_MODEL%" "%PROJECT_ROOT%"
-)
 goto :end
 
 :fcc

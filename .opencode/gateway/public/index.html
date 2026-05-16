@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenCode Gateway 🦞</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: #ddd; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        h1 { color: #ff4d4d; margin-bottom: 10px; }
+        .subtitle { margin-bottom: 30px; color: #888; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; width: 100%; max-width: 800px; }
+        .card { background: #2d2d2d; border: 1px solid #444; padding: 20px; border-radius: 8px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .card:hover { border-color: #ff4d4d; background: #333; }
+        .card h3 { margin: 0 0 10px 0; font-size: 16px; }
+        #console { margin-top: 30px; width: 100%; max-width: 800px; background: #000; color: #0f0; padding: 15px; border-radius: 5px; font-family: 'Consolas', monospace; white-space: pre-wrap; height: 400px; overflow-y: auto; border: 1px solid #444; }
+        .status-msg { margin-top: 10px; font-style: italic; color: #aaa; }
+        .loader { display: none; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <h1>OpenCode Gateway 🦞</h1>
+    <div class="subtitle">Academix v13.2 Control Plane</div>
+    
+    <div style="margin-bottom: 20px;">
+        <button onclick="openCanvas()" style="padding: 10px 20px; background: #ff4d4d; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">🗺️ Open Thesis Canvas</button>
+    </div>
+
+    <div class="grid" id="actions-grid"></div>
+
+    <div id="console">Welcome to OpenCode Gateway. Select an action above to begin...</div>
+    <div class="status-msg" id="status">Ready.</div>
+
+    <script>
+        const consoleEl = document.getElementById('console');
+        const statusEl = document.getElementById('status');
+        const gridEl = document.getElementById('actions-grid');
+
+        function openCanvas() {
+            window.open('/api/canvas', '_blank');
+        }
+
+        async function loadActions() {
+            const res = await fetch('/api/actions');
+            const actions = await res.json();
+            for (const [id, data] of Object.entries(actions)) {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<h3>${data.label}</h3>`;
+                card.onclick = () => executeAction(id);
+                gridEl.appendChild(card);
+            }
+        }
+
+        async function executeAction(id) {
+            statusEl.innerText = 'Executing... please wait...';
+            consoleEl.innerText += `\n\n> Executing ${id}...\n`;
+            
+            try {
+                const res = await fetch('/api/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ actionId: id })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    consoleEl.innerText += data.stdout + (data.stderr ? `\nSTDERR: ${data.stderr}` : '');
+                    statusEl.innerText = 'Success!';
+                } else {
+                    consoleEl.innerText += `Error: ${data.error}\n${data.stderr || ''}`;
+                    statusEl.innerText = 'Failed.';
+                }
+            } catch (e) {
+                consoleEl.innerText += `Network Error: ${e.message}`;
+                statusEl.innerText = 'Error.';
+            }
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        loadActions();
+    </script>
+</body>
+</html>
