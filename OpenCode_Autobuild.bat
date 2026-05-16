@@ -1,2 +1,2 @@
 @echo off
-call OpenCode.bat autobuild
+call 'OpenCode.bat' autobuild

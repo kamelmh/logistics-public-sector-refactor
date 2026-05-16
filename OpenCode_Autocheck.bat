@@ -1,2 +1,2 @@
 @echo off
-call OpenCode.bat autocheck
+call 'OpenCode.bat' autocheck

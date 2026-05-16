@@ -471,9 +471,9 @@ goto :end
 :: ==============================================================
 :deepseek
 title %WINDOW_TITLE%
-echo [OpenCode] DeepSeek V4-Pro — Insufficient Balance — Session: %SESSION_NAME%
+echo [OpenCode] DeepSeek V4-Pro — Redirecting to Nemotron 120B — Session: %SESSION_NAME%
 echo.
-echo   DeepSeek credits exhausted. Redirecting to Nemotron 120B (1M ctx, free via OpenRouter)...
+echo   DeepSeek credits exhausted. Using Nemotron 120B (1M ctx, free via OpenRouter)...
 echo.
 cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%NEMOTRON_MODEL%" "%PROJECT_ROOT%"
@@ -481,9 +481,9 @@ goto :end
 
 :deepseek-flash
 title %WINDOW_TITLE%
-echo [OpenCode] DeepSeek V4-Flash — Insufficient Balance — Session: %SESSION_NAME%
+echo [OpenCode] DeepSeek V4-Flash — Redirecting to Ring 2.6 1T — Session: %SESSION_NAME%
 echo.
-echo   DeepSeek credits exhausted. Redirecting to Ring 2.6 1T (262K ctx, free via OpenRouter)...
+echo   DeepSeek credits exhausted. Using Ring 2.6 1T (262K ctx, free via OpenRouter)...
 echo.
 cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%RING_MODEL%" "%PROJECT_ROOT%"
@@ -491,9 +491,9 @@ goto :end
 
 :kimi
 title %WINDOW_TITLE%
-echo [OpenCode] Kimi K2.6 — Insufficient OpenRouter credits — Session: %SESSION_NAME%
+echo [OpenCode] Kimi K2.6 — Redirecting to Ring 2.6 1T — Session: %SESSION_NAME%
 echo.
-echo   Paid Kimi unavailable. Redirecting to Ring 2.6 1T (free Kimi clone, 262K ctx)...
+echo   Paid Kimi unavailable. Using Ring 2.6 1T (free Kimi clone, 262K ctx)...
 echo.
 cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%RING_MODEL%" "%PROJECT_ROOT%"
@@ -501,9 +501,9 @@ goto :end
 
 :quasar
 title %WINDOW_TITLE%
-echo [OpenCode] Quasar Alpha — Deprecated (revealed as GPT-4.1 preview) — Session: %SESSION_NAME%
+echo [OpenCode] Quasar Alpha — Redirecting to Nemotron 120B — Session: %SESSION_NAME%
 echo.
-echo   Quasar removed from OpenRouter. Redirecting to Nemotron 120B (1M ctx, free)...
+echo   Quasar deprecated. Using Nemotron 120B (1M ctx, free via OpenRouter)...
 echo.
 cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%NEMOTRON_MODEL%" "%PROJECT_ROOT%"

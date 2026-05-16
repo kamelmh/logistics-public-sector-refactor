@@ -1,2 +1,2 @@
 @echo off
-call OpenCode.bat autoaudit
+call 'OpenCode.bat' autoaudit

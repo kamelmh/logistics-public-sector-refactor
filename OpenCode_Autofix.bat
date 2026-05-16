@@ -1,2 +1,2 @@
 @echo off
-call OpenCode.bat autofix
+call 'OpenCode.bat' autofix

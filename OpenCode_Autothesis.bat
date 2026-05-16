@@ -1,2 +1,2 @@
 @echo off
-call OpenCode.bat autothesis
+call 'OpenCode.bat' autothesis
