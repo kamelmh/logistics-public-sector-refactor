@@ -83,3 +83,43 @@ VERDICT: ALL CHECKS PASSED
 | **C (Architect)** 🏛️ | ✅ **Done** | Polished مبحث ثاني + ثالث, validated ground truth |
 
 **Thesis is delivery-ready.** All windows' work integrated, verified, and signed off.
+
+---
+
+## 📩 DISPATCH: Window D (Claude Desktop) — Master Reviewer
+
+**To:** Window D — Claude Desktop (Claude 4 Sonnet)
+**From:** Window A (Scout), Window B (Surgeon), Window C (Architect/Gemma 4 26B)
+**Subject:** Academix v13.2 — Complete thesis 36/36 PASS, ERP GOLDEN — Final expert review
+
+### Project Summary
+Academix v13.2 is a VBA/Excel Decision Support System (DSS) for inventory management at مديرية التربية لولاية البيض (El Bayadh Education Directorate). The thesis is a BTS CNEPD mémoire (BTSS GSL — TAG1801). Thesis and ERP are both complete and verified.
+
+### Deliverables for Your Review
+
+| File | Path | Size | Status |
+|------|------|------|--------|
+| **Thesis source** | `Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md` | 907 lines, 4 chapters | ✅ 36/36 PASS |
+| **الفصل الرابع** | `Thesis_Surgical_Edit/الفصل_الرابع_التجريب_والتحقق_من_النتائج.md` | 75 lines, 2 مباحث | ✅ Complete |
+| **Thesis DOCX** | `Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx` | 107 KB | ✅ Fields updated |
+| **Thesis PDF** | `Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.pdf` | 949 KB | ✅ Fully rendered |
+| **ERP workbook** | `ERP_v13.2.xlsm` | 833 KB | ✅ GOLDEN |
+
+### Ground Truth (Locked — Do Not Modify)
+| Param | Value | Param | Value |
+|-------|-------|-------|-------|
+| D (ART-001) | 1,546 | Q* | 176 |
+| ROP | 212.4 | SS | 200 |
+| LT | 2 days | S | 801.45 DZD |
+| I | 20% | PU | 400 DZD |
+| Performance | 99.7% | Modules | 37 .bas + 1 .frm |
+| Sheets | 25 | Articles | 12 (ART-001→ART-012) |
+
+### Your Task as Window D (Master Reviewer)
+1. **Read** `.crossflow/MASTER_CONTEXT.md` — full project context
+2. **Read** `CLAUDE.md` — topology and your role
+3. **Review** the thesis source `.md` files for academic quality
+4. **Review** the PDF for formatting, tables, references
+5. **Deliver** your final expert analysis, suggestions, or sign-off via HANDOFF.md
+
+**All windows await your assessment.** 🎓

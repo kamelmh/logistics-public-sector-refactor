@@ -1,7 +1,7 @@
 # CrossFlow Master Context — Academix v13.2
 > Unified context payload shared across OpenCode, Claude Code, OMC, ECC, FCC.
 > Auto-loaded by all agents via CROSSFLOW block in their CLAUDE.md files.
-> Last updated: 2026-05-12
+> Last updated: 2026-05-17
 
 ## PROJECT IDENTITY
 - **Project**: Logistics Public Sector Refactor — Academix v13.2
@@ -27,11 +27,14 @@
 |----------|------|
 | Project root | `C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\` |
 | Thesis source | `...\Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md` |
-| Thesis PDF | `...\Thesis_Surgical_Edit\output\Memoire_Academix_v13_2_Final.pdf` |
-| Thesis DOCX | `...\Thesis_Surgical_Edit\output\Memoire_Academix_v13_2_Final.docx` |
-| Cover page | `...\Thesis_Surgical_Edit\cover-page.docx` |
+| Thesis source | `...\Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md` |
+| Thesis PDF | `...\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.pdf` |
+| Thesis DOCX | `...\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx` |
+| الفصل الرابع | `...\Thesis_Surgical_Edit\الفصل_الرابع_التجريب_والتحقق_من_النتائج.md` |
+| Cover page | `...\Thesis_Surgical_Edit\output\cover-page.docx` |
 | Claude context | `...\Thesis_Surgical_Edit\claude-context\` |
-| ERP workbook | `...\Software_Surgical_Edit\ERP_Academie_v13_2.xlsm` |
+| ERP workbook | `...\ERP_v13.2.xlsm` |
+| VBA source | `...\vbe-auto\src\` (37 .bas + 1 .frm) |
 | VBA modules | `...\Software_Surgical_Edit\VBA_Modules\` (37 .bas + 1 .frm) |
 | Build config | `...\vbe-auto\config.json` |
 | Build script | `...\vbe-auto\build.ps1` |
@@ -70,12 +73,12 @@
 | ART-006–012 | (various C items) | (per full table) | C |
 
 ## THESIS STRUCTURE
-| Chapter | Title | مباحث | مطالب |
-|---------|-------|-------|-------|
-| الفصل الأول | الإطار النظري للتسيير اللوجيستي | 5 | 14 |
-| الفصل الثاني | الإطار العملي للتشخيص الميداني | 3 | 9 |
-| الفصل الثالث | تصميم وإنجاز نظام دعم القرار | 4 | 15 |
-| الفصل الرابع | التجريب والتحقق من النتائج | 6 | 14 |
+| Chapter | Title | مباحث | مطالب | Status |
+|---------|-------|-------|-------|--------|
+| الفصل الأول | الإطار النظري للتسيير اللوجيستي | 5 | 14 | ✅ Polished |
+| الفصل الثاني | الإطار العملي والتشخيص الميداني | 3 | 9 | ✅ Polished (B+C) |
+| الفصل الثالث | تصميم وإنجاز نظام دعم القرار | 4 | 15 | ✅ Complete |
+| الفصل الرابع | التجريب والتحقق من النتائج | 2 | 7 | ✅ Complete |
 
 ## MULTI-WINDOW ORCHESTRATION (براءة اختراع)
 > Core invention: coordinating multiple AI windows/sessions, each with a specialized model,
@@ -83,18 +86,19 @@
 > across sessions — each window owns its domain but syncs via CrossFlow.
 
 ### Active Windows
-| Window | Launch Command | Model | Domain | Status |
-|--------|---------------|-------|--------|--------|
-| main-hub | `opencode` | big-pickle (default) | VBA dev, build, verify, orchestration | 🟢 Active |
-| gemini-thesis | `opencode gemini` | Gemini 2.5 Flash (1M ctx) | Thesis-wide analysis, deep reasoning | 🟢 Active |
-| claude-project | Claude Desktop | Claude 4 Sonnet | Give-and-take on thesis + project | 🟢 Active |
+| Window | Identity | Launch Command | Model | Domain | Status |
+|--------|----------|---------------|-------|--------|--------|
+| **A** 🕵️ | Scout | `opencode` | DeepSeek V4 Flash | Audit, verify, orchestrate, threshold fixes | ✅ Complete |
+| **B** 👨‍🔧 | Surgeon | `opencode gemini` | Gemini 2.5 Flash | Build pipeline, thesis edits, dedup fix | ✅ Complete |
+| **C** 🏛️ | Architect | `opencode gemma` | Gemma 4 26B (256K ctx) | Deep reasoning, quality review, thesis polish | ✅ Complete |
+| **D** 🎓 | Master Reviewer | Claude Desktop | Claude 4 Sonnet | **Final expert review, master prompt recipient** | 🟢 Active |
 
 ### Window Handoff Protocol
-1. **main-hub → gemini-thesis**: When VBA work triggers thesis updates (e.g., ground truth changes, new feature)
-2. **main-hub → claude-project**: When architectural decisions need human discussion or thesis chapter review  
-3. **gemini-thesis → main-hub**: When thesis analysis reveals VBA changes needed
-4. **claude-project → main-hub**: After discussion yields action items for VBA implementation
-5. **Any → all**: After completing a task, append to SESSION_LOG.md and update HANDOFF.md
+1. **A (Scout) → C (Architect)**: Reports findings, discrepancies, audit results
+2. **C (Architect) → B (Surgeon)**: Dispatches tasks based on A's report
+3. **B (Surgeon) → A (Scout)**: Signals completion, A runs verification
+4. **Any → D (Master)**: Deliverables for Claude Desktop final review
+5. **All → HANDOFF.md**: Update after each milestone
 
 ## SYNC PROTOCOL
 1. OpenCode big-pickle (main-hub) writes `.bas` → `build.ps1` → `verify.ps1` (ERP pipeline)
@@ -111,14 +115,19 @@ Load the `crossflow-orchestrator` skill in any OpenCode session to activate:
 - Handoff generation (formats handoff messages for other windows)
 - Context freshness check (compares local state vs MASTER_CONTEXT.md timestamp)
 
-## LATEST SESSION STATE (2026-05-12)
-| Metric | Status |
-|--------|--------|
-| Build | ✅ COMPILE: OK |
-| Verify | ✅ 174/174 PASS |
-| Tests | ✅ 20/20 PASS |
-| Audit | ✅ 16 PASS, 0 CRITICAL |
-| Public LSM | ✅ Pushed v1.4.0 |
-| Defense checklist | ✅ Created: `milestone_13_2\defense-demo-checklists.md` |
-| Next | Thesis polish (gemini-thesis) / Feature expansion (main-hub)
+## LATEST SESSION STATE (2026-05-17)
+| Metric | Status | Details |
+|--------|--------|---------|
+| Thesis Build | ✅ **36/36 PASS** | **ALL CHECKS PASSED** — 0 failures, 0 warnings |
+| Thesis Source | ✅ 907 lines | 4 chapters, 56 refs, 21 tables, 5 footnotes |
+| Thesis DOCX | ✅ 107 KB | TOC/LOT/SEQ fields updated via Word COM |
+| Thesis PDF | ✅ 949 KB | Post-field-update, fully rendered |
+| الفصل الرابع | ✅ Complete | 75 lines, 2 مباحث, separate file |
+| ERP Build | ✅ GOLDEN — 174/174 PASS | 38 modules, 833 KB |
+| ERP Tests | ✅ 20/20 PASS | Macro test suite |
+| ERP Audit | ✅ 16 PASS | DSS 5-phase audit |
+| Ground Truth | ✅ Locked | D=1546, Q*=176, ROP=212.4, SS=200 |
+| Git | ✅ Committed | `04ab98f` on `s12-test-branch` |
+| CrossFlow Cycle | ✅ **COMPLETE** | All 4 windows synchronized |
+| Next | Deliver for Window D (Claude Desktop) | Final expert review + master prompt
 
