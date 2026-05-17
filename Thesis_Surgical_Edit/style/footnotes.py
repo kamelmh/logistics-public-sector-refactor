@@ -21,6 +21,50 @@ CNEPD_PREFIX = "راجع: "
 CITATION_RE = re.compile(r'\(([A-Z][A-Za-z\s&,\.\-;]+),\s*(\d{4})\)')
 
 
+def clean_markdown(text):
+    """Strip markdown syntax from text for Word output."""
+    # Remove markdown italic/bold markers
+    text = re.sub(r'\*+', '', text)
+    # Convert pandoc en-dash/em-dash
+    text = text.replace('---', '\u2014')  # em-dash
+    text = text.replace('--', '\u2013')   # en-dash
+    # Clean trailing comma before year (e.g. "journal, 1997" -> "journal 1997")
+    text = re.sub(r',\s+(\d{4})$', r' \1', text)
+    # Clean '.,' pattern (e.g. "D.," -> "D.")
+    text = re.sub(r'\.\s*,\s*', '. ', text)
+    return text.strip()
+
+
+def extract_surnames(author_str):
+    """Extract last names from an author string like 'Cooper, M. C., Lambert, D. M., & Pagh, J. D'"""
+    surnames = []
+    for part in author_str.split('&'):
+        part = part.strip()
+        # Get text before first comma (the surname)
+        surname = part.split(',')[0].strip()
+        if surname:
+            surnames.append(surname)
+    return surnames
+
+
+def match_citation_to_ref(citation_text, year, ref):
+    """Match citation text like 'Cooper, Lambert & Pagh, 1997' to a reference entry."""
+    ref_year = str(ref.get('year', ''))
+    if year != ref_year:
+        return False
+
+    ref_author = ref.get('authors', '')
+    ref_surnames = extract_surnames(ref_author)
+
+    # Check each surname against the citation text
+    citation_lower = citation_text.lower()
+    for sname in ref_surnames:
+        if sname.lower() in citation_lower:
+            return True
+
+    return False
+
+
 def ensure_footnotes_part(doc):
     """Create footnotes.xml part if it doesn't exist in the DOCX."""
     package = doc.part.package
@@ -64,33 +108,28 @@ def get_footnotes_xml(footnotes_part):
     return footnotes_part._element
 
 
-def create_footnote(footnotes_part, citation_text, ref_map, cited_sources):
+def create_footnote(footnotes_part, citation_text, ref_map, cited_sources, year_str):
     """Create a professional CNEPD footnote. Returns the footnote ID."""
     root = get_footnotes_xml(footnotes_part)
     
-    # Identify the source key from the citation text (e.g., "Wilson, 1934")
+    # Identify the source key from the citation text (e.g., "Cooper, Lambert & Pagh, 1997")
     source_key = None
     for ref in ref_map:
-        # Handle both list and dict formats for safety
-        if isinstance(ref, dict):
-            author = ref.get('author', '')
-            year = str(ref.get('year', ''))
-            if author and author in citation_text and year and year in citation_text:
-                source_key = ref.get('key')
-                break
+        if isinstance(ref, dict) and match_citation_to_ref(citation_text, year_str, ref):
+            source_key = ref.get('key')
+            break
     
     # Determine footnote content based on CNEPD rules
     if source_key:
-        # Find the full ref data again
         ref_data = next((r for r in ref_map if r.get('key') == source_key), {})
         if source_key not in cited_sources:
-            # FIRST MENTION: Full Bibliographic Entry
-            full_ref = f"{ref_data.get('author', '')}, {ref_data.get('title_full', ref_data.get('title', 'Untitled'))}, {ref_data.get('publisher', '')}, {ref_data.get('year', '')}"
+            # FIRST MENTION: Full CNEPD Bibliographic Entry
+            full_ref = clean_markdown(f"{ref_data.get('authors', '')}, {ref_data.get('title_full', '')}, {ref_data.get('year', '')}")
             footnote_content = full_ref
             cited_sources.add(source_key)
         else:
             # SUBSEQUENT MENTION: op. cit.
-            author_last = ref_data.get('author', 'Author').split(',')[0].split(' ')[-1]
+            author_last = ref_data.get('authors', '').split(',')[0].strip()
             footnote_content = f"{author_last}, op. cit."
     else:
         footnote_content = citation_text
@@ -180,7 +219,7 @@ def process_docx(docx_path):
             citation_text = f"{m.group(1)}, {m.group(2)}"
             full_citation = m.group(0)
 
-            fn_id = create_footnote(footnotes_part, citation_text, ref_map, cited_sources)
+            fn_id = create_footnote(footnotes_part, citation_text, ref_map, cited_sources, m.group(2))
 
             # Remove citation from paragraph XML runs
             char_offset = m.start()

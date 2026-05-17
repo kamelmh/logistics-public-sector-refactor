@@ -408,30 +408,78 @@
       },
       "timestamp": "2026-05-17 02:13:59",
       "build_id": "20260517-021358"
+    },
+    {
+      "source": {
+        "md5": "02375F6A8B91723649329D43C9634555",
+        "file": "Memoire_DSS_Logistique_ElBayadh.md",
+        "size_kb": 123.2
+      },
+      "build_id": "20260517-024738",
+      "timestamp": "2026-05-17 02:47:40",
+      "outputs": {
+        "pdf": {
+          "md5": "D54279E42012D92BD60E061790F4EA6B",
+          "size_kb": 949.0
+        },
+        "docx": {
+          "md5": "F75D824FB9860213DC91BCFAECF444BC",
+          "size_kb": 107.0
+        }
+      },
+      "verify": {
+        "failed": 4,
+        "total": 38,
+        "passed": 29
+      }
+    },
+    {
+      "build_id": "20260517-050217",
+      "outputs": {
+        "pdf": {
+          "md5": "4F917E394499FBE4BF358BCA51F03BE3",
+          "size_kb": 949.0
+        },
+        "docx": {
+          "md5": "20F750FC1AE4D91D6EF2CCE45E807CFA",
+          "size_kb": 104.0
+        }
+      },
+      "timestamp": "2026-05-17 05:02:18",
+      "verify": {
+        "total": 33,
+        "failed": 0,
+        "passed": 31
+      },
+      "source": {
+        "file": "Memoire_DSS_Logistique_ElBayadh.md",
+        "size_kb": 123.3,
+        "md5": "CDBEFAAC86B53E64583958400BDE2F6D"
+      }
     }
   ],
   "golden_baseline": {
-    "source": {
-      "md5": "02375F6A8B91723649329D43C9634555",
-      "file": "Memoire_DSS_Logistique_ElBayadh.md",
-      "size_kb": 123.2
-    },
-    "build_id": "20260517-024738",
-    "timestamp": "2026-05-17 02:47:40",
+    "timestamp": "2026-05-17 13:39:04",
     "outputs": {
       "pdf": {
-        "md5": "D54279E42012D92BD60E061790F4EA6B",
-        "size_kb": 949.0
+        "md5": "B67D9A46C19C6CB0976F60EFDCC63DB3",
+        "size_kb": 950.0
       },
       "docx": {
-        "md5": "F75D824FB9860213DC91BCFAECF444BC",
-        "size_kb": 107.0
+        "md5": "FA532A919E1A51AC2F7030C0E21917BE",
+        "size_kb": 108.0
       }
     },
+    "build_id": "20260517-133903",
+    "source": {
+      "file": "Memoire_DSS_Logistique_ElBayadh.md",
+      "md5": "4D2127C1AF69EF0EBE644C06DD6DE41D",
+      "size_kb": 124.1
+    },
     "verify": {
-      "failed": 4,
-      "total": 38,
-      "passed": 29
+      "passed": 30,
+      "total": 34,
+      "failed": 1
     }
   }
 }

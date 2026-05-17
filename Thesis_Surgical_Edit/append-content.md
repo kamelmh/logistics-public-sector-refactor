@@ -126,7 +126,7 @@
 | ART-002 | Ramette A4 80g | 520 | 400.0 | AX |
 | ART-003 | Agrafe 24/6 | 1500 | 800.0 | BX |
 | ART-004 | Classeur | 300 | 200.0 | BY |
-| ART-005 | Agrafeuse de bureau | 1 | 212.4 | CX |
+| ART-005 | Agrafeuse de bureau | 1 | 12.4 | CX |
 | ART-006 | Trombone boîte | 1800 | 1000.0 | BX |
 | ART-007 | Enveloppe A4 | 2000 | 1200.0 | BX |
 | ART-008 | Stylo bleu | 4000 | 2000.0 | AX |
