@@ -72,3 +72,8 @@ learn-claude-code/
 # Third-party projects
 WindsurfAPI/
 
+
+# Binary tools
+bin/
+.worktrees/
+
