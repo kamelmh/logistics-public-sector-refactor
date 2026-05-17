@@ -20,6 +20,7 @@ title OpenCode Launcher v3.6 ^| CrossFlow ^| Academix v13.2
 ::   OpenCode gemma-local / ogg-local  CLI with Ollama Gemma 4 e2b (128K ctx, offline, 7.2GB)
 ::   OpenCode phi4               CLI with phi4-mini:3.8b (CPU coding, offline)
 ::   OpenCode qwen3              CLI with qwen3:1.7b (CPU reasoning, offline)
+::   OpenCode hermes3            CLI with Hermes 3 3B (instructor-optimized, tool-use, 2K ctx)
 ::   OpenCode ollama             CLI with Ollama server + model menu
 ::   OpenCode proxy              Start FCC proxy only (background)
 ::   OpenCode academix           Interactive project dashboard
@@ -87,14 +88,24 @@ set "OLLAMA_FAST_MODEL=ollama/qwen2.5-coder:7b"
 set "OLLAMA_QWEN3=ollama/qwen3:1.7b"
 set "OLLAMA_PHI4=ollama/phi4-mini:3.8b-q4_K_M"
 set "OLLAMA_GEMMA4_LOCAL=ollama/gemma4:e2b"
+set "OLLAMA_HERMES3=ollama/hermes3:3b-tiny"
 set "DEEPSEEK_PRO_MODEL=deepseek/deepseek-v4-pro"
 set "DEEPSEEK_FLASH_MODEL=deepseek/deepseek-v4-flash"
+:: ---- DeepSeek V4 Flash Multi-Provider Fallback Chain ----
+:: Primary: OpenRouter free tier
+:: Secondary: Hugging Face Inference Endpoints
+:: Tertiary: DeepInfra free tier
+:: Quaternary: Chutes (serverless GPU inference)
+set "DEEPSEEK_FREE_MODEL=openrouter/deepseek/deepseek-v4-flash:free"
+set "HF_INFERENCE_URL=https://api-inference.huggingface.co/models/deepseek-ai/DeepSeek-V3"
+set "DEEPINFRA_MODEL=deepinfra/deepseek-ai/DeepSeek-V3"
+set "CHUTES_MODEL=chutes/deepseek-ai/DeepSeek-V3"
 set "KIMI_MODEL=openrouter/moonshotai/kimi-k2.6"
 set "QUASAR_MODEL=openrouter/openrouter/quasar-alpha"
 
 :: ---- Mode Registry (Single Source of Truth) ----
-set "CLI_MODES=cli groq llama llama-405b mixtral gemini gemini3 gemma gemma-31b gemma-local phi4 qwen3 nemotron ring freellm completions deepseek deepseek-flash kimi quasar ollama windsurf windsurf-anthropic"
-set "OLLAMA_MODES=phi4 qwen3 gemma-local"
+set "CLI_MODES=cli groq llama llama-405b mixtral gemini gemini3 gemma gemma-31b gemma-local phi4 qwen3 hermes3 nemotron ring deepseek-free freellm completions deepseek deepseek-flash kimi quasar ollama windsurf windsurf-anthropic"
+set "OLLAMA_MODES=phi4 qwen3 hermes3 gemma-local"
 set "PIPELINE_MODES=autobuild autoverify autotest autoaudit autothesis autocheck autofix autoplan autolog automenu autoclean status crossflow crossflow-sync sync mem sandbox"
 set "SPECIAL_MODES=gui fcc proxy academix restore picker help"
 :: Menu display categories
@@ -249,22 +260,8 @@ cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%LLAMA_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
-:mixtral
-title %WINDOW_TITLE%
-echo [OpenCode] Launching with Groq Mixtral 8x7B — Session: %SESSION_NAME%
-echo   Model: %MIXTRAL_MODEL%
-echo.
-cd /d "%BASEDIR%"
-"%OC_EXE%" --model "%MIXTRAL_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
-:llama-405b
-title %WINDOW_TITLE%
-echo [OpenCode] Launching with Groq Llama 3.1 405B Reasoning — Session: %SESSION_NAME%
-echo   Model: %LLAMA_405B_MODEL%
-echo.
-cd /d "%BASEDIR%"
-"%OC_EXE%" --model "%LLAMA_405B_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
 :windsurf
@@ -332,68 +329,10 @@ cd /d "%BASEDIR%"
 "%OC_EXE%" "%PROJECT_ROOT%"
 goto :end
 
-:windsurf
-title %WINDOW_TITLE%
-echo [OpenCode] Launching via WindsurfAPI — Session: %SESSION_NAME%
-echo   Target URL: http://localhost:3003/v1
-echo.
-cd /d "%BASEDIR%"
-"%OC_EXE%" --model "http://localhost:3003/v1" "%PROJECT_ROOT%"
 goto :end
 
-:windsurf-anthropic
-title %WINDOW_TITLE%
-echo [OpenCode] Launching via WindsurfAPI (Anthropic) — Session: %SESSION_NAME%
-echo   Target URL: http://localhost:3003
-echo.
-cd /d "%BASEDIR%"
-"%OC_EXE%" --model "http://localhost:3003" "%PROJECT_ROOT%"
 goto :end
 
-:fcc
-echo [OpenCode] Launching via free-claude-code proxy — Session: %SESSION_NAME%
-echo.
-if not exist "%FCC_DIR%" (
-    echo ERROR: free-claude-code not found at:
-    echo %FCC_DIR%
-    echo.
-    echo Install: git clone https://github.com/Alishahryar1/free-claude-code.git
-    echo to: %FCC_DIR%
-    echo Then: cd %FCC_DIR% ^&^& uv sync
-    pause
-    exit /b 1
-)
-powershell -Command "try { $r = Invoke-RestMethod 'http://localhost:%FCC_PORT%/health' -TimeoutSec 2; exit 0 } catch { exit 1 }"
-if errorlevel 1 (
-    echo   Proxy not running. Starting on port %FCC_PORT%...
-    pushd "%FCC_DIR%"
-    start "FCC Proxy" cmd /c "uv run uvicorn server:app --host 0.0.0.0 --port %FCC_PORT% --timeout-graceful-shutdown 5"
-    popd
-    set "RETRY_COUNT=0"
-    :fcc-retry
-    set /a RETRY_COUNT+=1
-    ping 127.0.0.1 -n 4 >nul
-    powershell -Command "try { $r = Invoke-RestMethod 'http://localhost:%FCC_PORT%/health' -TimeoutSec 3; exit 0 } catch { exit 1 }"
-    if errorlevel 1 (
-        if !RETRY_COUNT! LSS 5 (
-            echo   Retry !RETRY_COUNT!/5...
-            goto :fcc-retry
-        )
-        echo   WARNING: Proxy may not have started.
-    ) else (
-        echo   Proxy is running.
-    )
-) else (
-    echo   Proxy already running on port %FCC_PORT%.
-)
-echo.
-echo   Model: Nemotron 3 Super 120B (free, 1M ctx, via OpenRouter)
-echo.
-set "ANTHROPIC_BASE_URL=http://localhost:%FCC_PORT%"
-set "ANTHROPIC_AUTH_TOKEN=freecc"
-title %WINDOW_TITLE%
-cd /d "%BASEDIR%"
-"%OC_EXE%" "%PROJECT_ROOT%"
 goto :end
 
 :gemini
@@ -463,6 +402,16 @@ cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%OLLAMA_QWEN3%" "%PROJECT_ROOT%"
 goto :end
 
+:hermes3
+call :ensure-ollama
+title %WINDOW_TITLE%
+echo [OpenCode] Launching with Hermes 3 3B — Session: %SESSION_NAME%
+echo   Model: %OLLAMA_HERMES3% (3.2B params, 2K context, instructor-optimized)
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "%OLLAMA_HERMES3%" "%PROJECT_ROOT%"
+goto :end
+
 :nemotron
 title %WINDOW_TITLE%
 echo [OpenCode] Launching with Nemotron 120B — Session: %SESSION_NAME%
@@ -485,31 +434,46 @@ cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%RING_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
-:windsurf
+:: ==============================================================
+:deepseek-free
 title %WINDOW_TITLE%
-echo [OpenCode] Launching via WindsurfAPI — Session: %SESSION_NAME%
-echo   Target URL: http://localhost:3003/v1
+echo [OpenCode] Launching with DeepSeek V4 Flash (FREE) — Session: %SESSION_NAME%
+echo   Model: %DEEPSEEK_FREE_MODEL% (256K context, $0.00, Multi-Provider Fallback)
+echo   284B total / 13B active params, MoE architecture
+echo   Fallback chain: OpenRouter → Hugging Face → DeepInfra → Chutes
 echo.
 cd /d "%BASEDIR%"
-"%OC_EXE%" --model "http://localhost:3003/v1" "%PROJECT_ROOT%"
-goto :end
 
-:windsurf-anthropic
-title %WINDOW_TITLE%
-echo [OpenCode] Launching via WindsurfAPI (Anthropic) — Session: %SESSION_NAME%
-echo   Target URL: http://localhost:3003
-echo.
-cd /d "%BASEDIR%"
-"%OC_EXE%" --model "http://localhost:3003" "%PROJECT_ROOT%"
-goto :end
+:: Try primary provider (OpenRouter)
+echo [1/4] Trying OpenRouter free tier...
+"%OC_EXE%" --model "%DEEPSEEK_FREE_MODEL%" "%PROJECT_ROOT%"
+if not errorlevel 1 goto :end
 
-:ring
-title %WINDOW_TITLE%
-echo [OpenCode] Launching with Ring 2.6 1T (Kimi K2.6) — Session: %SESSION_NAME%
-echo   Model: %RING_MODEL% (262K context, free, OpenRouter)
+:: Fallback 1: Hugging Face Inference Endpoints
 echo.
-cd /d "%BASEDIR%"
-"%OC_EXE%" --model "%RING_MODEL%" "%PROJECT_ROOT%"
+echo [!] OpenRouter failed or rate-limited. Trying Hugging Face...
+echo [2/4] Trying Hugging Face Inference Endpoints...
+"%OC_EXE%" --model "%HF_INFERENCE_URL%" "%PROJECT_ROOT%"
+if not errorlevel 1 goto :end
+
+:: Fallback 2: DeepInfra
+echo.
+echo [!] Hugging Face failed. Trying DeepInfra...
+echo [3/4] Trying DeepInfra free tier...
+"%OC_EXE%" --model "%DEEPINFRA_MODEL%" "%PROJECT_ROOT%"
+if not errorlevel 1 goto :end
+
+:: Fallback 3: Chutes
+echo.
+echo [!] DeepInfra failed. Trying Chutes...
+echo [4/4] Trying Chutes serverless inference...
+"%OC_EXE%" --model "%CHUTES_MODEL%" "%PROJECT_ROOT%"
+if not errorlevel 1 goto :end
+
+:: All providers failed — final fallback to Gemini
+echo.
+echo [!] All DeepSeek providers unavailable. Falling back to Gemini 2.5 Flash...
+"%OC_EXE%" --model "%GEMINI_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
 :ollama
@@ -523,13 +487,15 @@ echo   1) qwen2.5-coder:1.5b     (986 MB, fastest)
 echo   2) qwen3:1.7b             (1.4 GB, CPU reasoning)
 echo   3) phi4-mini:3.8b-q4_K_M  (2.5 GB, CPU coding)
 echo   4) qwen2.5-coder:7b       (4.7 GB, highest quality)
+echo   5) hermes3:3b-tiny        (2.0 GB, instructor-optimized, tool-use)
 echo.
-set /p OLLAMA_CHOICE="Select model [1-4] (default: 2): "
+set /p OLLAMA_CHOICE="Select model [1-5] (default: 2): "
 if "%OLLAMA_CHOICE%"=="" set "OLLAMA_CHOICE=2"
 if "%OLLAMA_CHOICE%"=="1" set "SELECTED_MODEL=%OLLAMA_MODEL%"
 if "%OLLAMA_CHOICE%"=="2" set "SELECTED_MODEL=%OLLAMA_QWEN3%"
 if "%OLLAMA_CHOICE%"=="3" set "SELECTED_MODEL=%OLLAMA_PHI4%"
 if "%OLLAMA_CHOICE%"=="4" set "SELECTED_MODEL=%OLLAMA_FAST_MODEL%"
+if "%OLLAMA_CHOICE%"=="5" set "SELECTED_MODEL=%OLLAMA_HERMES3%"
 echo   Model: %SELECTED_MODEL%
 echo.
 cd /d "%BASEDIR%"
@@ -923,8 +889,10 @@ for %%m in (%CLI_MODES%) do (
     if "%%m"=="ring" set "_d=Ring 2.6 1T (Kimi K2.6, free, OpenRouter)"
     if "%%m"=="phi4" set "_d=Phi4-mini 3.8B (CPU coding)"
     if "%%m"=="qwen3" set "_d=Qwen3 1.7B (CPU reasoning)"
+    if "%%m"=="hermes3" set "_d=Hermes 3 8B (Ollama, tool-use)"
     if "%%m"=="nemotron" set "_d=Nemotron 120B (1M ctx)"
     if "%%m"=="freellm" set "_d=FreeLLM gateway (8 providers)"
+    if "%%m"=="deepseek-free" set "_d=DeepSeek V4 Flash (4-provider fallback)"
     if "%%m"=="completions" set "_d=Completions.me (free, 26 models)"
     if "%%m"=="deepseek" set "_d=→ Nemotron 120B (1M ctx, redirect)"
     if "%%m"=="deepseek-flash" set "_d=→ Ring 2.6 1T (262K ctx, redirect)"
@@ -1017,6 +985,7 @@ echo   fcc        CLI via FCC proxy (auto-start)
   echo   gemma-local CLI with Ollama Gemma 4 e2b (128K ctx, offline)
    echo   ring       CLI with Ring 2.6 1T (Kimi K2.6, 262K ctx, free OpenRouter)
    echo   freellm    FreeLLM gateway status (8 providers, auto-failover)
+   echo   deepseek-free Multi-provider DeepSeek V4 Flash (OpenRouter → HF → DeepInfra → Chutes)
    echo   deepseek   [REDIRECT] → Nemotron 120B (1M ctx, DeepSeek balance exhausted)
    echo   deepseek-flash [REDIRECT] → Ring 2.6 1T (262K ctx, free, DeepSeek balance exhausted)
    echo   kimi       [REDIRECT] → Ring 2.6 1T (free Kimi clone, no credits needed)
@@ -1024,6 +993,7 @@ echo   fcc        CLI via FCC proxy (auto-start)
    echo   ogg-local  Alias for gemma-local
 echo   phi4       CLI with phi4-mini:3.8b (CPU, offline)
 echo   qwen3      CLI with qwen3:1.7b (CPU, offline)
+echo   hermes3    CLI with Hermes 3 3B (Ollama, instructor-optimized, 2K ctx)
 echo   ollama     CLI with model menu + auto-start server
 echo   proxy      Start FCC proxy only (background)
 echo   academix   Interactive project dashboard

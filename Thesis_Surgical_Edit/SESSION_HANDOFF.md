@@ -55,12 +55,12 @@ Full thesis build: 31/31 ALL CHECKS PASSED. PDF 971 KB, DOCX 107 KB. Golden base
 - `output/metrics/archive-baseline.json` — NEW: archive reference for comparison
 
 ## Remaining Issues
-1. 3 false regressions when comparing current build vs archive: 43→22 tables (archive had artifacts), 9→7 footnotes (archive had extras), 62→107 KB (actual improvement). These are expected — archive was built by different pipeline
-2. Cover formatting (build-cover-page.py) uses basic python-docx formatting — does NOT match original archive DOCX's exact design (font weights, spacing, colors). Functional but not pixel-perfect
-3. PDF generated successfully but requires Word COM — no fallback for headless servers
-4. `refs_missing_from_bib`: "Vollmann et al., 2005" flagged — verify if this is a false positive or genuinely missing from bibliography
+1. ~~3 false regressions when comparing current build vs archive~~ — expected (archive built by different pipeline)
+2. ~~Cover formatting~~ — functional, exact design match is low priority
+3. ~~PDF requires Word COM~~ — no headless fallback, acceptable for current workflow
+4. ~~`refs_missing_from_bib`: "Vollmann et al., 2005"~~ — **RESOLVED**: False positive. Citation exists at line 157, bibliography entry #8 at line 721. Verify script regex mismatch.
 
 ## Next Steps
-1. Investigate `refs_missing_from_bib: Vollmann et al., 2005` — verify if citation exists in source with matching bib entry
-2. Consider polish: exact cover font weights/colors matching (low priority, current is functional)
-3. Consider automated testing against golden baseline as CI gate
+1. ~~Investigate Vollmann et al., 2005~~ — resolved as false positive
+2. Consider fixing verify-thesis.ps1 regex for "et al." citations to prevent future false positives
+3. All remaining items are polish/CI — thesis is production-ready

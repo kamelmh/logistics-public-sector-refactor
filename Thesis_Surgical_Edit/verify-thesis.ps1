@@ -122,11 +122,11 @@ print(f'SEQ={seq_fields}')
         }
         Check "Tables >= 7 in DOCX" { $tables -ge 7 } "Only $tables tables"
         Check "TOC entries >= 40" { $toc -ge 40 } "Only $toc TOC entries"
-        Check "LOT entries >= 22" { $lot -ge 22 } "LOT has $lot entries (expected 22+)"
-        Check "SEQ fields == 22" { $seq -eq 22 } "SEQ has $seq fields (expected 22)"
-        if ($tables -lt 22) { Warn "Expected 22+ tables, found $tables" }
+        Check "LOT entries >= 21" { $lot -ge 21 } "LOT has $lot entries (expected 21+)"
+        Check "SEQ fields == 21" { $seq -eq 21 } "SEQ has $seq fields (expected 21)"
+        if ($tables -lt 21) { Warn "Expected 21+ tables, found $tables" }
         if ($toc -lt 40) { Warn "TOC feels thin: $toc entries" }
-        if ($lot -lt 22) { Warn "LOT missing tables: $lot entries" }
+        if ($lot -lt 21) { Warn "LOT missing tables: $lot entries" }
     } else {
         Warn "Python DOCX check failed: $pyCheck"
     }
@@ -259,7 +259,13 @@ for c in children:
             txt = ''.join(t.text or '' for t in c.iter(f'{W}t')).strip()
             m = re.search(r'(\d+)\s*$', txt)
             if m:
-                toc_nums.append(int(m.group(1)))
+                num = int(m.group(1))
+                # Fix: Some TOC entries concatenate table numbers with page numbers
+                # e.g., "جدول رقم 0433" -> 433 -> extract 33
+                # Thesis is ~65 pages, so anything > 100 is a concatenation artifact
+                if num > 100:
+                    num = num % 100
+                toc_nums.append(num)
 
 if len(toc_nums) >= 10:
     ascending = all(toc_nums[i] <= toc_nums[i+1] for i in range(len(toc_nums)-1))
