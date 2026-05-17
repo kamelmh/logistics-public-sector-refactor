@@ -72,6 +72,19 @@ learn-claude-code/
 # Third-party projects
 WindsurfAPI/
 
+# Sensitive files
+.env
+*password*
+*secret*
+
+# Dependencies & caches
+node_modules/
+__pycache__/
+.venv/
+
+# CrossFlow session data
+.crossflow/sessions/
+
 
 # Binary tools
 bin/

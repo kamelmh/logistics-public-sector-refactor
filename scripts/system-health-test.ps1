@@ -64,7 +64,7 @@ Write-Host ""
 Write-Host "─── [1/7] Critical Paths ───" -ForegroundColor Yellow
 
 Test-Step "Project root exists" { Test-Path $ROOT }
-Test-Step "Active workbook" { Test-Path "C:\Users\Administrator\Dropbox\ERP_v13.2.xlsm" }
+Test-Step "Active workbook" { Test-Path "$ROOT\..\ERP_v13.2.xlsm" }
 Test-Step "Compiled workbook" { Test-Path "$ROOT\ERP_v13.2.xlsm" }
 Test-Step "VBA modules dir" { Test-Path "$ROOT\Software_Surgical_Edit\VBA_Modules" }
 Test-Step "Thesis source" { Test-Path "$ROOT\Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md" }
