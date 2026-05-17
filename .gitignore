@@ -77,3 +77,12 @@ WindsurfAPI/
 bin/
 .worktrees/
 
+
+pentest-agents/
+
+# Session transcripts (may contain API keys)
+.crossflow/OVERFLOW/
+session-ses_*.md
+links/
+*.tmp
+output/mso*.tmp

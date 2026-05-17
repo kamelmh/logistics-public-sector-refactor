@@ -27,7 +27,8 @@
 |----------|------|
 | Project root | `C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\` |
 | Thesis source | `...\Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md` |
-| Thesis source | `...\Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md` |
+| Ground Truth | `...\Thesis_Surgical_Edit\THESIS_GROUND_TRUTH.md` |
+| Terminology | `...\Thesis_Surgical_Edit\THESIS_TERMINOLOGY_MAPPING.md` |
 | Thesis PDF | `...\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.pdf` |
 | Thesis DOCX | `...\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx` |
 | الفصل الرابع | `...\Thesis_Surgical_Edit\الفصل_الرابع_التجريب_والتحقق_من_النتائج.md` |
@@ -61,6 +62,13 @@
 | Code lines | ~8,100 | Verified |
 | Performance | 99.7% | NOT 97% |
 | Test suite | 20 | All passing |
+
+## 🚫 FORBIDDEN TERMS (CNEPD COMPLIANCE)
+> The following terms are FORBIDDEN in the thesis and must be replaced to respect the offline-first, pure VBA environment:
+- ❌ **"Database"** → Replace with: **"السجل الرقمي" (Digital Ledger)**
+- ❌ **"Python/Backend"** → Replace with: **"وحدات المعالجة VBA" (VBA Processing Units)**
+- ❌ **"Hybrid System"** → Replace with: **"نظام إلكتروني متكامل" (Integrated Electronic System)**
+- ❌ **"XLOOKUP"** → Forbidden (Excel 2010 compatibility required).
 
 ### ART Code Short Reference
 | Code | French | Arabic | Class |
@@ -127,7 +135,7 @@ Load the `crossflow-orchestrator` skill in any OpenCode session to activate:
 | ERP Tests | ✅ 20/20 PASS | Macro test suite |
 | ERP Audit | ✅ 16 PASS | DSS 5-phase audit |
 | Ground Truth | ✅ Locked | D=1546, Q*=176, ROP=212.4, SS=200 |
-| Git | ✅ Committed | `04ab98f` on `s12-test-branch` |
+| Git | ✅ Committed | `f0bba14` on `master` |
 | CrossFlow Cycle | ✅ **COMPLETE** | All 4 windows synchronized |
 | Next | Deliver for Window D (Claude Desktop) | Final expert review + master prompt
 
