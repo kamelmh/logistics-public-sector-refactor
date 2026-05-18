@@ -1,0 +1,138 @@
+name: Academix v13.2 CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  validate:
+    name: Validate VBA Sources
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check VBA modules exist
+        shell: pwsh
+        run: |
+          $bas = Get-ChildItem "Software_Surgical_Edit/VBA_Modules/*.bas" -ErrorAction SilentlyContinue
+          $frm = Get-ChildItem "Software_Surgical_Edit/VBA_Modules/*.frm" -ErrorAction SilentlyContinue
+          Write-Host "VBA .bas files: $($bas.Count)"
+          Write-Host "VBA .frm files: $($frm.Count)"
+          if ($bas.Count -lt 29) { throw "Expected >= 29 .bas files, found $($bas.Count)" }
+          if ($frm.Count -lt 1) { throw "Expected >= 1 .frm file, found $($frm.Count)" }
+
+      - name: Check for UTF-8 em dashes (VBA syntax killer)
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem "Software_Surgical_Edit/VBA_Modules/*.bas", "Software_Surgical_Edit/VBA_Modules/*.frm" -ErrorAction SilentlyContinue
+          $badFiles = @()
+          foreach ($f in $files) {
+            $content = Get-Content $f.FullName -Raw -ErrorAction SilentlyContinue
+            if ($content -match "[\u2014\u2013]") { $badFiles += $f.Name }
+          }
+          if ($badFiles.Count -gt 0) {
+            Write-Host "WARNING: UTF-8 em dashes found in: $($badFiles -join ', ')" -ForegroundColor Yellow
+          } else {
+            Write-Host "No UTF-8 em dashes found - OK"
+          }
+
+      - name: Validate PowerShell scripts syntax
+        shell: pwsh
+        run: |
+          $scripts = Get-ChildItem "scripts/*.ps1" -ErrorAction SilentlyContinue
+          $errors = @()
+          foreach ($s in $scripts) {
+            $null = [System.Management.Automation.Language.Parser]::ParseFile($s.FullName, [ref]$null, [ref]$parseErrors)
+            if ($parseErrors) { $errors += "$($s.Name): $($parseErrors.Count) errors" }
+          }
+          if ($errors.Count -gt 0) {
+            Write-Host "Script syntax errors:" -ForegroundColor Red
+            $errors | ForEach-Object { Write-Host "  $_" }
+            exit 1
+          } else {
+            Write-Host "All $($scripts.Count) scripts pass syntax check"
+          }
+
+      - name: Check critical files exist
+        shell: pwsh
+        run: |
+          $critical = @(
+            ".opencode/bootstrap/MASTER_BOOTSTRAP.xml",
+            "Software_Surgical_Edit/erp-project-context.xml",
+            "vbe-auto/build.ps1",
+            "vbe-auto/verify.ps1",
+            "Thesis_Surgical_Edit/build-thesis.ps1",
+            "milestone_13_2/tests/dss-audit.ps1"
+          )
+          $missing = @()
+          foreach ($f in $critical) {
+            if (-not (Test-Path $f)) { $missing += $f }
+          }
+          if ($missing.Count -gt 0) {
+            Write-Host "Missing critical files:" -ForegroundColor Red
+            $missing | ForEach-Object { Write-Host "  $_" }
+            exit 1
+          } else {
+            Write-Host "All $($critical.Count) critical files present"
+          }
+
+      - name: Check .gitignore coverage
+        shell: pwsh
+        run: |
+          $gitignore = Get-Content ".gitignore" -ErrorAction SilentlyContinue
+          $required = @("*.xlsm", "*.bak", ".env", "node_modules/", "__pycache__/", ".venv/", "logs/")
+          $missing = @()
+          foreach ($r in $required) {
+            if (-not ($gitignore | Where-Object { $_ -like "*$r*" })) { $missing += $r }
+          }
+          if ($missing.Count -gt 0) {
+            Write-Host "Missing .gitignore patterns: $($missing -join ', ')" -ForegroundColor Yellow
+          } else {
+            Write-Host "All required .gitignore patterns present"
+          }
+
+  health-report:
+    name: Generate Health Report
+    runs-on: windows-latest
+    needs: validate
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate health report
+        shell: pwsh
+        run: |
+          $report = @()
+          $report += "## Academix v13.2 Health Report"
+          $report += ""
+          $report += "### Repository Stats"
+          $files = (Get-ChildItem -Recurse -File -ErrorAction SilentlyContinue | Measure-Object).Count
+          $size = (Get-ChildItem -Recurse -File -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum
+          $report += "- Files: $files"
+          $report += "- Total size: $([math]::Round($size/1MB, 1)) MB"
+          $report += ""
+          $report += "### VBA Modules"
+          $bas = Get-ChildItem "Software_Surgical_Edit/VBA_Modules/*.bas" -ErrorAction SilentlyContinue
+          $lines = ($bas | ForEach-Object { (Get-Content $_.FullName -ErrorAction SilentlyContinue | Measure-Object -Line).Lines } | Measure-Object -Sum).Sum
+          $report += "- .bas files: $($bas.Count)"
+          $report += "- Total lines: $lines"
+          $report += ""
+          $report += "### Scripts"
+          $scripts = Get-ChildItem "scripts/*.ps1" -ErrorAction SilentlyContinue
+          $report += "- PowerShell scripts: $($scripts.Count)"
+          $report += ""
+          $report += "### Git"
+          $commits = (git log --oneline 2>$null | Measure-Object).Count
+          $report += "- Commits: $commits"
+          $report += "- Branch: $(git branch --show-current 2>$null)"
+          $report += ""
+          $report += "Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm UTC')"
+          $report | Out-File -FilePath "health-report.md" -Encoding utf8
+          Write-Host "Health report generated"
+
+      - name: Upload health report
+        uses: actions/upload-artifact@v4
+        with:
+          name: health-report
+          path: health-report.md
