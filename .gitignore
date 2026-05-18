@@ -112,3 +112,6 @@ backups/
 
 # Benchmarks
 benchmarks/
+
+# Runtime state
+scripts/.opencode/
