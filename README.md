@@ -183,6 +183,22 @@ Dropbox/Logistics.Public.Sector.Refactor/
 | W009 | ✅ Resolved | SyncBridge stubs implemented |
 | W010 | ✅ Resolved | ThisWorkbook.cls fixed |
 
+## Performance Baseline
+
+Benchmark results from `.\scripts\benchmark.ps1` (3 iterations, 2026-05-18):
+
+| Operation | Avg | Min | Max |
+|-----------|-----|-----|-----|
+| VBA module scan | 99ms | 74ms | 129ms |
+| Script syntax parse | 282ms | 221ms | 385ms |
+| Git status | 809ms | 754ms | 868ms |
+| Git log (100 commits) | 286ms | 245ms | 361ms |
+| Full file enumeration | 15,843ms | 13,202ms | 20,362ms |
+| XML context parse | 124ms | 63ms | 223ms |
+| Symlink resolution (75 links) | 319ms | 280ms | 349ms |
+
+Run benchmarks: `.\scripts\benchmark.ps1`
+
 ## Additional Documentation
 - `AGENTS.md` — Agent configuration, model routing, session recovery
 - `CLAUDE.md` — Project identity, ground truth, thesis constraints, AI backends
