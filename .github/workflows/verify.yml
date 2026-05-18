@@ -44,8 +44,12 @@ jobs:
           $scripts = Get-ChildItem "scripts/*.ps1" -ErrorAction SilentlyContinue
           $errors = @()
           foreach ($s in $scripts) {
-            $null = [System.Management.Automation.Language.Parser]::ParseFile($s.FullName, [ref]$null, [ref]$parseErrors)
-            if ($parseErrors) { $errors += "$($s.Name): $($parseErrors.Count) errors" }
+            $tokens = $null
+            $parseErrors = $null
+            $null = [System.Management.Automation.Language.Parser]::ParseFile($s.FullName, [ref]$tokens, [ref]$parseErrors)
+            if ($parseErrors -and $parseErrors.Count -gt 0) {
+              $errors += "$($s.Name): $($parseErrors.Count) errors"
+            }
           }
           if ($errors.Count -gt 0) {
             Write-Host "Script syntax errors:" -ForegroundColor Red
