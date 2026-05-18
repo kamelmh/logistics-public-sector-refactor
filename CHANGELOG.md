@@ -1,80 +1,91 @@
-# Changelog
+# CHANGELOG — Academix v13.2
 
-All notable changes to the ERP Académie v13.2 project.
+All notable changes to this project will be documented in this file.
 
-## 2026-05-10
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-### Features
-- Mass update launchers, profiles, and context files
+## [Unreleased]
 
-## 2026-05-09
+### Fixed
+- Replaced hardcoded ERP path in `system-health-test.ps1` with relative path
+- Added missing `.gitignore` patterns (`.env`, `*password*`, `*secret*`, `node_modules/`, `__pycache__/`, `.venv/`)
+- Updated stale model references: DeepSeek V4 Flash → Gemini 2.5 Flash
+- Deprecated free-claude-code proxy reference in MASTER_BOOTSTRAP.xml
+- Removed 3 orphaned `.bak` files
 
-### Features
-- System architecture: MASTER_BOOTSTRAP.xml, session persistence, multi-session
-- Major cleanup: gitignore, XML compression, infrastructure tracking
-- AI: switch to Groq Llama 3.3 70B free tier, drop paid Claude
-- AI: add Anthropic Claude as primary provider, refactor build pipeline, clean milestone_13_2
+### Added
+- GitHub Actions CI/CD pipeline (`.github/workflows/ci.yml`)
+- Automated workbook backup script (`scripts/backup-workbook.ps1`)
+- Daily health check script (`scripts/daily-health-check.ps1`)
+- Symlink hub with 75 links in `links/`
+- 211 skills linked across 4 ecosystems
 
-### Documentation
-- Add MASTER_BOOTSTRAP.xml reference to admin-paths config
-- Consolidate master context for Llama 3.3 70B compatibility
+### Changed
+- Untracked 7 large embedded repos from git (ruflo, MiniCPM-V, oracle-ai-developer-hub, opencode_updates, mempalace, Auto-claude-code-research-in-sleep, cocoindex_exploration)
 
-## 2026-05-08
+---
 
-### Features
-- Thesis: style pipeline, v13.1-matched formatting, USB deploy, sync tools
-- Project: major cleanup, 16 new VBA modules, delivery layout, build pipeline
+## [v13.2-FINAL] — 2026-05-17
 
-### Bug Fixes
-- Thesis: CNEPD compliance audit — SIGLE→SIGB, add Law 23-12, FormState architecture, public sector compliance section
+### Added
+- Project AGENTS.md and instructions.md from global config
+- Pipeline scripts restored and merged
+- Research paper, executive summary, and academic sign-off
+- WindsurfAPI modes and expanded fallback chains
+- FreeLLM gateway with 4 provider keys activated
+- Completions.me integration (26 models)
+- Engineering harness infrastructure
+- Portable launchers with `%~dp0` paths
 
-## 2026-05-06
+### Fixed
+- Thesis pipeline — Word COM leak fixed, Vollmann false positive resolved (34/34 → 36/36 PASS)
+- Thesis footnote mandatory fixes — 8 CNEPD footnotes
+- Working directory on launch, fixed paths, added opicker
+- Protected all 26 sheets via VBA FinalizeBuildProtection macro
+- VBA syntax errors and error handlers
+- ACCUEIL sheet integration
+- Moved `.ps1` scripts to `scripts/` directory
+- Secured API keys
 
-### Features
-- Thesis: expand Ch4 with full EOQ/ROP math, ABC classification for 12 articles, KPI tables, before/after comparison, approval workflow
-- Thesis: expand Chapter4 with full EOQ/ROP calculations, ABC results, 27-module technical metrics, before/after comparison
-- Launcher: add Qwen2.5-Coder 1.5B local bat file with Ollama service check
-- Launcher: add Desktop bat file with Groq context injection, 3 backup copies
-- AI workspace: add context injection system, trigger phrases, skills config, agentic protocols
-- Regenerate XML context files for Groq backend (W001-W010 all resolved, 27 modules)
-- Add remaining VBA modules, context files, and thesis docs
+### Changed
+- Replaced deprecated Llama 3.3 70B with Gemini 2.5 Flash
+- Optimized model selection and enforced redirections
+- Consolidated launchers and updated documentation
+- Expanded AI model stack and harmonized ground truth
+- Polished thesis Chapter 1
+- Compressed mode dispatch into variable lists
+- Added Gemma 4 e2b to launcher
 
-### Bug Fixes
-- VBA: fix all audit findings — mod_Utilities concat line, mod_StockEngine dead code, ThisWorkbook Option Explicit, MAIN_MACROS/mod_Navigation form checks, UTF-8 BOM all 31 files, garbled comments fixed
-- Build: fix worksheet creation COM error; successful 25 sheets + 28 modules, all compile
-- Build: rewrite Build_Excel_DSS.ps1 — 25 sheets, 27 modules, v13.2 ground truth, approval columns
-- W010: Remove Option Explicit from ThisWorkbook.cls to prevent compile errors
-- W006-W008: Add missing Public keywords to mod_Navigation, mod_ReceiptTag, mod_Utilities
-- Surgical edit: fix 7 bugs, add test harness, sync AGENTS.md
+### Removed
+- Added WindsurfAPI/ to `.gitignore`
+- Cleaned up loose test files and archives
+- Removed stale thesis binaries
 
-### Refactoring
-- Thesis: realign Ch4 to original outline — 6→4 mabahith, move بيئة_التجريب to Ch3, move تصنيف_ABC to Ch1
+---
 
-### Documentation
-- Defense: add DEFENSE_QA_GUIDE.md with 8 jury questions, fix 'Database' CNEPD violation, verify workbook, regenerate PDF
-- Thesis: enhance DSS-Algerian references appendix with CNEPD jury rubric (92.9%), SIGLE roadmap
-- Thesis: proofreading fixes — Arabic abstract, French résumé, English abstract, keywords, glossary, bibliography
-- Thesis: fix table numbering order in Ch2, replace missing image, remove manual TOC
-- Thesis: mass audit — add # headings, replace Arabic letters with numbers in chapters, fix annex numbering
-- Thesis: deduplicate glossaries, add DSS-Algerian references appendix
-- Thesis: add subtitle, append software_originality.md as annexes
-- Rewrite CLAUDE.md — v13.2 ground truth, 27 modules, AI context trigger
-- Add comprehensive README.md with project overview, ground truth, architecture
+## [thesis/v2-clean] — 2026-05-16
 
-## 2026-05-02
+### Fixed
+- Thesis pipeline Word COM memory leak
+- Vollmann false positive in verification
 
-### Features
-- Add enhanced VBA Stock Entry Logic with validation and dashboard alerts
-- Add enhanced VBA Export Engine with PDF generation and Stock Dashboard
-- Add VBA Stock Calculations module and Enhanced Stock Entry Form for thesis
+---
 
-### Documentation
-- Add CNEPD-compliant thesis defense summary
-- Replace all technical terms in Review Report with CNEPD-compliant terminology
-- Replace 'Academix' with CNEPD-compliant name 'نظام دعم القرار لتسيير المخزون'
+## [thesis/v1-golden] — 2026-05-15
 
-### Bug Fixes
-- Remove forbidden term 'فرع' (Branch) — replaced with 'تكميلية' per CNEPD requirements
+### Added
+- Thesis golden baseline established
+- Pipeline fixes for build and verify
 
-### Initial Commit
-- Logistics.Public.Sector.Refactor (current refactored version from Dropbox)
+---
+
+## [Initial] — 2026-05-14
+
+### Added
+- ERP v13.2 core system (37 .bas + 1 .frm modules)
+- 25 Excel sheets with French headers
+- Thesis: 4 chapters, 16 مباحث, 52 مطالب
+- Ground truth parameters: D=1546, Q*=176, ROP=205.6, SS=200, LT=2 days, S=801.45 DZD, I=20%
+- Build pipeline: build.ps1, verify.ps1, test-macros.ps1, dss-audit.ps1
+- CrossFlow multi-window orchestration
+- OpenCode portable launcher with 23 modes

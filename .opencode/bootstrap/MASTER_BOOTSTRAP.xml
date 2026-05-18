@@ -82,7 +82,7 @@
     <opencode-skills>C:\Users\Administrator\.opencode\skills\</opencode-skills>
     <memory-notepad>C:\Users\Administrator\.opencode\notepad.md</memory-notepad>
     <omc-state>C:\Users\Administrator\.omc\state\</omc-state>
-    <fcc-proxy>C:\Users\Administrator\free-claude-code\</fcc-proxy>
+    <fcc-proxy>deprecated — replaced by FreeLLM gateway</fcc-proxy>
     <launcher>C:\Users\Administrator\Desktop\OpenCode.bat</launcher>
     <freellm-gateway>C:\Users\Administrator\.opencode\plugins\freellm\</freellm-gateway>
     <freellm-launcher>scripts\freellm-launcher.ps1</freellm-launcher>

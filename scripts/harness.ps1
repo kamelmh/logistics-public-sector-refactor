@@ -20,6 +20,37 @@ $WORKTREES_INDEX = "$WORKTREES_DIR\index.json"
 $TEAM_CONFIG = "$TEAM_DIR\config.json"
 $BG_DIR = "$ROOT\.tasks\bg"
 
+# ===== Pre-flight dependency validation =====
+function Test-Dependencies {
+    $deps = @(
+        @{ Name = "PowerShell 7+"; Check = { $PSVersionTable.PSVersion.Major -ge 7 } },
+        @{ Name = "git"; Check = { [bool](Get-Command git -ErrorAction SilentlyContinue) } },
+        @{ Name = "Project root"; Check = { Test-Path $ROOT } },
+        @{ Name = "VBA modules dir"; Check = { Test-Path "$ROOT\Software_Surgical_Edit\VBA_Modules" } },
+        @{ Name = "build.ps1"; Check = { Test-Path "$ROOT\vbe-auto\build.ps1" } },
+        @{ Name = "verify.ps1"; Check = { Test-Path "$ROOT\vbe-auto\verify.ps1" } },
+        @{ Name = "MASTER_BOOTSTRAP.xml"; Check = { Test-Path "$ROOT\.opencode\bootstrap\MASTER_BOOTSTRAP.xml" } }
+    )
+
+    $allOk = $true
+    foreach ($d in $deps) {
+        $ok = & $d.Check
+        if (-not $ok) {
+            Write-Warning "MISSING: $($d.Name)"
+            $allOk = $false
+        }
+    }
+
+    if (-not $allOk) {
+        Write-Warning "Some dependencies are missing. Some harness features may not work."
+        Write-Host "Run '.\scripts\system-health-test.ps1' for full diagnostics." -ForegroundColor Yellow
+    }
+    return $allOk
+}
+
+# Run dependency check on load
+$null = Test-Dependencies
+
 function Safe-Json {
     param([string]$Path)
     try {

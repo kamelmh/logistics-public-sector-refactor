@@ -18,7 +18,7 @@ Four parallel specialized sessions coordinated via CrossFlow:
 
 | Window | Launch | Model | Role |
 |--------|--------|-------|------|
-| **main-hub/A** | `opencode` | DeepSeek V4 Flash | Scout — audit, verify, orchestrate |
+| **main-hub/A** | `opencode` | Gemini 2.5 Flash | Scout — audit, verify, orchestrate |
 | **gemini-thesis/B** | `opencode gemini` | Gemini 2.5 Flash (1M ctx) | Surgeon — thesis edits, build pipeline |
 | **claude-project/C** | Claude Desktop | Claude 4 Sonnet | Architect — deep reasoning, thesis review |
 | **D** (you) | Claude Desktop | Claude 4 Sonnet | **Master prompt** — full context recipient, final review, expert analysis |

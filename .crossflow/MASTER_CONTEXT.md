@@ -96,7 +96,7 @@
 ### Active Windows
 | Window | Identity | Launch Command | Model | Domain | Status |
 |--------|----------|---------------|-------|--------|--------|
-| **A** 🕵️ | Scout | `opencode` | DeepSeek V4 Flash | Audit, verify, orchestrate, threshold fixes | ✅ Complete |
+| **A** 🕵️ | Scout | `opencode` | Gemini 2.5 Flash | Audit, verify, orchestrate, threshold fixes | ✅ Complete |
 | **B** 👨‍🔧 | Surgeon | `opencode gemini` | Gemini 2.5 Flash | Build pipeline, thesis edits, dedup fix | ✅ Complete |
 | **C** 🏛️ | Architect | `opencode gemma` | Gemma 4 26B (256K ctx) | Deep reasoning, quality review, thesis polish | ✅ Complete |
 | **D** 🎓 | Master Reviewer | Claude Desktop | Claude 4 Sonnet | **Final expert review, master prompt recipient** | 🟢 Active |

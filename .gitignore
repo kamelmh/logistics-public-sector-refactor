@@ -10,8 +10,15 @@
 *.bak
 *.bak_phase*
 
-# Embedded repos
+# Embedded repos (large binaries, not source)
 public-lsm/
+ruflo/
+MiniCPM-V/
+oracle-ai-developer-hub/
+opencode_updates/
+mempalace/
+Auto-claude-code-research-in-sleep/
+cocoindex_exploration/
 
 # OS / editor files
 Thumbs.db
@@ -99,3 +106,9 @@ session-ses_*.md
 links/
 *.tmp
 output/mso*.tmp
+
+# Backups
+backups/
+
+# Benchmarks
+benchmarks/
