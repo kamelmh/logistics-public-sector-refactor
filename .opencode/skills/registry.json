@@ -19,6 +19,7 @@
       "skills": {
         "autonomous-iteration": { "version": "1.0", "description": "Hypothesize-Implement-Measure-Learn loop" },
         "auto-thesis": { "version": "1.0", "description": "Automated thesis generation and formatting" },
+        "cli-notification": { "version": "1.0", "description": "Pipeline alerts to Telegram/Discord/Slack" },
         "cnepd-memoire": { "version": "1.0", "description": "CNEPD Thesis domain context" },
         "engineering-harness": { "version": "1.0", "description": "Academix v13.2 ERP engineering pipeline" },
         "thesis-docx": { "version": "1.0", "description": "Thesis structure in DOCX" },

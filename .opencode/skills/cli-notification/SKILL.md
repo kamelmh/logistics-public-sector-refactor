@@ -1,56 +1,125 @@
 # CLI Notification Skill
 
-This skill provides guidelines and a standardized framework for sending notifications to the user within the Command Line Interface (CLI).
+Send pipeline results and alerts to Telegram, Discord, or Slack from PowerShell build scripts.
 
 ## Purpose
-Ensure consistent, clear, and actionable communication between the agent and the user, reducing noise while highlighting critical information.
+Enable real-time notifications for ERP/Thesis pipeline results (build, verify, audit, test) without requiring manual checking.
 
-## Notification Levels
+## Configuration
 
-| Level | Prefix | Use Case | Example |
-| :--- | :--- | :--- | :--- |
-| **Success** | `[SUCCESS]` | Confirming a completed task or a successful fix. | `[SUCCESS] Tests passed: 12/12` |
-| **Info** | `[INFO]` | General updates, progress reports, or neutral information. | `[INFO] Analyzing codebase for potential bottlenecks...` |
-| **Warning** | `[WARN]` | Potential issues, non-critical errors, or deprecated patterns. | `[WARN] Found 3 unused imports in src/main.ts` |
-| **Error** | `[ERROR]` | Critical failures, syntax errors, or blocked progress. | `[ERROR] Build failed: Missing dependency 'zod'` |
+### Environment Variables
+Set in `$env:` or persist in `$PROFILE`:
 
-## Guidelines
+```powershell
+# Telegram (create bot via @BotFather, get chat_id via @userinfobot)
+$env:NOTIFY_TELEGRAM_BOT_TOKEN = "123456:ABC-DEF..."
+$env:NOTIFY_TELEGRAM_CHAT_ID = "987654321"
 
-1. **Be Concise**: Keep notifications to 1-2 lines. Avoid fluff.
-2. **Be Actionable**: Errors should ideally suggest a fix or a next step.
-3. **Avoid Noise**: Do not send notifications for trivial intermediate steps unless the task is long-running.
-4. **Visual Hierarchy**: Use the prefixes to allow users to scan logs quickly.
+# Discord (create webhook in channel settings)
+$env:NOTIFY_DISCORD_WEBHOOK = "https://discord.com/api/webhooks/..."
 
-## Suggested Configuration (YAML)
-
-To avoid "YAML errors" during configuration, ensure the following schema is followed if implementing a settings file (e.g., `notifications.yaml`):
-
-```yaml
-notifications:
-  enabled: true
-  theme: "standard"
-  levels:
-    success:
-      prefix: "[SUCCESS]"
-      color: "green"
-    info:
-      prefix: "[INFO]"
-      color: "blue"
-    warning:
-      prefix: "[WARN]"
-      color: "yellow"
-    error:
-      prefix: "[ERROR]"
-      color: "red"
-  defaults:
-    show_timestamp: false
-    verbosity: "medium"
+# Slack (create incoming webhook in app settings)
+$env:NOTIFY_SLACK_WEBHOOK = "https://hooks.slack.com/services/..."
 ```
 
-## Implementation Pattern
+### Priority Order
+If multiple are configured, notifications send to all. Set `$env:NOTIFY_PROVIDER = "telegram"` to use only one.
 
-When notifying the user, use the following pattern:
-`[LEVEL] <Message> (<Optional Action/Context>)`
+## Usage
 
-Example:
-`[ERROR] YAML syntax error in config.yaml: Line 12. (Suggested fix: Remove trailing colon)`
+### In PowerShell Scripts
+```powershell
+# Import the notification function
+. "$PSScriptRoot\..\skills\cli-notification\notify.ps1"
+
+# Send notification
+Send-Notify -Title "ERP Build" -Message "35 modules compiled, 811.3 KB" -Status "success"
+Send-Notify -Title "Thesis Build" -Message "DOCX 123 KB, PDF 1,075 KB" -Status "success"
+Send-Notify -Title "Verify Failed" -Message "3 checks failed" -Status "error"
+Send-Notify -Title "Audit Warning" -Message "2 warnings found" -Status "warning"
+```
+
+### Status Types
+| Status | Color | Emoji | Use Case |
+|--------|-------|-------|----------|
+| `success` | Green | ✅ | Pipeline passed |
+| `error` | Red | ❌ | Pipeline failed |
+| `warning` | Yellow | ⚠️ | Warnings found |
+| `info` | Blue | ℹ️ | Informational |
+
+## Pipeline Integration
+
+### build.ps1
+```powershell
+# At end of build script
+. "$PSScriptRoot\..\skills\cli-notification\notify.ps1"
+if ($allPassed) {
+    Send-Notify -Title "ERP Build" -Message "$modules modules, $size KB" -Status "success"
+} else {
+    Send-Notify -Title "ERP Build" -Message "Compilation failed" -Status "error"
+}
+```
+
+### verify.ps1
+```powershell
+Send-Notify -Title "Verify" -Message "$passed/$total PASS, $failed FAILED" -Status $(if ($failed -eq 0) { "success" } else { "error" })
+```
+
+### build-thesis.ps1
+```powershell
+Send-Notify -Title "Thesis Build" -Message "DOCX $docx KB, PDF $pdf KB, $passed/$total PASS" -Status $(if ($failed -eq 0) { "success" } else { "error" })
+```
+
+## notify.ps1 Implementation
+
+```powershell
+function Send-Notify {
+    param(
+        [string]$Title,
+        [string]$Message,
+        [ValidateSet("success","error","warning","info")]
+        [string]$Status = "info"
+    )
+
+    $colors = @{ success = "00ff00"; error = "ff0000"; warning = "ffff00"; info = "0088ff" }
+    $emojis = @{ success = "✅"; error = "❌"; warning = "⚠️"; info = "ℹ️" }
+    $emoji = $emojis[$Status]
+    $color = $colors[$Status]
+    $text = "$emoji **$Title**`n$Message`n_$(Get-Date -Format 'yyyy-MM-dd HH:mm')_"
+
+    # Telegram
+    if ($env:NOTIFY_TELEGRAM_BOT_TOKEN -and $env:NOTIFY_TELEGRAM_CHAT_ID) {
+        $uri = "https://api.telegram.org/bot$($env:NOTIFY_TELEGRAM_BOT_TOKEN)/sendMessage"
+        $body = @{ chat_id = $env:NOTIFY_TELEGRAM_CHAT_ID; text = $text; parse_mode = "Markdown" }
+        try { Invoke-RestMethod -Uri $uri -Method Post -Body $body -ErrorAction Stop | Out-Null } catch { Write-Warning "Telegram notify failed: $_" }
+    }
+
+    # Discord
+    if ($env:NOTIFY_DISCORD_WEBHOOK) {
+        $payload = @{ content = $text; embeds = @(@{ color = [Convert]::ToInt32($color, 16); title = $Title; description = $Message }) } | ConvertTo-Json
+        try { Invoke-RestMethod -Uri $env:NOTIFY_DISCORD_WEBHOOK -Method Post -Body $payload -ContentType "application/json" -ErrorAction Stop | Out-Null } catch { Write-Warning "Discord notify failed: $_" }
+    }
+
+    # Slack
+    if ($env:NOTIFY_SLACK_WEBHOOK) {
+        $payload = @{ text = $text } | ConvertTo-Json
+        try { Invoke-RestMethod -Uri $env:NOTIFY_SLACK_WEBHOOK -Method Post -Body $payload -ContentType "application/json" -ErrorAction Stop | Out-Null } catch { Write-Warning "Slack notify failed: $_" }
+    }
+
+    if (-not ($env:NOTIFY_TELEGRAM_BOT_TOKEN -or $env:NOTIFY_DISCORD_WEBHOOK -or $env:NOTIFY_SLACK_WEBHOOK)) {
+        Write-Host "[$Status] $Title: $Message" -ForegroundColor $(switch ($Status) { success { "Green" }; error { "Red" }; warning { "Yellow" }; default { "Blue" } })
+    }
+}
+```
+
+## Quick Test
+```powershell
+. "$PSScriptRoot\notify.ps1"
+Send-Notify -Title "Test" -Message "Notification system working" -Status "success"
+```
+
+## Security Notes
+- Never commit webhook URLs or bot tokens to git
+- Add to `.gitignore`: `*.env`, `notify-config.json`
+- Use Windows Credential Manager for production: `cmdkey /add:NotifyToken /user:token /pass:xxx`
+- Tokens are read from environment only, never hardcoded
