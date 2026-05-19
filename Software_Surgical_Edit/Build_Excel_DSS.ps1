@@ -172,7 +172,6 @@ Write-Host "✓ CALCULS_EOQ configured" -ForegroundColor Green
 $vbaFiles = @(
     "MAIN_MACROS.bas",
     "mod_Analysis.bas",
-    "mod_ApprovalWorkflow.bas",
     "mod_AuditTrail.bas",
     "mod_Barcode.bas",
     "mod_Budget.bas",
@@ -183,8 +182,7 @@ $vbaFiles = @(
     "mod_Database.bas",
     "mod_DataValidator.bas",
     "mod_DemoData.bas",
-    "mod_EntryPoints.bas",
-    "mod_ExportEngine.bas",
+    # "mod_EntryPoints.bas",  # Archived - see VBA_Modules/ARCHIVED/
     "mod_Forecasting.bas",
     "mod_InventoryReconciliation.bas",
     "mod_Localization.bas",
@@ -194,8 +192,7 @@ $vbaFiles = @(
     "mod_ReceiptTag.bas",
     "mod_Reports.bas",
     "mod_SharedEnvironment.bas",
-    "mod_SheetSetup.bas",
-    "mod_StockAging.bas",
+    # "mod_SheetSetup.bas",  # Archived - see VBA_Modules/ARCHIVED/
     "mod_StockEngine.bas",
     "mod_StockEntry_Logic.bas",
     "mod_StockOutPredictor.bas",
@@ -273,4 +270,5 @@ Write-Host "  25 sheets created" -ForegroundColor Green
 Write-Host "  $imported VBA modules imported" -ForegroundColor Green
 Write-Host "  Workbook saved to: $OutputPath" -ForegroundColor Green
 Write-Host ""
+
 

@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-05-18 23:36:30",
+  "source": {
+    "file": "Memoire_DSS_Logistique_ElBayadh.md",
+    "md5": "A3E898B845D7B795AD8F6B253874DCEF",
+    "size_kb": 136.2
+  },
+  "verify": {
+    "passed": 25,
+    "failed": 0,
+    "total": 25
+  },
+  "build_id": "20260518-233629",
+  "outputs": {
+    "pdf": {
+      "md5": "88AEE9C9F0E89052B0AE6A30C26021FA",
+      "size_kb": 1040.0
+    },
+    "docx": {
+      "md5": "5945B70E7A9941FA841E41D99576AF9C",
+      "size_kb": 118.0
+    }
+  }
+}

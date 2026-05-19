@@ -24,6 +24,7 @@ Option Explicit
 ' ============================================================
 
 Public Sub GenerateReceiptTagPDF()
+    On Error GoTo ErrorHandler
 
     Dim wsData     As Worksheet
     Dim wsTemplate As Worksheet
@@ -118,13 +119,18 @@ Public Sub GenerateReceiptTagPDF()
     MsgBox "Bon de rception gn" & Chr(233) & "r" & Chr(233) & " avec succ" & Chr(232) & "s!" & vbCrLf & _
            "Fichier: " & pdfPath & vbCrLf & _
            "Code de v" & Chr(233) & "rification: " & verifyCode, vbInformation, "ERP Acad" & Chr(233) & "mie v13"
+    Exit Sub
 
+ErrorHandler:
+    MsgBox "Erreur lors de la g" & Chr(233) & "n" & Chr(233) & "ration du bon: " & Err.Description, vbCritical, "ERP Acad" & Chr(233) & "mie v13"
+    Debug.Print "[ReceiptTag] Error " & Err.Number & ": " & Err.Description
 End Sub
 
 ' ============================================================
 ' SETUP: Run this once to create named ranges on RECEIPT_TAG sheet
 ' ============================================================
 Public Sub SetupReceiptTagSheet()
+    On Error GoTo ErrorHandler
 
     Dim ws As Worksheet
     Dim sheetExists As Boolean: sheetExists = False
@@ -213,6 +219,11 @@ Public Sub SetupReceiptTagSheet()
 
     MsgBox "Feuille RECEIPT_TAG cr" & Chr(233) & "e avec succ" & Chr(232) & "s! Lancez la macro apr" & Chr(232) & "s avoir s" & Chr(233) & "lectionn" & Chr(233) & " une ligne de mouvement.", _
            vbInformation, "Setup OK"
+    Exit Sub
+
+ErrorHandler:
+    MsgBox "Erreur lors de la configuration: " & Err.Description, vbCritical, "ERP Acad" & Chr(233) & "mie v13"
+    Debug.Print "[ReceiptTag] Error " & Err.Number & ": " & Err.Description
 End Sub
 
 ' ============================================================

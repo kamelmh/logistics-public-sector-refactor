@@ -191,16 +191,16 @@ $output = @"
 | :--- | :--- | :--- | :--- | :--- |
 | ART-001 | Toner G030 | 289 | 212.4 | AX |
 | ART-002 | Ramette A4 80g | 520 | 400.0 | AX |
-| ART-003 | Agrafe 24/6 | 1500 | 800.0 | BX |
-| ART-004 | Classeur | 300 | 200.0 | BY |
-| ART-005 | Agrafeuse de bureau | 1 | 212.4 | CX |
-| ART-006 | Trombone boîte | 1800 | 1000.0 | BX |
-| ART-007 | Enveloppe A4 | 2000 | 1200.0 | BX |
-| ART-008 | Stylo bleu | 4000 | 2000.0 | AX |
-| ART-009 | Marqueur | 800 | 300.0 | BY |
-| ART-010 | Ruban adhésif | 350 | 150.0 | BY |
-| ART-011 | Toner H030 | 120 | 80.0 | AY |
-| ART-012 | Papier A3 | 600 | 250.0 | BX |
+| ART-003 | Rame papier A3 80g/m² | 210 | 46.4 | BX |
+| ART-004 | Boîte archives carton | 85 | 23.2 | BY |
+| ART-005 | Agrafeuse de bureau | 12 | 12.4 | CX |
+| ART-006 | Stylos bille boîte/50 | 95 | 50.0 | CX |
+| ART-007 | Registre grand format 5m | 60 | 35.0 | CX |
+| ART-008 | Encre tampon | 30 | 20.0 | CX |
+| ART-009 | Sous-chemise carton | 45 | 25.0 | CX |
+| ART-010 | Chemise cartonnée | 150 | 80.0 | BY |
+| ART-011 | Rouleau papier fax | 40 | 22.0 | CX |
+| ART-012 | Marqueur permanent noir | 70 | 30.0 | CX |
 
 **ملاحظة:** يتم تخزين البيانات في أوراق Excel محمية بكلمة مرور مع تعطيل التعديل اليدوي المباشر.
 

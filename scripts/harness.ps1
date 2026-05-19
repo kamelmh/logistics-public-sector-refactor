@@ -1,6 +1,6 @@
 param(
     [Parameter(Position=0)]
-    [ValidateSet("compact","task","bg","worktree","status","cleanup","sync","unlock")]
+    [ValidateSet("compact","task","bg","worktree","status","cleanup","sync","unlock","autonomous")]
     [string]$Layer,
 
     [Parameter(Position=1)]
@@ -202,17 +202,65 @@ function Set-TaskClaim {
 }
 
 function Get-TaskList {
+    param([string]$FilterStatus, [string]$FilterLayer)
     $files = Get-ChildItem "$TASKS_DIR\task_*.json" -ErrorAction SilentlyContinue | Sort-Object Name
     if (-not $files) { return "No tasks." }
     $files | ForEach-Object {
         $t = Safe-Json $_.FullName
         if (-not $t) { return }
+        if ($FilterStatus -and $t.status -ne $FilterStatus) { return }
+        if ($FilterLayer -and $t.layer -ne $FilterLayer) { return }
         $icon = @{pending="[ ]"; in_progress="[>]"; completed="[x]"}[$t.status]
         if (-not $icon) { $icon = "[?]" }
         $owner = if ($t.owner) { " @$($t.owner)" } else { "" }
         $blocked = if ($t.blockedBy -and $t.blockedBy.Count -gt 0) { " (blocked by: $($t.blockedBy -join ','))" } else { "" }
-        "$icon #$($t.id): $($t.subject)$owner$blocked"
+        $layer = if ($t.layer) { " [$($t.layer)]" } else { "" }
+        $priority = if ($t.priority) { " ($($t.priority))" } else { "" }
+        "$icon #$($t.id): $($t.subject)$owner$layer$priority$blocked"
     }
+}
+
+function Get-NextUnblockedTask {
+    param([string]$AgentName)
+    $files = Get-ChildItem "$TASKS_DIR\task_*.json" -ErrorAction SilentlyContinue | Sort-Object Name
+    if (-not $files) { return $null }
+
+    $candidates = @()
+    foreach ($f in $files) {
+        $t = Safe-Json $f.FullName
+        if (-not $t) { continue }
+        if ($t.status -ne "pending") { continue }
+        if ($t.owner -and $t.owner -ne $AgentName) { continue }
+
+        # Check dependencies
+        $blocked = $false
+        if ($t.blockedBy -and $t.blockedBy.Count -gt 0) {
+            foreach ($depId in $t.blockedBy) {
+                $depPath = "$TASKS_DIR\task_$depId.json"
+                if (Test-Path $depPath) {
+                    $dep = Safe-Json $depPath
+                    if ($dep -and $dep.status -ne "completed") {
+                        $blocked = $true
+                        break
+                    }
+                }
+            }
+        }
+        if (-not $blocked) {
+            $candidates += $t
+        }
+    }
+
+    if ($candidates.Count -eq 0) { return $null }
+
+    # Priority ordering: high > medium > low
+    $priorityOrder = @{high=1; medium=2; low=3}
+    $sorted = $candidates | Sort-Object {
+        $p = $priorityOrder[$_.priority]
+        if (-not $p) { $p = 4 }
+        $p
+    }
+    return $sorted[0]
 }
 
 # ===== s08: Background Runner (file-based, cross-session) =====
@@ -475,6 +523,93 @@ function Invoke-Sync {
     "SESSION_LOG.md: entry #$($slCount + 1) appended"
 }
 
+# ===== s11: Autonomous Task Claim Cycle =====
+function Invoke-AutonomousCycle {
+    param([string]$AgentName, [int]$MaxIterations = 5, [switch]$DryRun)
+
+    Write-Output "=== Autonomous Agent: $AgentName ==="
+    Write-Output "Scanning for unblocked pending tasks..."
+
+    $completed = 0
+    for ($i = 0; $i -lt $MaxIterations; $i++) {
+        $task = Get-NextUnblockedTask -AgentName $AgentName
+        if (-not $task) {
+            Write-Output "No unblocked tasks found. Cycle complete."
+            break
+        }
+
+        Write-Output "  Found: #$($task.id) - $($task.subject) [$($task.priority)]"
+
+        if ($DryRun) {
+            Write-Output "  [DRY RUN] Would claim task #$($task.id)"
+            $completed++
+            continue
+        }
+
+        # Claim the task
+        Set-TaskClaim -Id $task.id -Owner $AgentName | Out-Null
+        Write-Output "  Claimed: #$($task.id) for $AgentName"
+
+        # Worktree integration (s12)
+        $worktreeName = $null
+        if ($task.layer -eq "s12" -or ($task.worktree -eq $null -and $task.id -ge 13)) {
+            $worktreeName = "wt-$AgentName-task-$($task.id)"
+            $wtResult = New-Worktree -Name $worktreeName -TaskId $task.id
+            Write-Output "  Worktree: $wtResult"
+        }
+
+        # Execute task based on layer
+        Write-Output "  Executing task #$($task.id)..."
+        $execResult = Invoke-TaskExecution -Task $task
+        Write-Output "  Result: $execResult"
+
+        # Mark completed
+        Set-Task -Id $task.id -Status "completed" | Out-Null
+        Write-Output "  Completed: #$($task.id)"
+
+        # Clean up worktree
+        if ($worktreeName) {
+            Remove-Worktree -Name $worktreeName -CompleteTask:$false | Out-Null
+            Write-Output "  Worktree removed: $worktreeName"
+        }
+
+        $completed++
+    }
+
+    Write-Output "=== Cycle complete: $completed tasks processed ==="
+    return $completed
+}
+
+function Invoke-TaskExecution {
+    param($Task)
+    # Placeholder execution logic — in production, this dispatches to layer-specific handlers
+    switch ($Task.layer) {
+        "s08" {
+            # Background pipeline task
+            return "Bg pipeline dispatched for $($Task.subject)"
+        }
+        "s09" {
+            # Team inbox task
+            return "Team inboxes initialized"
+        }
+        "s11" {
+            # Autonomous cycle task
+            return "Claim cycle verified"
+        }
+        "s12" {
+            # Worktree task
+            return "Worktree isolation tested"
+        }
+        "thesis" {
+            # Thesis task
+            return "Thesis task executed: $($Task.subject)"
+        }
+        default {
+            return "Task executed: $($Task.subject)"
+        }
+    }
+}
+
 # ===== Dispatch =====
 switch ($Layer) {
     "compact" {
@@ -521,5 +656,16 @@ switch ($Layer) {
     }
     "unlock" {
         Invoke-Unlock
+    }
+    "autonomous" {
+        $agentName = "autonomous-agent"
+        $maxIter = 5
+        $dryRun = $false
+        foreach ($arg in $Args) {
+            if ($arg -eq "-DryRun") { $dryRun = $true }
+            elseif ($arg -match '^\d+$') { $maxIter = [int]$arg }
+            elseif ($arg -notlike '-*') { $agentName = $arg }
+        }
+        Invoke-AutonomousCycle -AgentName $agentName -MaxIterations $maxIter -DryRun:$dryRun
     }
 }

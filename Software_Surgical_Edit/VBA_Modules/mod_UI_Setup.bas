@@ -60,14 +60,19 @@ Public Sub SetupAccueilSheet()
     rowCur = rowCur + 10
     Call DrawSectionHeader(ws, rowCur, 3, "ANALYSE", "Calculs EOQ, CMUP, ABC, pr" & Chr(233) & "visions", RGB(120, 40, 120))
     rowCur = rowCur + 2
-    AddAccueilButton ws, COL1, rowCur, "[ABC] Classement ABC", "mod_StockEngine.UpdateAllABCClassifications"
+    AddAccueilButton ws, COL1, rowCur, "[ABC] Classement ABC", "mod_Analysis.UpdateABC_Classification"
     AddAccueilButton ws, COL2, rowCur, "[CMUP] Rafraichir CMUP", "mod_StockEngine.RefreshAllCMUP"
-    AddAccueilButton ws, COL3, rowCur, "[FORECAST] Pr" & Chr(233) & "vision Rupture", "mod_StockOutPredictor.RunStockOutPrediction"
+    AddAccueilButton ws, COL3, rowCur, "[FORECAST] Pr" & Chr(233) & "vision Rupture", "mod_Analysis.RunStockOutAnalysis"
 
     rowCur = rowCur + 4
-    AddAccueilButton ws, COL1, rowCur, "[RECONCILE] Inventaire", "mod_InventoryReconciliation.RunInventoryReconciliation"
-    AddAccueilButton ws, COL2, rowCur, "[SCORECARD] Fournisseurs", "mod_SupplierScorecard.RunSupplierScorecard"
-    AddAccueilButton ws, COL3, rowCur, "[AGING] Vieillissement Stock", "mod_StockAging.RunStockAgingReport"
+    AddAccueilButton ws, COL1, rowCur, "[FULL] Analyse Complete", "mod_Analysis.RunFullAnalysis"
+    AddAccueilButton ws, COL2, rowCur, "[AGING] Vieillissement Stock", "mod_Analysis.RunStockAgingAnalysis"
+    AddAccueilButton ws, COL3, rowCur, "[RECONCILE] Inventaire", "mod_InventoryReconciliation.RunInventoryReconciliation"
+
+    rowCur = rowCur + 4
+    AddAccueilButton ws, COL1, rowCur, "[SCORECARD] Fournisseurs", "mod_SupplierScorecard.RunSupplierScorecard"
+    AddAccueilButton ws, COL2, rowCur, "[BUDGET] Rapport Budget", "mod_Budget.GenerateBudgetReport"
+    AddAccueilButton ws, COL3, rowCur, "[IMPORT] Importer CSV", "mod_CSVImportExport.ExportMouvementsToCSV"
 
     rowCur = rowCur + 10
     Call DrawSectionHeader(ws, rowCur, 4, "RAPPORTS", "G" & Chr(233) & "n" & Chr(233) & "ration de documents", RGB(160, 70, 0))

@@ -20,7 +20,9 @@ function Audit-Record {
     $c = switch ($Status) { "PASS" { "Green" } "FAIL" { "Red" } "WARN" { "Yellow" }; default { "Gray" } }
     $label = "  [$Status] [$Severity] ${Category}: $Check"
     Write-Host $label -ForegroundColor $c
+    # Always show detail for warnings/fails, show detail for PASS if verbose
     if ($Detail -and $Status -ne "PASS") { Write-Host "         $Detail" -ForegroundColor DarkGray }
+    elseif ($Detail -and $Status -eq "PASS" -and $Severity -eq "WARNING") { Write-Host "         $Detail" -ForegroundColor DarkGreen }
 }
 
 # Kill existing Excel
@@ -94,15 +96,22 @@ else { Audit-Record "Security" "Hardcoded passwords" "CRITICAL" "FAIL" "$($pwdLi
 # 2.3 Error handling coverage
 $modules = Get-ChildItem "$sourceDir\*.bas"
 $modulesWithOnError = 0; $totalProcedures = 0
+$modulesWithoutOnError = @()
+$modulesSkipped = @()
 foreach ($f in $modules) {
     $content = Get-Content $f.FullName -Raw
     $procs = [regex]::Matches($content, "(?:Public|Private)\s+(?:Sub|Function)\s+\w+").Count
+    # Skip modules with no Sub/Function (constants-only modules like mod_Config)
+    if ($procs -eq 0) { $modulesSkipped += [System.IO.Path]::GetFileNameWithoutExtension($f.Name); continue }
     $totalProcedures += $procs
     if ($content -match "On\s+Error") { $modulesWithOnError++ }
+    else { $modulesWithoutOnError += [System.IO.Path]::GetFileNameWithoutExtension($f.Name) }
 }
-$pct = [math]::Round(($modulesWithOnError / $modules.Count) * 100, 0)
-if ($pct -ge 80) { Audit-Record "Security" "Error handling ($pct%)" "WARNING" "PASS" "$modulesWithOnError/$modules.Count modules have error handling" }
-else { Audit-Record "Security" "Error handling ($pct%)" "WARNING" "FAIL" "Only $modulesWithOnError/$modules.Count modules have error handling" }
+$eligibleModules = $modules.Count - $modulesSkipped.Count
+$pct = [math]::Round(($modulesWithOnError / $eligibleModules) * 100, 0)
+$skipNote = if ($modulesSkipped.Count -gt 0) { " (skipped: $($modulesSkipped -join ', '))" } else { "" }
+if ($pct -ge 80) { Audit-Record "Security" "Error handling ($pct%)" "WARNING" "PASS" "$modulesWithOnError/$eligibleModules modules have On Error. Missing: $($modulesWithoutOnError -join ', ')$skipNote" }
+else { Audit-Record "Security" "Error handling ($pct%)" "WARNING" "FAIL" "Only $modulesWithOnError/$eligibleModules modules have error handling. Missing: $($modulesWithoutOnError -join ', ')$skipNote" }
 
 # 2.4 Transaction safety
 $hasTransSafety = Test-Path "$sourceDir\mod_TransactionSafety.bas"
@@ -177,30 +186,27 @@ Write-Host "`n[Phase 4] Module Call Graph Analysis" -ForegroundColor Yellow
 $callGraph = @{}
 foreach ($f in Get-ChildItem "$sourceDir\*.bas") {
     $name = [System.IO.Path]::GetFileNameWithoutExtension($f.Name)
-    # Skip MAIN_MACROS (entry point, not a library module)
     if ($name -eq "MAIN_MACROS") { continue }
     $content = Get-Content $f.FullName -Raw
-    # Remove single-line comments
     $cleanContent = $content -replace "'[^\n]*", ""
-    # Remove string literals
     $cleanContent = $cleanContent -replace '"[^"]*"', ""
-    $cleanContent = $cleanContent -replace "'[^']*'", ""
     $calls = [regex]::Matches($cleanContent, "\bmod_\w+\.") | ForEach-Object { $_.Value.TrimEnd('.') } | Select-Object -Unique
     $callGraph[$name] = $calls
 }
 
-# 4.1 Orphan modules (not called by any other module)
-# Include calls from ThisWorkbook, forms, and MAIN_MACROS
-$allCalls = $callGraph.Values | ForEach-Object { $_ } | Select-Object -Unique
-# Also scan ThisWorkbook.cls and .frm files for module references
-foreach ($f in Get-ChildItem "$sourceDir\*.cls", "$sourceDir\*.frm") {
-    $content = Get-Content $f.FullName -Raw
-    $cleanContent = $content -replace "'[^\n]*", ""
-    $cleanContent = $cleanContent -replace '"[^"]*"', ""
-    $refs = [regex]::Matches($cleanContent, "\bmod_\w+\.") | ForEach-Object { $_.Value.TrimEnd('.') } | Select-Object -Unique
-    $allCalls = $allCalls + $refs | Select-Object -Unique
+# Collect ALL references from ALL source files (.bas, .cls, .frm) using Select-String
+# This is more reliable than regex on cleaned content
+$allSourceFiles = @(Get-ChildItem "$sourceDir\*.bas", "$sourceDir\*.cls", "$sourceDir\*.frm" -ErrorAction SilentlyContinue)
+$allCalls = @()
+
+foreach ($modName in $callGraph.Keys) {
+    $pattern = "\b${modName}\."
+    $refs = Select-String -Path $allSourceFiles.FullName -Pattern $pattern -List -ErrorAction SilentlyContinue
+    if ($refs) { $allCalls += $modName }
 }
-# MAIN_MACROS is an entry point, not a library
+$allCalls = $allCalls | Select-Object -Unique
+
+# Entry points are not orphans
 $entryPoints = @("mod_Config", "MAIN_MACROS")
 $orphanCount = 0
 $orphans = @()
@@ -308,4 +314,60 @@ Write-Host ""
 $reportPath = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\milestone_13_2\audit\dss-audit-report.csv"
 $auditResults | Export-Csv -Path $reportPath -NoTypeInformation -Encoding UTF8
 Write-Host "  Report saved to: $reportPath" -ForegroundColor Gray
+
+# ============================================================================
+# DETAILED ERROR/WARNING LOG
+# ============================================================================
+Write-Host "`n============================================" -ForegroundColor Cyan
+Write-Host "        DETAILED WARNING/ERROR LOG" -ForegroundColor Cyan
+Write-Host "============================================" -ForegroundColor Cyan
+
+$issues = $auditResults | Where-Object { $_.Status -ne "PASS" }
+$warnings = $auditResults | Where-Object { $_.Severity -eq "WARNING" -and $_.Status -eq "PASS" }
+
+if ($issues.Count -gt 0) {
+    Write-Host "`n[ERRORS/FAILURES] $($issues.Count) issue(s) found:" -ForegroundColor Red
+    foreach ($issue in $issues) {
+        Write-Host "  ❌ [$($issue.Severity)] $($issue.Category): $($issue.Check)" -ForegroundColor Red
+        Write-Host "     $($issue.Detail)" -ForegroundColor DarkGray
+    }
+} else {
+    Write-Host "`n[ERRORS/FAILURES] None — all critical checks passed." -ForegroundColor Green
+}
+
+if ($warnings.Count -gt 0) {
+    Write-Host "`n[WARNINGS] $($warnings.Count) warning(s) — passed but note:" -ForegroundColor Yellow
+    foreach ($w in $warnings) {
+        Write-Host "  ⚠️  [$($w.Category)] $($w.Check)" -ForegroundColor Yellow
+        Write-Host "     $($w.Detail)" -ForegroundColor DarkGray
+    }
+}
+
+# Generate detailed log file
+$logPath = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\milestone_13_2\audit\dss-audit-$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
+$logContent = @"
+DSS AUDIT DETAILED LOG — $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+================================================================
+
+SUMMARY: PASS=$pass | CRITICAL=$critical | WARNING=$warning | INFO=$info
+
+"@
+if ($issues.Count -gt 0) {
+    $logContent += "`nERRORS/FAILURES ($($issues.Count)):`n"
+    foreach ($issue in $issues) {
+        $logContent += "  [$($issue.Severity)] $($issue.Category): $($issue.Check) — $($issue.Detail)`n"
+    }
+}
+if ($warnings.Count -gt 0) {
+    $logContent += "`nWARNINGS ($($warnings.Count)):`n"
+    foreach ($w in $warnings) {
+        $logContent += "  [$($w.Category)] $($w.Check) — $($w.Detail)`n"
+    }
+}
+$logContent += "`nALL CHECKS:`n"
+foreach ($r in $auditResults) {
+    $logContent += "  [$($r.Status)] [$($r.Severity)] $($r.Category): $($r.Check) — $($r.Detail)`n"
+}
+$logContent | Set-Content $logPath -Encoding UTF8
+Write-Host "`n  Detailed log saved to: $logPath" -ForegroundColor Gray
 Write-Host ""

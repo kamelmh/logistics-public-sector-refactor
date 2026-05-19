@@ -104,7 +104,7 @@ set "KIMI_MODEL=openrouter/moonshotai/kimi-k2.6"
 set "QUASAR_MODEL=openrouter/openrouter/quasar-alpha"
 
 :: ---- Mode Registry (Single Source of Truth) ----
-set "CLI_MODES=cli groq llama llama-405b mixtral gemini gemini3 gemma gemma-31b gemma-local phi4 qwen3 hermes3 nemotron ring deepseek-free freellm completions deepseek deepseek-flash kimi quasar ollama windsurf windsurf-anthropic"
+set "CLI_MODES=cli groq gemini gemini3 gemma gemma-local phi4 qwen3 qwen7 hermes3 nemotron ring deepseek-free freellm completions deepseek deepseek-flash kimi quasar ollama"
 set "OLLAMA_MODES=phi4 qwen3 hermes3 gemma-local"
 set "PIPELINE_MODES=autobuild autoverify autotest autoaudit autothesis autocheck autofix autoplan autolog automenu autoclean status crossflow crossflow-sync sync mem sandbox"
 set "SPECIAL_MODES=gui fcc proxy academix restore picker help"
@@ -179,27 +179,32 @@ goto :help
 :: ==============================================================
 :ensure-ollama
 echo [OpenCode] Checking Ollama server...
-if not exist "%OLLAMA_EXE%" (
-    echo   ERROR: Ollama not found at %OLLAMA_EXE%
-    echo   Install from: https://ollama.ai
-    pause
-    exit /b 1
+if not exist "%OLLAMA_EXE%" goto :ollama-missing
+powershell -Command "try ^{ $r = Invoke-RestMethod 'http://localhost:11434/api/tags' -TimeoutSec 2; exit 0 ^} catch ^{ exit 1 ^}"
+if not errorlevel 1 goto :ollama-running
+
+echo   Starting Ollama server (background)...
+start "Ollama Server" "%OLLAMA_EXE%" serve
+echo   Waiting for Ollama server (may take 10-15s)...
+ping 127.0.0.1 -n 16 >nul
+powershell -Command "try { $r = Invoke-RestMethod 'http://localhost:11434/api/tags' -TimeoutSec 5; exit 0 } catch { exit 1 }"
+if not errorlevel 1 (
+    echo   Ollama server is running.
+    goto :ollama-done
 )
-powershell -Command "try { $r = Invoke-RestMethod 'http://localhost:11434/api/tags' -TimeoutSec 2; exit 0 } catch { exit 1 }"
-if errorlevel 1 (
-    echo   Starting Ollama server (background)...
-    start "Ollama Server" "%OLLAMA_EXE%" serve
-    echo   Waiting for Ollama server (may take 10-15s)...
-    ping 127.0.0.1 -n 16 >nul
-    powershell -Command "try { $r = Invoke-RestMethod 'http://localhost:11434/api/tags' -TimeoutSec 5; exit 0 } catch { exit 1 }"
-    if errorlevel 1 (
-        echo   WARNING: Ollama server may not be ready yet.
-    ) else (
-        echo   Ollama server is running.
-    )
-) else (
-    echo   Ollama server already running.
-)
+echo   WARNING: Ollama server may not be ready yet.
+goto :ollama-done
+
+:ollama-missing
+echo   ERROR: Ollama not found at %OLLAMA_EXE%
+echo   Install from: https://ollama.ai
+pause
+exit /b 1
+
+:ollama-running
+echo   Ollama server already running.
+
+:ollama-done
 goto :eof
 
 :: ==============================================================
@@ -233,53 +238,17 @@ cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%GROQ_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
-:llama-405b
-title %WINDOW_TITLE%
-echo [OpenCode] Launching with Groq Llama 3.1 405B Reasoning — Session: %SESSION_NAME%
-echo   Model: %LLAMA_405B_MODEL%
-echo.
-cd /d "%BASEDIR%"
-"%OC_EXE%" --model "%LLAMA_405B_MODEL%" "%PROJECT_ROOT%"
-goto :end
-
-:mixtral
-title %WINDOW_TITLE%
-echo [OpenCode] Launching with Groq Mixtral 8x7B — Session: %SESSION_NAME%
-echo   Model: %MIXTRAL_MODEL%
-echo.
-cd /d "%BASEDIR%"
-"%OC_EXE%" --model "%MIXTRAL_MODEL%" "%PROJECT_ROOT%"
-goto :end
-
-:llama
+:gemini
 title %WINDOW_TITLE%
 echo [OpenCode] Launching with Google Gemini 2.5 Flash — Session: %SESSION_NAME%
-echo   Model: %LLAMA_MODEL%
+echo   Model: %GEMINI_MODEL%
 echo.
 cd /d "%BASEDIR%"
-"%OC_EXE%" --model "%LLAMA_MODEL%" "%PROJECT_ROOT%"
+"%OC_EXE%" --model "%GEMINI_MODEL%" "%PROJECT_ROOT%"
 goto :end
 
 goto :end
 
-goto :end
-
-:windsurf
-title %WINDOW_TITLE%
-echo [OpenCode] Launching via WindsurfAPI — Session: %SESSION_NAME%
-echo   Target URL: http://localhost:3003/v1
-echo.
-cd /d "%BASEDIR%"
-"%OC_EXE%" --model "http://localhost:3003/v1" "%PROJECT_ROOT%"
-goto :end
-
-:windsurf-anthropic
-title %WINDOW_TITLE%
-echo [OpenCode] Launching via WindsurfAPI (Anthropic) — Session: %SESSION_NAME%
-echo   Target URL: http://localhost:3003
-echo.
-cd /d "%BASEDIR%"
-"%OC_EXE%" --model "http://localhost:3003" "%PROJECT_ROOT%"
 goto :end
 
 :fcc
@@ -401,6 +370,17 @@ echo.
 cd /d "%BASEDIR%"
 "%OC_EXE%" --model "%OLLAMA_QWEN3%" "%PROJECT_ROOT%"
 goto :end
+
+:qwen7
+call :ensure-ollama
+title %WINDOW_TITLE%
+echo [OpenCode] Launching with qwen2.5-coder:7b — Session: %SESSION_NAME%
+echo   Model: %OLLAMA_FAST_MODEL%
+echo.
+cd /d "%BASEDIR%"
+"%OC_EXE%" --model "%OLLAMA_FAST_MODEL%" "%PROJECT_ROOT%"
+goto :end
+
 
 :hermes3
 call :ensure-ollama
@@ -993,6 +973,7 @@ echo   fcc        CLI via FCC proxy (auto-start)
    echo   ogg-local  Alias for gemma-local
 echo   phi4       CLI with phi4-mini:3.8b (CPU, offline)
 echo   qwen3      CLI with qwen3:1.7b (CPU, offline)
+echo   qwen7      CLI with qwen2.5-coder:7b (CPU, offline)
 echo   hermes3    CLI with Hermes 3 3B (Ollama, instructor-optimized, 2K ctx)
 echo   ollama     CLI with model menu + auto-start server
 echo   proxy      Start FCC proxy only (background)

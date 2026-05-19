@@ -10,6 +10,8 @@ Attribute VB_Name = "mod_BudgetSetup"
 Option Explicit
 
 Public Sub SetupBudgetSheet()
+    On Error GoTo ErrorHandler
+    
     Dim ws As Worksheet
     Dim sheetExists As Boolean
     Dim s As Worksheet
@@ -122,4 +124,11 @@ Public Sub SetupBudgetSheet()
     ' MsgBox "BUDGET sheet created and populated successfully!", vbInformation, "ACADEMIX v13.2"
     
     Debug.Print "[BudgetSetup] BUDGET sheet created and populated"
+    Exit Sub
+
+ErrorHandler:
+    Debug.Print "[BudgetSetup] Error " & Err.Number & ": " & Err.Description
+    If Not ws Is Nothing Then
+        ws.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
+    End If
 End Sub
