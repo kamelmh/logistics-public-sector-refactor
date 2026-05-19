@@ -15,9 +15,8 @@ import inspect
 
 W = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 
-# Use golden reference if available (stable baseline, avoids circular dependency)
-GOLDEN_DOC = os.path.join(os.path.dirname(__file__), "reference-golden.docx")
-USER_DOC = GOLDEN_DOC if os.path.exists(GOLDEN_DOC) else r"C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx"
+# Golden reference — stable baseline from git, avoids circular dependency on output DOCX
+USER_DOC = os.path.join(os.path.dirname(__file__), "reference-golden.docx")
 REF_IN = os.path.join(os.path.dirname(__file__), "reference-in.docx")
 REF_OUT = os.path.join(os.path.dirname(__file__), "reference.docx")
 
