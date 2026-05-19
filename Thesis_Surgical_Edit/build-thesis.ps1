@@ -113,6 +113,15 @@ try {
     Write-Host "  [WARN] Footnotes conversion failed: $_" -ForegroundColor Yellow
 }
 
+# Step 2.8: Add footnotes for ALL 56 bibliography entries
+Write-Host "[2.8/10] Adding comprehensive bibliography footnotes..." -ForegroundColor Yellow
+try {
+    python (Join-Path $style "all-footnotes.py") $docx $sourcePath 2>&1
+    Write-Host "  All 56 bibliography entries now have footnotes" -ForegroundColor Green
+} catch {
+    Write-Host "  [WARN] Comprehensive footnotes failed: $_" -ForegroundColor Yellow
+}
+
 # Step 3: Post-process tables (header coloring, alternating rows)
 Write-Host "[3/10] Formatting tables with user's color scheme..." -ForegroundColor Yellow
 try {
@@ -205,13 +214,14 @@ try {
     $word = New-Object -ComObject Word.Application
     $word.Visible = $false
     $word.DisplayAlerts = 0
-    $wdDoc = $word.Documents.Open((Resolve-Path $docx).Path)
+    # Open as read-only to preserve section breaks
+    $wdDoc = $word.Documents.Open((Resolve-Path $docx).Path, $false, $true)
     $wdDoc.Fields.Update() | Out-Null
     $wdDoc.Fields.Update() | Out-Null
     try { $wdDoc.TablesOfContents.Item(1).Update() | Out-Null } catch { }
     try { $wdDoc.TablesOfFigures.Item(1).Update() | Out-Null } catch { }
     $wdDoc.Fields.Update() | Out-Null
-    $wdDoc.Save()
+    # Save PDF only - do NOT modify the DOCX
     $wdDoc.SaveAs2((Resolve-Path $outDir).Path + "\$OutputName.pdf", 17) | Out-Null
     $wdDoc.Close() | Out-Null
     $word.Quit() | Out-Null
