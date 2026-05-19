@@ -51,6 +51,11 @@
 - "XLOOKUP" → Forbidden (Excel 2010 compat)
 
 ## Next Actions
-1. Commit 25 modified + 13 untracked files
-2. Create CLI notification skill (requested session 1c2a, never completed)
-3. Thesis defense preparation (talking points + Q&A already prepared)
+1. Thesis defense preparation (talking points + Q&A already prepared)
+2. Optional: integrate CLI notifications into pipeline scripts
+
+## CLI Notification Skill (2026-05-19 11:15)
+- Created `.opencode/skills/cli-notification/` with SKILL.md + notify.ps1
+- Supports Telegram, Discord, Slack webhooks
+- Auto-fallback to console output
+- Committed as `bbd3872`

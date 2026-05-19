@@ -1,5 +1,5 @@
 # Gemma 4 (Jem) — Session State
-> Last updated: 2026-05-19 10:51
+> Last updated: 2026-05-19 11:15
 
 ## THESIS BUILD — ✅ COMPLETE (2026-05-19 11:01)
 
@@ -46,6 +46,7 @@
 - .opencode/state/project-memory.md
 - .crossflow/HANDOFF.md
 
-## Pending
-- 25 modified + 13 untracked files ready for commit
-- CLI notification skill (session 1c2a)
+## Completed
+- Commits: `7206423` (citation fix), `bbd3872` (notification skill)
+- CLI notification skill: `.opencode/skills/cli-notification/` (SKILL.md + notify.ps1)
+- All state files updated
