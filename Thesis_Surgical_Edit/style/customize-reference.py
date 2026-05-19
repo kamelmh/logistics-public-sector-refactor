@@ -15,7 +15,9 @@ import inspect
 
 W = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 
-USER_DOC = r"C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx"
+# Use golden reference if available (stable baseline, avoids circular dependency)
+GOLDEN_DOC = os.path.join(os.path.dirname(__file__), "reference-golden.docx")
+USER_DOC = GOLDEN_DOC if os.path.exists(GOLDEN_DOC) else r"C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx"
 REF_IN = os.path.join(os.path.dirname(__file__), "reference-in.docx")
 REF_OUT = os.path.join(os.path.dirname(__file__), "reference.docx")
 

@@ -19,15 +19,11 @@ if ((Test-Path $sourcePath) -and (Test-Path $manifest)) {
     $srcHash = (Get-FileHash $sourcePath -Algorithm MD5).Hash
     $prevManifest = Get-Content $manifest | ConvertFrom-Json
     $prevDocx = Join-Path $outDir "$OutputName.docx"
-    if ($prevManifest.PSObject.Properties.Name -contains "Memoire_DSS_Logistique_ElBayadh.md") {
-        $prevSrcHash = $prevManifest."Memoire_DSS_Logistique_ElBayadh.md".md5
-        $prevHash = $prevSrcHash -replace '[^a-fA-F0-9]', ''
-        $currHash = $srcHash -replace '[^a-fA-F0-9]', ''
-        if ($prevHash -eq $currHash -and (Test-Path $prevDocx)) {
-            Write-Host "  Source unchanged (MD5: $($srcHash.Substring(0,12))...), skipping rebuild" -ForegroundColor Green
-            & (Join-Path $root "verify-thesis.ps1")
-            exit $LASTEXITCODE
-        }
+    $prevSrcHash = $prevManifest.source.md5
+    if ($prevSrcHash -and $prevSrcHash -eq $srcHash -and (Test-Path $prevDocx)) {
+        Write-Host "  Source unchanged ($($srcHash.Substring(0,12))...), skipping rebuild" -ForegroundColor Green
+        & (Join-Path $root "verify-thesis.ps1")
+        exit $LASTEXITCODE
     }
     Write-Host "  Source changed or stale manifest, rebuilding..." -ForegroundColor Yellow
 }
@@ -214,14 +210,16 @@ try {
     $word = New-Object -ComObject Word.Application
     $word.Visible = $false
     $word.DisplayAlerts = 0
-    # Open as read-only to preserve section breaks
-    $wdDoc = $word.Documents.Open((Resolve-Path $docx).Path, $false, $true)
+    # Open as read-write to allow field update + save
+    $wdDoc = $word.Documents.Open((Resolve-Path $docx).Path, $false, $false)
     $wdDoc.Fields.Update() | Out-Null
     $wdDoc.Fields.Update() | Out-Null
     try { $wdDoc.TablesOfContents.Item(1).Update() | Out-Null } catch { }
     try { $wdDoc.TablesOfFigures.Item(1).Update() | Out-Null } catch { }
     $wdDoc.Fields.Update() | Out-Null
-    # Save PDF only - do NOT modify the DOCX
+    # Save DOCX with updated fields (populates TOC/LOT styles for verify)
+    $wdDoc.Save() | Out-Null
+    # Save PDF
     $wdDoc.SaveAs2((Resolve-Path $outDir).Path + "\$OutputName.pdf", 17) | Out-Null
     $wdDoc.Close() | Out-Null
     $word.Quit() | Out-Null
