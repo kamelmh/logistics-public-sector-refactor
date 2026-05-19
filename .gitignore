@@ -115,3 +115,6 @@ benchmarks/
 
 # Runtime state
 scripts/.opencode/
+
+# Repomix generated output
+Thesis_Surgical_Edit/claude-context/repomix-output.xml

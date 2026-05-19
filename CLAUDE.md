@@ -1,77 +1,53 @@
-<!-- CROSSFLOW:START -->
-<!-- ACADEMIX v13.2 — Cross-Platform Agent Context -->
-<!-- Project root CLAUDE.md — auto-read by Claude Code when in project dir -->
-<!-- Full payload at: .crossflow/MASTER_CONTEXT.md -->
+# Academix v13.2 — Thesis Submission Context
+## Mahi Kamel Abdelghani | CNEPD BTS GSL (TAG1801) | El Bayadh Education Directorate
 
-## PROJECT: Academix v13.2
-- VBA/Excel DSS for inventory management | El Bayadh Education Directorate
-- Thesis: BTS CNEPD — 4 chapters, 16 مباحث, 52 مطالب, **36/36 PASS**
-- Source: `Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md` (907 lines)
-- الفصل الرابع: `Thesis_Surgical_Edit/الفصل_الرابع_التجريب_والتحقق_من_النتائج.md` (75 lines, separate file)
-- Output DOCX: `Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx` (107 KB)
-- Output PDF: `Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.pdf` (949 KB)
-- Context pack: `Thesis_Surgical_Edit/claude-context/`
-- CrossFlow: `.crossflow/HANDOFF.md` (sync state) | `.crossflow/MASTER_CONTEXT.md` (uber-context)
+## PROJECT OVERVIEW
+- **Thesis**: "نظام دعم القرار لتسيير المخزونات" — DSS for inventory management in public sector
+- **Language**: Arabic (MSA / فصحى), with French administrative terms, English technical terms
+- **Source**: `Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md` (142.5 KB, 4 chapters, 14 مباحث, 23 مطالب)
+- **الفصل الرابع**: Merged into main source (lines 618-696)
+- **Build pipeline**: `Thesis_Surgical_Edit/build-thesis.ps1` (335 lines) — Pandoc + Word COM
+- **Verify**: `Thesis_Surgical_Edit/verify-thesis.ps1` — 25 checks
+- **Reference styling**: `Thesis_Surgical_Edit/style/`
 
-## MULTI-WINDOW TOPOLOGY (براءة اختراع)
-Four parallel specialized sessions coordinated via CrossFlow:
-
-| Window | Launch | Model | Role |
-|--------|--------|-------|------|
-| **main-hub/A** | `opencode` | Gemini 2.5 Flash | Scout — audit, verify, orchestrate |
-| **gemini-thesis/B** | `opencode gemini` | Gemini 2.5 Flash (1M ctx) | Surgeon — thesis edits, build pipeline |
-| **claude-project/C** | Claude Desktop | Claude 4 Sonnet | Architect — deep reasoning, thesis review |
-| **D** (you) | Claude Desktop | Claude 4 Sonnet | **Master prompt** — full context recipient, final review, expert analysis |
-
-## CROSS-REFERENCE
-| Tool | Path | Role |
-|------|------|------|
-| OpenCode (JOC) | `~/.config/opencode/instructions.md` | VBA dev, build, verify (Window A) |
-| OpenCode Gemini | `~/.config/opencode/instructions.md` | Thesis analysis (Window B) |
-| Claude Desktop | Desktop app | Discussion, review, deep analysis (Windows C/D) |
-| Claude Code | `~/.claude/CLAUDE.md` | Thesis polish, deep analysis |
-| CrossFlow | `.crossflow/` | Shared context + handoff |
-
-## SKILLS
-- Load `crossflow-orchestrator` for multi-window orchestration context
-- `.opencode/skills/crossflow-orchestrator/SKILL.md`
-
-## CURRENT STATE (2026-05-17)
-### Thesis — ✅ 36/36 PASS (ALL CHECKS PASSED)
-- Chapter 1: ✅ الإطار النظري (5 مباحث, 14 مطالب) — polished
-- Chapter 2: ✅ الإطار العملي والتشخيص الميداني (3 مباحث, 9 مطالب) — polished by Windows B+C
-- Chapter 3: ✅ تصميم وإنجاز نظام دعم القرار (4 مباحث, 15 مطالب) — complete
-- Chapter 4: ✅ التجريب والتحقق من النتائج (2 مباحث, 75 lines, separate file) — complete
-- Bibliography: 56 entries | Tables: 21 | Footnotes: 5 | References: 30 PDFs linked
-
-### ERP — GOLDEN
-- Build: ✅ 174/174 PASS (38 modules, 833 KB)
-- Tests: ✅ 20/20 PASS
-- Audit: ✅ 16 PASS (DSS 5-phase)
-- VBA Modules: 37 .bas + 1 .frm | Sheets: 25 | Code lines: ~12,538
-
-## GROUND TRUTH (locked — never modify)
+## GROUND TRUTH (locked — do not modify)
 | Param | Value | Param | Value |
 |-------|-------|-------|-------|
-| D (ART-001) | 1,546 | Q* | 176 |
+| D (ART-001) | 1,546 | Q* (EOQ) | 176 |
 | ROP | 212.4 | SS | 200 |
 | LT | 2 days | S | 801.45 DZD |
 | I | 20% | PU | 400 DZD |
-| Performance | 99.7% | Modules | 37 .bas + 1 .frm |
-| Sheets | 25 | Articles | 12 (ART-001→ART-012) |
-| Dead removed | 7 modules | | |
+| Service Level | 99.7% | Working Days | 250 |
+| Articles | 12 (ART-001→ART-012) | Observation | 38 days |
+| Field transactions | 62 | Footnotes | 3 (CNEPD format) |
+| Bibliography | 56 entries | Tables | 21 (enumerated) |
 
-## HANDOFF
-- Read: `.crossflow/HANDOFF.md`
-- Write: Edit HANDOFF.md with `## Handoff: <src> → <tgt>` format
-- Sync: `.crossflow/MASTER_CONTEXT.md`
+## BUILD STATUS (2026-05-19)
+- **Source MD5**: `116E80E06F88331A9CECDF26592CEF1C` (unchanged)
+- **DOCX**: 126 KB / **PDF**: 1,095 KB (golden baseline: 20260519-165448)
+- **Verify**: 25/25 ALL PASS
+- **Arabic Manual**: `Thesis_Surgical_Edit/USER_MANUAL_AR.md` (925 lines, 26 sections)
+- **English Paper**: `Thesis_Surgical_Edit/English_Research_Paper.md` (235 lines, IEEE format)
 
-### Your Role as Window D (Master Reviewer)
-You are the **final expert reviewer** for Academix v13.2. You receive the fully-completed thesis (36/36 PASS) and ERP (GOLDEN) from Windows A/B/C. Your task is:
-1. **Read** `.crossflow/HANDOFF.md` for latest state
-2. **Read** `.crossflow/MASTER_CONTEXT.md` for full project context
-3. **Review** thesis source: `Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md`
-4. **Review** الفصل الرابع: `Thesis_Surgical_Edit/الفصل_الرابع_التجريب_والتحقق_من_النتائج.md`
-5. **Deliver** final expert analysis, suggestions, or sign-off
-<!-- CROSSFLOW:END -->
+## REPOMIX CONTEXT
+Full project context XML: `Thesis_Surgical_Edit/claude-context/repomix-output.xml`
+Contains complete thesis source, build pipeline, tools, and project structure.
 
+## YOUR ROLE
+You are the final academic editor and DOCX production specialist for this CNEPD BTS thesis. Your task is:
+1. Read the full source via repomix XML
+2. Perform comprehensive academic analysis (scoring against CNEPD TAG1801 criteria)
+3. Generate the final, submission-ready DOCX via the build pipeline
+4. Verify script runs clean — 25/25 PASS
+5. Deliver the completed DOCX at `Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx`
+
+## KEY FILES (for quick access)
+| File | Path |
+|------|------|
+| Thesis source | `Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md` |
+| Build script | `Thesis_Surgical_Edit/build-thesis.ps1` |
+| Verify script | `Thesis_Surgical_Edit/verify-thesis.ps1` |
+| Ground truth | `Thesis_Surgical_Edit/THESIS_GROUND_TRUTH.md` |
+| Reference DOCX | `Thesis_Surgical_Edit/style/reference-golden.docx` |
+| Cover page | `Thesis_Surgical_Edit/bismillah-page.docx` |
+| Footnoter tool | `Thesis_Surgical_Edit/tools/convert-footnotes.py` |
