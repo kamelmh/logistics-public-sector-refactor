@@ -1,29 +1,77 @@
 {
   "golden_baseline": {
-    "timestamp": "2026-05-19 10:27:58",
-    "source": {
-      "md5": "407727166FCAA45A9101A27276125BEC",
-      "size_kb": 136.2,
-      "file": "Memoire_DSS_Logistique_ElBayadh.md"
-    },
-    "outputs": {
-      "docx": {
-        "size_kb": 118.0,
-        "md5": "DEF89109CAC1F5CF539B399EDD843137"
-      },
-      "pdf": {
-        "size_kb": 1041.0,
-        "md5": "DE99182E02CC5F0A7B2D0AED63B835A2"
-      }
-    },
-    "build_id": "20260519-102758",
+    "build_id": "20260519-110133",
+    "timestamp": "2026-05-19 11:01:34",
     "verify": {
       "total": 25,
       "failed": 0,
       "passed": 25
+    },
+    "source": {
+      "file": "Memoire_DSS_Logistique_ElBayadh.md",
+      "size_kb": 142.5,
+      "md5": "116E80E06F88331A9CECDF26592CEF1C"
+    },
+    "outputs": {
+      "pdf": {
+        "size_kb": 1075.0,
+        "md5": "5AB8D9D5152C13D20D4A794D88B93738"
+      },
+      "docx": {
+        "size_kb": 124.0,
+        "md5": "BD6E6FEDCFD497DCE72BBF3BD9F1F7DE"
+      }
     }
   },
   "manifest_history": [
+    {
+      "outputs": {
+        "docx": {
+          "md5": "4D8A2BE70E349245C6597F3EF8B3BC91",
+          "size_kb": 120.0
+        },
+        "pdf": {
+          "md5": "6FEF899A6F353079EDC27C16AF3F905E",
+          "size_kb": 1048.0
+        }
+      },
+      "source": {
+        "md5": "1F6F7A8A282687A910602F70A2BF9980",
+        "size_kb": 137.9,
+        "file": "Memoire_DSS_Logistique_ElBayadh.md"
+      },
+      "timestamp": "2026-05-19 10:51:09",
+      "verify": {
+        "total": 25,
+        "passed": 25,
+        "failed": 0
+      },
+      "build_id": "20260519-105108"
+    },
+    {
+      "timestamp": "2026-05-19 10:27:58",
+      "source": {
+        "md5": "407727166FCAA45A9101A27276125BEC",
+        "size_kb": 136.2,
+        "file": "Memoire_DSS_Logistique_ElBayadh.md"
+      },
+      "outputs": {
+        "docx": {
+          "size_kb": 118.0,
+          "md5": "DEF89109CAC1F5CF539B399EDD843137"
+        },
+        "pdf": {
+          "size_kb": 1041.0,
+          "md5": "DE99182E02CC5F0A7B2D0AED63B835A2"
+        }
+      },
+      "build_id": "20260519-102758",
+      "verify": {
+        "total": 25,
+        "failed": 0,
+        "passed": 25
+      }
+    },
     {
       "timestamp": "2026-05-19 10:25:53",
       "verify": {
