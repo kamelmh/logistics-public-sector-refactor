@@ -1,26 +1,148 @@
 {
   "golden_baseline": {
+    "timestamp": "2026-05-19 10:27:58",
     "source": {
-      "md5": "A3E898B845D7B795AD8F6B253874DCEF",
+      "md5": "407727166FCAA45A9101A27276125BEC",
       "size_kb": 136.2,
       "file": "Memoire_DSS_Logistique_ElBayadh.md"
     },
     "outputs": {
-      "pdf": {
-        "md5": "B8A98FFDEDE72894532533B66A92E5F1",
-        "size_kb": 1040.0
-      },
       "docx": {
-        "md5": "849F698A1C6ADEFA209FC885E3D2D619",
-        "size_kb": 118.0
+        "size_kb": 118.0,
+        "md5": "DEF89109CAC1F5CF539B399EDD843137"
+      },
+      "pdf": {
+        "size_kb": 1041.0,
+        "md5": "DE99182E02CC5F0A7B2D0AED63B835A2"
       }
     },
-    "timestamp": "2026-05-18 23:33:48",
+    "build_id": "20260519-102758",
     "verify": {
       "total": 25,
-      "passed": 25,
-      "failed": 0
+      "failed": 0,
+      "passed": 25
+    }
+  },
+  "manifest_history": [
+    {
+      "timestamp": "2026-05-19 10:25:53",
+      "verify": {
+        "total": 25,
+        "passed": 25,
+        "failed": 0
+      },
+      "source": {
+        "size_kb": 136.2,
+        "file": "Memoire_DSS_Logistique_ElBayadh.md",
+        "md5": "407727166FCAA45A9101A27276125BEC"
+      },
+      "outputs": {
+        "docx": {
+          "size_kb": 118.0,
+          "md5": "1052143E07848ADCDB42DE597B32178C"
+        },
+        "pdf": {
+          "size_kb": 1041.0,
+          "md5": "F8A61442F6FAFABDDF662022089161A9"
+        }
+      },
+      "build_id": "20260519-102552"
     },
-    "build_id": "20260518-233347"
-  }
+    {
+      "verify": {
+        "passed": 25,
+        "total": 25,
+        "failed": 0
+      },
+      "timestamp": "2026-05-19 10:22:54",
+      "build_id": "20260519-102253",
+      "outputs": {
+        "docx": {
+          "md5": "BB5499FDA1920B03FA2AE6B95ED083F9",
+          "size_kb": 118.0
+        },
+        "pdf": {
+          "md5": "B7857982AD5F1FA42CC9B96F2F4DF416",
+          "size_kb": 1041.0
+        }
+      },
+      "source": {
+        "size_kb": 136.2,
+        "md5": "407727166FCAA45A9101A27276125BEC",
+        "file": "Memoire_DSS_Logistique_ElBayadh.md"
+      }
+    },
+    {
+      "outputs": {
+        "docx": {
+          "md5": "CACA9F4AE3F1648D0AE7DE7A1093CA7C",
+          "size_kb": 118.0
+        },
+        "pdf": {
+          "md5": "07D9C31C18C4C31FED8A908ACB1A41F5",
+          "size_kb": 1041.0
+        }
+      },
+      "source": {
+        "md5": "407727166FCAA45A9101A27276125BEC",
+        "file": "Memoire_DSS_Logistique_ElBayadh.md",
+        "size_kb": 136.2
+      },
+      "timestamp": "2026-05-19 10:20:08",
+      "verify": {
+        "failed": 0,
+        "total": 25,
+        "passed": 25
+      },
+      "build_id": "20260519-102007"
+    },
+    {
+      "timestamp": "2026-05-19 10:17:30",
+      "source": {
+        "md5": "407727166FCAA45A9101A27276125BEC",
+        "file": "Memoire_DSS_Logistique_ElBayadh.md",
+        "size_kb": 136.2
+      },
+      "outputs": {
+        "docx": {
+          "md5": "986776775A0384E12AC76E39C27E65C9",
+          "size_kb": 118.0
+        },
+        "pdf": {
+          "md5": "361C90C39A87EE86B6EECBBB52F54F21",
+          "size_kb": 1041.0
+        }
+      },
+      "build_id": "20260519-101730",
+      "verify": {
+        "passed": 25,
+        "total": 25,
+        "failed": 0
+      }
+    },
+    {
+      "source": {
+        "md5": "A3E898B845D7B795AD8F6B253874DCEF",
+        "size_kb": 136.2,
+        "file": "Memoire_DSS_Logistique_ElBayadh.md"
+      },
+      "outputs": {
+        "pdf": {
+          "md5": "B8A98FFDEDE72894532533B66A92E5F1",
+          "size_kb": 1040.0
+        },
+        "docx": {
+          "md5": "849F698A1C6ADEFA209FC885E3D2D619",
+          "size_kb": 118.0
+        }
+      },
+      "timestamp": "2026-05-18 23:33:48",
+      "verify": {
+        "total": 25,
+        "passed": 25,
+        "failed": 0
+      },
+      "build_id": "20260518-233347"
+    }
+  ]
 }

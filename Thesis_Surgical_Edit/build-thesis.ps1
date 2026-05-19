@@ -199,7 +199,7 @@ try {
 $pdf = Join-Path $outDir "$OutputName.pdf"
 Write-Host "[5/10] Generating PDF via Word (updating fields)..." -ForegroundColor Yellow
 # Kill any stale Word instances BEFORE spawning COM (prevents orphan accumulation)
-Get-Process -Name WINWORD -ErrorAction SilentlyContinue | Stop-Process -Force
+Get-Process -Name WINWORD -ErrorAction SilentlyContinue | Stop-Process -Force | Out-Null
 Start-Sleep -Milliseconds 500
 try {
     $word = New-Object -ComObject Word.Application
@@ -208,13 +208,13 @@ try {
     $wdDoc = $word.Documents.Open((Resolve-Path $docx).Path)
     $wdDoc.Fields.Update() | Out-Null
     $wdDoc.Fields.Update() | Out-Null
-    try { $wdDoc.TablesOfContents.Item(1).Update() } catch { }
-    try { $wdDoc.TablesOfFigures.Item(1).Update() } catch { }
+    try { $wdDoc.TablesOfContents.Item(1).Update() | Out-Null } catch { }
+    try { $wdDoc.TablesOfFigures.Item(1).Update() | Out-Null } catch { }
     $wdDoc.Fields.Update() | Out-Null
     $wdDoc.Save()
-    $wdDoc.SaveAs2((Resolve-Path $outDir).Path + "\$OutputName.pdf", 17)
-    $wdDoc.Close()
-    $word.Quit()
+    $wdDoc.SaveAs2((Resolve-Path $outDir).Path + "\$OutputName.pdf", 17) | Out-Null
+    $wdDoc.Close() | Out-Null
+    $word.Quit() | Out-Null
     $size = (Get-Item $pdf).Length
     Write-Host "  Fields updated, PDF: $([math]::Round($size/1KB)) KB" -ForegroundColor Green
 } catch {
@@ -222,12 +222,12 @@ try {
     Write-Host "  Open $docx in Word and save as PDF manually." -ForegroundColor Yellow
 } finally {
     # Force cleanup of COM objects to prevent orphaned WINWORD processes
-    if ($wdDoc) { try { [System.Runtime.Interopservices.Marshal]::ReleaseComObject($wdDoc) } catch {} }
-    if ($word)  { try { [System.Runtime.Interopservices.Marshal]::ReleaseComObject($word)  } catch {} }
-    [System.GC]::Collect()
-    [System.GC]::WaitForPendingFinalizers()
+    if ($wdDoc) { try { [System.Runtime.Interopservices.Marshal]::ReleaseComObject($wdDoc) | Out-Null } catch {} }
+    if ($word)  { try { [System.Runtime.Interopservices.Marshal]::ReleaseComObject($word)  | Out-Null } catch {} }
+    [System.GC]::Collect() | Out-Null
+    [System.GC]::WaitForPendingFinalizers() | Out-Null
     Start-Sleep -Milliseconds 500
-    Get-Process -Name WINWORD -ErrorAction SilentlyContinue | Stop-Process -Force
+    Get-Process -Name WINWORD -ErrorAction SilentlyContinue | Stop-Process -Force | Out-Null
 }
 
 # Step 6: Verify output (basic)
@@ -286,22 +286,28 @@ try {
     Write-Host "  Manifest: src=$($srcHash.Substring(0,12)) docx=$($docxHash.Substring(0,12)) pdf=$($pdfHash.Substring(0,12))" -ForegroundColor Green
     # Also update thesis-state.json (tracked by git, survives sessions)
     $statePath = Join-Path $root "thesis-state.json"
-    $state = if (Test-Path $statePath) { Get-Content $statePath | ConvertFrom-Json } else { @{} }
-    if (-not $state.PSObject.Properties.Name -contains "manifest_history") {
-        $state | Add-Member -NotePropertyName "manifest_history" -NotePropertyValue @() -Force
-    }
+    $stateFile = if (Test-Path $statePath) { Get-Content $statePath -Raw } else { "{}" }
+    $state = $stateFile | ConvertFrom-Json
+    # Build new state as hashtable for reliable JSON serialization
+    $history = @()
     if ($state.PSObject.Properties.Name -contains "golden_baseline") {
-        $state.manifest_history += $state.golden_baseline
+        $history += $state.golden_baseline
     }
-    $state | Add-Member -NotePropertyName "golden_baseline" -NotePropertyValue @{
-        build_id  = $buildId
-        timestamp = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
-        source    = @{ file = $SourceMD; md5 = $srcHash; size_kb = [math]::Round((Get-Item $sourcePath).Length/1KB, 1) }
-        outputs   = @{ docx = @{ md5 = $docxHash; size_kb = $docxSizeKb }; pdf = @{ md5 = $pdfHash; size_kb = $pdfSizeKb } }
-        verify    = $verifyBlock
-    } -Force
-    $state | ConvertTo-Json -Depth 5 | Set-Content $statePath -Encoding UTF8
-    Write-Host "  State: golden_baseline updated, $($state.manifest_history.Count) prior builds archived" -ForegroundColor Green
+    if ($state.PSObject.Properties.Name -contains "manifest_history") {
+        $history += $state.manifest_history
+    }
+    $newState = @{
+        golden_baseline  = @{
+            build_id  = $buildId
+            timestamp = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+            source    = @{ file = $SourceMD; md5 = $srcHash; size_kb = [math]::Round((Get-Item $sourcePath).Length/1KB, 1) }
+            outputs   = @{ docx = @{ md5 = $docxHash; size_kb = $docxSizeKb }; pdf = @{ md5 = $pdfHash; size_kb = $pdfSizeKb } }
+            verify    = $verifyBlock
+        }
+        manifest_history = $history
+    }
+    $newState | ConvertTo-Json -Depth 5 | Set-Content $statePath -Encoding UTF8
+    Write-Host "  State: golden_baseline updated, $($history.Count) prior builds archived" -ForegroundColor Green
 } catch {
     Write-Host "  [WARN] Manifest write failed: $_" -ForegroundColor Yellow
 }
