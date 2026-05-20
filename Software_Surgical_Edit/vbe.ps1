@@ -1,1 +1,0 @@
-C:/Users/Administrator/Desktop/vbe-auto/vbe.ps1
