@@ -2,7 +2,7 @@
 
 **Academix v13.2** — Direction de l'Éducation, El Bayadh
 **Author:** Mahi Kamel Abdelghani
-**Auto-generated:** 2026-05-22 22:05
+**Auto-generated:** 2026-05-22 22:20
 
 ---
 
@@ -10,37 +10,18 @@
 
 | Category | Dirs | Files |
 |----------|------|-------|
-| Scripts & Utility | 4 | 9 |
-| Core Project | 5 | 339 |
 | R&D Umbrella | 1 | 13247 |
 | Third-Party Submodules | 17 | 56517 |
-| Platform & Configuration | 5 | 5651 |
+| Core Project | 5 | 339 |
+| Platform & Configuration | 5 | 5663 |
+| Scripts & Utility | 4 | 10 |
 | Archive & Backups | 2 | 7 |
 | External Dependencies | 2 | 94 |
 | Reference | 4 | 76 |
 | Uncategorized | 1 | 0 |
-| **Total** | **41** | **75940** |
+| **Total** | **41** | **75953** |
 
 ---
-
-## Scripts & Utility
-
-| Directory | Files | Submodule | Size |
-|-----------|-------|-----------|------|
-| $(System.Collections.Hashtable.Name) | 2 | — | 2 KB |
-| $(System.Collections.Hashtable.Name) | 5 | — | 46 KB |
-| $(System.Collections.Hashtable.Name) | 1 | — | 43 B |
-| $(System.Collections.Hashtable.Name) | 1 | — | 93 B |
-
-## Core Project
-
-| Directory | Files | Submodule | Size |
-|-----------|-------|-----------|------|
-| $(System.Collections.Hashtable.Name) | 141 | — | 14.0 MB |
-| $(System.Collections.Hashtable.Name) | 66 | — | 3.5 MB |
-| $(System.Collections.Hashtable.Name) | 70 | — | 69.9 MB |
-| $(System.Collections.Hashtable.Name) | 62 | — | 66 KB |
-| $(System.Collections.Hashtable.Name) | 0 | — |  B |
 
 ## R&D Umbrella
 
@@ -70,6 +51,16 @@
 | $(System.Collections.Hashtable.Name) | 1099 | Yes | 45.0 MB |
 | $(System.Collections.Hashtable.Name) | 269 | Yes | 2.9 MB |
 
+## Core Project
+
+| Directory | Files | Submodule | Size |
+|-----------|-------|-----------|------|
+| $(System.Collections.Hashtable.Name) | 141 | — | 14.0 MB |
+| $(System.Collections.Hashtable.Name) | 66 | — | 3.5 MB |
+| $(System.Collections.Hashtable.Name) | 70 | — | 69.9 MB |
+| $(System.Collections.Hashtable.Name) | 62 | — | 66 KB |
+| $(System.Collections.Hashtable.Name) | 0 | — |  B |
+
 ## Platform & Configuration
 
 | Directory | Files | Submodule | Size |
@@ -77,8 +68,17 @@
 | $(System.Collections.Hashtable.Name) | 1 | — | 68 B |
 | $(System.Collections.Hashtable.Name) | 6 | — | 31 KB |
 | $(System.Collections.Hashtable.Name) | 0 | — |  B |
-| $(System.Collections.Hashtable.Name) | 5623 | — | 38.4 MB |
+| $(System.Collections.Hashtable.Name) | 5635 | — | 38.4 MB |
 | $(System.Collections.Hashtable.Name) | 21 | — | 8 KB |
+
+## Scripts & Utility
+
+| Directory | Files | Submodule | Size |
+|-----------|-------|-----------|------|
+| $(System.Collections.Hashtable.Name) | 2 | — | 2 KB |
+| $(System.Collections.Hashtable.Name) | 6 | — | 58 KB |
+| $(System.Collections.Hashtable.Name) | 1 | — | 43 B |
+| $(System.Collections.Hashtable.Name) | 1 | — | 93 B |
 
 ## Archive & Backups
 
