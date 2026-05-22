@@ -150,9 +150,14 @@ def inspect_docx(docx_path):
     rtl_ok = rtl_bad = 0
     spacing_ok = spacing_bad = 0
 
+    SKIP_TAGS = ["heading", "titre", "toc", "table des", "caption",
+                  "légende", "legend", "footnote", "endnote", "header", "footer",
+                  "title", "subtitle", "author", "date", "block text",
+                  "no spacing", "list paragraph", "normal table", "table grid",
+                  "table of", "toc", "tof"]
     for p in paras:
-        sname = p.style.name
-        if any(k in sname for k in ("Heading", "Titre", "TOC", "Table des", "Caption", "Légende", "Footnote", "Note de fin")):
+        sname_lower = p.style.name.lower()
+        if any(t in sname_lower for t in SKIP_TAGS):
             continue
         txt = p.text.strip()
         if not txt:
