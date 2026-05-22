@@ -582,27 +582,15 @@ function Invoke-FixCmd {
                 Write-Host "  Page numbers added to footers" -ForegroundColor Green
             }
             "fix:all" {
+                Close-WordDoc $ses; $ses = $null
                 $pyFormat = Join-Path $script:projectRoot "Thesis_Surgical_Edit\style\fix_docx_formatting.py"
                 $pySect = Join-Path $script:projectRoot "Thesis_Surgical_Edit\style\fix_docx_sections.py"
                 Write-Host "  [PYTHON] Formatting (font/size/rtl/spacing/headings/tables)..." -ForegroundColor Cyan
-                python $pyFormat $script:docxPath --save 2>&1
+                python $pyFormat $script:docxPath --save 2>&1 | Where-Object { $_ -match '"Saved"' -or $_ -match '^{' -or $_ }
                 Write-Host "  [PYTHON] Section breaks..." -ForegroundColor Cyan
                 python $pySect $script:docxPath --save 2>&1
-                Write-Host "  [COM] TOC update + footers..." -ForegroundColor Cyan
-                try {
-                    $ses = Open-WordDoc $script:docxPath -ReadOnly $false -Visible $false
-                    if ($ses) {
-                        $doc = $ses.Doc
-                        for ($i = 1; $i -le $doc.Fields.Count; $i++) { try { $doc.Fields.Item($i).Update() } catch {} }
-                        for ($i = 1; $i -le $doc.Sections.Count; $i++) {
-                            try { $s = $doc.Sections.Item($i); $footer = $s.Footers.Item(1); if ($footer.Range.Fields.Count -gt 0) { $footer.PageNumbers.Add() | Out-Null } } catch {}
-                        }
-                        $doc.Save() | Out-Null
-                        Write-Host "  [COM] TOC + footers done." -ForegroundColor Green
-                    }
-                } catch { Write-Host "  [COM] Skipped (Word unavailable): $_" -ForegroundColor Yellow }
-                finally { Close-WordDoc $ses }
-                Write-Host "  All fixes applied." -ForegroundColor Green
+                Write-Host "  [NOTE] TOC fields update automatically when opened in Word. Skipping COM to avoid lock conflicts." -ForegroundColor Yellow
+                Write-Host "  All fixes applied (formatting + sections)." -ForegroundColor Green
             }
             default {
                 Write-Host "  Unknown fix command: $FixCommand" -ForegroundColor Red
