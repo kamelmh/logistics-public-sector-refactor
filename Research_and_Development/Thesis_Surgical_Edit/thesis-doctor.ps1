@@ -77,7 +77,7 @@ $script:COMMANDS = @{
     "fix:headings"      = @{ desc = "Fix heading styles and sizes"; group = "Fix" }
     "fix:tables"        = @{ desc = "Format tables (header color, alternating)"; group = "Fix" }
     "fix:footers"       = @{ desc = "Fix page numbering in footers"; group = "Fix" }
-    "fix:all"           = @{ desc = "Apply all fixes via Word COM"; group = "Fix" }
+    "fix:all"           = @{ desc = "Apply all fixes (formatting/sections/footnotes/page#)"; group = "Fix" }
     "learn:trends"      = @{ desc = "Show trends across all historical builds"; group = "Learn" }
     "learn:compare"     = @{ desc = "Compare last 2 builds side-by-side"; group = "Learn" }
     "learn:regressions" = @{ desc = "Show regressions across build history"; group = "Learn" }
@@ -488,6 +488,17 @@ function Show-LearnCompare {
 
 function Invoke-FixCmd {
     param([string]$FixCommand)
+    if ($FixCommand -eq "fix:all") {
+        $pyDir = Join-Path $script:projectRoot "Thesis_Surgical_Edit\style"
+        Write-Host "  [PYTHON] Formatting..." -ForegroundColor Cyan
+        python (Join-Path $pyDir "fix_docx_formatting.py") $script:docxPath --save 2>&1
+        Write-Host "  [PYTHON] Section breaks..." -ForegroundColor Cyan
+        python (Join-Path $pyDir "fix_docx_sections.py") $script:docxPath --save 2>&1
+        Write-Host "  [PYTHON] Footnote RTL + page numbering..." -ForegroundColor Cyan
+        python (Join-Path $pyDir "fix_docx_remaining.py") $script:docxPath --save 2>&1
+        Write-Host "  All fixes applied." -ForegroundColor Green
+        return
+    }
     Write-Host "  [FIX] Opening DOCX for editing..." -ForegroundColor Yellow
     $ses = Open-WordDoc $script:docxPath -ReadOnly $false -Visible $false
     if (-not $ses) { return }
@@ -581,17 +592,7 @@ function Invoke-FixCmd {
                 }
                 Write-Host "  Page numbers added to footers" -ForegroundColor Green
             }
-            "fix:all" {
-                Close-WordDoc $ses; $ses = $null
-                $pyFormat = Join-Path $script:projectRoot "Thesis_Surgical_Edit\style\fix_docx_formatting.py"
-                $pySect = Join-Path $script:projectRoot "Thesis_Surgical_Edit\style\fix_docx_sections.py"
-                Write-Host "  [PYTHON] Formatting (font/size/rtl/spacing/headings/tables)..." -ForegroundColor Cyan
-                python $pyFormat $script:docxPath --save 2>&1 | Where-Object { $_ -match '"Saved"' -or $_ -match '^{' -or $_ }
-                Write-Host "  [PYTHON] Section breaks..." -ForegroundColor Cyan
-                python $pySect $script:docxPath --save 2>&1
-                Write-Host "  [NOTE] TOC fields update automatically when opened in Word. Skipping COM to avoid lock conflicts." -ForegroundColor Yellow
-                Write-Host "  All fixes applied (formatting + sections)." -ForegroundColor Green
-            }
+
             default {
                 Write-Host "  Unknown fix command: $FixCommand" -ForegroundColor Red
             }

@@ -49,16 +49,18 @@ def add_section_breaks(path, save=False):
     # Apply breaks in REVERSE order so indices stay valid
     applied = 0
     for idx, p, name in reversed(insert_before_indices):
-        # Get the paragraph BEFORE the boundary paragraph
-        # The section break goes on the paragraph ending the current section
         if idx == 0:
-            continue  # can't break before first paragraph
+            continue
         prev_para = paras[idx - 1]
         p_elem = prev_para._p
-
-        # Clone body sectPr and place inside the previous paragraph's pPr
-        new_sect_pr = copy.deepcopy(body_sect_pr)
         pPr = p_elem.find(qn('w:pPr'))
+
+        # Skip if a sectPr already exists in this paragraph's pPr
+        if pPr is not None and pPr.find(qn('w:sectPr')) is not None:
+            print(f"  Skipped (exists): break before [{idx}] \"{p.text.strip()[:50]}\"")
+            continue
+
+        new_sect_pr = copy.deepcopy(body_sect_pr)
         if pPr is None:
             pPr = parse_xml(f'<w:pPr {nsdecls("w")}/>')
             p_elem.insert(0, pPr)
