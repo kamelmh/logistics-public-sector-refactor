@@ -27,6 +27,8 @@ try:
 except ImportError as e:
     sys.exit(f"Missing dependency: {e}. Install with `pip install pillow pytesseract`.")
 
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
 
 def ocr_image(image_path: Path) -> str:
     """Run Tesseract OCR on the supplied image and return the extracted text."""

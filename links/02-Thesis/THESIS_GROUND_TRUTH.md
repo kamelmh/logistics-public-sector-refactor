@@ -1,1 +1,0 @@
-C:/Users/Administrator/Dropbox/Logistics.Public.Sector.Refactor/Thesis_Surgical_Edit/THESIS_GROUND_TRUTH.md

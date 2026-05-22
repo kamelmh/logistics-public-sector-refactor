@@ -2,3 +2,26 @@
 *.tmp
 .tmp.driveupload/
 bin/
+
+# Binaries & build artifacts
+*.xlsm
+opencode.exe
+tesseract-ocr-w64-setup.exe
+
+# Session transcripts (not project code)
+session-ses_*.md
+
+# Archive & backup directories
+_archive/
+backups/
+
+# External dependencies
+node_modules/
+tesseract/
+MiniCPM-V/
+
+# Shortcut files
+*.lnk
+
+# Symlink hub (pointer files only)
+links/
