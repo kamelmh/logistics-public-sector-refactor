@@ -2,7 +2,7 @@
 
 **Academix v13.2** — Direction de l'Éducation, El Bayadh
 **Author:** Mahi Kamel Abdelghani
-**Auto-generated:** 2026-05-22 21:47
+**Auto-generated:** 2026-05-22 22:05
 
 ---
 
@@ -10,17 +10,27 @@
 
 | Category | Dirs | Files |
 |----------|------|-------|
+| Scripts & Utility | 4 | 9 |
 | Core Project | 5 | 339 |
-| Third-Party Submodules | 17 | 56517 |
 | R&D Umbrella | 1 | 13247 |
-| Scripts & Utility | 4 | 7 |
+| Third-Party Submodules | 17 | 56517 |
 | Platform & Configuration | 5 | 5651 |
 | Archive & Backups | 2 | 7 |
 | External Dependencies | 2 | 94 |
 | Reference | 4 | 76 |
-| **Total** | **40** | **75938** |
+| Uncategorized | 1 | 0 |
+| **Total** | **41** | **75940** |
 
 ---
+
+## Scripts & Utility
+
+| Directory | Files | Submodule | Size |
+|-----------|-------|-----------|------|
+| $(System.Collections.Hashtable.Name) | 2 | — | 2 KB |
+| $(System.Collections.Hashtable.Name) | 5 | — | 46 KB |
+| $(System.Collections.Hashtable.Name) | 1 | — | 43 B |
+| $(System.Collections.Hashtable.Name) | 1 | — | 93 B |
 
 ## Core Project
 
@@ -31,6 +41,12 @@
 | $(System.Collections.Hashtable.Name) | 70 | — | 69.9 MB |
 | $(System.Collections.Hashtable.Name) | 62 | — | 66 KB |
 | $(System.Collections.Hashtable.Name) | 0 | — |  B |
+
+## R&D Umbrella
+
+| Directory | Files | Submodule | Size |
+|-----------|-------|-----------|------|
+| $(System.Collections.Hashtable.Name) | 13247 | — | 371.5 MB |
 
 ## Third-Party Submodules
 
@@ -53,21 +69,6 @@
 | $(System.Collections.Hashtable.Name) | 147 | Yes | 892 KB |
 | $(System.Collections.Hashtable.Name) | 1099 | Yes | 45.0 MB |
 | $(System.Collections.Hashtable.Name) | 269 | Yes | 2.9 MB |
-
-## R&D Umbrella
-
-| Directory | Files | Submodule | Size |
-|-----------|-------|-----------|------|
-| $(System.Collections.Hashtable.Name) | 13247 | — | 371.5 MB |
-
-## Scripts & Utility
-
-| Directory | Files | Submodule | Size |
-|-----------|-------|-----------|------|
-| $(System.Collections.Hashtable.Name) | 2 | — | 2 KB |
-| $(System.Collections.Hashtable.Name) | 3 | — | 33 KB |
-| $(System.Collections.Hashtable.Name) | 1 | — | 43 B |
-| $(System.Collections.Hashtable.Name) | 1 | — | 93 B |
 
 ## Platform & Configuration
 
@@ -101,6 +102,12 @@
 | $(System.Collections.Hashtable.Name) | 3 | — | 22 KB |
 | $(System.Collections.Hashtable.Name) | 54 | — | 14 KB |
 | $(System.Collections.Hashtable.Name) | 2 | — | 253 KB |
+
+## Uncategorized
+
+| Directory | Files | Submodule |
+|-----------|-------|-----------|
+| $(System.Collections.Hashtable.Name) | 0 | — |
 
 ## Git Submodules (24 total)
 
