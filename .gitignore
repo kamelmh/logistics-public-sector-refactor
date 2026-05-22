@@ -23,5 +23,14 @@ MiniCPM-V/
 # Shortcut files
 *.lnk
 
+# Machine-specific config
+.claude/
+
+# Plugin installations (local dependencies)
+.opencode/plugins/
+
+# Build artifacts
+vbe-auto/results/*.json
+
 # Symlink hub (pointer files only)
 links/
