@@ -1,3 +1,4 @@
 # Google Drive temporary files
 *.tmp
 .tmp.driveupload/
+bin/
