@@ -166,3 +166,35 @@ Additional Technical:
 - **Action:** Ready for merge/final sign-off.
 
 **Thesis is print-ready. Both mandatory footnote fixes verified. Awaiting unconditional sign-off.** 🎓
+
+---
+
+## 🔄 Recovery Session — 2026-05-22 — Post Filter-Repo Cleanup
+
+### What was lost & restored
+| Item | Before | After |
+|------|--------|-------|
+| `.gitmodules` (24 submodules) | 🔴 Deleted in filter-repo | ✅ Restored (`8940f78`) |
+| Build pipeline `vbe-auto/build.ps1` + `verify.ps1` | 🔴 Deleted (`wt/wt-autonomous-agent-task-13` branch) | ✅ Restored from worktree (`4691320`) |
+| `frmStockEntry.frx` binary | 🔴 Missing → compile popup | ✅ Restored (`b6f3d95`) |
+| `dss-audit.ps1` workbook path | 🔴 Stale path | ✅ Fixed to `Copy of ERP_v13.2.xlsm` (`3e681e6`) |
+| `defense/` (4 files) | 🔴 Directory vanished (was on deleted `s12-test-branch`) | ✅ Recreated (today) |
+| `Software_Surgical_Edit/build.ps1` + `verify.ps1` | 🔴 0-byte stubs | ✅ Delegation wrappers to vbe-auto (today) |
+| `SESSION_HANDOFF.md` | 🔴 Never existed | ✅ Created (today) |
+| `Desktop\Academix_v13.2_Delivery\` | 🔴 Lost with branch cleanup | ⏳ Not restored (files can be regenerated) |
+| `s12-test-branch` | 🔴 Deleted (was crossflow working branch) | ⚠️ Master is now the single branch |
+
+### Current verification metrics
+- **Verify:** 105/105 PASS (today)
+- **DSS Audit:** 16/16 PASS
+- **Macro Tests:** 20/20 PASS
+- **Thesis Build:** 33/36 PASS (3 non-critical thresholds)
+
+### Path clarification
+- Thesis build script lives at: `Research_and_Development/Thesis_Surgical_Edit/thesis-doctor.ps1` (NOT `Thesis_Surgical_Edit/build-thesis.ps1`)
+- Golden workbook: `Copy of ERP_v13.2.xlsm` (larger, has complete form — switched from `ERP_v13.2.xlsm`)
+
+### Next
+- Window D unconditional sign-off (thesis is objectively print-ready)
+- Phase B: English Paper (IMRaD, 6-8pp, CIIA/DOAJ)
+- Optional: recreate Desktop delivery folder
