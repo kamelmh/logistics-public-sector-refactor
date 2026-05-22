@@ -1,0 +1,15 @@
+{
+  "id": 101,
+  "subject": "S11 Autonomous Loop Integration Test",
+  "description": "Verify that an agent can claim this task and bind to a worktree. Full cycle: claim → worktree create → execute → build → verify → complete → worktree remove.",
+  "status": "completed",
+  "priority": "high",
+  "blockedBy": [
+    13,
+    16
+  ],
+  "worktree": null,
+  "owner": "autonomous-agent",
+  "created": "2026-05-19T00:00:00+01:00",
+  "layer": "s11"
+}

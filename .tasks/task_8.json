@@ -1,0 +1,10 @@
+{
+  "worktree": null,
+  "owner": null,
+  "id": 8,
+  "subject": "Demo: harness worktree isolation",
+  "created": "2026-05-12T23:38:36.7090927+01:00",
+  "blockedBy": null,
+  "description": "Test s12 worktree with parallel dev lane",
+  "status": "completed"
+}

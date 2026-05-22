@@ -1,0 +1,10 @@
+{
+  "created": "2026-05-12T23:29:21.8871049+01:00",
+  "worktree": null,
+  "id": 5,
+  "status": "completed",
+  "owner": null,
+  "subject": "Stage 5: Fuzzy Search (mod_DataValidator)",
+  "blockedBy": null,
+  "description": "Levenshtein, SoundexFR, orphan suggestions"
+}

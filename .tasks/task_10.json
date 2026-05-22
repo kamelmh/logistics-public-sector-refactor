@@ -1,0 +1,10 @@
+{
+  "id": 10,
+  "subject": "Implement Bismillah page and regulate page numbering",
+  "blockedBy": null,
+  "worktree": null,
+  "description": "Add a single page with 'بسم الله الرحمن الرحيم' and adjust page numbering to start after it",
+  "owner": null,
+  "status": "completed",
+  "created": "2026-05-14T22:50:33.3497736+01:00"
+}

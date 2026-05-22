@@ -1,0 +1,12 @@
+{
+  "id": 17,
+  "subject": "Thesis PDF rebuild + M-03 table caption verification",
+  "description": "Rebuild thesis PDF (timed out at step 5/10 on last run). Verify DOCX uses Word Caption style for tables (not manual bold). Ensure all 6 audit fixes (C-01, C-02, M-01, M-02, M-03, M-04) are reflected in output.",
+  "status": "completed",
+  "priority": "high",
+  "blockedBy": [],
+  "worktree": null,
+  "owner": "autonomous-agent",
+  "created": "2026-05-19T00:00:00+01:00",
+  "layer": "thesis"
+}

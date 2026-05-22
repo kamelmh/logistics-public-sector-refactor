@@ -1,0 +1,17 @@
+{
+  "project": "Academix v13.2",
+  "last_session": "2026-05-08T17:01:08",
+  "last_build": "2026-05-08T16:32:29",
+  "last_verify": "97/97 PASS",
+  "last_test": "10/10 PASS",
+  "active_workbook": "C:\\Users\\Administrator\\Dropbox\\ERP_v13.2.xlsm",
+  "source_modules": 36,
+  "source_lines": 11396,
+  "drive_config": {
+    "primary": "C:\\Users\\Administrator\\Dropbox",
+    "ssd_expected": "F:",
+    "usb_expected": ""
+  },
+  "workspace_mode": "idle",
+  "session_count": 2
+}

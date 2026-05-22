@@ -1,0 +1,12 @@
+{
+  "id": 16,
+  "subject": "S11: Implement autonomous task claim cycle",
+  "description": "Create idle/claim loop: scan .tasks/ for unclaimed+unblocked tasks, claim with owner identity, execute, mark completed. Identity re-injection after context compression. Integrate with AUTO pipeline commands.",
+  "status": "completed",
+  "priority": "high",
+  "blockedBy": [],
+  "worktree": null,
+  "owner": "autonomous-agent",
+  "created": "2026-05-19T00:00:00+01:00",
+  "layer": "s11"
+}

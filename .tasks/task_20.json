@@ -1,0 +1,12 @@
+{
+  "id": 20,
+  "subject": "Gateway extension: add audit, test, health endpoints",
+  "description": "Extend .opencode/gateway/server.js with new API endpoints: /api/audit (dss-audit.ps1), /api/test (test-macros.ps1), /api/health (system-health-test.ps1), /api/status (combined dashboard). Add WebSocket for real-time build/verify progress. Update public/index.html with status dashboard.",
+  "status": "completed",
+  "priority": "low",
+  "blockedBy": [],
+  "worktree": null,
+  "owner": "autonomous-agent",
+  "created": "2026-05-19T00:00:00+01:00",
+  "layer": "s08"
+}

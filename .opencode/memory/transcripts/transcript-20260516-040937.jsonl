@@ -1,0 +1,94 @@
+{
+  "ts": "2026-05-16T04:09:37.6123019+01:00",
+  "worktrees": [
+    "   →  []",
+    "   →  []",
+    "   →  []"
+  ],
+  "tasks": [
+    {
+      "blockedBy": null,
+      "status": "completed",
+      "subject": "Stage 1: Harvest decision history",
+      "id": 1
+    },
+    {
+      "blockedBy": null,
+      "status": "completed",
+      "subject": "Implement Bismillah page and regulate page numbering",
+      "id": 10
+    },
+    {
+      "blockedBy": null,
+      "status": "completed",
+      "subject": "Stylistic Pass and Font Regulation",
+      "id": 11
+    },
+    {
+      "blockedBy": null,
+      "status": "in_progress",
+      "subject": "Final 100% Thesis Completion Audit",
+      "id": 12
+    },
+    {
+      "blockedBy": null,
+      "status": "completed",
+      "subject": "Stage 2: Compact Print (mod_ExportEngine)",
+      "id": 2
+    },
+    {
+      "blockedBy": null,
+      "status": "completed",
+      "subject": "Stage 3: UX Preload (frmStockEntry)",
+      "id": 3
+    },
+    {
+      "blockedBy": null,
+      "status": "completed",
+      "subject": "Stage 4: Stockout Projection (mod_Dashboard)",
+      "id": 4
+    },
+    {
+      "blockedBy": null,
+      "status": "completed",
+      "subject": "Stage 5: Fuzzy Search (mod_DataValidator)",
+      "id": 5
+    },
+    {
+      "blockedBy": [],
+      "status": "completed",
+      "subject": "Stage 6: Cross-ref update",
+      "id": 6
+    },
+    {
+      "blockedBy": [],
+      "status": "completed",
+      "subject": "Stage 7: Final build+verify+audit",
+      "id": 7
+    },
+    {
+      "blockedBy": null,
+      "status": "completed",
+      "subject": "Demo: harness worktree isolation",
+      "id": 8
+    },
+    {
+      "blockedBy": null,
+      "status": "completed",
+      "subject": "Integrate references and footnotes properly",
+      "id": 9
+    }
+  ],
+  "git": {
+    "commit": "88ef45b refactor: optimize model selection, enforce redirections, and rebuild all launchers",
+    "branch": "s12-test-branch",
+    "status": [
+      " m .worktrees/agent-Gemma4-Main",
+      " m .worktrees/harness-autonomous",
+      " m .worktrees/harness-demo",
+      " m .worktrees/thesis-final",
+      " M OpenCode.bat",
+      "?? WindsurfAPI/"
+    ]
+  }
+}

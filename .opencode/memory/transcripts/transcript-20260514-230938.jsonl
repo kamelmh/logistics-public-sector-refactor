@@ -1,0 +1,99 @@
+{
+  "worktrees": [
+    "No worktrees."
+  ],
+  "git": {
+    "status": [
+      " M .crossflow/HANDOFF.md",
+      " M .opencode/bootstrap/FREELLM_SETUP.md",
+      " M OpenCode.bat",
+      " M Thesis_Surgical_Edit/Chapters/Ch2_Field_Diagnosis.md",
+      " M Thesis_Surgical_Edit/Drafts/Drafts_AR_Thesis_Chapter4_Full.md",
+      " M Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md",
+      " M Thesis_Surgical_Edit/build-thesis.ps1",
+      " M Thesis_Surgical_Edit/claude-context/_FORMAT_GUIDE.md",
+      " M Thesis_Surgical_Edit/style/customize-reference.py",
+      " M Thesis_Surgical_Edit/style/footnotes.py",
+      " M Thesis_Surgical_Edit/style/reference.docx",
+      " M Thesis_Surgical_Edit/thesis-state.json",
+      "?? .opencode/model-fallback.json",
+      "?? .worktrees/harness-demo/",
+      "?? \"Thesis_Surgical_Edit/claude-context/Claude-Academic thesis editing system prompts.md\"",
+      "?? Thesis_Surgical_Edit/style/__pycache__/",
+      "?? Thesis_Surgical_Edit/style/build-bismillah.py",
+      "?? Thesis_Surgical_Edit/style/prepend-bismillah.py",
+      "?? bismillah-page.docx"
+    ],
+    "commit": "1427a66 fix: thesis pipeline — Word COM leak fixed, Vollmann false positive resolved, 34/34 PASS",
+    "branch": "master"
+  },
+  "tasks": [
+    {
+      "blockedBy": null,
+      "id": 1,
+      "subject": "Stage 1: Harvest decision history",
+      "status": "completed"
+    },
+    {
+      "blockedBy": null,
+      "id": 10,
+      "subject": "Implement Bismillah page and regulate page numbering",
+      "status": "pending"
+    },
+    {
+      "blockedBy": null,
+      "id": 11,
+      "subject": "Stylistic Pass and Font Regulation",
+      "status": "pending"
+    },
+    {
+      "blockedBy": null,
+      "id": 2,
+      "subject": "Stage 2: Compact Print (mod_ExportEngine)",
+      "status": "completed"
+    },
+    {
+      "blockedBy": null,
+      "id": 3,
+      "subject": "Stage 3: UX Preload (frmStockEntry)",
+      "status": "completed"
+    },
+    {
+      "blockedBy": null,
+      "id": 4,
+      "subject": "Stage 4: Stockout Projection (mod_Dashboard)",
+      "status": "completed"
+    },
+    {
+      "blockedBy": null,
+      "id": 5,
+      "subject": "Stage 5: Fuzzy Search (mod_DataValidator)",
+      "status": "completed"
+    },
+    {
+      "blockedBy": [],
+      "id": 6,
+      "subject": "Stage 6: Cross-ref update",
+      "status": "completed"
+    },
+    {
+      "blockedBy": [],
+      "id": 7,
+      "subject": "Stage 7: Final build+verify+audit",
+      "status": "completed"
+    },
+    {
+      "blockedBy": null,
+      "id": 8,
+      "subject": "Demo: harness worktree isolation",
+      "status": "completed"
+    },
+    {
+      "blockedBy": null,
+      "id": 9,
+      "subject": "Integrate references and footnotes properly",
+      "status": "pending"
+    }
+  ],
+  "ts": "2026-05-14T23:09:38.1138254+01:00"
+}

@@ -1,0 +1,10 @@
+{
+  "created": "2026-05-12T23:29:21.8280011+01:00",
+  "worktree": null,
+  "id": 4,
+  "status": "completed",
+  "owner": null,
+  "subject": "Stage 4: Stockout Projection (mod_Dashboard)",
+  "blockedBy": null,
+  "description": "Days-to-stockout, conditional coloring"
+}

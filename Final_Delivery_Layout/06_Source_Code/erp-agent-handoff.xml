@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<agent-handoff version="13.2" date="2026-05-12">
+  <ai-backends>
+    <backend key="primary" provider="Groq" model="llama-3.3-70b-versatile" response="~2s" context="32K">Daily driver</backend>
+    <backend key="fast-search" provider="Groq" model="qwen/qwen3-32b" response="~1s" context="32K">Explore/debug/audit</backend>
+    <backend key="large-ctx" provider="Google" model="gemini-2.5-flash" response="~2s" context="1M">Large context reasoning</backend>
+    <backend key="gemma-hosted" provider="Google" model="gemma-4-26b-a4b-it" response="~2s" context="262K">Free hosted Gemma 4</backend>
+    <backend key="or-free" provider="FreeLLM" model="free" response="varies" context="128K">Auto-routed: 6 providers, 27 models</backend>
+    <backend key="or-coder" provider="FreeLLM (Cerebras)" model="cerebras/qwen-3-235b-a22b-instruct-2507" response="~1s" context="128K">Qwen3 235B code model</backend>
+    <backend key="completions" provider="Completions.me" model="claude-opus-4.6" response="~2s" context="200K">Free unlimited Claude Opus 4.6</backend>
+    <backend key="local-7b" provider="Ollama" model="qwen2.5-coder:7b" response="~30-60s" context="8K">Offline fallback</backend>
+    <backend key="local-1.5b" provider="Ollama" model="qwen2.5-coder:1.5b" response="~95s" context="4K">Offline slow fallback</backend>
+    <backend key="local-qwen3" provider="Ollama" model="qwen3:1.7b" response="~40s" context="16K">CPU reasoning</backend>
+    <backend key="local-phi4" provider="Ollama" model="phi4-mini:3.8b-q4_K_M" response="~25s" context="16K">CPU coding</backend>
+  </ai-backends>
+  <session-context>
+    <last-action>2026-05-12: 7-stage execution complete — Compact Print, UX Preload, Stockout Projection, Fuzzy Search, Harvest+Cross-ref+Audit. Engineering harness activated (s06/s07/s08/s12). 2 bugs fixed (duplicate Dim, constant expression).</last-action>
+    <warnings-status>ALL RESOLVED (W001-W010)</warnings-status>
+    <modules>
+      <count>37 .bas + 1 .frm = 38 user components + ThisWorkbook.cls</count>
+      <lines>~12535</lines>
+      <compile-errors>0</compile-errors>
+    </modules>
+    <workbook active="ERP_v13.2.xlsm" compiled="ERP_Academie_v13_2.xlsm" sheets="26" />
+  </session-context>
+  <agents>
+    <agent name="build" model="groq/llama-3.3-70b-versatile">
+      <purpose>Write/edit VBA code, run build.ps1 after changes</purpose>
+      <rules>Fix .bas source files, never .xlsm directly. Run build.ps1 to rebuild.</rules>
+    </agent>
+    <agent name="plan" model="groq/llama-3.3-70b-versatile">
+      <purpose>Architecture decisions, document plans in .opencode/plans/</purpose>
+      <rules>Never modify mod_Config constants or CANON_* values.</rules>
+    </agent>
+    <agent name="explore" model="groq/qwen/qwen3-32b">
+      <purpose>Codebase recon - map files, grep patterns, trace call graphs</purpose>
+      <rules>Read-only. Never modify files.</rules>
+    </agent>
+    <agent name="debug" model="groq/qwen/qwen3-32b">
+      <purpose>Handoff-based VBA error diagnosis</purpose>
+      <rules>Read handoffN.txt -> diagnose -> fix source -> build.ps1 -> verify.ps1</rules>
+    </agent>
+    <agent name="audit" model="groq/qwen/qwen3-32b">
+      <purpose>5-phase DSS audit via dss-audit.ps1</purpose>
+      <checks>Structure, Security, Data Integrity, Call Graph, Compliance (CNEPD)</checks>
+    </agent>
+    <agent name="test" model="groq/qwen/qwen3-32b">
+      <purpose>Macro test suite via test-macros.ps1</purpose>
+    </agent>
+    <agent name="or-free" model="freellm/free">
+      <purpose>FreeLLM auto-route (max uptime) — aggregates Groq, Gemini, Cerebras, Cloudflare, GitHub Models, Ollama</purpose>
+      <note>27 models across 11 providers. Cerebras, Cloudflare, GitHub Models keys active. NVIDIA NIM skipped (SMS).</note>
+    </agent>
+    <agent name="or-coder" model="freellm/cerebras/qwen3-235b">
+      <purpose>FreeLLM via Cerebras — Qwen3 235B code model</purpose>
+      <note>Cerebras key: ACTIVE</note>
+    </agent>
+    <agent name="or-gemma" model="freellm/free-smart">
+      <purpose>FreeLLM smart route — picks strongest available model</purpose>
+    </agent>
+    <agent name="or-nemotron" model="freellm/nim/nvidia/nemotron-4-70b">
+      <purpose>FreeLLM via NVIDIA NIM — Nemotron 70B</purpose>
+      <note>SKIPPED — SMS verification unavailable</note>
+    </agent>
+    <agent name="completions" model="completions/claude-opus-4.6">
+      <purpose>Completions.me — free unlimited Claude Opus 4.6, GPT-5.2</purpose>
+      <note>Direct OpenAI-compatible provider in opencode.json (not via FreeLLM). Key: active.</note>
+    </agent>
+  </agents>
+  <workflows>
+    <workflow name="feature" steps="explore -> plan -> build">New feature development</workflow>
+    <workflow name="fix" steps="debug -> build -> test">Bug fix workflow</workflow>
+    <workflow name="quality" steps="audit -> explore -> build">Quality gate workflow</workflow>
+  </workflows>
+  <task-queue>
+    <task id="T001" status="completed">Fix blank article codes</task>
+    <task id="T002" status="completed">Fix non-numeric stock values</task>
+    <task id="T003" status="completed">Write Thesis Chapter 4 (Arabic)</task>
+    <task id="T004" status="completed">Add demo data to public LSM</task>
+    <task id="T005" status="completed">Fix 3 audit warnings (sheet protection, circular dep, EOQ cell read)</task>
+    <task id="T006" status="completed">5 Analysis modules: InventoryReconciliation, StockOutPredictor, SupplierScorecard, StockAging, DataValidator</task>
+    <task id="T007" status="completed">Stage 1: Harvest decision history (MASTER_BOOTSTRAP.xml)</task>
+    <task id="T008" status="completed">Stage 2: Compact Print — mod_ExportEngine.bas</task>
+    <task id="T009" status="completed">Stage 3: UX Preload — frmStockEntry.frm</task>
+    <task id="T010" status="completed">Stage 4: Stockout Projection — mod_Dashboard.bas</task>
+    <task id="T011" status="completed">Stage 5: Fuzzy Search — mod_DataValidator.bas</task>
+    <task id="T012" status="completed">Stage 6: Cross-ref update — erp-project-context.xml</task>
+    <task id="T013" status="completed">Stage 7: Final build+verify+audit</task>
+    <task id="T014" status="completed">Engineering harness activation: s06 transcript, s07 task DAG, s08 bg-run, s12 worktree</task>
+  </task-queue>
+  <session-persistence>
+    <problem>Session disconnects cause context loss. Model must re-learn project state on reconnect.</problem>
+    <checkpoint>notepad.md + project-memory.json + session.log + OMC checkpoint</checkpoint>
+    <recovery>
+      <step order="1">instructions.md auto-loads → read BOOTSTRAP PROTOCOL section</step>
+      <step order="2">Read .opencode/bootstrap/MASTER_BOOTSTRAP.xml → full context restored</step>
+      <step order="3">Read notepad.md → see last-action, resume there</step>
+      <step order="4">Run '/memory recall 0' → restore OMC checkpoint</step>
+    </recovery>
+    <multi-session>
+      <cmd>OpenCode &lt;mode&gt; &lt;name&gt; for parallel sessions</cmd>
+      <log>\.opencode\memory\last-session-&lt;name&gt;.txt</log>
+    </multi-session>
+  </session-persistence>
+  <cross-agent-protocol>
+    <rule priority="1">Read erp-project-context.xml FIRST on session start</rule>
+    <rule priority="2">Check dependencies in call graph before code changes</rule>
+    <rule priority="3">Always work on .bas source files, never .xlsm directly</rule>
+    <rule priority="4">Run build.ps1 after code changes, verify.ps1 to confirm</rule>
+    <rule priority="5">Never modify mod_Config constants or CANON_* values</rule>
+    <rule priority="6">Never commit without explicit user approval</rule>
+    <rule priority="7">Create task in .tasks/ before starting any pipeline - use .\scripts\harness.ps1 task create</rule>
+    <rule priority="8">Run .\scripts\harness.ps1 compact save before session end</rule>
+    <rule priority="9">Use .\scripts\harness.ps1 bg run for async builds/audits when working on other tasks</rule>
+  </cross-agent-protocol>
+  <agent-routing>
+    <task type="vba-edit" agent="build" />
+    <task type="feature-plan" agent="plan" />
+    <task type="codebase-search" agent="explore" />
+    <task type="thesis-arabic" agent="build" language="ar" />
+    <task type="vba-debug" agent="debug" />
+    <task type="dss-audit" agent="audit" />
+    <task type="macro-test" agent="test" />
+  </agent-routing>
+  <ground-truth>
+    <param name="D" value="1546">Annual Demand (38-day observation)</param>
+    <param name="Q*" value="176">EOQ (Wilson formula)</param>
+    <param name="ROP" value="212.4">Reorder Point</param>
+    <param name="SS" value="200">Safety Stock</param>
+    <param name="LT" value="2">Lead Time (days)</param>
+    <param name="S" value="500 DZD">Order Cost</param>
+    <param name="I" value="20%">Holding Rate</param>
+    <param name="MASTER_PWD" value="erp_secure_pwd_2026" />
+    <param name="VERSION" value="v13.2" />
+  </ground-truth>
+</agent-handoff>
+

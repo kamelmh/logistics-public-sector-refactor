@@ -1,0 +1,12 @@
+{
+  "id": 18,
+  "subject": "Phase B: English Research Paper (IEEE/Springer 6-8pp)",
+  "description": "Expand English_Research_Paper.md from 100 lines to 6-8 page IEEE/Springer format. IMRaD structure: Abstract (quantitative results), Introduction (gap analysis), Methods (ABC-XYZ, EOQ, VBA architecture), Results (per-article table, before/after KPIs, cost analysis), Discussion (comparison, limitations, future work), Conclusion. 15+ references, 3-4 figures, 4-6 tables. Target: CIIA Algeria or DOAJ-indexed journal.",
+  "status": "completed",
+  "priority": "high",
+  "blockedBy": [],
+  "worktree": null,
+  "owner": "autonomous-agent",
+  "created": "2026-05-19T00:00:00+01:00",
+  "layer": "thesis"
+}

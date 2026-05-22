@@ -1,0 +1,12 @@
+{
+  "id": 14,
+  "subject": "S08: Deploy background pipeline runner",
+  "description": "Create bg-worker.ps1 daemon that can run build.ps1, verify.ps1, dss-audit.ps1, test-macros.ps1 asynchronously. Notifications drained before each LLM call. Results stored in .tasks/bg/ directory.",
+  "status": "completed",
+  "priority": "high",
+  "blockedBy": [],
+  "worktree": null,
+  "owner": "autonomous-agent",
+  "created": "2026-05-19T00:00:00+01:00",
+  "layer": "s08"
+}

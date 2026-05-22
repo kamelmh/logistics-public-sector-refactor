@@ -1,0 +1,12 @@
+{
+  "id": 15,
+  "subject": "S09: Deploy agent team inboxes",
+  "description": "Create .team/inbox/ directory with JSONL inboxes for all 6 agents (explore, plan, build, debug, audit, test). Implement send/receive/acknowledge protocol. Update .team/config.json with inbox paths.",
+  "status": "completed",
+  "priority": "medium",
+  "blockedBy": [],
+  "worktree": null,
+  "owner": "autonomous-agent",
+  "created": "2026-05-19T00:00:00+01:00",
+  "layer": "s09"
+}

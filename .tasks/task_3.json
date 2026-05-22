@@ -1,0 +1,10 @@
+{
+  "created": "2026-05-12T23:29:21.7708576+01:00",
+  "worktree": null,
+  "id": 3,
+  "status": "completed",
+  "owner": null,
+  "subject": "Stage 3: UX Preload (frmStockEntry)",
+  "blockedBy": null,
+  "description": "Input masking, auto BS- prefix, color feedback"
+}

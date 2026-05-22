@@ -1,0 +1,58 @@
+[
+  {
+    "Operation": "VBA module scan",
+    "AvgMs": 99.0,
+    "MinMs": 74.0,
+    "MaxMs": 129.0,
+    "Iterations": 3,
+    "Timestamp": "2026-05-18_133234"
+  },
+  {
+    "Operation": "Script syntax parse",
+    "AvgMs": 282.0,
+    "MinMs": 221.0,
+    "MaxMs": 385.0,
+    "Iterations": 3,
+    "Timestamp": "2026-05-18_133234"
+  },
+  {
+    "Operation": "Git status",
+    "AvgMs": 809.0,
+    "MinMs": 754.0,
+    "MaxMs": 868.0,
+    "Iterations": 3,
+    "Timestamp": "2026-05-18_133234"
+  },
+  {
+    "Operation": "Git log (100 commits)",
+    "AvgMs": 286.0,
+    "MinMs": 245.0,
+    "MaxMs": 361.0,
+    "Iterations": 3,
+    "Timestamp": "2026-05-18_133234"
+  },
+  {
+    "Operation": "Full file enumeration",
+    "AvgMs": 15843.0,
+    "MinMs": 13202.0,
+    "MaxMs": 20362.0,
+    "Iterations": 3,
+    "Timestamp": "2026-05-18_133234"
+  },
+  {
+    "Operation": "XML context parse",
+    "AvgMs": 124.0,
+    "MinMs": 63.0,
+    "MaxMs": 223.0,
+    "Iterations": 3,
+    "Timestamp": "2026-05-18_133234"
+  },
+  {
+    "Operation": "Symlink resolution (75 links)",
+    "AvgMs": 319.0,
+    "MinMs": 280.0,
+    "MaxMs": 349.0,
+    "Iterations": 3,
+    "Timestamp": "2026-05-18_133234"
+  }
+]

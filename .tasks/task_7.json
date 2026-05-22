@@ -1,0 +1,10 @@
+{
+  "created": "2026-05-12T23:29:22.2602994+01:00",
+  "worktree": null,
+  "id": 7,
+  "status": "completed",
+  "owner": null,
+  "subject": "Stage 7: Final build+verify+audit",
+  "blockedBy": [],
+  "description": "COMPILE OK, 174/174, 16/16 DSS"
+}

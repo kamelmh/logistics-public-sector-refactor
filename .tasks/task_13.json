@@ -1,0 +1,12 @@
+{
+  "id": 13,
+  "subject": "S12: Deploy worktree isolation infrastructure",
+  "description": "Create .worktrees/index.json, implement worktree-create/remove/list commands, bind worktrees to tasks via task['worktree'] field, create events.jsonl lifecycle log",
+  "status": "completed",
+  "priority": "high",
+  "blockedBy": [],
+  "worktree": null,
+  "owner": "autonomous-agent",
+  "created": "2026-05-19T00:00:00+01:00",
+  "layer": "s12"
+}

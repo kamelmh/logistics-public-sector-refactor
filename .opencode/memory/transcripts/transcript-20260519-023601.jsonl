@@ -1,0 +1,173 @@
+{
+  "worktrees": [
+    "No worktrees."
+  ],
+  "ts": "2026-05-19T02:36:01.6817025+01:00",
+  "git": {
+    "commit": "f588afc fix: CI syntax check - initialize parser variables properly",
+    "status": [
+      " M .crossflow/HANDOFF.md",
+      " M .opencode/state/project-memory.md",
+      " M .team/config.json",
+      " M .worktrees/events.jsonl",
+      " M .worktrees/index.json",
+      " M OpenCode.bat",
+      " M Thesis_Surgical_Edit/Chapters/Ch1_Theoretical_Framework.md",
+      " M Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md",
+      " M Thesis_Surgical_Edit/THESIS_GROUND_TRUTH.md",
+      " M Thesis_Surgical_Edit/append-annexes.ps1",
+      " M Thesis_Surgical_Edit/style/bismillah-page.docx",
+      " M Thesis_Surgical_Edit/style/reference.docx",
+      " M Thesis_Surgical_Edit/style/thesis-metadata.yaml",
+      " m pentest-agents",
+      " M scripts/bg-worker.ps1",
+      " M scripts/harness.ps1",
+      "?? .opencode/harness-plan-full-spectrum.md",
+      "?? .opencode/skills/cli-notification/",
+      "?? .opencode/workzone-expanded-2026-05-19.md",
+      "?? .team/inbox/",
+      "?? Thesis_For_Claude_Review/",
+      "?? Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh_COMPLETE.docx",
+      "?? Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh_FINAL.docx",
+      "?? Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh_FINAL.md",
+      "?? \"Thesis_Surgical_Edit/claude-context/Claude-Thesis compliance audit and RTL verification.md\"",
+      "?? Thesis_Surgical_Edit/context_snapshot_v13.2.xml",
+      "?? Thesis_Surgical_Edit/thesis-state.json",
+      "?? create_snapshot.ps1",
+      "?? scripts/autonomous-agent.ps1",
+      "?? superpowers/"
+    ],
+    "branch": "master"
+  },
+  "tasks": [
+    {
+      "subject": "Stage 1: Harvest decision history",
+      "id": 1,
+      "blockedBy": null,
+      "status": "completed"
+    },
+    {
+      "subject": "Implement Bismillah page and regulate page numbering",
+      "id": 10,
+      "blockedBy": null,
+      "status": "completed"
+    },
+    {
+      "subject": "S11 Autonomous Loop Integration Test",
+      "id": 101,
+      "blockedBy": [
+        13,
+        16
+      ],
+      "status": "completed"
+    },
+    {
+      "subject": "Stylistic Pass and Font Regulation",
+      "id": 11,
+      "blockedBy": null,
+      "status": "completed"
+    },
+    {
+      "subject": "Final 100% Thesis Completion Audit",
+      "id": 12,
+      "blockedBy": null,
+      "status": "completed"
+    },
+    {
+      "subject": "S12: Deploy worktree isolation infrastructure",
+      "id": 13,
+      "blockedBy": [],
+      "status": "completed"
+    },
+    {
+      "subject": "S08: Deploy background pipeline runner",
+      "id": 14,
+      "blockedBy": [],
+      "status": "completed"
+    },
+    {
+      "subject": "S09: Deploy agent team inboxes",
+      "id": 15,
+      "blockedBy": [],
+      "status": "completed"
+    },
+    {
+      "subject": "S11: Implement autonomous task claim cycle",
+      "id": 16,
+      "blockedBy": [],
+      "status": "completed"
+    },
+    {
+      "subject": "Thesis PDF rebuild + M-03 table caption verification",
+      "id": 17,
+      "blockedBy": [],
+      "status": "completed"
+    },
+    {
+      "subject": "Phase B: English Research Paper (IEEE/Springer 6-8pp)",
+      "id": 18,
+      "blockedBy": [],
+      "status": "completed"
+    },
+    {
+      "subject": "Chapter expansion: ABC-XYZ matrix + VBA engine docs",
+      "id": 19,
+      "blockedBy": [],
+      "status": "completed"
+    },
+    {
+      "subject": "Stage 2: Compact Print (mod_ExportEngine)",
+      "id": 2,
+      "blockedBy": null,
+      "status": "completed"
+    },
+    {
+      "subject": "Gateway extension: add audit, test, health endpoints",
+      "id": 20,
+      "blockedBy": [],
+      "status": "completed"
+    },
+    {
+      "subject": "Stage 3: UX Preload (frmStockEntry)",
+      "id": 3,
+      "blockedBy": null,
+      "status": "completed"
+    },
+    {
+      "subject": "Stage 4: Stockout Projection (mod_Dashboard)",
+      "id": 4,
+      "blockedBy": null,
+      "status": "completed"
+    },
+    {
+      "subject": "Stage 5: Fuzzy Search (mod_DataValidator)",
+      "id": 5,
+      "blockedBy": null,
+      "status": "completed"
+    },
+    {
+      "subject": "Stage 6: Cross-ref update",
+      "id": 6,
+      "blockedBy": [],
+      "status": "completed"
+    },
+    {
+      "subject": "Stage 7: Final build+verify+audit",
+      "id": 7,
+      "blockedBy": [],
+      "status": "completed"
+    },
+    {
+      "subject": "Demo: harness worktree isolation",
+      "id": 8,
+      "blockedBy": null,
+      "status": "completed"
+    },
+    {
+      "subject": "Integrate references and footnotes properly",
+      "id": 9,
+      "blockedBy": null,
+      "status": "completed"
+    }
+  ]
+}

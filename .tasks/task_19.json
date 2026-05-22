@@ -1,0 +1,12 @@
+{
+  "id": 19,
+  "subject": "Chapter expansion: ABC-XYZ matrix + VBA engine docs",
+  "description": "Expand thesis chapters: Ch2 add ABC breakdown with consumption values, XYZ classification, ABC-XYZ matrix. Ch3 add EOQ algorithm flow, CMUP worked example, audit trail mechanism. Ch4 add per-KPI analysis paragraphs, reference 20/20 test suite, before/after operational comparison.",
+  "status": "completed",
+  "priority": "medium",
+  "blockedBy": [],
+  "worktree": null,
+  "owner": "autonomous-agent",
+  "created": "2026-05-19T00:00:00+01:00",
+  "layer": "thesis"
+}

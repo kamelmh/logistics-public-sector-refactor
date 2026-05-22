@@ -1,0 +1,10 @@
+{
+  "created": "2026-05-12T23:29:21.3469806+01:00",
+  "worktree": null,
+  "id": 1,
+  "status": "completed",
+  "owner": null,
+  "subject": "Stage 1: Harvest decision history",
+  "blockedBy": null,
+  "description": "Expand MASTER_BOOTSTRAP.xml (3→6 phases, 16 decisions)"
+}
