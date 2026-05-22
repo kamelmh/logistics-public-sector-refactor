@@ -21,11 +21,8 @@ jobs:
         shell: pwsh
         run: |
           Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser -SkipPublisherCheck
-          $results = Invoke-ScriptAnalyzer -Path . -Recurse -ExcludePath @(
-            '*node_modules*', '*.venv*', '*mercury-agent*',
-            '*explore-langflow*', '*explore-mini-browser*',
-            '*ruflo*', '*opencode_updates*'
-          ) -Severity @('Error', 'Warning')
+          $settings = @{ Exclude = @('*node_modules*','*.venv*','*mercury-agent*','*explore-langflow*','*explore-mini-browser*','*ruflo*','*opencode_updates*') }
+          $results = Invoke-ScriptAnalyzer -Path . -Recurse -Settings $settings -Severity @('Error', 'Warning')
           if ($results) { $results | Format-Table -AutoSize; exit 1 }
           Write-Host "PSScriptAnalyzer: OK (no errors or warnings)"
 

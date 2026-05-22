@@ -20,6 +20,7 @@ param(
 
 $ErrorActionPreference = "Continue"
 $script:root = Split-Path $MyInvocation.MyCommand.Path -Parent
+$script:projectRoot = Split-Path (Split-Path $script:root -Parent) -Parent  # two up: R&D/TSE → project root
 $script:styleDir = Join-Path $script:root "style"
 $script:outDir = Join-Path $script:root "output"
 $script:metricsDir = Join-Path $script:outDir "metrics"
@@ -28,7 +29,7 @@ $null = New-Item -ItemType Directory -Path $script:reportDir -Force
 
 if (-not $Path) { $script:docxPath = Join-Path $script:outDir "Memoire_DSS_Logistique_ElBayadh.docx" }
 else { $script:docxPath = $Path }
-$script:sourcePath = Join-Path $script:root "Memoire_DSS_Logistique_ElBayadh.md"
+$script:sourcePath = Join-Path $script:projectRoot "Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md"
 $script:pdfPath = Join-Path $script:outDir "Memoire_DSS_Logistique_ElBayadh.pdf"
 
 $script:GOLDEN = @{
@@ -619,11 +620,11 @@ function Invoke-Pipeline {
     switch ($Step) {
         "build" {
             Write-Host "  [PIPELINE] Running build..." -ForegroundColor Yellow
-            & (Join-Path $script:root "build-thesis.ps1") 2>&1
+            & (Join-Path $script:projectRoot "Thesis_Surgical_Edit\build-thesis.ps1") 2>&1
         }
         "verify" {
             Write-Host "  [PIPELINE] Running verify..." -ForegroundColor Yellow
-            & (Join-Path $script:root "verify-thesis.ps1") 2>&1
+            & (Join-Path $script:projectRoot "links\03-Build\verify-thesis.ps1") 2>&1
         }
         "metrics" {
             Write-Host "  [PIPELINE] Running metrics..." -ForegroundColor Yellow
