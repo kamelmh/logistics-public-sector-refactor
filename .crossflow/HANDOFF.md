@@ -194,7 +194,23 @@ Additional Technical:
 - Thesis build script lives at: `Research_and_Development/Thesis_Surgical_Edit/thesis-doctor.ps1` (NOT `Thesis_Surgical_Edit/build-thesis.ps1`)
 - Golden workbook: `Copy of ERP_v13.2.xlsm` (larger, has complete form — switched from `ERP_v13.2.xlsm`)
 
+### 2026-05-22 Late — Full Recovery Session Completed
+- **Git filter-repo fallout:** `s12-test-branch` deleted, `wt/wt-autonomous-agent-task-13` worktree lost. `links/` were 0B path stubs — real content was on the worktree.
+- **Recovery status:** Project fully operational. Key files restored from git history (`9199bfa`, `0e78398`, `deb6028`).
+- **Style scripts restored (17 files):** `footnotes.py` (9.5KB), `all-footnotes.py` (8.9KB), `add-page-numbers.py`, `add-toc.py`, `cnepd-thesis-checker.py`, `customize-reference.py`, `fix-fonts.py`, `format-baseline.py`, `format-cover.py`, `format-tables.py`, `format-tables-advanced.py`, `prepend-cover.py`, `reference-in.docx`, `reference.docx`, `style-comparison.txt`, `thesis-metadata.yaml`, `CNEPD_Footnotes_Guide.md`
+- **Refs restored (44 files):** `master-references.json` (27KB), `pdf-mapping.json` (6.7KB), 42 PDFs across 4 Semester subdirs
+- **pagination.py:** Covered by `add-page-numbers.py` (section breaks + Abjad/decimal page numbers). No functionality gap.
+- **`build-thesis.ps1` created at `Thesis_Surgical_Edit/`** — delegation wrapper to `Research_and_Development/Thesis_Surgical_Edit/thesis-doctor.ps1`. Both paths now work.
+- **Desktop delivery folder recreated:** `C:\Users\Administrator\Desktop\Academix_v13.2_Delivery\` — 64 files across 8 subdirs
+- **`scripts/bg-worker.ps1` created:** Delegates to `harness.ps1 bg <task>`. Supports `-Task`, `-List`, `-Status`.
+- **`links/README.md` updated:** Full path mapping for all 9 links/ subdirs
+- **Phase B English Paper:** Located at `Final_Delivery_Layout/01_Thesis_Final/English_Research_Paper.md` (11KB, IMRaD structure). Copied to `links/02-Thesis/` and `Thesis_Surgical_Edit/`
+- **AGENTS.md fixed:** `build-thesis.ps1` reference now points to the delegation script with comment clarifying real path
+- **Build verified:** 105/105 PASS (0 regressions)
+- **`pipeline:none` status:** All missing `pipeline:none` style files restored, build now passes
+
 ### Next
 - Window D unconditional sign-off (thesis is objectively print-ready)
-- Phase B: English Paper (IMRaD, 6-8pp, CIIA/DOAJ)
-- Optional: recreate Desktop delivery folder
+- Phase B: English Paper refinement and journal submission (CIIA/DOAJ)
+- Verify submodule status (ruflo, anansi, oracle-ai-developer-hub stale index entries)
+- Sync Google Drive mirror (stale since May 17)

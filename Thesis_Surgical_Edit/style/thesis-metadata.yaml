@@ -1,0 +1,17 @@
+---
+title: |
+  | بناء نظام دعم قرار لإتمام دورة الشراء والتخزين
+subtitle: |
+  | Designing a Decision Support System for Integrating Purchasing and Warehousing
+author: "ماحي كمال عبد الغني"
+institute: |
+  | الجمهورية الجزائرية الديمقراطية الشعبية
+  | وزارة التكوين والتعليم المهنيين
+  | المعهد الوطني المتخصص في التكوين المهني
+  | بن سعيدي عبد العاطي — البيض
+supervisor: "دهيني ميمونة"
+date: "دورة أكتوبر 2025"
+lang: ar
+dir: rtl
+documentclass: report
+...

@@ -1,0 +1,212 @@
+{
+  "18": {
+    "bib_number": 18,
+    "semester": "Semester_1",
+    "pdf_name": "1.IDENTIFICATION ET COLLECTE DES INFORMATIONS INTERNES ET EXTERNES.pdf",
+    "pdf_path": "refs\\Semester_1\\1.IDENTIFICATION ET COLLECTE DES INFORMATIONS INTERNES ET EXTERNES.pdf",
+    "exists": true
+  },
+  "19": {
+    "bib_number": 19,
+    "semester": "Semester_1",
+    "pdf_name": "2.ETUDES DES PRIX ET LES CONDITIONS DE NEGOCIATION..pdf",
+    "pdf_path": "refs\\Semester_1\\2.ETUDES DES PRIX ET LES CONDITIONS DE NEGOCIATION..pdf",
+    "exists": true
+  },
+  "20": {
+    "bib_number": 20,
+    "semester": "Semester_1",
+    "pdf_name": "3.DROIT SOCIAL.pdf",
+    "pdf_path": "refs\\Semester_1\\3.DROIT SOCIAL.pdf",
+    "exists": true
+  },
+  "21": {
+    "bib_number": 21,
+    "semester": "Semester_1",
+    "pdf_name": "4. INFORMATIQUE.pdf",
+    "pdf_path": "refs\\Semester_1\\4. INFORMATIQUE.pdf",
+    "exists": true
+  },
+  "22": {
+    "bib_number": 22,
+    "semester": "Semester_1",
+    "pdf_name": "5.MATHEMATIQUES GENERALES.pdf",
+    "pdf_path": "refs\\Semester_1\\5.MATHEMATIQUES GENERALES.pdf",
+    "exists": true
+  },
+  "23": {
+    "bib_number": 23,
+    "semester": "Semester_2",
+    "pdf_name": "1.RECHERCHE ET SELECTION DES FOURNISSEURS.pdf",
+    "pdf_path": "refs\\Semester_2\\1.RECHERCHE ET SELECTION DES FOURNISSEURS.pdf",
+    "exists": true
+  },
+  "24": {
+    "bib_number": 24,
+    "semester": "Semester_2",
+    "pdf_name": "2.ETABLISSEMENT-ET-CONTROLE-DE-LA-COMMANDE DACHAT.pdf",
+    "pdf_path": "refs\\Semester_2\\2.ETABLISSEMENT-ET-CONTROLE-DE-LA-COMMANDE DACHAT.pdf",
+    "exists": true
+  },
+  "25": {
+    "bib_number": 25,
+    "semester": "Semester_2",
+    "pdf_name": "3.ARHITMETIQUE COMMERCIALE.pdf",
+    "pdf_path": "refs\\Semester_2\\3.ARHITMETIQUE COMMERCIALE.pdf",
+    "exists": true
+  },
+  "26": {
+    "bib_number": 26,
+    "semester": "Semester_2",
+    "pdf_name": "4.APPLICATION DES REGLES DHYGIENE SECURITE ET ENVIRONNEMENT.pdf",
+    "pdf_path": "refs\\Semester_2\\4.APPLICATION DES REGLES DHYGIENE SECURITE ET ENVIRONNEMENT.pdf",
+    "exists": true
+  },
+  "27": {
+    "bib_number": 27,
+    "semester": "Semester_2",
+    "pdf_name": "5.DROIT COMMERCIAL.pdf",
+    "pdf_path": "refs\\Semester_2\\5.DROIT COMMERCIAL.pdf",
+    "exists": true
+  },
+  "28": {
+    "bib_number": 28,
+    "semester": "Semester_2",
+    "pdf_name": "6.DOCUMENTS COMMERCIAUX.pdf",
+    "pdf_path": "refs\\Semester_2\\6.DOCUMENTS COMMERCIAUX.pdf",
+    "exists": true
+  },
+  "29": {
+    "bib_number": 29,
+    "semester": "Semester_3",
+    "pdf_name": "1. Enregistrement comptable et controle des approvisionnements.pdf",
+    "pdf_path": "refs\\Semester_3\\1. Enregistrement comptable et controle des approvisionnements.pdf",
+    "exists": true
+  },
+  "30": {
+    "bib_number": 30,
+    "semester": "Semester_3",
+    "pdf_name": "2. Réalisation de linventaire physique.pdf",
+    "pdf_path": "refs\\Semester_3\\2. Réalisation de linventaire physique.pdf",
+    "exists": true
+  },
+  "31": {
+    "bib_number": 31,
+    "semester": "Semester_3",
+    "pdf_name": "3. Réalisation de linventaire comptable.pdf",
+    "pdf_path": "refs\\Semester_3\\3. Réalisation de linventaire comptable.pdf",
+    "exists": true
+  },
+  "32": {
+    "bib_number": 32,
+    "semester": "Semester_3",
+    "pdf_name": "4. Réalistion dune étude des myens de transport.pdf",
+    "pdf_path": "refs\\Semester_3\\4. Réalistion dune étude des myens de transport.pdf",
+    "exists": true
+  },
+  "33": {
+    "bib_number": 33,
+    "semester": "Semester_3",
+    "pdf_name": "5.DETERMINATION DES BESOINS ET LES ELEMENTS CONSTITUTIFS DU PROGRAMME DAPPROVISIONNEMENT.pdf",
+    "pdf_path": "refs\\Semester_3\\5.DETERMINATION DES BESOINS ET LES ELEMENTS CONSTITUTIFS DU PROGRAMME DAPPROVISIONNEMENT.pdf",
+    "exists": true
+  },
+  "34": {
+    "bib_number": 34,
+    "semester": "Semester_3",
+    "pdf_name": "6.Gestion efficace des approvisionnements.pdf",
+    "pdf_path": "refs\\Semester_3\\6.Gestion efficace des approvisionnements.pdf",
+    "exists": true
+  },
+  "35": {
+    "bib_number": 35,
+    "semester": "Semester_3",
+    "pdf_name": "7. Techniques dexpression et de communication.pdf",
+    "pdf_path": "refs\\Semester_3\\7. Techniques dexpression et de communication.pdf",
+    "exists": true
+  },
+  "36": {
+    "bib_number": 36,
+    "semester": "Semester_3",
+    "pdf_name": "8.ECONOMIE DE L ENTREPRISE.pdf",
+    "pdf_path": "refs\\Semester_3\\8.ECONOMIE DE L ENTREPRISE.pdf",
+    "exists": true
+  },
+  "37": {
+    "bib_number": 37,
+    "semester": "Semester_3",
+    "pdf_name": "9.STATISTIQUES DESCRIPTIVES.pdf",
+    "pdf_path": "refs\\Semester_3\\9.STATISTIQUES DESCRIPTIVES.pdf",
+    "exists": true
+  },
+  "38": {
+    "bib_number": 38,
+    "semester": "Semester_4",
+    "pdf_name": "1. PLANIFICATION STRATEGIQUE DE LA LOGISTIQUE.pdf",
+    "pdf_path": "refs\\Semester_4\\1. PLANIFICATION STRATEGIQUE DE LA LOGISTIQUE.pdf",
+    "exists": true
+  },
+  "39": {
+    "bib_number": 39,
+    "semester": "Semester_4",
+    "pdf_name": "2. PLANIFICATION STRATEGIQUE.pdf",
+    "pdf_path": "refs\\Semester_4\\2. PLANIFICATION STRATEGIQUE.pdf",
+    "exists": true
+  },
+  "40": {
+    "bib_number": 40,
+    "semester": "Semester_4",
+    "pdf_name": "3. RENOUVELLEMENT DE LA COMMANDE.pdf",
+    "pdf_path": "refs\\Semester_4\\3. RENOUVELLEMENT DE LA COMMANDE.pdf",
+    "exists": true
+  },
+  "41": {
+    "bib_number": 41,
+    "semester": "Semester_4",
+    "pdf_name": "4. SUIVI ET CONTROLE DES  ARTICLES LIVRES.pdf",
+    "pdf_path": "refs\\Semester_4\\4. SUIVI ET CONTROLE DES  ARTICLES LIVRES.pdf",
+    "exists": true
+  },
+  "42": {
+    "bib_number": 42,
+    "semester": "Semester_4",
+    "pdf_name": "5. ORGANISATION DES MOYENS LOGISTIQUE.pdf",
+    "pdf_path": "refs\\Semester_4\\5. ORGANISATION DES MOYENS LOGISTIQUE.pdf",
+    "exists": true
+  },
+  "43": {
+    "bib_number": 43,
+    "semester": "Semester_4",
+    "pdf_name": "6. GESTION BUDGETAIRE.pdf",
+    "pdf_path": "refs\\Semester_4\\6. GESTION BUDGETAIRE.pdf",
+    "exists": true
+  },
+  "44": {
+    "bib_number": 44,
+    "semester": "Semester_4",
+    "pdf_name": "7. ANGLAIS COMMERCIAL .pdf",
+    "pdf_path": "refs\\Semester_4\\7. ANGLAIS COMMERCIAL .pdf",
+    "exists": true
+  },
+  "45": {
+    "bib_number": 45,
+    "semester": "Semester_4",
+    "pdf_name": "8. ORGANISATION DU MATERIEL.pdf",
+    "pdf_path": "refs\\Semester_4\\8. ORGANISATION DU MATERIEL.pdf",
+    "exists": true
+  },
+  "46": {
+    "bib_number": 46,
+    "semester": "Semester_4",
+    "pdf_name": "9. METHODOLOGIE.pdf",
+    "pdf_path": "refs\\Semester_4\\9. METHODOLOGIE.pdf",
+    "exists": true
+  },
+  "47": {
+    "bib_number": 47,
+    "semester": "Semester_4",
+    "pdf_name": "GLOSSAIRE.pdf",
+    "pdf_path": "refs\\Semester_4\\GLOSSAIRE.pdf",
+    "exists": true
+  }
+}
