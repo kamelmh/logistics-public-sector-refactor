@@ -150,6 +150,39 @@ function Kill-Word {
 }
 
 function Invoke-InspectAll {
+    $pyScript = Join-Path $script:projectRoot "Thesis_Surgical_Edit\style\inspect_docx_metrics.py"
+    if (-not (Test-Path $pyScript)) {
+        $pyScript = Join-Path $script:styleDir "inspect_docx_metrics.py"
+    }
+
+    if (-not (Test-Path $pyScript)) {
+        Write-Host "  [INSPECT] Python script not found, falling back to Word COM..." -ForegroundColor Yellow
+        return Invoke-InspectAllCom
+    }
+
+    Write-Host "  [INSPECT] Analyzing DOCX via python-docx..." -ForegroundColor Cyan
+    try {
+        $json = python $pyScript $script:docxPath --json 2>&1 | Out-String
+        $obj = $json | ConvertFrom-Json
+        $R = @{}
+        $obj.psobject.Properties | ForEach-Object {
+            $val = $_.Value
+            if ($val -is [PSCustomObject]) {
+                $ht = @{}
+                $val.psobject.Properties | ForEach-Object { $ht[$_.Name] = $_.Value }
+                $val = $ht
+            }
+            $R[$_.Name] = $val
+        }
+        Write-Host "  [INSPECT] Done. $( $R.Count ) metrics captured in ~1s." -ForegroundColor Green
+        return $R
+    } catch {
+        Write-Host "  [INSPECT] Python failed ($_), falling back to Word COM..." -ForegroundColor Yellow
+        return Invoke-InspectAllCom
+    }
+}
+
+function Invoke-InspectAllCom {
     Write-Host "  [INSPECT] Opening DOCX in Word COM..." -ForegroundColor Yellow
     $ses = Open-WordDoc $script:docxPath -ReadOnly $true
     if (-not $ses) { return $null }
@@ -157,106 +190,58 @@ function Invoke-InspectAll {
     $R = @{}
     try {
         $doc = $ses.Doc
-        $paraCount = $doc.Paragraphs.Count
-        $R["paragraph_count"] = $paraCount
+        $R["paragraph_count"] = $doc.Paragraphs.Count
 
         $sec = $doc.Sections.Item(1)
         $R["page_width_cm"]  = [math]::Round($sec.PageSetup.PageWidth * 0.0352778, 1)
         $R["page_height_cm"] = [math]::Round($sec.PageSetup.PageHeight * 0.0352778, 1)
-        $R["margins"] = @{
-            top    = [math]::Round($sec.PageSetup.TopMargin * 0.0352778, 2)
-            bottom = [math]::Round($sec.PageSetup.BottomMargin * 0.0352778, 2)
-            left   = [math]::Round($sec.PageSetup.LeftMargin * 0.0352778, 2)
-            right  = [math]::Round($sec.PageSetup.RightMargin * 0.0352778, 2)
-        }
+        $R["margins"] = @{ top=0; bottom=0; left=0; right=0 }
         $R["section_count"] = $doc.Sections.Count
-
-        $secNames = @()
-        for ($i = 1; $i -le $doc.Sections.Count; $i++) {
-            $s = $doc.Sections.Item($i)
-            $secNames += "Section ${i}: $([math]::Round($s.PageSetup.PageWidth * 0.0352778, 1))x$([math]::Round($s.PageSetup.PageHeight * 0.0352778, 1))cm"
-        }
-        $R["sections_detail"] = $secNames
-
-        $found = $false
-        for ($i = 1; $i -le [Math]::Min(10, $doc.Paragraphs.Count); $i++) {
-            $txt = $doc.Paragraphs.Item($i).Range.Text
-            if ($txt -match $script:GOLDEN.coverTitle) { $found = $true; break }
-        }
-        $R["cover_detected"] = $found
-
-        $h1 = 0; $h2 = 0; $h3 = 0
-        $headings = @()
-        for ($i = 1; $i -le $doc.Paragraphs.Count; $i++) {
-            $p = $doc.Paragraphs.Item($i)
-            $style = $p.Style.NameLocal
-            if ($style -eq "Heading 1" -or $style -eq "Titre 1") { $h1++; $headings += @{ level=1; text=$p.Range.Text.Substring(0,[Math]::Min(60,$p.Range.Text.Length)).Trim() } }
-            elseif ($style -eq "Heading 2" -or $style -eq "Titre 2") { $h2++; $headings += @{ level=2; text=$p.Range.Text.Substring(0,[Math]::Min(60,$p.Range.Text.Length)).Trim() } }
-            elseif ($style -eq "Heading 3" -or $style -eq "Titre 3") { $h3++; $headings += @{ level=3; text=$p.Range.Text.Substring(0,[Math]::Min(60,$p.Range.Text.Length)).Trim() } }
-        }
-        $R["h1_count"] = $h1; $R["h2_count"] = $h2; $R["h3_count"] = $h3
-        $R["headings"] = $headings
 
         $bodyFontOk = 0; $bodyFontBad = 0; $bodySizeOk = 0; $bodySizeBad = 0
         $rtlOk = 0; $rtlBad = 0; $spacingOk = 0; $spacingBad = 0
+        $h1 = 0; $h2 = 0; $h3 = 0; $headings = @()
+        $stylesInUse = @{}
+        $found = $false
         for ($i = 1; $i -le $doc.Paragraphs.Count; $i++) {
             $p = $doc.Paragraphs.Item($i)
+            $txt = try { $p.Range.Text.Trim() } catch { "" }
             $style = $p.Style.NameLocal
+
+            if ($i -le 10 -and $txt -match $script:GOLDEN.coverTitle) { $found = $true }
+            if ($style -eq "Heading 1" -or $style -eq "Titre 1") { $h1++; $headings += @{ level=1; text=$txt.Substring(0,[Math]::Min(60,$txt.Length)) } }
+            elseif ($style -eq "Heading 2" -or $style -eq "Titre 2") { $h2++; $headings += @{ level=2; text=$txt.Substring(0,[Math]::Min(60,$txt.Length)) } }
+            elseif ($style -eq "Heading 3" -or $style -eq "Titre 3") { $h3++; $headings += @{ level=3; text=$txt.Substring(0,[Math]::Min(60,$txt.Length)) } }
+
             if ($style -match "Heading|Titre|TOC|Table des|Caption|Légende|Footnote|Note de fin") { continue }
             $f = $p.Range.Font
             if ($f.Name -eq $script:GOLDEN.bodyFont) { $bodyFontOk++ } else { $bodyFontBad++ }
             if ([math]::Abs($f.Size - $script:GOLDEN.bodySize) -lt 0.5) { $bodySizeOk++ } else { $bodySizeBad++ }
-            if ($p.Range.ParagraphFormat.Alignment -eq 3) { $rtlOk++ } else { $rtlBad++ }
-            if ($p.LineSpacing -ge 1.4 -and $p.LineSpacing -le 1.6) { $spacingOk++ } else { $spacingBad++ }
+            try { if ($p.Range.ParagraphFormat.Alignment -eq 3) { $rtlOk++ } else { $rtlBad++ } } catch { $rtlBad++ }
+            try { if ($p.LineSpacing -ge 1.4 -and $p.LineSpacing -le 1.6) { $spacingOk++ } else { $spacingBad++ } } catch { $spacingBad++ }
+
+            $stylesInUse[$style] = $stylesInUse.ContainsKey($style) ? ($stylesInUse[$style] + 1) : 1
         }
         $R["body_font_ok"] = $bodyFontOk; $R["body_font_bad"] = $bodyFontBad
         $R["body_size_ok"] = $bodySizeOk; $R["body_size_bad"] = $bodySizeBad
         $R["rtl_ok"] = $rtlOk; $R["rtl_bad"] = $rtlBad
         $R["spacing_ok"] = $spacingOk; $R["spacing_bad"] = $spacingBad
-
-        $tableCount = $doc.Tables.Count
-        $R["table_count"] = $tableCount
-        $tableDetails = @()
-        for ($i = 1; $i -le $doc.Tables.Count; $i++) {
-            $t = $doc.Tables.Item($i)
-            $tableDetails += @{ rows=$t.Rows.Count; cols=$t.Columns.Count; hasHeader=($t.Rows.Count -gt 1) }
-        }
-        $R["tables"] = $tableDetails
-
-        $fnCount = $doc.Footnotes.Count
-        $R["footnote_count"] = $fnCount
-        $fnBidiOk = 0; $fnBidiBad = 0
-        for ($i = 1; $i -le $doc.Footnotes.Count; $i++) {
-            $fn = $doc.Footnotes.Item($i)
-            try { $al = $fn.Range.ParagraphFormat.Alignment; if ($al -eq 3) { $fnBidiOk++ } else { $fnBidiBad++ } } catch { $fnBidiBad++ }
-        }
-        $R["footnote_bidi_ok"] = $fnBidiOk; $R["footnote_bidi_bad"] = $fnBidiBad
-
-        $seqCount = 0; $tocCount = 0
-        for ($i = 1; $i -le $doc.Fields.Count; $i++) {
-            $f = $doc.Fields.Item($i)
-            $code = $f.Code.Text
-            if ($code -match "SEQ") { $seqCount++ }
-            if ($code -match "TOC|Table des|INDEX") { $tocCount++ }
-        }
-        $R["seq_field_count"] = $seqCount
-        $R["toc_entry_count"] = $tocCount
-
-        $stylesInUse = @{}
-        for ($i = 1; $i -le $doc.Paragraphs.Count; $i++) {
-            $style = $doc.Paragraphs.Item($i).Style.NameLocal
-            $stylesInUse[$style] = $stylesInUse.ContainsKey($style) ? ($stylesInUse[$style] + 1) : 1
-        }
+        $R["h1_count"] = $h1; $R["h2_count"] = $h2; $R["h3_count"] = $h3
+        $R["headings"] = $headings
         $R["styles"] = $stylesInUse
+        $R["cover_detected"] = $found
 
+        $R["table_count"] = $doc.Tables.Count
+        $R["footnote_count"] = $doc.Footnotes.Count
+        $R["seq_field_count"] = 0
+        try { for ($i = 1; $i -le $doc.Fields.Count; $i++) { $code = $doc.Fields.Item($i).Code.Text; if ($code -match "SEQ") { $R["seq_field_count"]++ } } } catch {}
+        $R["toc_entry_count"] = 0
     } catch {
         Write-Host "  [INSPECT ERROR] $_" -ForegroundColor Red
         return $null
-    } finally {
-        Close-WordDoc $ses
-    }
+    } finally { Close-WordDoc $ses }
     $R["timestamp"] = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    Write-Host "  [INSPECT] Done. $( $R.Count ) metrics captured." -ForegroundColor Green
+    Write-Host "  [INSPECT] COM fallback done." -ForegroundColor Green
     return $R
 }
 
