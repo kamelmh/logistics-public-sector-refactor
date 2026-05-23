@@ -21,7 +21,7 @@ param(
 $ErrorActionPreference = "Continue"
 $script:root = Split-Path $MyInvocation.MyCommand.Path -Parent
 $script:projectRoot = Split-Path (Split-Path $script:root -Parent) -Parent  # two up: R&D/TSE → project root
-$script:styleDir = Join-Path $script:root "style"
+$script:styleDir = Join-Path $script:projectRoot "Thesis_Surgical_Edit\style"
 $script:outDir = Join-Path $script:root "output"
 $script:metricsDir = Join-Path $script:outDir "metrics"
 $script:reportDir = Join-Path $script:root "reports"
@@ -614,12 +614,14 @@ function Invoke-Pipeline {
         }
         "verify" {
             Write-Host "  [PIPELINE] Running verify..." -ForegroundColor Yellow
-            & (Join-Path $script:projectRoot "links\03-Build\verify-thesis.ps1") 2>&1
+            & (Join-Path $script:projectRoot "links\03-Build\verify-thesis.ps1") $script:docxPath 2>&1
         }
         "metrics" {
             Write-Host "  [PIPELINE] Running metrics..." -ForegroundColor Yellow
-            python (Join-Path $script:styleDir "measure-thesis.py") $script:docxPath $script:sourcePath 2>&1
-            python (Join-Path $script:styleDir "compare-thesis.py") 2>&1
+            $m = python (Join-Path $script:styleDir "measure-thesis.py") $script:docxPath $script:sourcePath
+            $c = python (Join-Path $script:styleDir "compare-thesis.py")
+            if ($m) { Write-Host $m }
+            if ($c) { Write-Host $c }
         }
         "full" {
             Invoke-Pipeline "build"; Invoke-Pipeline "verify"; Invoke-Pipeline "metrics"

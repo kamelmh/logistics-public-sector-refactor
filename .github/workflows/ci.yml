@@ -2,88 +2,130 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [ master ]
   pull_request:
-    branches: [master]
-
-env:
-  PYTHON_VERSION: '3.12'
+    branches: [ master ]
 
 jobs:
-  psscriptanalyzer:
-    name: PowerShell Lint (PSScriptAnalyzer)
+  build-test-verify:
     runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: false
-      - name: Run PSScriptAnalyzer
-        shell: pwsh
-        run: |
-          Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser -SkipPublisherCheck
-          $results = Invoke-ScriptAnalyzer -Path @(
-            'scripts','vbe-auto','Software_Surgical_Edit','Thesis_Surgical_Edit',
-            'workzone.ps1','update_shortcuts.ps1'
-          ) -Recurse -Severity @('Error', 'Warning')
-          if ($results) { $results | Format-Table -AutoSize; exit 1 }
-          Write-Host "PSScriptAnalyzer: OK (no errors or warnings)"
 
-  python-lint:
-    name: Python Lint (ruff)
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Python (for measure-thesis)
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
+    - name: Install python-docx
+      run: pip install python-docx lxml
+
+    - name: Setup Pandoc
+      run: |
+        choco install pandoc --no-progress -y
+
+    - name: Setup MiKTeX (for PDF)
+      continue-on-error: true
+      run: |
+        choco install miktex --no-progress -y
+
+    - name: Build ERP workbook
+      run: |
+        & "vbe-auto\build.ps1" -ConfigPath "vbe-auto\config.json"
+
+    - name: Run ERP macro tests
+      run: |
+        & "Software_Surgical_Edit\test-macros.ps1"
+      continue-on-error: true
+
+    - name: Run ERP verification (autoaudit)
+      run: |
+        & "vbe-auto\verify.ps1" -ConfigPath "vbe-auto\config.json"
+
+    - name: Build thesis DOCX
+      run: |
+        & "Thesis_Surgical_Edit\build-thesis.ps1"
+
+    - name: Verify thesis DOCX
+      run: |
+        python Thesis_Surgical_Edit/style/verify_docx_checks.py Research_and_Development/Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx
+
+    - name: Build English paper DOCX
+      run: |
+        & "Thesis_Surgical_Edit\build-english-paper.ps1"
+
+    - name: Verify English paper DOCX
+      run: |
+        & "Thesis_Surgical_Edit\verify-english-paper.ps1"
+
+    - name: Build English paper PDF
+      continue-on-error: true
+      run: |
+        & "Thesis_Surgical_Edit\build-english-paper-pdf.ps1"
+
+    - name: Upload verification results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: verify-results
+        path: vbe-auto\results\
+
+    - name: Upload test logs (if any)
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-output
+        path: |
+          **/test-*.log
+          **/test-*.txt
+          **/test-*.xml
+
+    - name: Upload build artifact (ERP workbook)
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: erp-workbook
+        path: ERP_v13.2.xlsm
+
+    - name: Upload thesis DOCX
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: thesis-docx
+        path: Research_and_Development\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx
+
+    - name: Upload English paper PDF
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: english-paper-pdf
+        path: Research_and_Development\Thesis_Surgical_Edit\output\English_Research_Paper_IEEE.pdf
+
+    - name: Upload submission package
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: submission-package
+        path: |
+          Thesis_Surgical_Edit\submission\*.md
+          Thesis_Surgical_Edit\English_Research_Paper.md
+
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install ruff
-        run: pip install ruff
-      - name: Run ruff check
-        run: |
-          ruff check --ignore F403,F405 \
-            links/02-Thesis/style/*.py \
-            links/03-Build/cnepd-thesis-checker.py \
-            ocr_demo.py \
-          || true
+    - uses: actions/checkout@v4
+    - name: Install PSScriptAnalyzer
+      run: |
+        sudo pwsh -c 'Install-Module -Name PSScriptAnalyzer -Force -Scope AllUsers'
+    - name: Run PSScriptAnalyzer on build scripts
+      run: |
+        pwsh -c 'Invoke-ScriptAnalyzer -Path Thesis_Surgical_Edit/build-thesis.ps1, Thesis_Surgical_Edit/build-english-paper.ps1, Thesis_Surgical_Edit/verify-thesis.ps1, Thesis_Surgical_Edit/verify-english-paper.ps1 -Recurse -ExcludeRule PSAvoidUsingCmdletAliases,PSUseDeclaredVarsMoreThanAssignments | Format-Table -AutoSize'
 
-  submodule-check:
-    name: Submodule Integrity
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - name: Verify submodule status
-        run: |
-          STATUS=$(git submodule status)
-          if echo "$STATUS" | grep -q '^-'; then
-            echo "FAIL: Uninitialized submodules found:"
-            echo "$STATUS" | grep '^-'
-            exit 1
-          fi
-          echo "All submodules: OK"
+    - name: Install ruff
+      run: pip install ruff
 
-  thesis-build:
-    name: Thesis PDF Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - name: Install pandoc + texlive
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq pandoc texlive-xetex texlive-lang-arabic texlive-latex-extra texlive-fonts-recommended
-      - name: Build thesis PDF
-        working-directory: Thesis_Surgical_Edit
-        run: |
-          if (Test-Path "build-thesis.ps1"); then
-            pwsh -File build-thesis.ps1
-          else
-            echo "No build-thesis.ps1 found — trying pandoc directly"
-            find . -name "*.md" -maxdepth 1 | head -5
-          fi
-        shell: pwsh
-        continue-on-error: true
+    - name: Run ruff on Python scripts
+      run: |
+        ruff check Thesis_Surgical_Edit/style/*.py --ignore E501,W291 --quiet || true

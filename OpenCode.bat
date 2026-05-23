@@ -40,6 +40,7 @@ title OpenCode Launcher v3.6 ^| CrossFlow ^| Academix v13.2
 ::   OpenCode crossflow          CrossFlow status + handoff overview
 ::   OpenCode crossflow-sync     Sync CROSSFLOW block to all CLAUDE.md files
 ::   OpenCode status             Quick project health overview
+::   OpenCode academix-agent / aa  Full context agent mode (resume prompt + agent profile)
 ::   OpenCode <mode> <name>      Launch with named session (multi-session)
 ::   OpenCode help               Show this help
 :: ==============================================================
@@ -107,7 +108,7 @@ set "QUASAR_MODEL=openrouter/openrouter/quasar-alpha"
 set "CLI_MODES=cli groq llama llama-405b mixtral gemini gemini3 gemma gemma-31b gemma-local phi4 qwen3 hermes3 nemotron ring deepseek-free freellm completions deepseek deepseek-flash kimi quasar ollama windsurf windsurf-anthropic"
 set "OLLAMA_MODES=phi4 qwen3 hermes3 gemma-local"
 set "PIPELINE_MODES=autobuild autoverify autotest autoaudit autothesis autocheck autofix autoplan autolog automenu autoclean status crossflow crossflow-sync sync mem sandbox"
-set "SPECIAL_MODES=gui fcc proxy academix restore picker help"
+set "SPECIAL_MODES=gui fcc proxy academix academix-agent restore picker help"
 :: Menu display categories
 set "MENU_AUTO=autobuild autoverify autotest autoaudit autofix autocheck"
 set "MENU_CROSS=crossflow crossflow-sync"
@@ -158,6 +159,7 @@ echo %MODE% > "%LAST_SESSION%"
 :: CLI modes (single loop — add once, works everywhere)
 for %%m in (%CLI_MODES%) do if /i "!MODE!"=="%%m" goto :%%m
 :: Aliases
+if /i "%MODE%"=="am" goto :academix-agent
 if /i "%MODE%"=="on" goto :nemotron
 if /i "%MODE%"=="ogg" goto :gemma
 if /i "%MODE%"=="g3" goto :gemini3
@@ -636,6 +638,21 @@ cd /d "%PROJECT_ROOT%"
 pwsh -NoExit -ExecutionPolicy Bypass -File "%ACADEMIX_SCRIPT%"
 echo.
 pause
+goto :end
+
+:: ==============================================================
+:academix-agent
+title %WINDOW_TITLE%
+echo [Academix Agent] Full context mode — Loading agent profile: academix
+echo   Model: Gemini 2.5 Flash
+echo   Agent: academix (from .opencode/prompts/resume-academix.md)
+echo.
+echo   Quick start:
+echo     1. Type /resume to load full project context
+echo     2. Or just start working — agent prompt already loaded
+echo.
+cd /d "%PROJECT_ROOT%"
+"%OC_EXE%" --model "%GEMINI_MODEL%" --agent academix "%PROJECT_ROOT%"
 goto :end
 
 :: ==============================================================

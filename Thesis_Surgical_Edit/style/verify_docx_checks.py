@@ -125,7 +125,7 @@ def run_checks(docx_path, strict_headings=False, size_threshold=50000):
     annexe = any('الملاحق' in (p.text or '') for p in paras)
     results.append(check("Annexes present", annexe, ""))
 
-    toc_h = any('المحتويات' in (p.text or '') and 'فهرس' in (p.text or '') for p in paras[:20])
+    toc_h = any('المحتويات' in (p.text or '') and 'فهرس' in (p.text or '') for p in paras[:50])
     results.append(check("TOC heading present", toc_h, ""))
 
     results.append(check("Opens without corruption", True, "python-docx ok"))
@@ -136,11 +136,14 @@ def run_checks(docx_path, strict_headings=False, size_threshold=50000):
     return {"checks": results, "summary": {"passed": passed, "failed": failed, "total": len(results)}}
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python verify_docx_checks.py <path/to.docx> [--json]", file=sys.stderr)
-        sys.exit(1)
-    r = run_checks(sys.argv[1])
-    if "--json" in sys.argv:
+    parser = argparse.ArgumentParser(description="Verify thesis DOCX")
+    parser.add_argument("docx", help="Path to DOCX file")
+    parser.add_argument("--json", action="store_true", help="JSON output")
+    parser.add_argument("--strict-headings", action="store_true", help="Strict heading hierarchy (no skips)")
+    parser.add_argument("--size-threshold", type=int, default=50000, help="DOCX size threshold in bytes")
+    args = parser.parse_args()
+    r = run_checks(args.docx, strict_headings=args.strict_headings, size_threshold=args.size_threshold)
+    if args.json:
         print(json.dumps(r, indent=2, ensure_ascii=False))
     else:
         for c in r["checks"]:

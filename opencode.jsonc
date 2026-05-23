@@ -1,0 +1,63 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "academix": {
+      "mode": "primary",
+      "description": "Academix v13.2 full-stack agent. VBA development, thesis pipeline, journal submission, CrossFlow coordination.",
+      "model": "google/gemini-2.5-flash",
+      "temperature": 0.3,
+      "prompt": "{file:.opencode/prompts/resume-academix.md}",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "read": true,
+        "grep": true,
+        "glob": true
+      }
+    },
+    "academix-safety": {
+      "mode": "subagent",
+      "description": "Read-only safety reviewer for file system operations. Audits before destructive changes.",
+      "model": "google/gemini-2.5-flash",
+      "temperature": 0.1,
+      "hidden": true,
+      "tools": {
+        "write": false,
+        "edit": false
+      },
+      "permission": {
+        "bash": {
+          "*": "deny",
+          "git diff": "allow",
+          "git log*": "allow",
+          "grep *": "allow",
+          "cat *": "allow",
+          "Get-*": "allow",
+          "Test-Path*": "allow"
+        }
+      }
+    },
+    "academix-thesis": {
+      "mode": "subagent",
+      "description": "Thesis DOCX pipeline specialist. Builds, verifies, and measures thesis and English paper DOCX/PDF output.",
+      "model": "google/gemini-2.5-flash",
+      "temperature": 0.2,
+      "tools": {
+        "write": false,
+        "edit": false
+      },
+      "permission": {
+        "bash": {
+          "*": "ask",
+          "python *": "allow",
+          "pandoc *": "allow",
+          "& *build-thesis*": "allow",
+          "& *build-english*": "allow",
+          "& *verify-*": "allow"
+        }
+      }
+    }
+  },
+  "default_agent": "academix"
+}
