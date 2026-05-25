@@ -1,0 +1,25 @@
+name: Model Health Check
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # daily 06:00 UTC
+  workflow_dispatch:       # allow manual trigger from Actions tab
+
+jobs:
+  health:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run full health check
+        shell: pwsh
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          .\scripts\model-health-check.ps1 -Mode all
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "::error::Model health check failed – check the diagnostic artifact and rotate keys if needed."
