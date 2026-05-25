@@ -24,3 +24,4 @@
 
 [2026-05-15] Window C: Completed Chapter 2 surgical injection (Mبحث 1 & 2). Aligned Table 04. Thesis rebuilt. Handing off to Claude Desktop for final Ch2 polish.
 | 19 | 2026-05-15 | OpenCode (big-pickle) | Window C taking lead: Finalizing Chapter 2 (المبحث الثالث) due to Claude rate-limit. | ✅ |
+| 20 | 2026-05-25 | OpenCode (GPT-OSS 120B) | Model integration implementation: health-check script, launcher aliases, CI workflow. | ✅ |
