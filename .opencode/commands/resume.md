@@ -26,6 +26,9 @@ Run these skill loads in order:
 4. `skill load autoaudit` — 5-phase DSS audit
 5. `skill load verify` — verification protocol
 6. `skill load planning-and-task-breakdown` — task decomposition
+7. `skill load brainstorming` — idea exploration and requirements design
+8. `skill load writing-plans` — create detailed implementation plans
+9. `skill load subagent-driven-development` — subagent-per-task execution with two-stage review
 
 ### Step 4 — Check current state
 - Read `vbe-auto/results/` — most recent verify_results_*.json for ERP health
