@@ -1026,12 +1026,12 @@ goto :!MODE!
 :model-health
 echo [OpenCode] Running full model health check...
 %PWSH% -File "%PROJECT_ROOT%\scripts\model-health-check.ps1" -Mode all
-goto :EOF
+goto :end
 
 :verify-sonnet
 echo [OpenCode] Verifying Claude Code backend...
 %PWSH% -File "%PROJECT_ROOT%\scripts\model-health-check.ps1" -Mode sonnet
-goto :EOF
+goto :end
 
 :: ==============================================================
 :help
@@ -1081,6 +1081,8 @@ echo   autotest   Macro test suite
 echo   autoaudit  5-phase DSS audit
 echo   autothesis Build thesis PDF
 echo   autocheck  System health test
+echo   model-health  Run full model health check
+echo   verify-sonnet  Verify Claude Code backend
 echo   autofix    Full pipeline
 echo   autoplan   CLI with Google Gemini 2.5 Flash (planning)
 echo   autolog    Run any mode with logging
