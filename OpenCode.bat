@@ -105,14 +105,14 @@ set "KIMI_MODEL=openrouter/moonshotai/kimi-k2.6"
 set "QUASAR_MODEL=openrouter/openrouter/quasar-alpha"
 
 :: ---- Mode Registry (Single Source of Truth) ----
-set "CLI_MODES=cli groq llama llama-405b mixtral gemini gemini3 gemma gemma-31b gemma-local phi4 qwen3 hermes3 nemotron ring deepseek-free freellm completions deepseek deepseek-flash kimi quasar ollama windsurf windsurf-anthropic"
+set "CLI_MODES=cli groq llama llama-405b mixtral gemini gemini3 gemma gemma-31b gemma-local phi4 qwen3 hermes3 nemotron ring deepseek-free freellm completions deepseek deepseek-flash kimi quasar ollama windsurf windsurf-anthropic model-health verify-sonnet"
 set "OLLAMA_MODES=phi4 qwen3 hermes3 gemma-local"
 set "PIPELINE_MODES=autobuild autoverify autotest autoaudit autothesis autocheck autofix autoplan autolog automenu autoclean status crossflow crossflow-sync sync mem sandbox"
-set "SPECIAL_MODES=gui fcc proxy academix academix-agent restore picker help"
+set "SPECIAL_MODES=gui fcc proxy academix academix-agent restore picker help sari sari-build sari-scan sari-shell"
 :: Menu display categories
 set "MENU_AUTO=autobuild autoverify autotest autoaudit autofix autocheck"
 set "MENU_CROSS=crossflow crossflow-sync"
-set "MENU_OTHER=academix gui picker freellm autoclean status help"
+set "MENU_OTHER=academix gui picker freellm autoclean status sari sari-build sari-scan sari-shell help"
 set "FCC_DIR=%USERPROFILE%\.opencode\plugins\fcc-proxy"
 set "FCC_PORT=8082"
 set "FREELM_DIR=%USERPROFILE%\.opencode\plugins\freellm"
@@ -655,8 +655,52 @@ cd /d "%PROJECT_ROOT%"
 "%OC_EXE%" --model "%GEMINI_MODEL%" --agent academix "%PROJECT_ROOT%"
 goto :end
 
-:: ==============================================================
-:restore
+ :: ==============================================================
+ :sari
+ title OpenCode [SARI] - %SESSION_NAME%
+ echo   === SARI PROJECT DASHBOARD ===
+ echo.
+ if not exist "%PROJECT_ROOT%\sari\scripts\sari-launcher.ps1" (
+     echo   ERROR: sari-launcher.ps1 not found
+     pause
+     exit /b 1
+ )
+ cd /d "%PROJECT_ROOT%"
+ pwsh -NoExit -ExecutionPolicy Bypass -File "%PROJECT_ROOT%\sari\scripts\sari-launcher.ps1"
+ echo.
+ pause
+ goto :end
+
+ :sari-build
+ title OpenCode [SARI-BUILD] - %SESSION_NAME%
+ echo   === SARI BUILD ===
+ echo.
+ pwsh -NoProfile -Command "Get-Process -Name excel -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue; Start-Sleep 2"
+ pwsh -NoProfile -ExecutionPolicy Bypass -File "%PROJECT_ROOT%\sari\build.ps1"
+ if errorlevel 1 ( echo   BUILD FAILED & pause & exit /b 1 ) else ( echo   BUILD OK )
+ pause
+ goto :end
+
+ :sari-scan
+ title OpenCode [SARI-SCAN] - %SESSION_NAME%
+ echo   === SARI VBA ERROR SCAN ===
+ echo.
+ pwsh -NoProfile -ExecutionPolicy Bypass -File "%PROJECT_ROOT%\sari\tools\scan-vba.ps1"
+ echo.
+ pause
+ goto :end
+
+ :sari-shell
+ title OpenCode [SARI-SHELL] - %SESSION_NAME%
+ echo   === SARI SHELL ===
+ echo   Launching OpenCode for Sari project...
+ echo.
+ cd /d "%PROJECT_ROOT%\sari"
+ "%OC_EXE%" "%PROJECT_ROOT%"
+ goto :end
+
+ :: ==============================================================
+ :restore
 echo [OpenCode] Restoring last session...
 if not exist "%LAST_SESSION%" (
     echo   No saved session found. Launching default CLI.
@@ -950,6 +994,10 @@ for %%o in (%MENU_OTHER%) do (
     if "%%o"=="gui" set "_d=Desktop GUI"
     if "%%o"=="autoclean" set "_d=Purge old files (30-day)"
     if "%%o"=="status" set "_d=Project health overview"
+    if "%%o"=="sari" set "_d=Sari micro-ERP dashboard"
+    if "%%o"=="sari-build" set "_d=Build Sari workbook"
+    if "%%o"=="sari-scan" set "_d=Scan Sari for VBA errors"
+    if "%%o"=="sari-shell" set "_d=OpenCode CLI for Sari workspace"
     if "%%o"=="help" set "_d=Show help"
     echo    [!_n!]  %%o  !_d!
     set /a _n+=1
@@ -973,6 +1021,17 @@ if /i "!MODE!"=="on" set "MODE=nemotron"
 if /i "!MODE!"=="ogg" set "MODE=gemma"
 if /i "!MODE!"=="ogg-local" set "MODE=gemma-local"
 goto :!MODE!
+
+:: ==============================================================
+:model-health
+echo [OpenCode] Running full model health check...
+%PWSH% -File "%PROJECT_ROOT%\scripts\model-health-check.ps1" -Mode all
+goto :EOF
+
+:verify-sonnet
+echo [OpenCode] Verifying Claude Code backend...
+%PWSH% -File "%PROJECT_ROOT%\scripts\model-health-check.ps1" -Mode sonnet
+goto :EOF
 
 :: ==============================================================
 :help
@@ -1033,6 +1092,10 @@ echo   sync       Incremental context sync (CocoIndex pattern)
 echo   mem        Semantic memory utilities (capture/search)
 echo   sandbox    Worktree sandbox iteration loop
 echo   status     Project health overview
+echo   sari       Sari micro-ERP dashboard
+echo   sari-build Build Sari workbook
+echo   sari-scan  Scan Sari workbook for VBA errors
+echo   sari-shell OpenCode CLI for Sari workspace
 echo   help       This screen
 echo.
 echo Multi-Session: OpenCode groq thesis  -- named session "thesis"
