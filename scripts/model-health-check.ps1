@@ -9,6 +9,9 @@ function Test-EnvVars {
     foreach ($key in $requiredKeys) {
         $val = [Environment]::GetEnvironmentVariable($key, "User")
         if ([string]::IsNullOrEmpty($val)) {
+            $val = [Environment]::GetEnvironmentVariable($key, "Process")
+        }
+        if ([string]::IsNullOrEmpty($val)) {
             Write-Host "FAIL: $key is not set" -ForegroundColor Red
             $allSet = $false
         } else {
@@ -27,7 +30,7 @@ function Test-Connectivity {
     $allOk = $true
     foreach ($p in $providers) {
         $key = [Environment]::GetEnvironmentVariable($p.KeyVar, "User")
-        if ([string]::IsNullOrEmpty($key)) { continue }
+        if ([string]::IsNullOrEmpty($key)) { Write-Host "SKIP: $($p.Name) (no key set)" -ForegroundColor Yellow; continue }
         try {
             $response = Invoke-RestMethod -Uri $p.Url -Headers @{ "Authorization" = "Bearer $key" } -TimeoutSec 5
             Write-Host "PASS: $($p.Name) reachable" -ForegroundColor Green
@@ -40,6 +43,16 @@ function Test-Connectivity {
 }
 
 function Test-ClaudeCodeBackend {
+    # 0. Binary existence checks
+    if ($null -eq (Get-Command "opencode.exe" -ErrorAction SilentlyContinue)) {
+        Write-Host "FAIL: opencode.exe not found on PATH" -ForegroundColor Red
+        return $false
+    }
+    if ($null -eq (Get-Command "omc.exe" -ErrorAction SilentlyContinue)) {
+        Write-Host "FAIL: omc.exe not found on PATH" -ForegroundColor Red
+        return $false
+    }
+
     # 1. Plugin presence
     $pluginOut = & "opencode.exe" plugins list 2>&1
     if ($pluginOut -match "everything-claude-code") {
@@ -60,7 +73,7 @@ function Test-ClaudeCodeBackend {
 
     # 3. E2E test query
     try {
-        $answer = & "omc.exe" ask /ask claude-code-sonnet "reply with the word READY" 2>&1
+        $answer = & "omc.exe" ask claude-code-sonnet "reply with the word READY" 2>&1
         if ($answer -match "READY") {
             Write-Host "PASS: Claude Code backend responds correctly" -ForegroundColor Green
             return $true
