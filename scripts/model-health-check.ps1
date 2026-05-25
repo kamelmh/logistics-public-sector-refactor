@@ -30,6 +30,9 @@ function Test-Connectivity {
     $allOk = $true
     foreach ($p in $providers) {
         $key = [Environment]::GetEnvironmentVariable($p.KeyVar, "User")
+        if ([string]::IsNullOrEmpty($key)) {
+            $key = [Environment]::GetEnvironmentVariable($p.KeyVar, "Process")
+        }
         if ([string]::IsNullOrEmpty($key)) { Write-Host "SKIP: $($p.Name) (no key set)" -ForegroundColor Yellow; continue }
         try {
             $response = Invoke-RestMethod -Uri $p.Url -Headers @{ "Authorization" = "Bearer $key" } -TimeoutSec 5
