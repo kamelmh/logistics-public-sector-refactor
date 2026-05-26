@@ -56,7 +56,7 @@ $pandocArgs = @(
 if (-not $DoubleBlind) {
     $pandocArgs += "--metadata", "author=Mahi Kamel Abdelghani"
 }
-&amp; pandoc $pandocArgs
+& pandoc $pandocArgs
 
 if ($LASTEXITCODE -eq 0) {
     $size = (Get-Item $outDocx).Length
