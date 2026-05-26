@@ -6,71 +6,144 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  PYTHON_VERSION: '3.x'
+  THESIS_DOCX: Research_and_Development/Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx
+  PAPER_DOCX: Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.docx
+  PAPER_PDF: Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.pdf
+
 jobs:
-  build-test-verify:
+  # ──────────────────────────────────────────────────────
+  # THESIS — Main gate (Windows-native scripts, must pass)
+  # ──────────────────────────────────────────────────────
+  thesis:
+    name: Thesis build & verify
     runs-on: windows-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
 
-    - name: Setup Python (for measure-thesis)
+    - name: Setup Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.x'
+        python-version: ${{ env.PYTHON_VERSION }}
 
     - name: Install python-docx
       run: pip install python-docx lxml
 
     - name: Setup Pandoc
-      run: |
-        choco install pandoc --no-progress -y
+      run: choco install pandoc --no-progress -y
 
     - name: Setup MiKTeX (for PDF)
       continue-on-error: true
-      run: |
-        choco install miktex --no-progress -y
-
-    - name: Build ERP workbook
-      run: |
-        & "vbe-auto\build.ps1" -ConfigPath "vbe-auto\config.json"
-
-    - name: Run ERP macro tests
-      run: |
-        & "Software_Surgical_Edit\test-macros.ps1"
-      continue-on-error: true
-
-    - name: Run ERP verification (autoaudit)
-      run: |
-        & "vbe-auto\verify.ps1" -ConfigPath "vbe-auto\config.json"
+      run: choco install miktex --no-progress -y
 
     - name: Build thesis DOCX
-      run: |
-        & "Thesis_Surgical_Edit\build-thesis.ps1"
+      run: pwsh -File Thesis_Surgical_Edit/build-thesis.ps1
 
-    - name: Verify thesis DOCX
+    - name: Verify thesis DOCX (28 checks)
       run: |
-        python Thesis_Surgical_Edit/style/verify_docx_checks.py Research_and_Development/Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx
+        python Thesis_Surgical_Edit/style/verify_docx_checks.py "${{ env.THESIS_DOCX }}"
 
     - name: Build English paper DOCX
-      run: |
-        & "Thesis_Surgical_Edit\build-english-paper.ps1"
+      run: pwsh -File Thesis_Surgical_Edit/build-english-paper.ps1
 
-    - name: Verify English paper DOCX
-      run: |
-        & "Thesis_Surgical_Edit\verify-english-paper.ps1"
+    - name: Verify English paper (12 checks)
+      run: pwsh -File Thesis_Surgical_Edit/verify-english-paper.ps1
 
     - name: Build English paper PDF
       continue-on-error: true
+      run: pwsh -File Thesis_Surgical_Edit/build-english-paper-pdf.ps1
+
+    - name: Upload thesis DOCX
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: thesis-docx
+        path: ${{ env.THESIS_DOCX }}
+
+    - name: Upload English paper DOCX
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: english-paper-docx
+        path: ${{ env.PAPER_DOCX }}
+
+    - name: Upload English paper PDF
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: english-paper-pdf
+        path: ${{ env.PAPER_PDF }}
+
+    - name: Upload submission package
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: submission-package
+        path: |
+          Thesis_Surgical_Edit/submission/*.md
+          Thesis_Surgical_Edit/English_Research_Paper.md
+
+  # ──────────────────────────────────────────────────────
+  # ERP — Requires Excel COM (self-hosted only)
+  # ──────────────────────────────────────────────────────
+  erp:
+    name: ERP workbook build
+    runs-on: windows-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Check for Excel
+      id: check-excel
+      shell: pwsh
       run: |
-        & "Thesis_Surgical_Edit\build-english-paper-pdf.ps1"
+        $paths = @(
+          "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE",
+          "C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE",
+          "C:\Program Files\Microsoft Office\Office16\EXCEL.EXE",
+          "C:\Program Files (x86)\Microsoft Office\Office14\EXCEL.EXE"
+        )
+        $found = $null
+        foreach ($p in $paths) {
+          if (Test-Path $p) { $found = $p; break }
+        }
+        if ($found) {
+          Write-Host "Excel found: $found"
+          "excel_found=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        } else {
+          Write-Host "Excel not found on this runner (expected: GA runners lack Office)"
+          "excel_found=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        }
+
+    - name: Build ERP workbook
+      if: steps.check-excel.outputs.excel_found == 'true'
+      continue-on-error: true
+      run: |
+        & "vbe-auto\build.ps1" -ConfigPath "vbe-auto\vbe-auto-config.json"
+
+    - name: Run ERP macro tests
+      if: steps.check-excel.outputs.excel_found == 'true'
+      continue-on-error: true
+      run: |
+        & "Software_Surgical_Edit\test-macros.ps1"
+
+    - name: Run ERP verification (autoaudit)
+      if: steps.check-excel.outputs.excel_found == 'true'
+      continue-on-error: true
+      run: |
+        & "vbe-auto\verify.ps1" -ConfigPath "vbe-auto\vbe-auto-config.json"
 
     - name: Upload verification results
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: verify-results
-        path: vbe-auto\results\
+        path: vbe-auto/results/
 
     - name: Upload test logs (if any)
       if: always()
@@ -89,39 +162,31 @@ jobs:
         name: erp-workbook
         path: ERP_v13.2.xlsm
 
-    - name: Upload thesis DOCX
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: thesis-docx
-        path: Research_and_Development\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx
-
-    - name: Upload English paper PDF
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: english-paper-pdf
-        path: Research_and_Development\Thesis_Surgical_Edit\output\English_Research_Paper_IEEE.pdf
-
-    - name: Upload submission package
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: submission-package
-        path: |
-          Thesis_Surgical_Edit\submission\*.md
-          Thesis_Surgical_Edit\English_Research_Paper.md
-
+  # ──────────────────────────────────────────────────────
+  # LINT — Code quality checks
+  # ──────────────────────────────────────────────────────
   lint:
+    name: Lint (PowerShell + Python)
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+
     - name: Install PSScriptAnalyzer
       run: |
         sudo pwsh -c 'Install-Module -Name PSScriptAnalyzer -Force -Scope AllUsers'
+
     - name: Run PSScriptAnalyzer on build scripts
+      shell: pwsh
       run: |
-        pwsh -c 'Invoke-ScriptAnalyzer -Path Thesis_Surgical_Edit/build-thesis.ps1, Thesis_Surgical_Edit/build-english-paper.ps1, Thesis_Surgical_Edit/verify-thesis.ps1, Thesis_Surgical_Edit/verify-english-paper.ps1 -Recurse -ExcludeRule PSAvoidUsingCmdletAliases,PSUseDeclaredVarsMoreThanAssignments | Format-Table -AutoSize'
+        $scripts = @(
+          "Thesis_Surgical_Edit/build-thesis.ps1",
+          "Thesis_Surgical_Edit/build-english-paper.ps1",
+          "Thesis_Surgical_Edit/verify-thesis.ps1",
+          "Thesis_Surgical_Edit/verify-english-paper.ps1"
+        )
+        Invoke-ScriptAnalyzer -Path $scripts -Recurse `
+          -ExcludeRule PSAvoidUsingCmdletAliases,PSUseDeclaredVarsMoreThanAssignments `
+        | Format-Table -AutoSize
 
     - name: Install ruff
       run: pip install ruff
