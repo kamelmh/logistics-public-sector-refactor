@@ -21,8 +21,9 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: recursive
+      # NOTE: submodules NOT fetched — some submodules have filename lengths
+      # exceeding Windows MAX_PATH (260 chars), causing checkout failures.
+      # CI only needs main repo files (MD sources + Python scripts + build tools).
 
     - name: Setup Python
       uses: actions/setup-python@v5
@@ -95,8 +96,7 @@ jobs:
     continue-on-error: true
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: recursive
+      # NOTE: submodules intentionally skipped (see thesis job comment)
 
     - name: Check for Excel
       id: check-excel
