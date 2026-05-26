@@ -53,6 +53,10 @@ def fix_footnotes_rtl(path):
 
     if modified:
         raw = ET.tostring(root, encoding="unicode")
+        # Preserve XML declaration required by OOXML (Word rejects missing declaration)
+        XML_DECL = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        if not raw.startswith('<?xml'):
+            raw = XML_DECL + raw
         with zipfile.ZipFile(path, "r") as z:
             items = z.namelist()
             # We'll write to a temp file and swap

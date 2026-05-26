@@ -286,6 +286,10 @@ def fix_footnotes_rtl(docx_path, changes):
     
     if modified:
         raw = ET.tostring(root, encoding='unicode')
+        # Preserve XML declaration required by OOXML (Word rejects missing declaration)
+        XML_DECL = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        if not raw.startswith('<?xml'):
+            raw = XML_DECL + raw
         tmp = docx_path + '.tmp'
         with zipfile.ZipFile(docx_path, 'r') as zin:
             with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as zout:

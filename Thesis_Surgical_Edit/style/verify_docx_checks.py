@@ -25,6 +25,24 @@ def run_checks(docx_path, strict_headings=False, size_threshold=50000):
         check("Paragraph count >= 250", p_count >= 250, f"count={p_count}"),
         check("File size threshold", fsize > size_threshold, f"size={fsize//1024}KB"),
     ]
+
+    # --- Validate all XML parts have XML declaration (prevents Word corruption) ---
+    xml_parts_no_decl = []
+    try:
+        xml_targets = ['word/document.xml', 'word/footnotes.xml', 'word/endnotes.xml',
+                       'word/styles.xml', 'word/settings.xml', 'word/numbering.xml',
+                       'word/fontTable.xml', 'word/webSettings.xml',
+                       '[Content_Types].xml']
+        with zipfile.ZipFile(docx_path, 'r') as z:
+            for xml_file in xml_targets:
+                if xml_file in z.namelist():
+                    raw = z.read(xml_file).decode('utf-8', errors='replace')
+                    if not raw.startswith('<?xml'):
+                        xml_parts_no_decl.append(xml_file)
+    except Exception as e:
+        xml_parts_no_decl = [f"ERROR: {e}"]
+    results.append(check("All XML parts have declaration", len(xml_parts_no_decl)==0,
+                         f"Missing in: {xml_parts_no_decl}" if xml_parts_no_decl else "All OK"))
     pg = sections[0].page_width; ph = sections[0].page_height
     results.append(check("Page size A4", abs(pg.cm-21)<0.1 and abs(ph.cm-29.7)<0.1, f"{pg.cm:.1f}x{ph.cm:.1f}cm"))
 
