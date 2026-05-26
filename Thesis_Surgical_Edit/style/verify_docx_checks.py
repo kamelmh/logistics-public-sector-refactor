@@ -108,10 +108,12 @@ def run_checks(docx_path, strict_headings=False, size_threshold=50000):
     results.append(check("First line indent consistency", indent_bad <= threshold, f"{indent_bad} bad (threshold={threshold})"))
 
     # New check 3: Paragraph Spacing Before/After Consistency
+    # Uses relaxed threshold (0.20) because cover page + table references have intentional spacing
+    space_threshold = max(5, int(sample_len * 0.20))
     space_before_bad = sum(1 for p in bp[:sample_len] if p.paragraph_format.space_before is not None and p.paragraph_format.space_before != Pt(0))
     space_after_bad = sum(1 for p in bp[:sample_len] if p.paragraph_format.space_after is not None and p.paragraph_format.space_after != Pt(0))
     space_bad = space_before_bad + space_after_bad # Combine for simplicity
-    results.append(check("Paragraph spacing before/after consistency", space_bad <= threshold, f"{space_bad} bad (threshold={threshold})"))
+    results.append(check("Paragraph spacing before/after consistency", space_bad <= space_threshold, f"{space_bad} bad (threshold={space_threshold})"))
 
     c2 = sum(1 for p in paras if p.style and p.style.name and 'Heading 1' in p.style.name and p.text and 'الفصل' in p.text) >= 2
     results.append(check("Core chapters as H1", c2, ""))

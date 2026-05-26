@@ -34,3 +34,24 @@ vbe-auto/results/*.json
 
 # Symlink hub (pointer files only)
 links/
+
+# Windows Desktop.ini artifacts
+desktop.ini
+*.ini
+
+# Generated output directories
+Thesis_Surgical_Edit/output/
+Thesis_Surgical_Edit/style/__pycache__/
+Research_and_Development/Thesis_Surgical_Edit/output/
+.opencode/skills_spectrum/
+media-*/
+external_obsidian_repos/
+node_modules/
+
+# Exploration repos (not project code)
+sari/
+Research_and_Development/explore-*/
+Research_and_Development/Thesis_Surgical_Edit/out/
+
+# CrossFlow handoff artifacts
+.crossflow/*.sari.md
