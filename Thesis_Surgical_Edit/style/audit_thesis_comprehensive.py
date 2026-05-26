@@ -258,19 +258,24 @@ def run_audit(docx_path):
     # 10. ISSUES SUMMARY
     issues = []
     
-    # Page numbering
-    cover_pg = doc.sections[0]._sectPr.find(NS+'pgNumType')
-    if cover_pg is not None:
-        cover_fmt = cover_pg.get(NS+'fmt')
-        if cover_fmt and cover_fmt != 'none':
-            issues.append("Cover has pgNumType (fmt=%s) — may show page number" % cover_fmt)
+    # Page numbering (handle single-section pandoc output gracefully)
+    n_sections = len(doc.sections)
+    if n_sections > 0:
+        cover_pg = doc.sections[0]._sectPr.find(NS+'pgNumType')
+        if cover_pg is not None:
+            cover_fmt = cover_pg.get(NS+'fmt')
+            if cover_fmt and cover_fmt != 'none':
+                issues.append("Cover has pgNumType (fmt=%s) — may show page number" % cover_fmt)
     
-    s1_fmt = 'default_decimal'
-    s1 = doc.sections[1]._sectPr.find(NS+'pgNumType')
-    if s1 is not None:
-        s1_fmt = s1.get(NS+'fmt')
-    if s1_fmt == 'default_decimal':
-        issues.append("Section 1 (front matter) uses decimal not lowerRoman")
+    if n_sections > 1:
+        s1_fmt = 'default_decimal'
+        s1 = doc.sections[1]._sectPr.find(NS+'pgNumType')
+        if s1 is not None:
+            s1_fmt = s1.get(NS+'fmt')
+        if s1_fmt == 'default_decimal':
+            issues.append("Section 1 (front matter) uses decimal not lowerRoman")
+    else:
+        issues.append("Single-section document (expected after pandoc rebuild — run fix_docx_sections.py)")
     
     # TOC status
     toc_count = sum(1 for p in doc.paragraphs if p.style and 'toc' in p.style.name.lower())

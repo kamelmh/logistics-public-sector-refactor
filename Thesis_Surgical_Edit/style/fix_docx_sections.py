@@ -1,4 +1,4 @@
-"""fix_docx_sections.py — Add section breaks at logical thesis boundaries
+"""fix_docx_sections.py — Add section breaks at logical thesis boundaries, set A4 page size
 Usage: python fix_docx_sections.py <path/to.docx> [--save]
 """
 
@@ -6,6 +6,19 @@ import sys, os, json, copy
 from docx import Document
 from docx.oxml.ns import qn, nsdecls
 from docx.oxml import parse_xml
+from docx.shared import Cm
+
+# Force UTF-8 for stdout (avoids 'charmap' codec error on Windows with Arabic text)
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+elif hasattr(sys.stdout, 'buffer'):
+    # Python <3.7 fallback
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
+# A4 dimensions in cm
+A4_WIDTH_CM = 21.0
+A4_HEIGHT_CM = 29.7
 
 # Boundary markers: look for paragraphs containing these strings AND matching heading style
 # Each tuple: (marker text, section_name, must_be_first_h1)
@@ -14,6 +27,19 @@ BOUNDARIES = [
     ("قائمة المصادر والمراجع", "BackMatter", False),
     ("الملاحق", "Annexes", False),
 ]
+
+
+def set_a4_page_size(sect_pr):
+    """Set page size to A4 (21.0 x 29.7 cm) on a sectPr element."""
+    pgSz = sect_pr.find(qn('w:pgSz'))
+    if pgSz is None:
+        pgSz = parse_xml(f'<w:pgSz {nsdecls("w")} w:w="11906" w:h="16838"/>')
+        sect_pr.insert(0, pgSz)
+    else:
+        pgSz.set(qn('w:w'), '11906')   # A4 width in twips (21cm)
+        pgSz.set(qn('w:h'), '16838')   # A4 height in twips (29.7cm)
+    # Remove any letter-size override
+    pgSz.attrib.pop(qn('w:orient'), None)
 
 
 def add_section_breaks(path, save=False):
@@ -26,6 +52,10 @@ def add_section_breaks(path, save=False):
     if body_sect_pr is None:
         print("[ERROR] No sectPr found in document body")
         return
+
+    # Force A4 page size on the body section
+    set_a4_page_size(body_sect_pr)
+    print(f"  [A4] Body section page size set to {A4_WIDTH_CM}x{A4_HEIGHT_CM}cm")
 
     HEADING_STYLES = {"Heading 1", "Heading 2", "Heading 3", "Titre 1", "Titre 2", "Titre 3"}
     # Find boundary paragraphs — match actual headings, not TOC entries
@@ -61,6 +91,8 @@ def add_section_breaks(path, save=False):
             continue
 
         new_sect_pr = copy.deepcopy(body_sect_pr)
+        # Force A4 on new sections too
+        set_a4_page_size(new_sect_pr)
         if pPr is None:
             pPr = parse_xml(f'<w:pPr {nsdecls("w")}/>')
             p_elem.insert(0, pPr)

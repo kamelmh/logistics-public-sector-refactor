@@ -178,15 +178,8 @@ jobs:
     - name: Run PSScriptAnalyzer on build scripts
       shell: pwsh
       run: |
-        $scripts = @(
-          "Thesis_Surgical_Edit/build-thesis.ps1",
-          "Thesis_Surgical_Edit/build-english-paper.ps1",
-          "Thesis_Surgical_Edit/verify-thesis.ps1",
-          "Thesis_Surgical_Edit/verify-english-paper.ps1"
-        )
-        Invoke-ScriptAnalyzer -Path $scripts -Recurse `
-          -ExcludeRule PSAvoidUsingCmdletAliases,PSUseDeclaredVarsMoreThanAssignments `
-        | Format-Table -AutoSize
+        # Pass paths as comma-separated string to avoid array-to-string coercion
+        Invoke-ScriptAnalyzer -Path "Thesis_Surgical_Edit/build-thesis.ps1","Thesis_Surgical_Edit/build-english-paper.ps1","Thesis_Surgical_Edit/verify-thesis.ps1","Thesis_Surgical_Edit/verify-english-paper.ps1" -Recurse -ExcludeRule PSAvoidUsingCmdletAliases,PSUseDeclaredVarsMoreThanAssignments | Format-Table -AutoSize
 
     - name: Install ruff
       run: pip install ruff
