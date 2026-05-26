@@ -1,78 +1,100 @@
-# Logistics Public Sector Refactor (ERP v13.2)
+# Academix v13.2 — DSS Logistique El Bayadh
 
-This repository contains the VBA‑based ERP system for the Algerian Public Sector (Direction de l'Education El Bayadh).  The codebase is pure VBA, built via the `vbe-auto` toolkit, and includes a thesis, verification pipelines, and auxiliary automation.
+[![CI](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml/badge.svg)](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml)
+[![VBA](https://img.shields.io/badge/VBA-Excel%202010%2B-green)](https://docs.microsoft.com/en-us/office/vba/)
+[![Thesis](https://img.shields.io/badge/Thesis-DSS%20Logistique%20El--Bayadh-8A2BE2)](https://github.com/kamelmh/lsm-vba-core)
 
-## New Skills Added (May 2026)
+Decision Support System for inventory management at the **Direction de l'Éducation d'El Bayadh** (Algerian Ministry of Education). Pure VBA, Excel 2010+ compatible.
 
-### `crossflow-deepseek-ask`
-- **Purpose**: Send a question to DeepSeek V4 Flash via the CrossFlow sync topology and capture the answer as an ask artifact.
-- **Usage**: `/crossflow-deepseek-ask "<your question>"`
-- **Location**: `.opencode/skills/crossflow-deepseek-ask/SKILL.md`
-- **Example**:
-  ```bash
-  /crossflow-deepseek-ask "Assess the priority of using CrossFlow for our EPIC project architecture."
-  ```
+**Master's thesis in Logistics & Supply Chain Management — ENP Oran / CNEPD 2026.**
 
-### `crossflow-sync`
-- **Purpose**: Multi‑window synchronization – reads handoff, checks context freshness, loads the orchestrator skill, and prompts to update the session log.
-- **Usage**: `/crossflow-sync` (run at session start and after any high‑impact task).
-- **Location**: `.opencode/skills/crossflow-sync/SKILL.md`
-- **Workflow**:
-  1. Read `.crossflow/HANDOFF.md` – pending items and recent sign‑offs.
-  2. Read `.crossflow/MASTER_CONTEXT.md` – last‑updated timestamp.
-  3. Load `crossflow-orchestrator` skill.
-  4. Prompt: “Did you perform work that may affect another window? (y/n)”. If **y**, open `SESSION_LOG.md` for appending.
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| D | 1,546 units/yr | Annual demand |
+| Q* | 176 units | Wilson EOQ |
+| ROP | 212.4 units | Reorder Point |
+| SS | 200 units | Safety Stock |
+| LT | 2 days | Lead Time |
+| S | 801.45 DZD | Order Cost |
+| I | 20% | Holding Rate |
 
-### `autoaudit`
-- **Purpose**: Run the full verification suite (`verify.ps1`) to ensure workbook health.
-- **Usage**: `/autoaudit`
-- **Location**: `.opencode/skills/autoaudit/SKILL.md`
+> Canonical thesis constants — locked, never modify.
 
-## Core Commands
+## Repositories
 
-| Alias | Command | Description |
-|-------|---------|-------------|
-| `autobuild` | `build.ps1` | Rebuild the ERP workbook from VBA sources. |
-| `autoverify` | `verify.ps1` | Run 137 verification checks. |
-| `autotest` | `test-macros.ps1` | Execute the macro test suite. |
-| `autoaudit` | `verify.ps1` (see skill) | Full verification health check. |
-| `autothesis` | `thesis-doctor.ps1 pipeline:full` | Build, verify, and metrics for the thesis. |
-| `crossflow-sync` | (skill) | Synchronize windows and update session log. |
-| `crossflow-deepseek-ask` | (skill) | Ask DeepSeek V4 Flash via CrossFlow. |
-
-## Verification & Testing
-
-- After any VBA edit, run `autoverify` to ensure no regressions.
-- Run `autotest` to confirm macro functionality.
-- Use `crossflow-sync` at session start and after edits that affect shared state (e.g., after a build or a handoff update).
-- Use `crossflow-deepseek-ask` for quick priority assessments, architecture questions, or any ad‑hoc DeepSeek V4 Flash query.
+| Repo | Visibility | Purpose |
+|------|-----------|---------|
+| [`logistics-public-sector-refactor`](https://github.com/kamelmh/logistics-public-sector-refactor) | 🔒 **PRIVATE** | Thesis drafts, exploration repos, full project context |
+| [`lsm-vba-core`](https://github.com/kamelmh/lsm-vba-core) | 🌍 PUBLIC | Sanitized VBA framework — referenced in thesis bibliography |
 
 ## Build Instructions
 
-1. **Re‑build the workbook**
-   ```powershell
-   & "vbe-auto\build.ps1" -ConfigPath "vbe-auto\config.json"
-   ```
-2. **Verify**
-   ```powershell
-   & "vbe-auto\verify.ps1" -ConfigPath "vbe-auto\config.json"
-   ```
-3. **Run macro tests**
-   ```powershell
-   & "Software_Surgical_Edit\test-macros.ps1"
-   ```
+### ERP Workbook
+```powershell
+& "vbe-auto\build.ps1" -ConfigPath "vbe-auto\vbe-auto-config.json"
+& "vbe-auto\verify.ps1" -ConfigPath "vbe-auto\vbe-auto-config.json"
+& "Software_Surgical_Edit\test-macros.ps1"
+```
 
-## Thesis Pipeline
+### Thesis (DOCX + PDF)
+```powershell
+# Full pipeline (build → fix → audit → verify → metrics)
+& "Thesis_Surgical_Edit\build-thesis.ps1"
 
-- Full build, verify, and metrics:
-  ```powershell
-  & "Research_and_Development\Thesis_Surgical_Edit\thesis-doctor.ps1" pipeline:full
-  ```
-- This yields a DOCX, runs 28 verification checks, and outputs metrics JSON.
+# Or verify only
+python Thesis_Surgical_Edit/style/verify_docx_checks.py Research_and_Development/Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx
+```
 
-## Notes
+### English Paper
+```powershell
+& "Thesis_Surgical_Edit\build-english-paper.ps1"
+& "Thesis_Surgical_Edit\verify-english-paper.ps1"
+```
 
-- All VBA edits must be made to the `*.bas` source files; never edit the `.xlsm` directly (stale p‑code cache).
-- Always rebuild after editing VBA sources.
-- The CrossFlow skills rely on the `crossflow-orchestrator` skill being present.
-- Commit only after user approval and a clean verification run.
+## CI Status
+
+| Job | Required | Description |
+|-----|----------|-------------|
+| `thesis` | ✅ Must pass | Builds DOCX + PDF, 28 verify checks, uploads artifacts |
+| `erp` | ⚠️ Optional | Requires Excel (skips on GitHub Actions runners) |
+| `lint` | ✅ Must pass | PSScriptAnalyzer + ruff checks |
+
+## Architecture
+
+```
+Private Repo (this)
+├── Thesis_Surgical_Edit/       ← Thesis source (MD) + build + verify scripts
+│   ├── Memoire_DSS_Logistique_ElBayadh.md
+│   ├── English_Research_Paper.md
+│   ├── build-thesis.ps1        ← 5 build modes
+│   ├── style/
+│   │   ├── fix_thesis_all.py   ← 7-step comprehensive fixer
+│   │   ├── verify_docx_checks.py ← 28 checks
+│   │   ├── docx_md_sync.py     ← MD ↔ DOCX sync tool
+│   │   ├── audit_thesis_comprehensive.py
+│   │   └── ...
+│   └── submission/             ← ISIA 2026 submission package
+├── Software_Surgical_Edit/     ← VBA source modules
+├── vbe-auto/                   ← Build toolkit (build.ps1, verify.ps1)
+├── external/lsm-vba-core ──→   PUBLIC submodule @ kamelmh/lsm-vba-core
+├── milestone_13_2/public-lsm ──→ (same submodule, snapshot)
+├── Research_and_Development/   ← Exploration, refs, images
+└── .github/workflows/ci.yml    ← CI pipeline (3 jobs)
+```
+
+## Verification Metrics
+
+| Check | Count | Tools |
+|-------|-------|-------|
+| Thesis DOCX | 28/28 | verify_docx_checks.py (python-docx) |
+| English Paper | 12/12 | verify-english-paper.ps1 |
+| ERP Build | 174/174 | vbe-auto verify.ps1 |
+| ERP Macro Tests | 20/20 | test-macros.ps1 |
+| ERP DSS Audit | 16/16 | dss-audit.ps1 |
+
+## Rules
+
+- **All VBA edits in `.bas` source files** — never edit `.xlsm` directly (stale p-code cache)
+- **Rebuild after every VBA change**
+- **Commit only after clean verify run**
+- **Never expose secrets, absolute paths, or real inventory data** (pre-push sanitize scripts in public repo)
