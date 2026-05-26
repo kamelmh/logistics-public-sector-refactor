@@ -70,5 +70,5 @@ if /i "%MODE%"=="build-scan" (
 
 :: Default: interactive dashboard
 title Sari v1 - Micro-ERP Dashboard
-pwsh -NoExit -ExecutionPolicy Bypass -File "%LAUNCHER_SCRIPT%"
+pwsh -NoProfile -NoExit -ExecutionPolicy Bypass -File "%LAUNCHER_SCRIPT%"
 pause
