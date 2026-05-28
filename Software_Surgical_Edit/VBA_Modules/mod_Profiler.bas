@@ -1,3 +1,4 @@
+Attribute VB_Name = "mod_Profiler"
 '=====================================================================
 ' mod_Profiler.bas
 ' Simple performance logger for VBA procedures.
@@ -6,7 +7,43 @@
 '=====================================================================
 Option Explicit
 
+' ------------------------------------------------------------------
+' Declarations (MUST be before any Sub/Function/Property)
+' ------------------------------------------------------------------
 Private Const LOG_FILE_NAME As String = "PerformanceLog.csv"
+
+' High-resolution timer API
+#If VBA7 Then
+    Private Declare PtrSafe Function QueryPerformanceFrequency Lib "kernel32" (ByRef Frequency As LongLong) As LongLong
+    Private Declare PtrSafe Function QueryPerformanceCounter Lib "kernel32" (ByRef Counter As LongLong) As LongLong
+#Else
+    Private Declare Function QueryPerformanceFrequency Lib "kernel32" (ByRef Frequency As Currency) As Long
+    Private Declare Function QueryPerformanceCounter Lib "kernel32" (ByRef Counter As Currency) As Long
+#End If
+
+' Module-level timer state
+Private m_FreqInitialized As Boolean
+Private m_Frequency As Double
+
+' ------------------------------------------------------------------
+' Helper: ensure frequency is initialized once
+' ------------------------------------------------------------------
+Private Sub InitFrequency()
+    If Not m_FreqInitialized Then
+        #If VBA7 Then
+            Dim freq As LongLong
+            QueryPerformanceFrequency freq
+            m_Frequency = CDbl(freq)
+        #Else
+            ' Currency is a 64-bit type scaled by 10000; QPC raw value
+            ' is divided by 10000 when read, so counter/freq cancels it
+            Dim freq As Currency
+            QueryPerformanceFrequency freq
+            m_Frequency = CDbl(freq)
+        #End If
+        m_FreqInitialized = True
+    End If
+End Sub
 
 ' Returns the full path to the log file (same folder as the workbook)
 Private Function GetLogPath() As String
@@ -43,36 +80,28 @@ Public Sub LogPerf(ByVal procName As String, ByVal elapsedMs As Double)
     Set ts = Nothing
 End Sub
 
-' Helper: high‑resolution timer using QueryPerformanceCounter
-#If VBA7 Then
-    Private Declare PtrSafe Function QueryPerformanceFrequency Lib "kernel32" (ByRef Frequency As LongLong) As LongLong
-    Private Declare PtrSafe Function QueryPerformanceCounter Lib "kernel32" (ByRef Counter As LongLong) As LongLong
-#Else
-    Private Declare Function QueryPerformanceFrequency Lib "kernel32" (ByRef Frequency As Currency) As Long
-    Private Declare Function QueryPerformanceCounter Lib "kernel32" (ByRef Counter As Currency) As Long
-#End If
-
-Private FrequencyAsDouble As Double
-
-' Initialize frequency on first use
-Private Sub Class_Initialize()
-    Dim freq As LongLong
-    QueryPerformanceFrequency freq
-    FrequencyAsDouble = CDbl(freq)
-End Sub
-
-' Start timer – returns seconds as Double
+' Start timer - returns seconds as Double
 Public Function TimerStart() As Double
-    Dim counter As LongLong
+    InitFrequency
+    #If VBA7 Then
+        Dim counter As LongLong
+    #Else
+        Dim counter As Currency
+    #End If
     QueryPerformanceCounter counter
-    TimerStart = CDbl(counter) / FrequencyAsDouble
+    TimerStart = CDbl(counter) / m_Frequency
 End Function
 
 ' Stop timer and return elapsed seconds
 Public Function TimerStop(ByVal startTime As Double) As Double
-    Dim counter As LongLong
+    InitFrequency
+    #If VBA7 Then
+        Dim counter As LongLong
+    #Else
+        Dim counter As Currency
+    #End If
     QueryPerformanceCounter counter
-    TimerStop = (CDbl(counter) / FrequencyAsDouble) - startTime
+    TimerStop = (CDbl(counter) / m_Frequency) - startTime
 End Function
 
 ' Convenience: elapsed milliseconds

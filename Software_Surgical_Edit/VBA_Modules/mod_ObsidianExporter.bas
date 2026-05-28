@@ -1,8 +1,9 @@
+Attribute VB_Name = "mod_ObsidianExporter"
 '=====================================================================
 ' mod_ObsidianExporter.bas
 ' Exports selected worksheets to Markdown files in the folder defined by
 ' the environment variable OBSIDIAN_EXPORT_PATH (defaults to a local
-%> folder if not set). Each sheet is saved as <SheetName>.md.
+' folder if not set). Each sheet is saved as <SheetName>.md.
 '=====================================================================
 Option Explicit
 

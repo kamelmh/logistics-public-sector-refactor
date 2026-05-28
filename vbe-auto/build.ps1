@@ -57,10 +57,30 @@ if (-not (Test-Path $sourceDir)) {
 }
 
 # ============================================================================
+# STEP 0: Pre-Build VBA Validation
+# ============================================================================
+
+Write-Host "[0/10] Pre-build VBA validation..." -ForegroundColor Yellow
+$validatorScript = "$ScriptDir\vba-check.py"
+if (Test-Path $validatorScript) {
+    $result = python $validatorScript 2>&1
+    $exitCode = $LASTEXITCODE
+    Write-Host $result
+
+    if ($exitCode -ne 0) {
+        Write-Host "[ERROR] Pre-build validation FAILED — fix errors before building" -ForegroundColor Red
+        exit 1
+    }
+    Write-Host "  Pre-build validation: OK" -ForegroundColor Green
+} else {
+    Write-Host "  Validator not found: $validatorScript — skipping" -ForegroundColor Yellow
+}
+
+# ============================================================================
 # STEP 1: Kill Excel
 # ============================================================================
 
-Write-Host "[1/9] Killing Excel..." -ForegroundColor Yellow
+Write-Host "[1/10] Killing Excel..." -ForegroundColor Yellow
 Get-Process -Name "EXCEL" -ErrorAction SilentlyContinue | Stop-Process -Force
 Start-Sleep 2
 
@@ -68,7 +88,7 @@ Start-Sleep 2
 # STEP 2: Open Master Workbook
 # ============================================================================
 
-Write-Host "[2/9] Opening MASTER workbook..." -ForegroundColor Yellow
+Write-Host "[2/10] Opening MASTER workbook..." -ForegroundColor Yellow
 $xl = New-Object -ComObject Excel.Application
 $xl.Visible = $false
 $xl.DisplayAlerts = $false
@@ -89,7 +109,7 @@ try {
 # STEP 3: Strip All User Modules
 # ============================================================================
 
-Write-Host "[3/9] Stripping all user modules..." -ForegroundColor Yellow
+Write-Host "[3/10] Stripping all user modules..." -ForegroundColor Yellow
 $removed = 0
 $components = @()
 
@@ -114,7 +134,7 @@ Write-Host "  Removed $removed modules" -ForegroundColor Gray
 # STEP 4: Import Source Files
 # ============================================================================
 
-Write-Host "[4/9] Importing source files..." -ForegroundColor Yellow
+Write-Host "[4/10] Importing source files..." -ForegroundColor Yellow
 
 # Import .bas files
 $basFiles = Get-ChildItem -Path $sourceDir -Filter "*.bas" -ErrorAction SilentlyContinue
@@ -165,7 +185,7 @@ Write-Host "  Imported $basCount .bas, $frmCount .frm files" -ForegroundColor Gr
 # STEP 5: Compile
 # ============================================================================
 
-Write-Host "[5/9] Compiling..." -ForegroundColor Yellow
+Write-Host "[5/10] Compiling..." -ForegroundColor Yellow
 try {
     $xl.VBE.CommandBars("Menu Bar").Controls("Debug").Controls("Compile VBAProject").Execute()
     Write-Host "  COMPILE: OK" -ForegroundColor Green
@@ -180,7 +200,7 @@ try {
 # STEP 6: Generate Demo Data
 # ============================================================================
 
-Write-Host "[6/9] Generating demo data..." -ForegroundColor Yellow
+Write-Host "[6/10] Generating demo data..." -ForegroundColor Yellow
 try {
     $null = $xl.Run("mod_DemoData.GenerateDemoData")
     Write-Host "  GenerateDemoData: OK" -ForegroundColor Green
@@ -195,7 +215,7 @@ try {
 # (GenerateDemoData uses UserInterfaceOnly which doesn't survive save)
 # ============================================================================
 
-Write-Host "[7/9] Finalizing sheet protection..." -ForegroundColor Yellow
+Write-Host "[7/10] Finalizing sheet protection..." -ForegroundColor Yellow
 try {
     $null = $xl.Run("mod_DemoData.FinalizeBuildProtection")
     Write-Host "  FinalizeBuildProtection: OK" -ForegroundColor Green
@@ -208,7 +228,7 @@ try {
 # STEP 8: Save
 # ============================================================================
 
-Write-Host "[8/9] Saving output..." -ForegroundColor Yellow
+Write-Host "[8/10] Saving output..." -ForegroundColor Yellow
 
 # Ensure output directory exists
 $outDir = Split-Path $outputPath -Parent
@@ -236,7 +256,7 @@ try {
 # STEP 9: Cleanup
 # ============================================================================
 
-Write-Host "[9/9] Cleaning up..." -ForegroundColor Yellow
+Write-Host "[9/10] Cleaning up..." -ForegroundColor Yellow
 
 # Data reload temporarily disabled - column mapping differs between Master and output
 Write-Host "  Data reload skipped" -ForegroundColor Gray

@@ -38,7 +38,7 @@ Private Sub Workbook_Open()
     
     If Application.UserControl Then
         welcomeMsg = "ERP Académie " & versionStr & vbCrLf & _
-                     "Direction de l'Éducation - El Bayadh" & vbCrLf & vbCrLf & _
+                     "Direction de l'Education - El Bayadh" & vbCrLf & vbCrLf & _
                      "D=1,546  |  ROP=212.4  |  Q*=176  |  SS=200"
         MsgBox welcomeMsg, vbInformation, titleStr
     End If
