@@ -290,8 +290,10 @@ Private Function ConvertViaLibreOffice(ByVal inputPath As String, _
         Dim actualPath As String
         actualPath = FindLOPathOutput(inputPath, outDir, format)
         If Len(actualPath) > 0 And Len(Dir(actualPath)) > 0 Then
-            ' Rename to expected output
-            Name actualPath As outputPath
+            ' Rename to expected output (use FSO to avoid Name/As confusion)
+            Dim fsoRename As Object
+            Set fsoRename = CreateObject("Scripting.FileSystemObject")
+            fsoRename.MoveFile actualPath, outputPath
             result = True
             Debug.Print "[LO] Renamed: " & actualPath & " -> " & outputPath
         Else
