@@ -2,7 +2,7 @@ Attribute VB_Name = "MAIN_MACROS"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Éducation - Wilaya d'El Bayadh
+' Direction de l'Education - Wilaya d'El Bayadh
 ' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
 ' All rights reserved. Unauthorized reproduction or distribution prohibited.
 ' ============================================================================
@@ -18,14 +18,14 @@ Public Sub AjouterMouvement()
         VBA.UserForms.Add(frmName).Show
     Else
         MsgBox "Erreur: Le formulaire '" & frmName & "' n'existe pas." & vbCrLf & _
-               "Veuillez vérifier que le fichier n'est pas corrompu.", _
-               vbCritical, "ERP Académie v13.2"
+               "Veuillez v�rifier que le fichier n'est pas corrompu.", _
+               vbCritical, "ERP Acad�mie v13.2"
     End If
     Exit Sub
 
 ErrorHandler:
     MsgBox "Erreur lors de l'ouverture du formulaire: " & Err.Description, _
-           vbCritical, "ERP Académie v13.2"
+           vbCritical, "ERP Acad�mie v13.2"
 End Sub
 
 Public Sub RunGenerateDemoData()
@@ -44,12 +44,12 @@ Public Sub ShowMainMenu()
     If Not ws Is Nothing Then
         ws.Activate
     Else
-        MsgBox "Erreur: Feuille d'accueil introuvable.", vbCritical, "ERP Académie v13.2"
+        MsgBox "Erreur: Feuille d'accueil introuvable.", vbCritical, "ERP Acad�mie v13.2"
     End If
     Exit Sub
 
 ErrorHandler:
-    MsgBox "Erreur: " & Err.Description, vbCritical, "ERP Académie v13.2"
+    MsgBox "Erreur: " & Err.Description, vbCritical, "ERP Acad�mie v13.2"
 End Sub
 
 Private Function MainMacrosFormExists(ByVal formName As String) As Boolean
@@ -235,14 +235,14 @@ Public Sub LibeConvertBatch()
     If Len(Trim(folderPath)) = 0 Then Exit Sub
     Dim count As Long
     Application.StatusBar = "Conversion en cours..."
-    count = mod_LibreBridge.ConvertBatchToPDF(folderPath, "*.docx")
+    count = mod_LibreBridge.ConvertBatch(folderPath, "*.docx")
     Application.StatusBar = False
     MsgBox count & " fichiers convertis en PDF.", vbInformation, "Conversion batch"
 End Sub
 
 Public Sub LibeShowBridgeInfo()
     Dim info As String
-    info = mod_LibreBridge.Bridge_Description
+    info = mod_LibreBridge.Bridge_Description()
     MsgBox info, vbInformation, "Ponts d'Int" & Chr(233) & "gration"
 End Sub
 
@@ -259,7 +259,7 @@ Public Sub RunAllBarcodeGeneration()
 End Sub
 
 Public Sub RunFullPipeline()
-    ' One-click: full pipeline — validate, sync, forecast, export, backup
+    ' One-click: full pipeline - validate, sync, forecast, export, backup
     Application.StatusBar = "[PIPELINE] Lancement de la cha" & Chr(238) & "ne compl" & Chr(232) & "te..."
     
     Call mod_TaskOrchestrator.CreateDataSyncTasks

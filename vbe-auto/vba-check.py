@@ -111,6 +111,15 @@ def validate_file(fpath):
                 if first_word not in HEADER_KEYWORDS and not first_word.startswith('#'):
                     err(f"{fname} line {ln+1}: Comment continuation without leading ' — '{line.rstrip()}'")
     
+    # === CHECK 9: Const declaration using Array() (runtime function in Const) ===
+    for ln, line in enumerate(lines):
+        stripped = line.strip().upper()
+        if 'CONST' in stripped and 'ARRAY(' in stripped:
+            # Remove comments for accurate check
+            code_part = line.strip().split("'")[0].upper()
+            if 'CONST' in code_part and 'ARRAY(' in code_part:
+                err(f"{fname} line {ln+1}: Const declaration uses Array() — use module-level variable instead: '{line.rstrip()}'")
+    
     CHECKS_PASSED += 1
 
 
