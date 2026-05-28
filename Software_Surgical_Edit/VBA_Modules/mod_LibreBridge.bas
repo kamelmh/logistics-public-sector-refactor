@@ -176,8 +176,8 @@ End Function
 
 Public Function ConvertDocument(ByVal inputPath As String, _
                                 Optional ByVal outputPath As String = "", _
-                                Optional ByVal format As LibeFormat = lfPDF, _
-                                Optional ByVal timeoutSec As Long = 60) As Boolean
+                                 Optional ByVal targetFormat As LibeFormat = lfPDF, _
+                                 Optional ByVal timeoutSec As Long = 60) As Boolean
     ' Generic document conversion using best available engine.
     ' If outputPath is empty, derives from inputPath with new extension.
     ' Returns True on success.
@@ -193,18 +193,18 @@ Public Function ConvertDocument(ByVal inputPath As String, _
     
     ' Derive output if empty
     If Len(outputPath) = 0 Then
-        outputPath = ChangeExtension(inputPath, FormatExtension(format))
+        outputPath = ChangeExtension(inputPath, FormatExtension(targetFormat))
     End If
     
     ' Try LibreOffice first (best quality)
     If IsLibreOfficeInstalled() Then
-        ConvertDocument = ConvertViaLibreOffice(inputPath, outputPath, format, timeoutSec)
+        ConvertDocument = ConvertViaLibreOffice(inputPath, outputPath, targetFormat, timeoutSec)
         If ConvertDocument Then Exit Function
     End If
     
     ' Fallback: COM export (Excel files only)
     If IsCOMEnabled() Then
-        ConvertDocument = ExportViaCOM(inputPath, outputPath, format)
+        ConvertDocument = ExportViaCOM(inputPath, outputPath, targetFormat)
         If ConvertDocument Then Exit Function
     End If
     
@@ -214,11 +214,11 @@ End Function
 
 Public Function ConvertToPDF(ByVal inputPath As String, _
                              Optional ByVal outputPath As String = "", _
-                             Optional ByVal format As LibeFormat = lfPDF, _
-                             Optional ByVal timeoutSec As Long = 60) As Boolean
+                              Optional ByVal targetFormat As LibeFormat = lfPDF, _
+                              Optional ByVal timeoutSec As Long = 60) As Boolean
     ' Legacy API wrapper - calls ConvertDocument with PDF target
-    If format = lfPDF Or format = lfPDFA Then
-        ConvertToPDF = ConvertDocument(inputPath, outputPath, format, timeoutSec)
+    If targetFormat = lfPDF Or targetFormat = lfPDFA Then
+        ConvertToPDF = ConvertDocument(inputPath, outputPath, targetFormat, timeoutSec)
     Else
         ConvertToPDF = ConvertDocument(inputPath, outputPath, lfPDF, timeoutSec)
     End If
@@ -230,7 +230,7 @@ End Function
 
 Private Function ConvertViaLibreOffice(ByVal inputPath As String, _
                                        ByVal outputPath As String, _
-                                       ByVal format As LibeFormat, _
+                                       ByVal targetFormat As LibeFormat, _
                                        ByVal timeoutSec As Long) As Boolean
     ' Core LibreOffice headless conversion
     ' Determines correct filter name for the target format
@@ -251,7 +251,7 @@ Private Function ConvertViaLibreOffice(ByVal inputPath As String, _
     On Error GoTo LOConvertError
     
     ' Map format to LibreOffice filter name
-    filterName = GetLOFilterName(format)
+    filterName = GetLOFilterName(targetFormat)
     If Len(filterName) = 0 Then
         ConvertViaLibreOffice = False
         Exit Function
@@ -290,7 +290,7 @@ Private Function ConvertViaLibreOffice(ByVal inputPath As String, _
     Else
         ' LibreOffice may have used a different filename pattern
         ' Try to find the actual output
-        actualPath = FindLOPathOutput(inputPath, outDir, format)
+        actualPath = FindLOPathOutput(inputPath, outDir, targetFormat)
         If Len(actualPath) > 0 And Len(Dir(actualPath)) > 0 Then
             ' Rename to expected output (use FSO to avoid Name/As confusion)
             Set fsoRename = CreateObject("Scripting.FileSystemObject")
@@ -315,9 +315,9 @@ LOConvertError:
     ConvertViaLibreOffice = WaitForFile(outputPath, 3)
 End Function
 
-Private Function GetLOFilterName(ByVal format As LibeFormat) As String
+Private Function GetLOFilterName(ByVal targetFormat As LibeFormat) As String
     ' Returns the LibreOffice --convert-to filter string for each format
-    Select Case format
+    Select Case targetFormat
         ' --- PDF ---
         Case lfPDF:     GetLOFilterName = "writer_pdf_Export"
         Case lfPDFA:    GetLOFilterName = "writer_pdf_Export:{" & _
@@ -360,8 +360,8 @@ Private Function GetLOFilterName(ByVal format As LibeFormat) As String
     End Select
 End Function
 
-Private Function FormatExtension(ByVal format As LibeFormat) As String
-    Select Case format
+Private Function FormatExtension(ByVal targetFormat As LibeFormat) As String
+    Select Case targetFormat
         Case lfPDF, lfPDFA:     FormatExtension = ".pdf"
         Case lfDOCX:            FormatExtension = ".docx"
         Case lfDOC:             FormatExtension = ".doc"
@@ -530,7 +530,7 @@ End Function
 
 Private Function ExportViaCOM(ByVal inputPath As String, _
                               ByVal outputPath As String, _
-                              ByVal format As LibeFormat) As Boolean
+                              ByVal targetFormat As LibeFormat) As Boolean
     ' Fallback: Use Excel COM to export (limited to XLSX/XLS -> PDF)
     
     If Not IsCOMEnabled() Then
@@ -566,7 +566,7 @@ Private Function ExportViaCOM(ByVal inputPath As String, _
     End If
     
     ' 0 = xlTypePDF, 1 = xlTypeXPS
-    If format = lfXPS Then
+    If targetFormat = lfXPS Then
         wb.ExportAsFixedFormat 1, outputPath
     Else
         wb.ExportAsFixedFormat 0, outputPath
@@ -1090,14 +1090,14 @@ End Function
 
 Private Function FindLOPathOutput(ByVal inputPath As String, _
                                   ByVal outDir As String, _
-                                  ByVal format As LibeFormat) As String
+                                  ByVal targetFormat As LibeFormat) As String
     ' LibreOffice derives output filename from input
     Dim baseName As String
     baseName = Left(inputPath, InStrRev(inputPath, ".") - 1)
     baseName = Mid(baseName, InStrRev(baseName, "\") + 1)
     
     Dim ext As String
-    ext = FormatExtension(format)
+    ext = FormatExtension(targetFormat)
     
     Dim candidate As String
     candidate = outDir & "\" & baseName & ext

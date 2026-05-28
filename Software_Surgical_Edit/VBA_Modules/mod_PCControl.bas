@@ -791,11 +791,11 @@ Public Function Net_Ping(ByVal host As String) As String
 End Function
 
 Public Function Net_GetIPConfig() As String
-    Return Shell_CaptureOutput("ipconfig")
+    Net_GetIPConfig = Shell_CaptureOutput("ipconfig")
 End Function
 
 Public Function Net_GetDNS() As String
-    Return Shell_CaptureOutput("nslookup localhost 2>nul | findstr /i ""Default Server""")
+    Net_GetDNS = Shell_CaptureOutput("nslookup localhost 2>nul | findstr /i ""Default Server""")
 End Function
 
 Public Sub Net_ShowIPConfig()

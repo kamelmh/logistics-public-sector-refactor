@@ -545,7 +545,7 @@ End Sub
 
 Public Sub StopScheduler()
     On Error Resume Next
-    Application.OnTime EarliestTime:=m_SchedulerTimer, Name:="SchedulerCheck", Schedule:=False
+    Application.OnTime EarliestTime:=m_SchedulerTimer, Procedure:="SchedulerCheck", Schedule:=False
     On Error GoTo 0
     Debug.Print "[TASK] Scheduler stopped"
 End Sub
