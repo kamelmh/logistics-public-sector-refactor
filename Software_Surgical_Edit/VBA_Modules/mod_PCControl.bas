@@ -2,10 +2,10 @@ Attribute VB_Name = "mod_PCControl"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Éducation - Wilaya d'El Bayadh
-' PC Control Toolset — Shell execution, WMI queries, Registry access,
+' Direction de l'Education - Wilaya d'El Bayadh
+' PC Control Toolset - Shell execution, WMI queries, Registry access,
 ' FileSystem operations, Windows API, network tools, process management.
-' Style: MCP (Model Context Protocol) — tool-oriented, composable.
+' Style: MCP (Model Context Protocol) - tool-oriented, composable.
 ' ============================================================================
 
 Option Explicit
@@ -847,5 +847,5 @@ Public Sub PC_RunAndWait(ByVal command As String)
 End Sub
 
 ' ============================================================================
-' END — mod_PCControl.bas
+' END - mod_PCControl.bas
 ' ============================================================================

@@ -2,7 +2,7 @@ Attribute VB_Name = "mod_Procurement"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Ã‰ducation - Wilaya d'El Bayadh
+' Direction de l'Education - Wilaya d'El Bayadh
 ' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
 ' All rights reserved. Unauthorized reproduction or distribution prohibited.
 ' ============================================================================
@@ -32,7 +32,7 @@ Public Sub GenerateOrderReport()
     
     lastRow = wsArt.Cells(wsArt.Rows.count, COL_ART_CODE).End(xlUp).Row
     If lastRow < 2 Then
-        MsgBox "Aucun article trouvÃ© dans le catalogue.", vbExclamation, "ACADEMIX v13"
+        MsgBox "Aucun article trouvé dans le catalogue.", vbExclamation, "ACADEMIX v13"
         Exit Sub
     End If
     
@@ -110,16 +110,16 @@ NextArticle:
         wsOrder.Columns("A:G").AutoFit
         
         ' Total Calculation
-        wsOrder.Cells(rowNum, 6).Value = "TOTAL ESTIMÃ‰ :"
+        wsOrder.Cells(rowNum, 6).Value = "TOTAL ESTIME :"
         wsOrder.Cells(rowNum, 6).Font.Bold = True
         wsOrder.Cells(rowNum, 7).Formula = "=SUM(G2:G" & rowNum - 1 & ")"
         wsOrder.Cells(rowNum, 7).Font.Bold = True
         wsOrder.Cells(rowNum, 7).NumberFormat = "#,##0.00 ""DZD"""
     Else
-        MsgBox "Aucun article ne nÃ©cessite de rÃ©approvisionnement.", vbInformation, "ACADEMIX v13"
+        MsgBox "Aucun article ne nécessite de réapprovisionnement.", vbInformation, "ACADEMIX v13"
     End If
     
-    MsgBox "Bordereau de commande gÃ©nÃ©rÃ© avec succÃ¨s !", vbInformation, "ACADEMIX v13"
+    MsgBox "Bordereau de commande généré avec succès !", vbInformation, "ACADEMIX v13"
 End Sub
 
 '--------------------------------------------------------------------------------------

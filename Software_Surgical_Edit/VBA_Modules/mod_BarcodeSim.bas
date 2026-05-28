@@ -2,7 +2,7 @@ Attribute VB_Name = "mod_BarcodeSim"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Éducation - Wilaya d'El Bayadh
+' Direction de l'Education - Wilaya d'El Bayadh
 ' Advanced Barcode Simulation and Generation Engine
 ' Supports: Code128 (A/B/C), EAN-13, Code39, Interleaved 2of5
 ' Generates visual barcodes in Excel cells, labels, and scanner simulation
@@ -43,7 +43,7 @@ Private Const BARCODE_SIM_SHEET As String = "BARCODE_LABELS"
 Private Const BARCODE_REG_RANGE As String = "BARCODE_REGISTRY"
 
 ' ============================================================================
-' INITIALIZATION — Load encoding tables
+' INITIALIZATION - Load encoding tables
 ' ============================================================================
 
 Private Sub InitCode128()
@@ -164,7 +164,7 @@ Private Sub InitCode39()
 End Sub
 
 ' ============================================================================
-' PUBLIC API — Code128 Encoding
+' PUBLIC API - Code128 Encoding
 ' ============================================================================
 
 Public Function Code128_Encode(ByVal text As String, _
@@ -233,13 +233,13 @@ EncodeError:
 End Function
 
 Public Function Code128_Decode(ByVal data As String) As String
-    ' Decode a previously encoded string — validation use
+    ' Decode a previously encoded string - validation use
     ' Checks checksum and returns original data
     Code128_Decode = data  ' Simple pass-through for label display
 End Function
 
 ' ============================================================================
-' PUBLIC API — EAN-13 Encoding
+' PUBLIC API - EAN-13 Encoding
 ' ============================================================================
 
 Public Function EAN13_Encode(ByVal barcodeStr As String) As String
@@ -278,7 +278,7 @@ Public Function EAN13_Encode(ByVal barcodeStr As String) As String
     ' EAN-13 LGP: Left Guard Pattern
     result = "101"  ' Start
     
-    ' Left group (digits 1-6) — parity encoded by first digit
+    ' Left group (digits 1-6) - parity encoded by first digit
     parity = EAN13_ParityTable(digits(0))
     
     For i = 1 To 6
@@ -291,7 +291,7 @@ Public Function EAN13_Encode(ByVal barcodeStr As String) As String
     
     result = result & "01010"  ' Center guard
     
-    ' Right group (digits 7-12) — all use right encoding
+    ' Right group (digits 7-12) - all use right encoding
     For i = 7 To 12
         result = result & EAN13_RightPattern(digits(i))
     Next i
@@ -324,7 +324,7 @@ Public Function EAN13_Checksum(ByRef digits() As Integer) As Integer
 End Function
 
 ' ============================================================================
-' PUBLIC API — Code39 Encoding (simpler, variable length)
+' PUBLIC API - Code39 Encoding (simpler, variable length)
 ' ============================================================================
 
 Public Function Code39_Encode(ByVal text As String) As String
@@ -361,7 +361,7 @@ Public Function Code39_Encode(ByVal text As String) As String
 End Function
 
 ' ============================================================================
-' PUBLIC API — Barcode Visual Rendering
+' PUBLIC API - Barcode Visual Rendering
 ' ============================================================================
 
 Public Sub GenerateBarcode(ByVal targetSheet As String, _
@@ -478,7 +478,7 @@ BatchError:
 End Sub
 
 ' ============================================================================
-' PUBLIC API — Barcode Scanner Simulation
+' PUBLIC API - Barcode Scanner Simulation
 ' ============================================================================
 
 Public Sub SimulateBarcodeScan()
@@ -542,7 +542,7 @@ ScanError:
 End Sub
 
 Public Sub GenerateBarcodeFromInput()
-    ' Interactive barcode generator — user enters data and chooses type
+    ' Interactive barcode generator - user enters data and chooses type
     
     Dim barcodeData As String
     Dim symbology As BarcodeSymbology
@@ -578,7 +578,7 @@ Public Sub GenerateBarcodeFromInput()
 End Sub
 
 ' ============================================================================
-' PUBLIC API — Barcode Label Printing
+' PUBLIC API - Barcode Label Printing
 ' ============================================================================
 
 Public Sub PrintBarcodeLabels()
@@ -657,7 +657,7 @@ PrintError:
 End Sub
 
 ' ============================================================================
-' PUBLIC API — Barcode Registration (extends existing mod_Barcode)
+' PUBLIC API - Barcode Registration (extends existing mod_Barcode)
 ' ============================================================================
 
 Public Sub RegisterBarcodeWithSymbology()
@@ -717,7 +717,7 @@ Public Sub RegisterBarcodeWithSymbology()
 End Sub
 
 ' ============================================================================
-' PRIVATE — Barcode Rendering Engine
+' PRIVATE - Barcode Rendering Engine
 ' ============================================================================
 
 Private Sub RenderBinaryBarcode(ByRef ws As Worksheet, _
@@ -764,7 +764,7 @@ Private Sub RenderBinaryBarcode(ByRef ws As Worksheet, _
         col.ColumnWidth = barWidth * 0.45
         
         If Mid(binaryPattern, i, 1) = "1" Then
-            ' Black bar — use full height shape
+            ' Black bar - use full height shape
             col.Interior.Color = RGB(0, 0, 0)
             col.Value = ""
         Else
@@ -869,7 +869,7 @@ Private Sub GenerateQRVisualBlock(ByRef ws As Worksheet, _
                     ws.Cells(target.Row + i, target.Column + j).Interior.Color = RGB(255, 255, 255)
                 End If
             Else
-                ' Data area — deterministic from hash
+                ' Data area - deterministic from hash
                 patternVal = ((seed * (i + 1) * (j + 1) + (i * 17) + (j * 13)) Mod 100)
                 If patternVal < 45 Then
                     ws.Cells(target.Row + i, target.Column + j).Interior.Color = RGB(0, 0, 0)
@@ -896,7 +896,7 @@ Private Sub GenerateQRVisualBlock(ByRef ws As Worksheet, _
 End Sub
 
 ' ============================================================================
-' PRIVATE — Encoding Helpers
+' PRIVATE - Encoding Helpers
 ' ============================================================================
 
 Private Function TextToCode128B(ByVal text As String) As Integer()
@@ -1116,7 +1116,7 @@ Private Function I2of5_Digit(ByVal digit As Integer, ByVal isBar As Boolean) As 
 End Function
 
 ' ============================================================================
-' PRIVATE — Utility Functions
+' PRIVATE - Utility Functions
 ' ============================================================================
 
 Private Function GetOrCreateSheet(ByVal sheetName As String) As Worksheet
@@ -1158,5 +1158,5 @@ Private Function GetPatternHash(ByVal pattern As String) As Long
 End Function
 
 ' ============================================================================
-' END — mod_BarcodeSim.bas
+' END - mod_BarcodeSim.bas
 ' ============================================================================

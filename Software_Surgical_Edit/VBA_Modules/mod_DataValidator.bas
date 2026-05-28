@@ -2,7 +2,7 @@ Attribute VB_Name = "mod_DataValidator"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Éducation - Wilaya d'El Bayadh
+' Direction de l'Education - Wilaya d'El Bayadh
 ' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
 ' All rights reserved. Unauthorized reproduction or distribution prohibited.
 ' ============================================================================
@@ -276,7 +276,7 @@ Private Function GetOrCreateSheet(ByVal sheetName As String) As Worksheet
 End Function
 
 '===============================================================================
-' FUZZY SEARCH ENGINE — Offline AI (Pillar 4)
+' FUZZY SEARCH ENGINE - Offline AI (Pillar 4)
 ' Levenshtein distance + French Soundex for duplicate article prevention
 '===============================================================================
 
@@ -309,7 +309,7 @@ Public Function LevenshteinDistance(ByVal s1 As String, ByVal s2 As String) As L
 End Function
 
 Public Function SoundexFR(ByVal word As String) As String
-    ' French Soundex — handles accents, silent letters, French phonemes
+    ' French Soundex - handles accents, silent letters, French phonemes
     Dim s As String: s = UCase(word)
     Dim i As Long
     Dim result As String
@@ -373,7 +373,7 @@ Public Function FuzzySearchArticle(ByVal inputText As String, Optional ByVal thr
         Dim artCode As String: artCode = Trim(wsArt.Cells(i, COL_ART_CODE).Value)
         Dim designation As String: designation = Trim(wsArt.Cells(i, COL_ART_DESIGNATION).Value)
         
-        ' Soundex pre-filter — rapid phonetic gating
+        ' Soundex pre-filter - rapid phonetic gating
         Dim desigSoundex As String: desigSoundex = SoundexFR(designation)
         Dim soundexMatch As Boolean
         If Len(inputSoundex) >= 3 And Len(desigSoundex) >= 3 Then

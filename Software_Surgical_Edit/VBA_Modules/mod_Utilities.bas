@@ -2,7 +2,7 @@ Attribute VB_Name = "mod_Utilities"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Éducation - Wilaya d'El Bayadh
+' Direction de l'Education - Wilaya d'El Bayadh
 ' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
 ' All rights reserved. Unauthorized reproduction or distribution prohibited.
 ' ============================================================================
@@ -34,7 +34,7 @@ End Sub
 
 '=======================================================================================
 ' FUNCTION: SafeVal
-' Safe numeric cast � returns 0 for empty / non-numeric values
+' Safe numeric cast ? returns 0 for empty / non-numeric values
 '=======================================================================================
 Public Function SafeVal(ByVal v As Variant) As Double
     If IsNumeric(v) And Not IsEmpty(v) Then

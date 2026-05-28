@@ -49,7 +49,7 @@ Private Sub BuildUI()
     '- Set form dimensions
     Me.Width = 870
     Me.Height = 640
-    Me.Caption = "ERP AcadÃ©mie - Saisie des Mouvements"
+    Me.Caption = "ERP Académie - Saisie des Mouvements"
     Me.StartUpPosition = 1  ' CenterOwner
     
     '--------------------------------------------------------------------------
@@ -798,7 +798,7 @@ Private Sub btnSyncMasterData_Click()
     On Error Resume Next
     Call mod_SyncBridge.SyncMetricsFromLedger
     If Err.Number = 0 Then
-        MsgBox "Synchronisation rÃ©ussie.", vbInformation, "Sync Master"
+        MsgBox "Synchronisation réussie.", vbInformation, "Sync Master"
     Else
         MsgBox "Erreur: " & Err.Description, vbCritical, "Sync Error"
     End If
@@ -817,7 +817,7 @@ Private Sub btnImprimerBon_Click()
     If Len(docRef) > 0 Then
         Call mod_ExportEngine.ExportTransactionToPDF(docRef)
     Else
-        MsgBox "Veuillez gÃ©nÃ©rer une rÃ©fÃ©rence d'abord.", vbExclamation
+        MsgBox "Veuillez générer une référence d'abord.", vbExclamation
     End If
 End Sub
 

@@ -2,7 +2,7 @@ Attribute VB_Name = "mod_StockEntry_Logic"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Ã‰ducation - Wilaya d'El Bayadh
+' Direction de l'Education - Wilaya d'El Bayadh
 ' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
 ' All rights reserved. Unauthorized reproduction or distribution prohibited.
 ' ============================================================================
@@ -27,7 +27,7 @@ Option Explicit
 ' SECTION 0 - MODULE-LEVEL CONSTANTS & STATE
 '================================================================================
 
-'-- Canonical ERP constants (mirrors UnitÃ© de traitement VBA GROUND_TRUTH)
+'-- Canonical ERP constants (mirrors Unité de traitement VBA GROUND_TRUTH)
 Private Const CANON_ROP    As Double = 212.4
 Private Const CANON_SS     As Long = 200
 Private Const CANON_QSTAR  As Long = 176
@@ -642,7 +642,7 @@ Public Function AddLineToGrid(ByRef state As FormState) As Boolean
     '- Guard 2: Document reference
     If Len(Trim(state.docRef)) = 0 Then
         Call mod_ThemingEngine.HighlightFieldError(state.formRef.txtRefDoc)
-        MsgBox "Le NÂ° Reference est OBLIGATOIRE.", vbCritical
+        MsgBox "Le N deg Reference est OBLIGATOIRE.", vbCritical
         state.formRef.txtRefDoc.SetFocus
         Exit Function
     End If
@@ -935,7 +935,7 @@ Public Function CommitTransaction(ByRef state As FormState) As Boolean
     
     '- Commit safety transaction (validates consistency)
     If Not mod_TransactionSafety.CommitTransaction Then
-        MsgBox "Validation de la transaction Ã©chouÃ©e. Annulation...", vbCritical
+        MsgBox "Validation de la transaction échouée. Annulation...", vbCritical
         GoTo SaveError
     End If
     

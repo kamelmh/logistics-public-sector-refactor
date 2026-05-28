@@ -2,7 +2,7 @@ Attribute VB_Name = "mod_UIEnhancements"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Éducation - Wilaya d'El Bayadh
+' Direction de l'Education - Wilaya d'El Bayadh
 ' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
 ' All rights reserved. Unauthorized reproduction or distribution prohibited.
 ' ============================================================================
@@ -31,13 +31,13 @@ Public Const CLR_BG_HEADER       As Long = 14474460     ' RGB(220,230,240) - Pan
 Public Const CLR_BG_HOVER        As Long = 14737632     ' RGB(224,234,244) - Hover state
 
 '-- Semantic colors
-Public Const CLR_SUCCESS         As Long = 3289650      ' RGB(51,51,51) → Actually green below
+Public Const CLR_SUCCESS         As Long = 3289650      ' RGB(51,51,51) -> Actually green below
 Public Const CLR_SUCCESS_BG      As Long = 13631502     ' RGB(211,240,224) - Success background
 Public Const CLR_SUCCESS_TEXT    As Long = 2580992      ' RGB(40,100,40) - Success text
 Public Const CLR_WARNING_BG      As Long = 13762047     ' RGB(255,243,224) - Warning background
-Public Const CLR_WARNING_TEXT    As Long = 3407872      ' RGB(52,73,94) → Actually amber below
+Public Const CLR_WARNING_TEXT    As Long = 3407872      ' RGB(52,73,94) -> Actually amber below
 Public Const CLR_ERROR_BG        As Long = 14409216     ' RGB(255,220,220) - Error background
-Public Const CLR_ERROR_TEXT      As Long = 2236991      ' RGB(34,34,139) → Actually red below
+Public Const CLR_ERROR_TEXT      As Long = 2236991      ' RGB(34,34,139) -> Actually red below
 
 '-- Border colors
 Public Const CLR_BORDER          As Long = 13421772     ' RGB(204,204,204) - Input borders
@@ -49,7 +49,7 @@ Public Const CLR_BTN_PRIMARY     As Long = 11393215     ' RGB(0,102,204) - Prima
 Public Const CLR_BTN_PRIMARY_HOVER As Long = 9109504    ' RGB(0,82,164) - Primary hover
 Public Const CLR_BTN_SECONDARY   As Long = 15724527     ' RGB(240,240,245) - Secondary
 Public Const CLR_BTN_SECONDARY_HOVER As Long = 14737632 ' RGB(224,234,244) - Secondary hover
-Public Const CLR_BTN_DANGER      As Long = 2236991      ' RGB(34,34,139) → Actually red below
+Public Const CLR_BTN_DANGER      As Long = 2236991      ' RGB(34,34,139) -> Actually red below
 
 '================================================================================
 ' FONT CONSTANTS

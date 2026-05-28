@@ -8,7 +8,9 @@
 | Source MD | ✅ 993 lines | `Memoire_DSS_Logistique_ElBayadh.md` — Ch4 embedded |
 | DOCX | ✅ 94 KB | 8 footnotes in full CNEPD format |
 | PDF | ✅ 952 KB | Fully rendered |
-| ERP Workbook | ✅ 833 KB GOLDEN 174/174 | `Copy of ERP_v13.2.xlsm` |
+| ERP Workbook (Golden) | ✅ 696 KB, 43 clean modules | `GOLDEN_ERP_v13.2.xlsm` |
+| ERP Workbook (Active) | ✅ 696 KB, 43 modules | `ERP_v13.2.xlsm` |
+| ERP Workbook (Archive) | 📦 Archival, 50 dead modules | `ARCHIVE_LEGACY_Copy_of_ERP_v13.2.xlsm` |
 | Build | ✅ 33/36 (3 non-critical) | DOCX size threshold, manifest hash |
 | Verify | ✅ 105/105 PASS | Today |
 | Audit | ✅ 16/16 PASS | 5-phase DSS |

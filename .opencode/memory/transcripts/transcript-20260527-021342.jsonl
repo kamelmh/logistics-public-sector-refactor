@@ -1,0 +1,207 @@
+{
+  "ts": "2026-05-27T02:13:42.7447703+01:00",
+  "tasks": [
+    {
+      "subject": "Stage 1: Harvest decision history",
+      "blockedBy": null,
+      "status": "completed",
+      "id": 1
+    },
+    {
+      "subject": "Implement Bismillah page and regulate page numbering",
+      "blockedBy": null,
+      "status": "completed",
+      "id": 10
+    },
+    {
+      "subject": "S11 Autonomous Loop Integration Test",
+      "blockedBy": [
+        13,
+        16
+      ],
+      "status": "completed",
+      "id": 101
+    },
+    {
+      "subject": "Stylistic Pass and Font Regulation",
+      "blockedBy": null,
+      "status": "completed",
+      "id": 11
+    },
+    {
+      "subject": "Final 100% Thesis Completion Audit",
+      "blockedBy": null,
+      "status": "completed",
+      "id": 12
+    },
+    {
+      "subject": "S12: Deploy worktree isolation infrastructure",
+      "blockedBy": [],
+      "status": "completed",
+      "id": 13
+    },
+    {
+      "subject": "S08: Deploy background pipeline runner",
+      "blockedBy": [],
+      "status": "completed",
+      "id": 14
+    },
+    {
+      "subject": "S09: Deploy agent team inboxes",
+      "blockedBy": [],
+      "status": "completed",
+      "id": 15
+    },
+    {
+      "subject": "S11: Implement autonomous task claim cycle",
+      "blockedBy": [],
+      "status": "completed",
+      "id": 16
+    },
+    {
+      "subject": "Thesis PDF rebuild + M-03 table caption verification",
+      "blockedBy": [],
+      "status": "completed",
+      "id": 17
+    },
+    {
+      "subject": "Phase B: English Research Paper (IEEE/Springer 6-8pp)",
+      "blockedBy": [],
+      "status": "completed",
+      "id": 18
+    },
+    {
+      "subject": "Chapter expansion: ABC-XYZ matrix + VBA engine docs",
+      "blockedBy": [],
+      "status": "completed",
+      "id": 19
+    },
+    {
+      "subject": "Stage 2: Compact Print (mod_ExportEngine)",
+      "blockedBy": null,
+      "status": "completed",
+      "id": 2
+    },
+    {
+      "subject": "Gateway extension: add audit, test, health endpoints",
+      "blockedBy": [],
+      "status": "completed",
+      "id": 20
+    },
+    {
+      "subject": "Stage 3: UX Preload (frmStockEntry)",
+      "blockedBy": null,
+      "status": "completed",
+      "id": 3
+    },
+    {
+      "subject": "Stage 4: Stockout Projection (mod_Dashboard)",
+      "blockedBy": null,
+      "status": "completed",
+      "id": 4
+    },
+    {
+      "subject": "Stage 5: Fuzzy Search (mod_DataValidator)",
+      "blockedBy": null,
+      "status": "completed",
+      "id": 5
+    },
+    {
+      "subject": "Stage 6: Cross-ref update",
+      "blockedBy": [],
+      "status": "completed",
+      "id": 6
+    },
+    {
+      "subject": "Stage 7: Final build+verify+audit",
+      "blockedBy": [],
+      "status": "completed",
+      "id": 7
+    },
+    {
+      "subject": "Demo: harness worktree isolation",
+      "blockedBy": null,
+      "status": "completed",
+      "id": 8
+    },
+    {
+      "subject": "Integrate references and footnotes properly",
+      "blockedBy": null,
+      "status": "completed",
+      "id": 9
+    }
+  ],
+  "git": {
+    "branch": "master",
+    "commit": "a198e72 feat: add 4 advanced VBA modules — BarcodeSim, TaskOrchestrator, PCControl, LibreBridge",
+    "status": [
+      " M .crossflow/HANDOFF.md",
+      " M COLLABORATION.md",
+      " M MANIFEST.md",
+      " m Research_and_Development/explore-langflow",
+      " ? Research_and_Development/explore-mini-browser",
+      " M Software_Surgical_Edit/VBA_Modules/MAIN_MACROS.bas",
+      " M Software_Surgical_Edit/VBA_Modules/frmStockEntry.frm",
+      " M Software_Surgical_Edit/VBA_Modules/mod_Analysis.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_ApprovalWorkflow.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_AuditTrail.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_Barcode.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_BarcodeSim.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_Budget.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_BudgetSetup.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_CSVImportExport.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_Config.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_Dashboard.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_DataValidator.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_Database.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_DemoData.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_ExportEngine.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_Forecasting.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_InventoryReconciliation.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_LibreBridge.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_Localization.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_Navigation.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_ObsidianExporter.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_PCControl.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_Procurement.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_Profiler.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_QRCode.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_ReceiptTag.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_Reports.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_SharedEnvironment.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_StockAging.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_StockEngine.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_StockEntry_Logic.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_StockOutPredictor.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_SupplierRegistry.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_SupplierScorecard.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_SyncBridge.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_TaskOrchestrator.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_ThemingEngine.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_Timer.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_TransactionSafety.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_UIEnhancements.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_UI_Setup.bas",
+      " M Software_Surgical_Edit/VBA_Modules/mod_Utilities.bas",
+      " M Thesis_Surgical_Edit/SESSION_HANDOFF.md",
+      " M Thesis_Surgical_Edit/defense/demo-walkthrough-script.md",
+      " m WindsurfAPI",
+      " m pentest-agents",
+      " m ruflo",
+      " M scripts/bg-worker.ps1",
+      " M scripts/harness.ps1",
+      " M vbe-auto/build.ps1",
+      " M vbe-auto/export-frm.ps1",
+      " M vbe-auto/vbe-auto-config.json",
+      "?? .opencode/commands/vba-autofix.md",
+      "?? .opencode/commands/vba-validate.md",
+      "?? .opencode/skills/vba-validate/",
+      "?? vbe-auto/vba-autofix.ps1",
+      "?? vbe-auto/vba-check.py",
+      "?? vbe-auto/vba-validate.ps1"
+    ]
+  },
+  "worktrees": [
+    "No worktrees."
+  ]
+}

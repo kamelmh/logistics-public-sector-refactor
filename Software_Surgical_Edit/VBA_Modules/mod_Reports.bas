@@ -2,7 +2,7 @@ Attribute VB_Name = "mod_Reports"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Éducation - Wilaya d'El Bayadh
+' Direction de l'Education - Wilaya d'El Bayadh
 ' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
 ' All rights reserved. Unauthorized reproduction or distribution prohibited.
 ' ============================================================================
@@ -129,7 +129,7 @@ Public Sub GenerateMonthlyReport(Optional ByVal rptMonth As Integer = 0)
     wsReport.SaveAs fullPath
     wsReport.Delete
     Application.ScreenUpdating = True
-    MsgBox "Rapport g�n�r�: " & fullPath, vbInformation, mod_Config.SYS_TITLE
+    MsgBox "Rapport g?n?r?: " & fullPath, vbInformation, mod_Config.SYS_TITLE
     Exit Sub
 ReportError:
     Application.ScreenUpdating = True
@@ -155,7 +155,7 @@ Public Sub GenerateStockCard(Optional ByVal sku As String = "")
     
     Dim artRow As Variant: artRow = Application.Match(sku, wsArt.Range("A:A"), 0)
     If IsError(artRow) Then
-        MsgBox "Article non trouv�: " & sku, vbExclamation
+        MsgBox "Article non trouv?: " & sku, vbExclamation
         Exit Sub
     End If
     
@@ -203,7 +203,7 @@ Public Sub GenerateStockCard(Optional ByVal sku As String = "")
     wsCard.SaveAs fullPath
     wsCard.Delete
     Application.ScreenUpdating = True
-    MsgBox "Fiche de stock g�n�r�e: " & fullPath, vbInformation, mod_Config.SYS_TITLE
+    MsgBox "Fiche de stock g?n?r?e: " & fullPath, vbInformation, mod_Config.SYS_TITLE
     Exit Sub
 ReportError:
     Application.ScreenUpdating = True

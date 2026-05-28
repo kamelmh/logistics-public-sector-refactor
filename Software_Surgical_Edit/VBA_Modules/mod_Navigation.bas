@@ -2,7 +2,7 @@ Attribute VB_Name = "mod_Navigation"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Ã‰ducation - Wilaya d'El Bayadh
+' Direction de l'Education - Wilaya d'El Bayadh
 ' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
 ' All rights reserved. Unauthorized reproduction or distribution prohibited.
 ' ============================================================================
@@ -18,13 +18,13 @@ Public Sub OpenStockForm()
         VBA.UserForms.Add(frmName).Show
     Else
         MsgBox "Erreur: Le formulaire de saisie est manquant.", _
-               vbCritical, "ERP AcadÃ©mie v13.2"
+               vbCritical, "ERP Académie v13.2"
     End If
     Exit Sub
 
 ErrorHandler:
     MsgBox "Erreur lors de l'ouverture: " & Err.Description, _
-           vbCritical, "ERP AcadÃ©mie v13.2"
+           vbCritical, "ERP Académie v13.2"
 End Sub
 
 Public Sub GoToSheet(ByVal sheetName As String)
@@ -37,7 +37,7 @@ Public Sub GoToSheet(ByVal sheetName As String)
     Exit Sub
 
 ErrorHandler:
-    MsgBox "Feuille introuvable: " & sheetName, vbExclamation, "ERP AcadÃ©mie v13.2"
+    MsgBox "Feuille introuvable: " & sheetName, vbExclamation, "ERP Académie v13.2"
 End Sub
 
 Public Sub ShowWelcome()
@@ -48,13 +48,13 @@ Public Sub ShowWelcome()
     On Error GoTo ErrorHandler
     If versionStr = "" Then versionStr = "v13.2"
 
-    MsgBox "ERP AcadÃ©mie " & versionStr & vbCrLf & _
-           "Direction de l'Ã‰ducation - El Bayadh", _
+    MsgBox "ERP Académie " & versionStr & vbCrLf & _
+           "Direction de l'Education - El Bayadh", _
            vbInformation, "Bienvenue"
     Exit Sub
 
 ErrorHandler:
-    MsgBox "Erreur: " & Err.Description, vbCritical, "ERP AcadÃ©mie v13.2"
+    MsgBox "Erreur: " & Err.Description, vbCritical, "ERP Académie v13.2"
 End Sub
 
 Private Function FormExists(ByVal formName As String) As Boolean

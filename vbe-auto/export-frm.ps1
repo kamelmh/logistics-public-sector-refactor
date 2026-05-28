@@ -1,5 +1,5 @@
 param(
-    [string]$WorkbookPath = "..\Copy of ERP_v13.2.xlsm",
+    [string]$WorkbookPath = "..\GOLDEN_ERP_v13.2.xlsm",
     [string]$FormName = "frmStockEntry",
     [string]$OutputDir = "..\Software_Surgical_Edit\VBA_Modules"
 )

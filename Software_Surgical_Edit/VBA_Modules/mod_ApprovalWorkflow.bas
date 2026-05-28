@@ -2,10 +2,12 @@ Attribute VB_Name = "mod_ApprovalWorkflow"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Éducation - Wilaya d'El Bayadh
+' Direction de l'Education - Wilaya d'El Bayadh
 ' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
 ' All rights reserved. Unauthorized reproduction or distribution prohibited.
 ' ============================================================================
+
+Option Explicit
 
 Public Enum ApprovalLevel
     magasinier = 1
@@ -14,7 +16,7 @@ Public Enum ApprovalLevel
 End Enum
 
 ' Validates transaction by Comptable (Financial validation)
-' Sets "Validé par Comptable" + date in Column G
+' Sets "Valid� par Comptable" + date in Column G
 Public Sub ValidateByComptable(transactionID As String)
     Dim ws As Worksheet
     Dim lastRow As Long
@@ -27,7 +29,7 @@ Public Sub ValidateByComptable(transactionID As String)
     
     For i = 2 To lastRow
         If CStr(ws.Cells(i, 1).Value) = transactionID Then
-            ws.Cells(i, 7).Value = "Validé par Comptable"
+            ws.Cells(i, 7).Value = "Valid� par Comptable"
             ws.Cells(i, 7).Interior.Color = RGB(255, 255, 200)
             ws.Cells(i, 8).Value = Date
             found = True
@@ -41,7 +43,7 @@ Public Sub ValidateByComptable(transactionID As String)
 End Sub
 
 ' Approves transaction by Directeur (Final authorization)
-' Sets "Approuvé par Directeur" + visa stamp in Column H
+' Sets "Approuv� par Directeur" + visa stamp in Column H
 Public Sub ApproveByDirecteur(transactionID As String)
     Dim ws As Worksheet
     Dim lastRow As Long
@@ -54,11 +56,11 @@ Public Sub ApproveByDirecteur(transactionID As String)
     
     For i = 2 To lastRow
         If CStr(ws.Cells(i, 1).Value) = transactionID Then
-            If ws.Cells(i, 7).Value <> "Validé par Comptable" Then
+            If ws.Cells(i, 7).Value <> "Valid� par Comptable" Then
                 MsgBox "Transaction must be validated by Comptable before Directeur approval.", vbExclamation, "Approval Error"
                 Exit Sub
             End If
-            ws.Cells(i, 8).Value = "Approuvé par Directeur"
+            ws.Cells(i, 8).Value = "Approuv� par Directeur"
             ws.Cells(i, 8).Interior.Color = RGB(200, 255, 200)
             ws.Cells(i, 9).Value = Date
             ws.Cells(i, 9).Font.Bold = True
@@ -86,9 +88,9 @@ Public Function CheckApprovalStatus(transactionID As String) As ApprovalLevel
     
     For i = 2 To lastRow
         If CStr(ws.Cells(i, 1).Value) = transactionID Then
-            If ws.Cells(i, 8).Value = "Approuvé par Directeur" Then
+            If ws.Cells(i, 8).Value = "Approuv� par Directeur" Then
                 CheckApprovalStatus = directeur
-            ElseIf ws.Cells(i, 7).Value = "Validé par Comptable" Then
+            ElseIf ws.Cells(i, 7).Value = "Valid� par Comptable" Then
                 CheckApprovalStatus = comptable
             Else
                 CheckApprovalStatus = magasinier
@@ -119,7 +121,7 @@ Public Sub InitializeMouvementsColumns()
     ws.Cells(1, 8).Value = "Approbation Directeur"
     ws.Cells(1, 8).Interior.Color = RGB(200, 255, 200)
     
-    ' Column I: Statut (En attente/Validé/Approuvé)
+    ' Column I: Statut (En attente/Valid�/Approuv�)
     ws.Cells(1, 9).Value = "Statut"
     ws.Cells(1, 9).Interior.Color = RGB(220, 220, 255)
     

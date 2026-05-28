@@ -2,7 +2,7 @@ Attribute VB_Name = "mod_StockEngine"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Ã‰ducation - Wilaya d'El Bayadh
+' Direction de l'Education - Wilaya d'El Bayadh
 ' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
 ' All rights reserved. Unauthorized reproduction or distribution prohibited.
 ' ============================================================================
@@ -10,13 +10,13 @@ Attribute VB_Name = "mod_StockEngine"
 Option Explicit
 
 ' ================================================================================
-' CONSTANTS ï¿½ Synchronized with UnitÃ© de traitement VBA GROUND_TRUTH
+' CONSTANTS ? Synchronized with Unité de traitement VBA GROUND_TRUTH
 ' ================================================================================
-Private Const ORDER_COST_S  As Double = 801.45 ' DZD ï¿½ full order cycle cost (field-refined from 500)
+Private Const ORDER_COST_S  As Double = 801.45 ' DZD ? full order cycle cost (field-refined from 500)
 Private Const HOLDING_RATE  As Double = 0.2    ' 20% of unit price per year
 Private Const LEAD_TIME_DEFAULT As Integer = 2 ' Default delivery days
 
-' Article-specific safety stocks ï¿½ mirrors UnitÃ© de traitement VBA GROUND_TRUTH
+' Article-specific safety stocks ? mirrors Unité de traitement VBA GROUND_TRUTH
 Public Function GetSafetyStock(ByVal sku As String) As Double
     Select Case UCase(Trim(sku))
         Case "ART-001": GetSafetyStock = 200

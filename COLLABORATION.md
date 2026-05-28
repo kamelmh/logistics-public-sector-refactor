@@ -45,7 +45,7 @@ Examples:
 ## Project Structure
 ```
 ├── ERP_v13.2.xlsm              # Built ERP workbook (output)
-├── Copy of ERP_v13.2.xlsm      # Master workbook (VBA template)
+├── GOLDEN_ERP_v13.2.xlsm       # Master workbook (VBA template) — 43 modules, clean
 ├── SOFTWARE_SURGICAL_EDIT/
 │   └── VBA_Modules/            # All VBA source files (.bas, .frm, .cls)
 │       ├── mod_Barcode.bas     # Original barcode lookup

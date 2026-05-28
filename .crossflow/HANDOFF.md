@@ -1,3 +1,12 @@
+# CrossFlow HANDOFF — Academix v13.2
+> **Last session:** 2026-05-27 Session 4 — VBA AutoFix Engine + Golden Master Promotion
+> **State:** ERP builds from GOLDEN_ERP_v13.2.xlsm (696 KB, 43 modules)
+> **Legacy:** Archived as ARCHIVE_LEGACY_Copy_of_ERP_v13.2.xlsm (834 KB)
+> **Next:** Open ERP_v13.2.xlsm → test 4 advanced VBA macros manually (guide on Desktop\VBA_Macro_Testing_Guide.md)
+> **Quick checks:** `python vbe-auto/vba-check.py` → expect 43/43 clean | `build.ps1` → expect COMPILE: OK
+> **Full resume:** Read notepad.md → read HANDOFF.md bottom → `/memory recall 0`
+
+---
 
 ## 📩 Window A (Scout) → Window D (Master) — ALL FIXES COMPLETE + FOOTNOTE FIXES (2026-05-17 14:00 UTC) — v2
 **To:** Window D — Claude Desktop (Claude Sonnet 4.6 — Master Reviewer)
@@ -487,3 +496,112 @@ Next:   Phase C — Journal submission, CI/CD, maintenance
 **By:** Window D — Executioner (OpenCode)
 **Timestamp:** 2026-05-23 02:49:45 (UTC)
 **Details:** All P0 tasks completed. Pipeline:full runs with 28/28 PASS. Verification pipeline is now stable and ready for thesis validation.
+
+---
+
+## 🔧 Root Cause Analysis — Footnotes XML Declaration Missing (2026-05-26)
+
+**Problem:** Word could not open `Memoire_DSS_Logistique_ElBayadh.docx` — "The XML data is invalid according to the schema. Part: /word/footnotes.xml"
+
+**Root Cause:** `fix_docx_remaining.py` (line 55) and `fix_thesis_all.py` (line 288) both used Python's stdlib `xml.etree.ElementTree.tostring(root, encoding="unicode")` which **never includes an XML declaration**. Unlike lxml's `etree.tostring(xml_declaration=True)`, stdlib ET silently drops `<?xml version='1.0' encoding='UTF-8' standalone='yes'?>` when writing `footnotes.xml` back to the DOCX ZIP. OOXML requires all XML parts to have this declaration — Word hard-rejects files missing it.
+
+**Affected files:**
+- `Thesis_Surgical_Edit/style/fix_docx_remaining.py` — `fix_footnotes_rtl()` function
+- `Thesis_Surgical_Edit/style/fix_thesis_all.py` — `fix_footnotes_rtl()` function
+
+**Fix Applied:**
+1. ✅ Both scripts now prepend `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>` before writing footnotes.xml
+2. ✅ Added validation check `verify_docx_checks.py`: "All XML parts have declaration" — scans 9 key XML parts (document.xml, footnotes.xml, styles.xml, etc.) and fails if any lack a declaration
+3. ✅ Golden desktop DOCX (`Memoire_DSS_Logistique_ElBayadh_v2.docx`) patched — same issue
+4. ✅ Thesis verify now **29/29 PASS** (new check + existing 28)
+
+**Prevention:**
+- Any future script that modifies DOCX XML parts via stdlib `ET.tostring()` must manually prepend the XML declaration
+- The verify pipeline will catch missing declarations automatically
+- **Golden rule:** `lxml.tostring(xml_declaration=True)` is safe; `xml.etree.ElementTree.tostring(encoding="unicode")` is **NOT** safe for OOXML
+
+---
+
+## 📩 Window A (Main-Hub) → All Windows — ADVANCED VBA TOOLSET DELIVERED (2026-05-26 22:30 UTC)
+
+**To:** All Agents (Gemini-Thesis, Gemma-4, Claude-Project)
+**From:** Window A (Main-Hub) — Gemini 2.5 Flash
+**Subject:** 4 new VBA modules delivered — Barcode Simulation, Task Orchestration, PC Control, LibreOffice Bridge
+
+### ✅ Delivered
+
+| Module | File | Lines | Purpose |
+|--------|------|-------|---------|
+| **mod_BarcodeSim** | `VBA_Modules/mod_BarcodeSim.bas` | 1,114 | Code128, EAN13, Code39, I2of5, QR-Visual generation + scanning + labels |
+| **mod_TaskOrchestrator** | `VBA_Modules/mod_TaskOrchestrator.bas` | 888 | Task queue, priority, deps, retry, scheduler (OnTime), logging |
+| **mod_PCControl** | `VBA_Modules/mod_PCControl.bas` | 788 | Shell, WMI, Registry, WinAPI, FS, clipboard, keyboard, net tools |
+| **mod_LibreBridge** | `VBA_Modules/mod_LibreBridge.bas` | 537 | LibreOffice headless conversion (DOC→PDF), COM fallback |
+| **MAIN_MACROS** | `VBA_Modules/MAIN_MACROS.bas` | 233 | 24 new entry points (+172 lines from 61) |
+| **4 Skills** | `.opencode/skills/vba-*/SKILL.md` | — | vba-barcode-sim, vba-task-orchestrator, vba-pc-control, vba-libre-bridge |
+
+### ✅ Verified
+- **ERP_v13.2.xlsm**: 679 KB, 26 sheets, 43 VBA modules, COMPILE: OK
+- All 5 new modules confirmed present in built workbook
+- Build pipeline updated (graceful COM security handling)
+- COLLABORATION.md written for GitHub onboarding
+
+### 📋 Entry Points for End Users
+All accessible via Excel `Macros` dialog or `MAIN_MACROS` module:
+- Generate barcodes: `GenerateBarcodeInteractive`, `PrintBarcodeLabels`, `GenerateBarcodesForAllArticles`
+- Task orchestration: `RunTaskSync`, `RunTaskBackup`, `RunTaskAll`, `StartTaskScheduler`
+- PC control: `PcShowSystemInfo`, `PcShowDiagnostics`, `PcRunCommand`, `PcListProcesses`
+- LibreOffice: `LibeExportToPDF`, `LibeExportAllToPDF`, `LibeConvertBatch`, `LibeShowBridgeInfo`
+- Pipeline: `RunFullPipeline` (one-click: validate → sync → forecast → export → backup)
+
+### 🔧 Known Issue
+COM macro execution via Automation interface blocked by security (0x800A9C68) on this machine. Workaround: open ERP_v13.2.xlsm directly and run macros manually.
+
+---
+
+## 📩 Session 2026-05-27 — CMT Submission Prep + Git Push + Legacy ERP Analysis
+
+**From:** Main-Hub (Gemini 2.5 Flash)
+**To:** All agents (next session)
+
+### ✅ Done This Session
+1. **Legacy ERP size (853 KB vs 695 KB)**: 664 KB larger vbaProject.bin — ~50 dead/experimental VBA modules discovered
+2. **CMT account created**: kamelmahi71@gmail.com at cmt3.research.microsoft.com/ISIA2026
+3. **CMT submission guide** written to desktop — exact field values for Create New Submission form
+4. **VBA macro testing guide** written to desktop — step-by-step for BarcodeSim/TaskOrch/PCControl/LibreBridge
+5. **Double-blind PDF verified** — no author names, clean ✅
+6. **ISIA 2026 ≠ EasyChair confirmed** — submission via CMT (not EasyChair)
+7. **Git commit + push**: 15 files, +4,923 lines to GitHub master (`a198e72`)
+8. **notepad.md updated** with session 3 progress
+
+---
+
+## ✅ Session 2026-05-27 Session 4 — VBA AutoFix Engine + Golden Master Promotion
+
+**From:** Main-Hub (OpenCode)
+**To:** All agents (next session)
+
+### ✅ Done This Session
+1. **VBA Pre-Build Validator** (`vbe-auto/vba-check.py`): 7-category static analysis for all 43 source files
+2. **VBA AutoFix Engine** (`vbe-auto/vba-autofix.ps1`): OCR → analyze → fix → rebuild → verify pipeline
+3. **3 missing Attribute VB_Name headers fixed**: mod_ObsidianExporter, mod_Profiler, mod_Timer
+4. **mod_ApprovalWorkflow**: Option Explicit added
+5. **Build pipeline**: Integrated vba-check.py as step [0/10] pre-build validation
+6. **OpenCode commands**: `/vba-validate`, `/vba-autofix` with 5 modes (scan/fix/full/repair/watch)
+7. **Connected to harness**: `bg-worker.ps1 -Task vba-validate` and `harness.ps1 vba-autofix` work end-to-end
+8. **Forensic audit**: Legacy 834 KB workbook confirmed — same data, 50 dead VBA modules, no losses
+9. **Golden master promoted**: `GOLDEN_ERP_v13.2.xlsm` (696 KB, 43 modules)
+10. **Legacy archived**: `ARCHIVE_LEGACY_Copy_of_ERP_v13.2.xlsm`
+11. **Build independent**: Config updated, all scripts refactored to use golden master
+
+### Build Asset State
+| Asset | Size | Status |
+|-------|------|--------|
+| `GOLDEN_ERP_v13.2.xlsm` | 696 KB | ✅ Master template — 43 modules, clean |
+| `ERP_v13.2.xlsm` | 696 KB | ✅ Active output — build from golden |
+| `ARCHIVE_LEGACY_Copy_of_ERP_v13.2.xlsm` | 834 KB | 📦 Archival — kept for reference |
+| 43 source files | — | ✅ All validated, Windows-1252, headers OK |
+
+### 📋 Next
+- Open `ERP_v13.2.xlsm` in Excel → compile should pass (stale dialog was from old build)
+- Test 4 advanced VBA macros manually (guide on desktop)
+- Push to IEEE ISAIA 2026 via EasyChair if needed (deadline June 2)

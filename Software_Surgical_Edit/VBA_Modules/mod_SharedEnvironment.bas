@@ -2,7 +2,7 @@ Attribute VB_Name = "mod_SharedEnvironment"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'√âducation - Wilaya d'El Bayadh
+' Direction de l'Education - Wilaya d'El Bayadh
 ' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
 ' All rights reserved. Unauthorized reproduction or distribution prohibited.
 ' ============================================================================
@@ -161,11 +161,11 @@ Public Sub CheckWorkbookAccess()
         owner = GetLockOwner()
         
         Dim response As VbMsgBoxResult
-        response = MsgBox("ATTENTION: Ce fichier est d√©j√† ouvert par: " & owner & vbCrLf & _
+        response = MsgBox("ATTENTION: Ce fichier est dÈj‡ ouvert par: " & owner & vbCrLf & _
                          vbCrLf & _
-                         "L'ouverture en mode lecture seule est recommand√©e pour √©viter" & vbCrLf & _
-                         "la corruption des donn√©es. Continuer en mode lecture/√©criture?", _
-                         vbYesNo + vbExclamation, "Acc√®s concurrent d√©tect√©")
+                         "L'ouverture en mode lecture seule est recommandÈe pour Èviter" & vbCrLf & _
+                         "la corruption des donnÈes. Continuer en mode lecture/Ècriture?", _
+                         vbYesNo + vbExclamation, "AccËs concurrent dÈtectÈ")
         
         If response = vbNo Then
             ThisWorkbook.ChangeFileAccess Mode:=xlReadOnly
@@ -215,7 +215,7 @@ Public Sub BatchExportPDFs(ByVal startDate As Date, ByVal endDate As Date)
     Next i
     
     If docRefs.Count = 0 Then
-        MsgBox "Aucun document trouv√© pour la p√©riode s√©lectionn√©e.", vbInformation
+        MsgBox "Aucun document trouvÈ pour la pÈriode sÈlectionnÈe.", vbInformation
         Exit Sub
     End If
     
@@ -245,9 +245,9 @@ Public Sub BatchExportPDFs(ByVal startDate As Date, ByVal endDate As Date)
         On Error GoTo 0
     Next key
     
-    MsgBox "Export par lot termin√©:" & vbCrLf & _
-           "Succ√®s: " & successCount & vbCrLf & _
-           "√âchecs: " & failCount, _
+    MsgBox "Export par lot terminÈ:" & vbCrLf & _
+           "SuccËs: " & successCount & vbCrLf & _
+           "Echecs: " & failCount, _
            vbInformation, "Export par lot"
     
     Debug.Print "[Batch] Exported " & successCount & " documents (" & failCount & " failed)"
@@ -269,7 +269,7 @@ Public Sub BulkImportMovements(ByVal importSheetName As String)
     lastRow = wsImport.Cells(wsImport.Rows.Count, "A").End(xlUp).Row
     
     If lastRow < 2 Then
-        MsgBox "Aucune donn√©e √† importer.", vbInformation
+        MsgBox "Aucune donnÈe ‡ importer.", vbInformation
         Exit Sub
     End If
     
@@ -323,9 +323,9 @@ Public Sub BulkImportMovements(ByVal importSheetName As String)
 NextRow:
     Next i
     
-    MsgBox "Import par lot termin√©:" & vbCrLf & _
-           "Succ√®s: " & successCount & vbCrLf & _
-           "√âchecs: " & failCount, _
+    MsgBox "Import par lot terminÈ:" & vbCrLf & _
+           "SuccËs: " & successCount & vbCrLf & _
+           "Echecs: " & failCount, _
            vbInformation, "Import par lot"
     
     Debug.Print "[BulkImport] Imported " & successCount & " movements (" & failCount & " failed)"

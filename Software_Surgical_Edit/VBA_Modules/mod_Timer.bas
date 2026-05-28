@@ -1,3 +1,4 @@
+Attribute VB_Name = "mod_Timer"
 '=====================================================================
 ' mod_Timer.bas
 ' Simple high-resolution timer for profiling VBA code.

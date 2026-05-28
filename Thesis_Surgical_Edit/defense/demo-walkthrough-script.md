@@ -255,4 +255,4 @@
 2. Si les macros sont bloquées : `Fichier > Options > Centre de gestion de la confidentialité > Paramètres > Activer toutes les macros`
 3. Si un bouton ne répond pas : `Alt+F8` → sélectionner la macro manuellement
 4. Si les données sont corrompues : `Alt+F8` → `mod_DemoData.GenerateDemoData` pour regénérer les données de démonstration
-5. **Dernier recours :** Ouvrir `Copy of ERP_v13.2.xlsm` (copie de sauvegarde vierge)
+5. **Dernier recours :** Ouvrir `GOLDEN_ERP_v13.2.xlsm` ou `ARCHIVE_LEGACY_Copy_of_ERP_v13.2.xlsm` (copies de sauvegarde)

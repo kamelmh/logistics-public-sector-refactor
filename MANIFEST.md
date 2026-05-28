@@ -45,14 +45,15 @@ build iteration that Word COM strictly validates but python-docx/lxml handles le
 | File | Size | Status |
 |------|------|--------|
 | `ERP_v13.2.xlsm` (project root) | 650 KB | **ACTIVE** — 105/105 PASS |
-| `Copy of ERP_v13.2.xlsm` | 833 KB | Dead code (7 modules extra in VBA) |
+| `ARCHIVE_LEGACY_Copy_of_ERP_v13.2.xlsm` | 834 KB | Archived — 50 dead VBA modules, kept for reference |
+| `GOLDEN_ERP_v13.2.xlsm` | 696 KB | Golden master — 43 clean modules, used as build template |
 | `Final_Delivery_Layout/ERP_v13.2.xlsm` | 663 KB | Delivery copy (clean) |
 | `Final_Delivery_Layout/04_Systeme_v13_2/` | 663 KB | Delivery copy (clean) |
 | `Final_Delivery_Layout/02_ERP_System/` | 663 KB | Delivery copy (clean) |
 | `Software_Surgical_Edit/ERP_v13.2.xlsm` | 631 KB | Dev copy (clean) |
 | `Software_Surgical_Edit/ARCHIVED/*.xlsm` | 177-607 KB | Archived versions |
 
-**Action**: `Copy of ERP_v13.2.xlsm` (833 KB) should be archived or cleaned.
+**Status**: ✅ `Copy of ERP_v13.2.xlsm` archived as `ARCHIVE_LEGACY_Copy_of_ERP_v13.2.xlsm`. New golden master: `GOLDEN_ERP_v13.2.xlsm` (696 KB, 43 clean modules).
 The 600 KB larger VBA binary contains the **7 dead modules** that were removed.
 Active version has 63 modules, 12,027 lines.
 
@@ -84,5 +85,5 @@ Active version has 63 modules, 12,027 lines.
 1. **Review the golden PDF** generated via LibreOffice (Option C)
 2. **If Word GUI opens it** (Option A), compare for any layout differences
 3. **Optional: Enrich MD source** with the 27 additional golden footnotes (Option B)
-4. **Archive/delete** the 833 KB "Copy of ERP_v13.2.xlsm" and keep 650 KB active
+4. ✅ **Archived** "Copy of ERP_v13.2.xlsm" → `ARCHIVE_LEGACY_Copy_of_ERP_v13.2.xlsm`. Golden master is `GOLDEN_ERP_v13.2.xlsm` (696 KB).
 5. **Upload to EasyChair** for ISIA 2026 (deadline May 31)

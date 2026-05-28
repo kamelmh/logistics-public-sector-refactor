@@ -2,16 +2,16 @@ Attribute VB_Name = "mod_Analysis"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Ã‰ducation - Wilaya d'El Bayadh
+' Direction de l'Education - Wilaya d'El Bayadh
 ' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
 ' All rights reserved. Unauthorized reproduction or distribution prohibited.
 ' ============================================================================
 '
-' ANALYSIS UI HUB â€” Consolidated entry point for all analytical operations.
+' ANALYSIS UI HUB - Consolidated entry point for all analytical operations.
 ' Delegates computation to engine modules (mod_StockEngine, mod_Forecasting,
 ' mod_StockOutPredictor) and provides user-friendly UI feedback.
 '
-' Pattern: UI Layer (mod_Analysis) â†’ Engine Layer (mod_StockEngine, etc.)
+' Pattern: UI Layer (mod_Analysis) -> Engine Layer (mod_StockEngine, etc.)
 '
 ' ============================================================================
 
@@ -28,11 +28,11 @@ Public Sub UpdateABC_Classification()
     ' Delegate to engine: recalculates CMUP and ABC from MOUVEMENTS ledger
     Call mod_SyncBridge.SyncMetricsFromLedger
     
-    MsgBox "La classification ABC-XYZ a Ã©tÃ© mise a jour avec succes a partir des donnees de consommation.", vbInformation, "Analyse Complete"
+    MsgBox "La classification ABC-XYZ a été mise a jour avec succes a partir des donnees de consommation.", vbInformation, "Analyse Complete"
     Exit Sub
 
 ErrorHandler:
-    MsgBox "Une erreur s'est produite durant l'analyse: " & Err.Description, vbCritical, "ERP AcadÃ©mie v13"
+    MsgBox "Une erreur s'est produite durant l'analyse: " & Err.Description, vbCritical, "ERP Académie v13"
     Debug.Print "[Analysis] Error " & Err.Number & " in UpdateABC_Classification: " & Err.Description
 End Sub
 
@@ -50,7 +50,7 @@ Public Sub RunStockOutAnalysis()
     Exit Sub
 
 ErrorHandler:
-    MsgBox "Une erreur s'est produite durant l'analyse de rupture: " & Err.Description, vbCritical, "ERP AcadÃ©mie v13"
+    MsgBox "Une erreur s'est produite durant l'analyse de rupture: " & Err.Description, vbCritical, "ERP Académie v13"
     Debug.Print "[Analysis] Error " & Err.Number & " in RunStockOutAnalysis: " & Err.Description
 End Sub
 
@@ -66,7 +66,7 @@ Public Sub RefreshForecastAnalysis()
     Exit Sub
 
 ErrorHandler:
-    MsgBox "Une erreur s'est produite durant le recalcul des prÃ©visions: " & Err.Description, vbCritical, "ERP AcadÃ©mie v13"
+    MsgBox "Une erreur s'est produite durant le recalcul des prévisions: " & Err.Description, vbCritical, "ERP Académie v13"
     Debug.Print "[Analysis] Error " & Err.Number & " in RefreshForecastAnalysis: " & Err.Description
 End Sub
 
@@ -82,7 +82,7 @@ Public Sub RunStockAgingAnalysis()
     Exit Sub
 
 ErrorHandler:
-    MsgBox "Une erreur s'est produite durant l'analyse de vieillissement: " & Err.Description, vbCritical, "ERP AcadÃ©mie v13"
+    MsgBox "Une erreur s'est produite durant l'analyse de vieillissement: " & Err.Description, vbCritical, "ERP Académie v13"
     Debug.Print "[Analysis] Error " & Err.Number & " in RunStockAgingAnalysis: " & Err.Description
 End Sub
 Public Sub RunFullAnalysis()
@@ -108,13 +108,13 @@ Public Sub RunFullAnalysis()
     Application.Calculation = xlCalculationAutomatic
     Application.EnableEvents = True
     
-    MsgBox "Analyse complete: CMUP, ABC-XYZ, prÃ©visions et rupture de stock mis a jour.", vbInformation, "ERP AcadÃ©mie v13"
+    MsgBox "Analyse complete: CMUP, ABC-XYZ, prévisions et rupture de stock mis a jour.", vbInformation, "ERP Académie v13"
     Exit Sub
 
 ErrorHandler:
     Application.ScreenUpdating = True
     Application.Calculation = xlCalculationAutomatic
     Application.EnableEvents = True
-    MsgBox "Une erreur s'est produite durant l'analyse complete: " & Err.Description, vbCritical, "ERP AcadÃ©mie v13"
+    MsgBox "Une erreur s'est produite durant l'analyse complete: " & Err.Description, vbCritical, "ERP Académie v13"
     Debug.Print "[Analysis] Error " & Err.Number & " in RunFullAnalysis: " & Err.Description
 End Sub

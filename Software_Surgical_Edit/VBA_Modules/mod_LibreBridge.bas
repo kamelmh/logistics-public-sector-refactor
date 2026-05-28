@@ -2,12 +2,12 @@ Attribute VB_Name = "mod_LibreBridge"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Éducation - Wilaya d'El Bayadh
-' LibreOffice Integration Bridge — cross-platform document conversion,
+' Direction de l'Education - Wilaya d'El Bayadh
+' LibreOffice Integration Bridge - cross-platform document conversion,
 ' Excel COM interop, headless soffice automation, format bridging.
 '
 ' v2.0 FIXES:
-'  - Fixed critical bug: End Function → Exit Function (line 151)
+'  - Fixed critical bug: End Function -> Exit Function (line 151)
 '  - Added Registry-based LibreOffice detection (WMI Win32_Product + Registry keys)
 '  - Added 14 more install path versions (LO 3-10, 24-30, Portable)
 '  - Added 7 new formats: EPUB, RTF, SVG, XPS, PDF/A, merge, watermark
@@ -69,7 +69,7 @@ Private m_LOVersion As String        ' Cached version string
 Private m_COMAvailable As Integer    ' -1=unknown, 0=no, 1=yes
 
 ' ============================================================================
-' 1. DETECTION (v2 — Registry + WMI + PATH + 30 install paths)
+' 1. DETECTION (v2 - Registry + WMI + PATH + 30 install paths)
 ' ============================================================================
 
 Public Function IsLibreOfficeInstalled() As Boolean
@@ -82,7 +82,7 @@ Public Function IsLibreOfficeInstalled() As Boolean
         Exit Function
     End If
     
-    ' First run — multi-strategy detection
+    ' First run - multi-strategy detection
     m_LOPath = ""
     
     ' Strategy 1: Scan all known Program Files paths (fastest)
@@ -171,7 +171,7 @@ Public Function GetLOVersion() As String
 End Function
 
 ' ============================================================================
-' 2. DOCUMENT CONVERSION — Generic API
+' 2. DOCUMENT CONVERSION - Generic API
 ' ============================================================================
 
 Public Function ConvertDocument(ByVal inputPath As String, _
@@ -216,7 +216,7 @@ Public Function ConvertToPDF(ByVal inputPath As String, _
                              Optional ByVal outputPath As String = "", _
                              Optional ByVal format As LibeFormat = lfPDF, _
                              Optional ByVal timeoutSec As Long = 60) As Boolean
-    ' Legacy API wrapper — calls ConvertDocument with PDF target
+    ' Legacy API wrapper - calls ConvertDocument with PDF target
     If format = lfPDF Or format = lfPDFA Then
         ConvertToPDF = ConvertDocument(inputPath, outputPath, format, timeoutSec)
     Else
@@ -225,7 +225,7 @@ Public Function ConvertToPDF(ByVal inputPath As String, _
 End Function
 
 ' ============================================================================
-' 3. LIBREOFFICE CONVERSION ENGINE (v2 — all filters)
+' 3. LIBREOFFICE CONVERSION ENGINE (v2 - all filters)
 ' ============================================================================
 
 Private Function ConvertViaLibreOffice(ByVal inputPath As String, _
@@ -388,7 +388,7 @@ Private Function FormatExtension(ByVal format As LibeFormat) As String
 End Function
 
 ' ============================================================================
-' 4. PDF UTILITIES — Merge, Split, Watermark
+' 4. PDF UTILITIES - Merge, Split, Watermark
 ' ============================================================================
 
 Public Function CombineMultiplePDFs(ByVal pdfFolder As String, _
@@ -523,7 +523,7 @@ Private Function TryGhostscript(ByVal folder As String, _
 End Function
 
 ' ============================================================================
-' 5. EXCEL COM FALLBACK — Export without LibreOffice
+' 5. EXCEL COM FALLBACK - Export without LibreOffice
 ' ============================================================================
 
 Private Function ExportViaCOM(ByVal inputPath As String, _
@@ -710,7 +710,7 @@ Public Sub ExportAllToPDF()
 End Sub
 
 Public Sub ConvertDocumentInteractive()
-    ' Interactive document conversion — user picks file and format
+    ' Interactive document conversion - user picks file and format
     Dim filePath As String
     Dim fmtChoice As Variant
     Dim outPath As String
@@ -845,7 +845,7 @@ Public Function Bridge_Description() As String
 End Function
 
 ' ============================================================================
-' 9. PRIVATE — LibreOffice Detection Helpers
+' 9. PRIVATE - LibreOffice Detection Helpers
 ' ============================================================================
 
 Private Function ScanProgramFilesPaths() As String
@@ -877,7 +877,7 @@ Private Function ScanProgramFilesPaths() As String
                 End If
             Next i
             
-            ' Check base path (no version number — current/recommended)
+            ' Check base path (no version number - current/recommended)
             path = bp & "\program\soffice.exe"
             If Len(Dir(path)) > 0 Then
                 ScanProgramFilesPaths = path
@@ -1047,7 +1047,7 @@ Private Function GetLOVersionInternal(ByVal loPath As String) As String
 End Function
 
 ' ============================================================================
-' 10. PRIVATE — Utilities
+' 10. PRIVATE - Utilities
 ' ============================================================================
 
 Private Function ChangeExtension(ByVal filePath As String, _
@@ -1066,7 +1066,7 @@ Private Function WaitForFile(ByVal filePath As String, _
     Dim i As Long
     For i = 1 To retryCount
         If Len(Dir(filePath)) > 0 Then
-            ' File exists — also verify it's not zero bytes
+            ' File exists - also verify it's not zero bytes
             Dim fso As Object
             Set fso = CreateObject("Scripting.FileSystemObject")
             If fso.GetFile(filePath).Size > 0 Then
@@ -1135,5 +1135,5 @@ Private Function BrowseForFile(ByVal filter As String, _
 End Function
 
 ' ============================================================================
-' END — mod_LibreBridge.bas (v2.0)
+' END - mod_LibreBridge.bas (v2.0)
 ' ============================================================================

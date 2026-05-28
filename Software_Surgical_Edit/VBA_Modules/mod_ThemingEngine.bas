@@ -2,7 +2,7 @@ Attribute VB_Name = "mod_ThemingEngine"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Éducation - Wilaya d'El Bayadh
+' Direction de l'Education - Wilaya d'El Bayadh
 ' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
 ' All rights reserved. Unauthorized reproduction or distribution prohibited.
 ' ============================================================================
@@ -138,7 +138,7 @@ Private Sub ApplyFormTheme(ByRef frm As Object)
     With frm
         .BackColor = CLR_FORM_BG
         .BorderStyle = fmBorderStyleSingle
-        .Caption = "ERP Académie v13.2 - سـجـل الـمـخـزون"
+        .Caption = "ERP Academie v13.2 - Registre de Stock"
         .SpecialEffect = fmSpecialEffectFlat
         .ScrollBars = fmScrollBarsNone
     End With
@@ -312,7 +312,7 @@ Public Sub ApplyButtonDangerTheme(ByRef frm As Object, ByVal ctrlName As String)
         .MousePointer = fmMousePointerCustom
     End With
     
-    ctrl.ControlTipText = "Supprimer la ligne sélectionnée"
+    ctrl.ControlTipText = "Supprimer la ligne selectionnee"
 End Sub
 
 '-- Ghost button (Annuler, Auto-Ref, Imprimer) - transparent, subtle
@@ -400,8 +400,8 @@ Public Sub SetTabOrder(ByRef frm As Object)
     Dim tabIndex As Integer
     Dim ctrlNames As Variant
     
-    ' Logical flow: Doc Type → Date → Ref → Service → Article → Category →
-    '               Qty → PU → Add → Remove → Grid → Enregistrer → Annuler
+    ' Logical flow: Doc Type -> Date -> Ref -> Service -> Article -> Category ->
+    '               Qty -> PU -> Add -> Remove -> Grid -> Enregistrer -> Annuler
     ctrlNames = Array( _
         "cmbTypeDoc", "TxtDate", "txtRefDoc", "cmbService", _
         "cmbArticle", "cmbCategorie", "txtQuantite", "txtPrixUnitaire", _
@@ -423,12 +423,12 @@ End Sub
 Public Sub SetDefaultCancelButtons(ByRef frm As Object)
     On Error Resume Next
     
-    ' Enter key → Enregistrer (primary action)
+    ' Enter key -> Enregistrer (primary action)
     If frm.Controls.Exists("btnEnregistrer") Then
         frm.Controls("btnEnregistrer").Default = True
     End If
     
-    ' ESC key → Annuler
+    ' ESC key -> Annuler
     If frm.Controls.Exists("btnAnnuler") Then
         frm.Controls("btnAnnuler").Cancel = True
     End If
@@ -584,7 +584,7 @@ End Sub
 Public Sub InitStatusBar(ByRef frm As Object)
     On Error Resume Next
     If mod_StockEntry_Logic.HasControl(frm, "StatusBar") Then
-        frm.Controls("StatusBar").Value = "Prêt"
+        frm.Controls("StatusBar").Value = "Pret"
     End If
     On Error GoTo 0
 End Sub

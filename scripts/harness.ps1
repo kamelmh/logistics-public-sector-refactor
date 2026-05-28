@@ -1,6 +1,6 @@
 param(
     [Parameter(Position=0)]
-    [ValidateSet("compact","task","bg","worktree","status","cleanup","sync","unlock")]
+    [ValidateSet("compact","task","bg","worktree","status","cleanup","sync","unlock","vba-validate","vba-autofix")]
     [string]$Layer,
 
     [Parameter(Position=1)]
@@ -29,6 +29,8 @@ function Test-Dependencies {
         @{ Name = "VBA modules dir"; Check = { Test-Path "$ROOT\Software_Surgical_Edit\VBA_Modules" } },
         @{ Name = "build.ps1"; Check = { Test-Path "$ROOT\vbe-auto\build.ps1" } },
         @{ Name = "verify.ps1"; Check = { Test-Path "$ROOT\vbe-auto\verify.ps1" } },
+        @{ Name = "vba-check.py"; Check = { Test-Path "$ROOT\vbe-auto\vba-check.py" } },
+        @{ Name = "vba-autofix.ps1"; Check = { Test-Path "$ROOT\vbe-auto\vba-autofix.ps1" } },
         @{ Name = "MASTER_BOOTSTRAP.xml"; Check = { Test-Path "$ROOT\.opencode\bootstrap\MASTER_BOOTSTRAP.xml" } }
     )
 
@@ -521,5 +523,33 @@ switch ($Layer) {
     }
     "unlock" {
         Invoke-Unlock
+    }
+    "vba-validate" {
+        Write-Output "=== s13: VBA Pre-Build Validation ==="
+        $vbaCheck = "$ROOT\vbe-auto\vba-check.py"
+        if (Test-Path $vbaCheck) {
+            & python $vbaCheck
+            Write-Output "Exit code: $LASTEXITCODE"
+        } else {
+            Write-Output "ERROR: vba-check.py not found"
+        }
+    }
+    "vba-autofix" {
+        $mode = if ($Action -eq "full") { "-Full" } elseif ($Action -eq "watch") { "-Watch" } elseif ($Action -eq "scan") { "" } else { "-Repair" }
+        $vbaAutofix = "$ROOT\vbe-auto\vba-autofix.ps1"
+        if (Test-Path $vbaAutofix) {
+            if ($Action -eq "watch" -or $Action -eq "full") {
+                # Long-running — launch in background
+                Start-Process -WindowStyle Hidden -FilePath pwsh -ArgumentList @(
+                    "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $vbaAutofix, $mode
+                ) -PassThru | Out-Null
+                Write-Output "vba-autofix $mode launched in background"
+            } else {
+                # Synchronous
+                & $vbaAutofix $mode
+            }
+        } else {
+            Write-Output "ERROR: vba-autofix.ps1 not found"
+        }
     }
 }
