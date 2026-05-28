@@ -120,6 +120,27 @@ def validate_file(fpath):
             if 'CONST' in code_part and 'ARRAY(' in code_part:
                 err(f"{fname} line {ln+1}: Const declaration uses Array() — use module-level variable instead: '{line.rstrip()}'")
     
+    # === CHECK 10: Return statement (VB.NET syntax, not valid in VBA) ===
+    # VBA uses FunctionName = value for return, not "Return value".
+    # "Return" in VBA is only valid inside GoSub...Return (deprecated pattern).
+    for ln, line in enumerate(lines):
+        code_part = line.strip().split("'")[0].strip()
+        if code_part.upper().startswith('RETURN ') and not code_part.strip().startswith("'"):
+            err(f"{fname} line {ln+1}: 'Return' statement is VB.NET syntax — use 'FunctionName = value' instead: '{line.rstrip()}'")
+    
+    # === CHECK 11: Named argument Name:= in Application.OnTime should be Procedure:= ===
+    for ln, line in enumerate(lines):
+        code_part = line.strip().split("'")[0].strip()
+        if 'ONTIME' in code_part.upper() and 'NAME:=' in code_part.upper():
+            err(f"{fname} line {ln+1}: Application.OnTime uses 'Name:=' — should be 'Procedure:=': '{line.rstrip()}'")
+    
+    # === CHECK 12: Parameter named 'format' (conflicts with VBA built-in Format function) ===
+    for ln, line in enumerate(lines):
+        code_part = line.strip().split("'")[0].strip()
+        upper = code_part.upper()
+        if ('BYVAL FORMAT AS' in upper or 'BYREF FORMAT AS' in upper) and 'LIBEFORMAT' in upper:
+            err(f"{fname} line {ln+1}: Parameter 'format' conflicts with VBA Format() built-in — rename to 'targetFormat': '{line.rstrip()}'")
+    
     CHECKS_PASSED += 1
 
 
@@ -135,7 +156,7 @@ def main():
                    glob.glob(os.path.join(VBA_DIR, "*.cls")))
     
     print("╔══════════════════════════════════════════════╗")
-    print("║        VBA Pre-Build Validator v1.0         ║")
+    print("║        VBA Pre-Build Validator v1.2         ║")
     print("╚══════════════════════════════════════════════╝")
     print(f"  Scanning: {VBA_DIR}")
     print(f"  Files:    {len(files)}")
