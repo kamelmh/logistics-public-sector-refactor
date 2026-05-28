@@ -244,6 +244,9 @@ Private Function ConvertViaLibreOffice(ByVal inputPath As String, _
     Dim startTime As Double
     Dim outDir As String
     Dim result As Boolean
+    Dim actualPath As String
+    Dim fsoRename As Object
+    Dim errText As String
     
     On Error GoTo LOConvertError
     
@@ -287,11 +290,9 @@ Private Function ConvertViaLibreOffice(ByVal inputPath As String, _
     Else
         ' LibreOffice may have used a different filename pattern
         ' Try to find the actual output
-        Dim actualPath As String
         actualPath = FindLOPathOutput(inputPath, outDir, format)
         If Len(actualPath) > 0 And Len(Dir(actualPath)) > 0 Then
             ' Rename to expected output (use FSO to avoid Name/As confusion)
-            Dim fsoRename As Object
             Set fsoRename = CreateObject("Scripting.FileSystemObject")
             fsoRename.MoveFile actualPath, outputPath
             result = True
@@ -299,7 +300,6 @@ Private Function ConvertViaLibreOffice(ByVal inputPath As String, _
         Else
             Debug.Print "[LO] FAILED: " & inputPath & " (exit " & exec.ExitCode & ")"
             ' Capture stderr for diagnostics
-            Dim errText As String
             On Error Resume Next
             errText = exec.StdErr.ReadAll()
             If Len(errText) > 0 Then Debug.Print "[LO] stderr: " & Left(errText, 500)
