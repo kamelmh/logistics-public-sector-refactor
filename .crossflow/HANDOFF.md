@@ -1,9 +1,11 @@
 # CrossFlow HANDOFF — Academix v13.2
-> **Last session:** 2026-05-29 Session 6 — 3 compile errors FIXED (LibreBridge, PCControl, TaskOrch), 112/112 PASS
-> **State:** ERP builds from GOLDEN_ERP_v13.2.xlsm (1056 KB, 70 modules, 16618 lines)
+> **Last session:** 2026-05-29 Session 6 — Full Pipeline Integration + vba-check v1.2 (12 checks)
+> **ERP verify:** 112/112 PASS | **Macro tests:** 20/20 PASS | **DSS audit:** 16 PASS, 0 CRITICAL, 1 WARN
+> **Pipeline:** `pipeline-full.ps1` created: vba-check→build→verify→test-macros→dss-audit (5 stages)
+> **State:** ERP builds from GOLDEN_ERP_v13.2.xlsm (1059 KB, 70 modules, 16621 lines)
 > **Legacy:** Archived as ARCHIVE_LEGACY_Copy_of_ERP_v13.2.xlsm (834 KB)
-> **Next:** Test 4 advanced VBA macros manually (guide on Desktop\VBA_Macro_Testing_Guide.md)
-> **Quick checks:** `python vbe-auto/vba-check.py` → expect 44/44 clean | `build.ps1` → expect COMPILE: OK
+> **Next:** Explore skills/agents, CI/CD gap closure, wide maintenance
+> **Quick checks:** `& "vbe-auto\pipeline-full.ps1" -SkipBuild` | or `/pipeline` in chat
 > **Full resume:** Read notepad.md → read HANDOFF.md bottom → `/memory recall 0`
 
 ---
