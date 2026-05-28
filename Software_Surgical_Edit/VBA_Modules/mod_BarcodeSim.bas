@@ -382,7 +382,10 @@ Public Sub GenerateBarcode(ByVal targetSheet As String, _
     On Error GoTo BarcodeError
     
     Set ws = GetOrCreateSheet(targetSheet)
+    ' Unprotect if protected (newly created sheets have no protection)
+    On Error Resume Next
     ws.Unprotect Password:=mod_Config.MASTER_PWD
+    On Error GoTo BarcodeError
     
     cleanData = Trim(data)
     If Len(cleanData) = 0 Then Exit Sub
