@@ -2,8 +2,8 @@ Attribute VB_Name = "mod_TaskOrchestrator"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Éducation - Wilaya d'El Bayadh
-' Task Orchestration Engine — advanced macro coordination with queue,
+' Direction de l'Education - Wilaya d'El Bayadh
+' Task Orchestration Engine - advanced macro coordination with queue,
 ' priorities, dependencies, progress tracking, error retry, and scheduler.
 ' ============================================================================
 
@@ -91,8 +91,6 @@ Private m_InitDone As Boolean
 
 ' Sheet for persistent task log
 Private Const TASK_LOG_SHEET As String = "TASK_LOG"
-Private Const TASK_LOG_HEADER() As Variant = Array("TASK_ID", "NAME", "STATUS", "STARTED", _
-                                                   "COMPLETED", "DURATION_S", "ERROR", "RESULT")
 
 ' ============================================================================
 ' INITIALIZATION
@@ -108,6 +106,7 @@ Private Sub ClassInit()
     ReDim m_Queue(0 To 99)
     m_IsRunning = False
     m_InitDone = True
+
 End Sub
 
 Public Sub Initialize()
@@ -116,7 +115,7 @@ Public Sub Initialize()
 End Sub
 
 ' ============================================================================
-' PUBLIC API — Task Definition & Registration
+' PUBLIC API - Task Definition & Registration
 ' ============================================================================
 
 Public Function DefineTask(ByVal taskID As String, _
@@ -201,7 +200,7 @@ Public Sub SetSchedule(ByVal taskID As String, _
 End Sub
 
 ' ============================================================================
-' PUBLIC API — Queue Management
+' PUBLIC API - Queue Management
 ' ============================================================================
 
 Public Sub EnqueueTask(ByVal taskID As String)
@@ -277,7 +276,7 @@ Public Sub ClearQueue()
 End Sub
 
 ' ============================================================================
-' PUBLIC API — Execution Engine
+' PUBLIC API - Execution Engine
 ' ============================================================================
 
 Public Sub RunQueue(Optional ByVal concurrent As Boolean = False)
@@ -383,7 +382,7 @@ Public Function RunSingleTask(ByVal taskID As String) As Boolean
 End Function
 
 ' ============================================================================
-' PUBLIC API — Progress Tracking
+' PUBLIC API - Progress Tracking
 ' ============================================================================
 
 Public Sub UpdateProgress(ByVal pct As Double, Optional ByVal message As String = "")
@@ -424,7 +423,7 @@ Public Sub ShowProgressDialog()
 End Sub
 
 ' ============================================================================
-' PUBLIC API — Task Status & Reporting
+' PUBLIC API - Task Status & Reporting
 ' ============================================================================
 
 Public Function GetTaskStatus(ByVal taskID As String) As TaskStatus
@@ -532,7 +531,7 @@ Public Sub ExportTaskLogToSheet()
 End Sub
 
 ' ============================================================================
-' PUBLIC API — Scheduler
+' PUBLIC API - Scheduler
 ' ============================================================================
 
 Public Sub StartScheduler(Optional ByVal intervalSeconds As Long = 60)
@@ -552,7 +551,7 @@ Public Sub StopScheduler()
 End Sub
 
 Public Sub SchedulerCheck()
-    ' Called by Application.OnTime — checks and runs scheduled tasks
+    ' Called by Application.OnTime - checks and runs scheduled tasks
     If m_IsRunning Then
         ' Re-schedule and return if orchestrator is busy
         Call ScheduleNextCheck
@@ -590,7 +589,7 @@ Public Sub SchedulerCheck()
 End Sub
 
 ' ============================================================================
-' PUBLIC API — Predefined Task Factories
+' PUBLIC API - Predefined Task Factories
 ' ============================================================================
 
 Public Sub CreateDataSyncTasks()
@@ -648,7 +647,7 @@ Public Sub CreateInventoryTasks()
 End Sub
 
 ' ============================================================================
-' PUBLIC API — Quick Run (one-call orchestration)
+' PUBLIC API - Quick Run (one-call orchestration)
 ' ============================================================================
 
 Public Sub QuickRunBackup()
@@ -693,7 +692,7 @@ Public Sub ShowTaskDashboard()
 End Sub
 
 ' ============================================================================
-' PRIVATE — Execution Internals
+' PRIVATE - Execution Internals
 ' ============================================================================
 
 Private Sub ExecuteTask(ByVal taskID As String)
@@ -807,7 +806,7 @@ Private Function CheckDependencies(ByVal taskID As String) As Boolean
         depIdx = FindTaskIndex(deps(i))
         
         If depIdx < 0 Then
-            ' Dependency not found — skip
+            ' Dependency not found - skip
             CheckDependencies = False
             Exit Function
         End If
@@ -946,5 +945,5 @@ Private Function StatusLabel(ByVal status As TaskStatus) As String
 End Function
 
 ' ============================================================================
-' END — mod_TaskOrchestrator.bas
+' END - mod_TaskOrchestrator.bas
 ' ============================================================================
