@@ -1,0 +1,14 @@
+# Default owners for all files
+* @kamelmh
+
+# CI/CD pipeline — review required for workflow changes
+.github/workflows/*.yml @kamelmh
+
+# VBA source code
+Software_Surgical_Edit/VBA_Modules/ @kamelmh
+
+# Thesis and paper
+Thesis_Surgical_Edit/ @kamelmh
+
+# Build and verification tools
+vbe-auto/ @kamelmh

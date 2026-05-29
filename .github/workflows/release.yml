@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:       # allow manual release creation from Actions tab
 
 permissions:
   contents: write
@@ -21,6 +22,8 @@ jobs:
         python-version: '3.x'
 
     - name: Run vba-check.py (pre-build validation)
+      env:
+        PYTHONIOENCODING: utf-8
       run: python vbe-auto/vba-check.py
 
     - name: Check for Excel

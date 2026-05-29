@@ -5,9 +5,11 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  workflow_dispatch:       # allow manual trigger from Actions tab
 
 env:
   PYTHON_VERSION: '3.x'
+  PYTHONIOENCODING: utf-8          # Fix Unicode box-drawing chars in GA runner (Python 3.14+)
   THESIS_DOCX: Research_and_Development/Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx
   PAPER_DOCX: Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.docx
   PAPER_PDF: Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.pdf

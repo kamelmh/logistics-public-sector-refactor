@@ -1,8 +1,14 @@
 # Academix v13.2 — DSS Logistique El Bayadh
 
 [![CI](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml/badge.svg)](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml)
+[![VBA Validate](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml/badge.svg?job=vba-validate)](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml)
+[![Lint](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml/badge.svg?job=lint)](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml)
+[![Model Health](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/model-health.yml/badge.svg)](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/model-health.yml)
+[![Release](https://img.shields.io/github/v/release/kamelmh/logistics-public-sector-refactor?include_prereleases&label=release)](https://github.com/kamelmh/logistics-public-sector-refactor/releases)
 [![VBA](https://img.shields.io/badge/VBA-Excel%202010%2B-green)](https://docs.microsoft.com/en-us/office/vba/)
+[![License](https://img.shields.io/github/license/kamelmh/logistics-public-sector-refactor)](LICENSE)
 [![Thesis](https://img.shields.io/badge/Thesis-DSS%20Logistique%20El--Bayadh-8A2BE2)](https://github.com/kamelmh/lsm-vba-core)
+[![GitHub Models](https://img.shields.io/badge/GitHub_Models-Free_tier-181717?logo=github)](tools/gh-models.ps1)
 
 Decision Support System for inventory management at the **Direction de l'Éducation d'El Bayadh** (Algerian Ministry of Education). Pure VBA, Excel 2010+ compatible.
 
