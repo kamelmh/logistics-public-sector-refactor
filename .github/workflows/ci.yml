@@ -14,6 +14,21 @@ env:
 
 jobs:
   # ──────────────────────────────────────────────────────
+  # VBA VALIDATION — Pure Python, no Excel, runs on ANY runner
+  # ──────────────────────────────────────────────────────
+  vba-validate:
+    name: VBA source validation (12 checks)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    - name: Run vba-check.py (12 static checks, 44 .bas/.frm files)
+      run: python vbe-auto/vba-check.py
+
+  # ──────────────────────────────────────────────────────
   # THESIS — Main gate (Windows-native scripts, must pass)
   # ──────────────────────────────────────────────────────
   thesis:
@@ -39,6 +54,9 @@ jobs:
     - name: Setup MiKTeX (for PDF)
       continue-on-error: true
       run: choco install miktex --no-progress -y
+
+    - name: Run vba-check.py (pre-build source validation)
+      run: python vbe-auto/vba-check.py
 
     - name: Build thesis DOCX
       run: pwsh -File Thesis_Surgical_Edit/build-thesis.ps1
@@ -89,14 +107,14 @@ jobs:
 
   # ──────────────────────────────────────────────────────
   # ERP — Requires Excel COM (self-hosted only)
+  # All stages run via pipeline-full.ps1 (single source of truth)
   # ──────────────────────────────────────────────────────
   erp:
-    name: ERP workbook build
+    name: ERP workbook build & verify
     runs-on: windows-latest
     continue-on-error: true
     steps:
     - uses: actions/checkout@v4
-      # NOTE: submodules intentionally skipped (see thesis job comment)
 
     - name: Check for Excel
       id: check-excel
@@ -116,31 +134,17 @@ jobs:
           Write-Host "Excel found: $found"
           "excel_found=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         } else {
-          Write-Host "Excel not found on this runner (expected: GA runners lack Office)"
+          Write-Host "Excel not found on this runner — ERP build skipped"
           "excel_found=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         }
 
-    - name: Run ERP full pipeline (vba-check → build → verify → macros → audit)
-      if: steps.check-excel.outputs.excel_found == 'true'
-      continue-on-error: true
-      id: pipeline
-      run: |
-        & "vbe-auto\pipeline-full.ps1" -SkipBuild:$false -ContinueOnError
-
-    - name: Run DSS audit (standalone)
+    - name: Run full pipeline (vba-check → build → verify → macros → audit)
       if: steps.check-excel.outputs.excel_found == 'true'
       continue-on-error: true
       run: |
-        & "milestone_13_2\public-lsm\tests\dss-audit.ps1"
+        & "vbe-auto\pipeline-full.ps1" -ContinueOnError
 
-    - name: Run standalone verify (for comparison)
-      if: steps.check-excel.outputs.excel_found == 'true'
-      continue-on-error: true
-      id: verify
-      run: |
-        & "vbe-auto\verify.ps1" -ConfigPath "vbe-auto\vbe-auto-config.json"
-
-    - name: Upload pipeline results
+    - name: Upload pipeline report
       if: always()
       uses: actions/upload-artifact@v4
       with:
@@ -154,25 +158,20 @@ jobs:
         name: verify-results
         path: vbe-auto/results/verify_results_*.json
 
-    - name: Upload test logs (if any)
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: test-output
-        path: |
-          **/test-*.log
-          **/test-*.txt
-          **/test-*.xml
-
-    - name: Upload build artifact (ERP workbook)
+    - name: Upload ERP workbook
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: erp-workbook
         path: ERP_v13.2.xlsm
 
+    - name: Failure notification
+      if: failure()
+      run: |
+        Write-Host "::warning::ERP pipeline failed — review pipeline report artifact for details"
+
   # ──────────────────────────────────────────────────────
-  # LINT — Code quality checks
+  # LINT — Code quality checks (Linux, no Excel needed)
   # ──────────────────────────────────────────────────────
   lint:
     name: Lint (PowerShell + Python)
@@ -184,10 +183,9 @@ jobs:
       run: |
         sudo pwsh -c 'Install-Module -Name PSScriptAnalyzer -Force -Scope AllUsers'
 
-    - name: Run PSScriptAnalyzer on build scripts
+    - name: PSScriptAnalyzer — thesis scripts
       shell: pwsh
       run: |
-        # Run separately per file to avoid string[] to string coercion bug
         $exitCode = 0
         @(
           "Thesis_Surgical_Edit/build-thesis.ps1",
@@ -198,12 +196,33 @@ jobs:
           $result = Invoke-ScriptAnalyzer -Path $_ -Recurse -ExcludeRule PSAvoidUsingCmdletAliases,PSUseDeclaredVarsMoreThanAssignments
           if ($result) { $result | Format-Table -AutoSize; $exitCode = 1 }
         }
-        if ($exitCode -ne 0) { Write-Host "ScriptAnalyzer issues found" -ForegroundColor Yellow }
-        exit 0  # Don't fail the job
+        if ($exitCode -ne 0) { Write-Host "Thesis script issues found" -ForegroundColor Yellow }
+        exit 0
+
+    - name: PSScriptAnalyzer — vbe-auto build tools
+      shell: pwsh
+      run: |
+        $exitCode = 0
+        @(
+          "vbe-auto/build.ps1",
+          "vbe-auto/verify.ps1",
+          "vbe-auto/pipeline-full.ps1",
+          "vbe-auto/vba-autofix.ps1",
+          "vbe-auto/vbe.ps1"
+        ) | ForEach-Object {
+          $result = Invoke-ScriptAnalyzer -Path $_ -Recurse -ExcludeRule PSAvoidUsingCmdletAliases,PSUseDeclaredVarsMoreThanAssignments
+          if ($result) { $result | Format-Table -AutoSize; $exitCode = 1 }
+        }
+        if ($exitCode -ne 0) { Write-Host "Build tool issues found" -ForegroundColor Yellow }
+        exit 0
 
     - name: Install ruff
       run: pip install ruff
 
-    - name: Run ruff on Python scripts
+    - name: Ruff — Python style scripts
       run: |
         ruff check Thesis_Surgical_Edit/style/*.py --ignore E501,W291 --quiet || true
+
+    - name: Ruff — VBA validator
+      run: |
+        ruff check vbe-auto/vba-check.py --ignore E501 --quiet || true

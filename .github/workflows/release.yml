@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+
+    - name: Run vba-check.py (pre-build validation)
+      run: python vbe-auto/vba-check.py
+
+    - name: Check for Excel
+      id: check-excel
+      shell: pwsh
+      run: |
+        $paths = @(
+          "C:\Program Files\Microsoft Office\root\Office16\EXCEL.EXE",
+          "C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE"
+        )
+        $found = $null
+        foreach ($p in $paths) { if (Test-Path $p) { $found = $p; break } }
+        if ($found) {
+          "excel_found=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        } else {
+          "excel_found=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        }
+
+    - name: Build ERP workbook
+      if: steps.check-excel.outputs.excel_found == 'true'
+      run: |
+        & "vbe-auto\build.ps1" -ConfigPath "vbe-auto\vbe-auto-config.json"
+
+    - name: Build thesis DOCX
+      run: |
+        pip install python-docx lxml
+        choco install pandoc --no-progress -y
+        pwsh -File Thesis_Surgical_Edit/build-thesis.ps1
+
+    - name: Build English paper DOCX + PDF
+      run: |
+        pwsh -File Thesis_Surgical_Edit/build-english-paper.ps1
+        pwsh -File Thesis_Surgical_Edit/build-english-paper-pdf.ps1
+
+    - name: Determine release assets
+      id: assets
+      shell: pwsh
+      run: |
+        $files = @()
+        if (Test-Path "ERP_v13.2.xlsm") { $files += "ERP_v13.2.xlsm" }
+        if (Test-Path "Research_and_Development/Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx") {
+          $files += "Research_and_Development/Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx"
+        }
+        if (Test-Path "Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.docx") {
+          $files += "Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.docx"
+        }
+        if (Test-Path "Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.pdf") {
+          $files += "Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.pdf"
+        }
+        Write-Host "Assets: $($files -join ', ')"
+        "assets=$($files -join ',')" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        name: Academix ${{ github.ref_name }}
+        draft: true
+        generate_release_notes: true
+        files: |
+          ERP_v13.2.xlsm
+          Research_and_Development/Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx
+          Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.docx
+          Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.pdf
