@@ -18,8 +18,8 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          .\scripts\model-health-check.ps1 -Mode all
+          .\scripts\model-health-check.ps1 -Mode env,connectivity
 
       - name: Notify on failure
         if: failure()
-        run: echo "::error::Model health check failed – check the diagnostic artifact and rotate keys if needed."
+        run: echo "::error::Model health check failed – check API keys or connectivity. Run locally with -Mode all for full desktop test."
