@@ -692,7 +692,7 @@ Public Sub ExportAllToPDF()
     Application.StatusBar = "[LO] Export de tous les documents..."
     
     Dim thesisPath As String
-    thesisPath = basePath & "Research_and_Development\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx"
+    thesisPath = basePath & "Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx"
     If Len(Dir(thesisPath)) > 0 Then
         If ConvertDocument(thesisPath) Then
             Debug.Print "[LO] Thesis PDF generated"

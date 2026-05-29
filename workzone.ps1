@@ -17,7 +17,7 @@ Write-Host @"
 
 # ─── Pre-flight: Verify core paths ─────────────────────────────────────
 $errors = @()
-if (-not (Test-Path (Join-Path $ROOT "Research_and_Development\Thesis_Surgical_Edit\thesis-doctor.ps1"))) { $errors += "thesis-doctor.ps1" }
+if (-not (Test-Path (Join-Path $ROOT "Thesis_Surgical_Edit\thesis-doctor.ps1"))) { $errors += "thesis-doctor.ps1 (archived)" }
 if (-not (Test-Path (Join-Path $ROOT "scripts\checkpoint.ps1"))) { $errors += "checkpoint.ps1" }
 if (-not (Test-Path (Join-Path $ROOT "scripts\autonomous-mode.ps1"))) { $errors += "autonomous-mode.ps1" }
 if (-not (Test-Path (Join-Path $ROOT "vbe-auto\build.ps1"))) { $errors += "build.ps1" }
@@ -47,7 +47,7 @@ switch ($Mode) {
     }
     "inspect" {
         Write-Host "  Mode: COM Inspection`n" -ForegroundColor Yellow
-        & (Join-Path $ROOT "Research_and_Development\Thesis_Surgical_Edit\thesis-doctor.ps1") inspect:all
+        Write-Host "  [INSPECT] thesis-doctor.ps1 is archived — use build-thesis.ps1 instead" -ForegroundColor Yellow
     }
     "skills" {
         Write-Host "  Mode: Skills Inventory`n" -ForegroundColor Yellow

@@ -10,11 +10,10 @@ $projectRoot = Split-Path $PSScriptRoot -Parent
 $tsDir = Join-Path $projectRoot "Thesis_Surgical_Edit"
 $styleDir = Join-Path $tsDir "style"
 $outDir = Join-Path $tsDir "output"
-$rndOutDir = Join-Path $projectRoot "Research_and_Development\Thesis_Surgical_Edit\output"
 $reportDir = Join-Path $projectRoot "pipeline-reports"
 $null = New-Item -ItemType Directory -Path $reportDir -Force
 
-$thesisDocx = Join-Path $rndOutDir "Memoire_DSS_Logistique_ElBayadh.docx"
+$thesisDocx = Join-Path $outDir "Memoire_DSS_Logistique_ElBayadh.docx"
 $thesisDocxLocal = Join-Path $outDir "Memoire_DSS_Logistique_ElBayadh.docx"
 $fixedDocx = Join-Path $outDir "Memoire_DSS_Logistique_ElBayadh_fixed.docx"
 $preFixDocx = Join-Path $outDir "Memoire_DSS_Logistique_ElBayadh_pre_fix.docx"

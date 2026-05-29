@@ -3,11 +3,11 @@
   Build double-blind version of the English paper for ISIA 2026 submission.
 .DESCRIPTION
   Strips author info from MD, builds DOCX + PDF in double-blind format.
-  Output: Research_and_Development/Thesis_Surgical_Edit/output/
+  Output: Thesis_Surgical_Edit/output/
 #>
 
 $projectRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-$outDir = Join-Path $projectRoot "Research_and_Development\Thesis_Surgical_Edit\output"
+$outDir = Join-Path $projectRoot "Thesis_Surgical_Edit\output"
 
 Write-Host "=== ISIA 2026 — Double-Blind Build ===" -ForegroundColor Cyan
 

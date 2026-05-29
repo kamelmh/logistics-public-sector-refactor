@@ -1,72 +1,9 @@
-[submodule "MiniCPM-V"]
-	path = MiniCPM-V
-	url = https://github.com/OpenBMB/MiniCPM-V.git
-[submodule "My-Brain-Is-Full-Crew"]
-	path = My-Brain-Is-Full-Crew
-	url = https://github.com/gnekt/My-Brain-Is-Full-Crew.git
-[submodule "Research_and_Development/explore-bitnet"]
-	path = Research_and_Development/explore-bitnet
-	url = https://github.com/microsoft/BitNet.git
-[submodule "Research_and_Development/explore-langflow"]
-	path = Research_and_Development/explore-langflow
-	url = https://github.com/langflow-ai/langflow.git
-[submodule "Research_and_Development/explore-lap"]
-	path = Research_and_Development/explore-lap
-	url = https://github.com/Lap-Platform/LAP.git
-[submodule "Research_and_Development/explore-mini-browser"]
-	path = Research_and_Development/explore-mini-browser
-	url = https://github.com/runablehq/mini-browser.git
-[submodule "Research_and_Development/explore-research-codex"]
-	path = Research_and_Development/explore-research-codex
-	url = https://github.com/Imbad0202/academic-research-skills-codex.git
-[submodule "WindsurfAPI"]
-	path = WindsurfAPI
-	url = https://github.com/dwgx/WindsurfAPI.git
-[submodule "anansi"]
-	path = anansi
-	url = https://github.com/mdowis/anansi.git
-[submodule "andrej-karpathy-skills"]
-	path = andrej-karpathy-skills
-	url = https://github.com/multica-ai/andrej-karpathy-skills.git
-[submodule "autoresearch_exploration"]
-	path = autoresearch_exploration
-	url = https://github.com/karpathy/autoresearch.git
-[submodule "cocoindex_exploration"]
-	path = cocoindex_exploration
-	url = https://github.com/cocoindex-io/cocoindex.git
-[submodule "explore"]
-	path = explore
-	url = https://github.com/elder-plinius/OBLITERATUS.git
 [submodule "external/lsm-vba-core"]
 	path = external/lsm-vba-core
 	url = https://github.com/kamelmh/lsm-vba-core.git
-[submodule "iFixAi"]
-	path = iFixAi
-	url = https://github.com/ifixai-ai/iFixAi.git
-[submodule "learn-claude-code"]
-	path = learn-claude-code
-	url = https://github.com/shareAI-lab/learn-claude-code.git
-[submodule "mercury-agent"]
-	path = mercury-agent
-	url = https://github.com/cosmicstack-labs/mercury-agent.git
 [submodule "milestone_13_2/public-lsm"]
 	path = milestone_13_2/public-lsm
 	url = https://github.com/kamelmh/lsm-vba-core.git
-[submodule "opencode_updates"]
-	path = opencode_updates
-	url = https://github.com/anomalyco/opencode.git
-[submodule "oracle-ai-developer-hub"]
-	path = oracle-ai-developer-hub
-	url = https://github.com/oracle-devrel/oracle-ai-developer-hub.git
-[submodule "pentest-agents"]
-	path = pentest-agents
-	url = https://github.com/H-mmer/pentest-agents.git
-[submodule "ruflo"]
-	path = ruflo
-	url = https://github.com/ruvnet/ruflo.git
 [submodule "superpowers"]
 	path = superpowers
 	url = https://github.com/obra/superpowers.git
-[submodule "tesseract"]
-	path = tesseract
-	url = https://github.com/tesseract-ocr/tesseract.git

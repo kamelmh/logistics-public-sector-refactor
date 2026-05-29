@@ -64,14 +64,14 @@ jobs:
       run: |
         $files = @()
         if (Test-Path "ERP_v13.2.xlsm") { $files += "ERP_v13.2.xlsm" }
-        if (Test-Path "Research_and_Development/Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx") {
-          $files += "Research_and_Development/Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx"
+        if (Test-Path "Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx") {
+          $files += "Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx"
         }
-        if (Test-Path "Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.docx") {
-          $files += "Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.docx"
+        if (Test-Path "Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.docx") {
+          $files += "Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.docx"
         }
-        if (Test-Path "Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.pdf") {
-          $files += "Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.pdf"
+        if (Test-Path "Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.pdf") {
+          $files += "Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.pdf"
         }
         Write-Host "Assets: $($files -join ', ')"
         "assets=$($files -join ',')" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
@@ -84,6 +84,6 @@ jobs:
         generate_release_notes: true
         files: |
           ERP_v13.2.xlsm
-          Research_and_Development/Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx
-          Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.docx
-          Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.pdf
+          Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx
+          Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.docx
+          Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.pdf

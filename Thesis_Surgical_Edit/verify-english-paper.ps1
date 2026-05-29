@@ -4,7 +4,7 @@
 #>
 
 param(
-    [string]$DocxPath = "Research_and_Development\Thesis_Surgical_Edit\output\English_Research_Paper_IEEE.docx"
+    [string]$DocxPath = "Thesis_Surgical_Edit\output\English_Research_Paper_IEEE.docx"
 )
 
 $script:projectRoot = Split-Path -Parent $PSScriptRoot

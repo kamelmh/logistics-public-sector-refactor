@@ -10,8 +10,8 @@ param(
 $ROOT = Split-Path -Parent $PSScriptRoot
 $CHECKPOINT_DIR = Join-Path $ROOT ".checkpoints"
 $DOCX_SRC = Join-Path $ROOT "Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md"
-$DOCX_OUT = Join-Path $ROOT "Research_and_Development\Thesis_Surgical_Edit\output"
-$METRICS_DIR = Join-Path $ROOT "Research_and_Development\Thesis_Surgical_Edit\metrics"
+$DOCX_OUT = Join-Path $ROOT "Thesis_Surgical_Edit\output"
+$METRICS_DIR = Join-Path $ROOT "Thesis_Surgical_Edit\metrics"
 
 if (-not (Test-Path $CHECKPOINT_DIR)) { New-Item -ItemType Directory -Path $CHECKPOINT_DIR -Force | Out-Null }
 

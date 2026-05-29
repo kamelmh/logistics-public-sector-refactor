@@ -6,7 +6,7 @@ param(
 )
 
 $ROOT = Split-Path -Parent $PSScriptRoot
-$THESIS_DOCTOR = Join-Path $ROOT "Research_and_Development\Thesis_Surgical_Edit\thesis-doctor.ps1"
+$THESIS_DOCTOR = Join-Path $ROOT "Thesis_Surgical_Edit\thesis-doctor.ps1"
 $CHECKPOINT = Join-Path $ROOT "scripts\checkpoint.ps1"
 $HANDOFF = Join-Path $ROOT ".crossflow\HANDOFF.md"
 $NOTEPAD = "C:\Users\Administrator\.opencode\notepad.md"

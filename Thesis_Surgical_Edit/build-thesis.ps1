@@ -10,7 +10,7 @@ $sourcePath = Join-Path $projectRoot "Thesis_Surgical_Edit\Memoire_DSS_Logistiqu
 $desktopDocx = "C:\Users\Administrator\Desktop\Memoire_DSS_Logistique_ElBayadh_v2.docx"
 $styleDir = Join-Path $PSScriptRoot "style"
 $refDocx = Join-Path $styleDir "reference.docx"
-$outDir = Join-Path $projectRoot "Research_and_Development\Thesis_Surgical_Edit\output"
+$outDir = Join-Path $PSScriptRoot "output"
 $null = New-Item -ItemType Directory -Path $outDir -Force
 $docxPath = Join-Path $outDir "Memoire_DSS_Logistique_ElBayadh.docx"
 
@@ -127,7 +127,7 @@ if ($Command -eq "sync-md") {
     exit 0
 }
 
-$real = Join-Path $PSScriptRoot "..\Research_and_Development\Thesis_Surgical_Edit\thesis-doctor.ps1"
-if (-not (Test-Path $real)) { Write-Error "thesis-doctor.ps1 not found: $real"; exit 1 }
-
-& $real -Command $Command
+# thesis-doctor.ps1 was archived to D:\Archives\Research_and_Development\
+# All standard commands (build, pandoc-only, copy-desktop, sync-md) handled above.
+Write-Host "  Unknown command: '$Command'. Available: build, pandoc-only, copy-desktop, sync-md" -ForegroundColor Yellow
+exit 1

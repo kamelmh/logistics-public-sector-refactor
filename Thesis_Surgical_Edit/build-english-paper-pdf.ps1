@@ -8,7 +8,7 @@
 
 $script:projectRoot = Split-Path -Parent $PSScriptRoot
 $paperMd = Join-Path $script:projectRoot "Thesis_Surgical_Edit\English_Research_Paper.md"
-$outDir = Join-Path $script:projectRoot "Research_and_Development\Thesis_Surgical_Edit\output"
+$outDir = Join-Path $PSScriptRoot "output"
 $outPdf = Join-Path $outDir "English_Research_Paper_IEEE.pdf"
 
 if (-not (Test-Path $outDir)) { New-Item -ItemType Directory -Path $outDir -Force | Out-Null }

@@ -28,10 +28,10 @@
 | Asset | Path |
 |-------|------|
 | Thesis source (MD) | `Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md` |
-| Thesis DOCX | `Research_and_Development/Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx` |
+| Thesis DOCX | `Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx` |
 | English paper (MD) | `Thesis_Surgical_Edit/English_Research_Paper.md` |
-| English paper DOCX | `Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.docx` |
-| English paper PDF | `Research_and_Development/Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.pdf` |
+| English paper DOCX | `Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.docx` |
+| English paper PDF | `Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.pdf` |
 | ERP workbook | `ERP_v13.2.xlsm` |
 | Build scripts | `vbe-auto/build.ps1`, `Thesis_Surgical_Edit/build-thesis.ps1`, `Thesis_Surgical_Edit/build-english-paper.ps1` |
 | Verify scripts | `vbe-auto/verify.ps1`, `Thesis_Surgical_Edit/style/verify_docx_checks.py`, `Thesis_Surgical_Edit/verify-english-paper.ps1` |

@@ -7,7 +7,7 @@ from pathlib import Path
 style_dir = os.path.dirname(os.path.abspath(__file__))
 ts_dir = os.path.dirname(style_dir)  # Thesis_Surgical_Edit/
 project_root = os.path.dirname(ts_dir)
-output_dir = os.path.join(project_root, "Research_and_Development", "Thesis_Surgical_Edit", "output")
+output_dir = os.path.join(project_root, "Thesis_Surgical_Edit", "output")
 history_file = os.path.join(output_dir, "metrics", "build_history.json")
 
 if not os.path.exists(history_file):

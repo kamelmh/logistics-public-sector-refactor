@@ -42,7 +42,8 @@ desktop.ini
 # Generated output directories
 Thesis_Surgical_Edit/output/
 Thesis_Surgical_Edit/style/__pycache__/
-Research_and_Development/Thesis_Surgical_Edit/output/
+# Thesis output (build artifacts)
+Thesis_Surgical_Edit/output/
 .opencode/skills_spectrum/
 media-*/
 external_obsidian_repos/
