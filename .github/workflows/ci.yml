@@ -79,28 +79,28 @@ jobs:
 
     - name: Upload thesis DOCX
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: thesis-docx
         path: ${{ env.THESIS_DOCX }}
 
     - name: Upload English paper DOCX
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: english-paper-docx
         path: ${{ env.PAPER_DOCX }}
 
     - name: Upload English paper PDF
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: english-paper-pdf
         path: ${{ env.PAPER_PDF }}
 
     - name: Upload submission package
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: submission-package
         path: |
@@ -148,21 +148,21 @@ jobs:
 
     - name: Upload pipeline report
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: pipeline-results
         path: vbe-auto/results/pipeline-report_*.json
 
     - name: Upload verification results
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: verify-results
         path: vbe-auto/results/verify_results_*.json
 
     - name: Upload ERP workbook
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: erp-workbook
         path: ERP_v13.2.xlsm
