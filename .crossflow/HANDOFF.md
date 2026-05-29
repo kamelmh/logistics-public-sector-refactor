@@ -1,59 +1,42 @@
 # CrossFlow HANDOFF — Academix v13.2
 
 ## Last Updated
-2026-05-29 02:00 UTC
+2026-05-29 01:45 UTC
 
 ## Ground Truth
 D=1546 | Q*=176 | ROP=212.4 | SS=200 | LT=2 | S=801.45 DZD | I=20% | MASTER_PWD=erp_secure_pwd_2026 | VERSION=v13.2
 
-## Session State (2026-05-29)
-### Completed This Session
-1. ✅ vba-check.py v1.2 — 12 checks, 44/44 PASS
-2. ✅ 4 runtime bugs fixed (BarcodeSim, LibreBridge, PCControl, TaskOrchestrator)
-3. ✅ pipeline-full.ps1 — 5-stage pipeline (all PASS 93.5s)
-4. ✅ `/pipeline` command created
-5. ✅ CI/CD overhaul — 3 workflows, vba-validate job on ubuntu
-6. ✅ GitHub secrets (OPENAI_API_KEY, GEMINI_API_KEY, ANTHROPIC_API_KEY)
-7. ✅ 4 VBA skills updated to v1.1
-8. ✅ GitHub Models Free Tier toolkit + PAT configured + desktop shortcuts
-9. ✅ Pipeline tested locally (Excel COM available)
-10. ✅ Commits pushed: e4b6a59, 81d31bc
+## CI Status (Latest Run #26612626917)
+| Job | Status |
+|-----|--------|
+| VBA source validation (12 checks) | ✅ PASS |
+| Lint (PowerShell + Python) | ✅ PASS |
+| ERP workbook build & verify | ✅ PASS |
+| Thesis build & verify | 🔄 Running |
 
-### Current Status
-- **ERP verify**: 112/112 PASS
-- **Pipeline**: All 5 stages PASS
-- **Macro tests**: 20/20 PASS
-- **DSS audit**: 16 PASS, 0 CRITICAL, 1 WARNING
-- **GitHub Models**: gpt-4o-mini working, PAT with models:read, token saved 4 ways
-- **Submodules**: Clean (force-reset)
+**Key fix**: Added `PYTHONIOENCODING: utf-8` to workflow env — this was causing ALL CI failures on Python 3.14 (Unicode box-drawing chars).
 
-### Pending / Blocked
-- COM automation (0x800A9C68) blocks macro execution via PowerShell on this machine — workaround: open workbook manually
-- Model-health workflow no secrets (GEMINI_API_KEY at least now configured)
-- Submodule explore-langflow has uncommitted content (not blocking)
+## GitHub Infrastructure Created
+- Issue templates, PR template, CODEOWNERS, SECURITY, SUPPORT, LICENSE (MIT)
+- Dependabot enabled — 4 PRs created, all passing CI
+- README: 9 badges, repo: 11 topics
+- Manual workflow_dispatch added to ci.yml + release.yml
 
-### Next Steps
-1. Use gh-models.ps1 from any device/SSH for free AI models
-2. Monitor CI/CD workflow runs on GitHub
-3. Continue improving VBA source files if needed
+## Dependabot PRs (all passing CI)
+- actions/checkout v4→v6
+- actions/setup-python v5→v6
+- actions/upload-artifact v4→v7
+- softprops/action-gh-release v2→v3
 
-## Assets Created/Modified
-| Asset | Location | Status |
-|-------|----------|--------|
-| gh-models.ps1 | `tools/` | ✅ New |
-| gh-models-lite.ps1 | `tools/` | ✅ New |
-| gh-models.bat | `tools/` | ✅ New |
-| SETUP_MODELS_TOKEN.ps1 | `tools/` | ✅ New |
-| gh-models-quick.ps1 | `tools/` | ✅ New |
-| gh-models-menu.bat | `tools/` | ✅ New |
-| GH Models Free.bat | `Desktop/` | ✅ New |
-| GH Models Q&A.bat | `Desktop/` | ✅ New |
-| pipeline-full.ps1 | `vbe-auto/` | ✅ New |
-| pipeline.md | `.opencode/commands/` | ✅ New |
-| vba-validate/SKILL.md | `.opencode/skills/` | ✅ Updated v1.2 |
-| 4 VBA skills | `.opencode/skills/` | ✅ Updated v1.1 |
+## GitHub Models
+- PAT with models:read configured, token saved 4 ways
+- Desktop shortcuts created (GH Models Free.bat, GH Models Q&A.bat)
+- tools/gh-models.ps1, gh-models-lite.ps1, SETUP_MODELS_TOKEN.ps1
 
-## Sync Keys
-- `vba-validate` skill: v1.2 (12 checks)
-- `pipeline-full`: 5-stage unified
-- `gh-models`: v1.0, working with PAT
+## Session State
+All tasks complete. CI is running with encoding fix. Dependabot auto-enabled.
+
+## Next Steps
+1. Check thesis CI job completion
+2. Merge Dependabot PRs (review version bumps)
+3. Use gh-models.ps1 from anywhere
