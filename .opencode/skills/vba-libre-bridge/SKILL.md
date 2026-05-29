@@ -1,4 +1,4 @@
-# VBA LibreOffice Bridge Skill
+# VBA LibreOffice Bridge Skill (v1.1)
 
 ## Overview
 Cross-platform document conversion bridge that detects and uses LibreOffice (headless) for DOCX/XLSX/ODT → PDF conversion, with Excel COM fallback. Enables PDF generation without requiring Microsoft Word or Excel.
@@ -80,6 +80,16 @@ PATH environment variable fallback
 - **Excel COM**: Only needed for fallback (no LibreOffice)
 - **VBA Security**: Must allow COM object creation
 
+## Pre-Build Validation
+This module is checked by `vba-check.py` (v1.2) which catches:
+- ❌ Parameter named `format` (conflicts with built-in `Format()`) — **7 functions fixed in v1.1**
+- ❌ `Return` statement (VB.NET syntax)
+- ❌ `Name:=` in `Application.OnTime`
+- ❌ `Const Array()` (runtime function in Const declaration)
+- ❌ UTF-8 encoding issues, missing headers, broken continuations
+
+**Known fix applied (v2026-05-29):** All `format` parameters renamed to `targetFormat` across 7 functions to prevent shadowing the VBA built-in `Format()` function.
+
 ## Verification
 ```vb
 ' Check bridge status
@@ -88,3 +98,9 @@ PATH environment variable fallback
 ' Test conversion (creates PDF alongside source)
 ?mod_LibreBridge.ConvertToPDF(ThisWorkbook.FullName)
 ```
+
+## History
+| Version | Date | Changes |
+|---------|------|---------|
+| v1.1 | 2026-05-29 | Fixed `format`→`targetFormat` param rename (7 functions); added pre-build validation section |
+| v1.0 | 2026-02-24 | Initial release — LibreOffice detection, COM fallback, batch conversion |

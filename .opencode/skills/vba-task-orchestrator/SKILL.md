@@ -1,4 +1,4 @@
-# VBA Task Orchestrator Skill
+# VBA Task Orchestrator Skill (v1.1)
 
 ## Overview
 Advanced macro coordination engine with task queue, priority scheduling, dependency management, progress tracking, error retry, and automated scheduler. Enables complex workflow orchestration in pure VBA.
@@ -71,9 +71,19 @@ mod_TaskOrchestrator.StartScheduler 60  ' Check every 60 seconds
 | `tsSkipped` | 6 | Dependency not met |
 | `tsCancelled` | 7 | Cancelled by user |
 
+## Pre-Build Validation
+This module is checked by `vba-check.py` (v1.2) which catches:
+- ❌ `Name:=` in `Application.OnTime` (must be `Procedure:=`) — **fixed in v1.1**
+- ❌ `Return` statement (VB.NET syntax)
+- ❌ Parameter named `format` (conflicts with built-in `Format()`)
+- ❌ `Const Array()` (runtime function in Const declaration)
+- ❌ UTF-8 encoding issues, missing headers, broken continuations
+
+**Known fix applied (v2026-05-29):** `Application.OnTime` named argument changed from `Name:=` to `Procedure:=` (the correct syntax in VBA for scheduling procedures).
+
 ## Dependencies
 - `mod_Config.bas` — Master password
-- VBA runtime `OnTime` for scheduler
+- VBA runtime `OnTime` for scheduler (use `Procedure:=`, not `Name:=`)
 - No external dependencies
 
 ## Verification
@@ -83,3 +93,9 @@ Run `build.ps1` then `mod_TaskOrchestrator.QuickRunSync` to verify:
 3. Error retry functions correctly
 4. Scheduler timer fires
 5. Log export writes correctly
+
+## History
+| Version | Date | Changes |
+|---------|------|---------|
+| v1.1 | 2026-05-29 | Fixed `Name:=`→`Procedure:=` in `Application.OnTime`; added pre-build validation section |
+| v1.0 | 2026-02-24 | Initial release — task queue, scheduler, dependency management |

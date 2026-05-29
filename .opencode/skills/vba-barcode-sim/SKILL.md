@@ -1,4 +1,4 @@
-# VBA Barcode Simulation Skill
+# VBA Barcode Simulation Skill (v1.1)
 
 ## Overview
 Generates and simulates barcodes in Excel using pure VBA (no external dependencies). Supports Code128, EAN-13, Code39, and Interleaved 2-of-5 symbologies with visual rendering in worksheet cells.
@@ -66,8 +66,24 @@ mod_BarcodeSim.GenerateBarcodeRange("BARCODE_LABELS", "A3", range, bcCode128, 30
 - `mod_Barcode.bas` — Existing barcode lookup (extended)
 - `STAGING_BUFFER` and `BARCODE_LABELS` sheets (auto-created)
 
+## Pre-Build Validation
+This module is checked by `vba-check.py` (v1.2) which catches:
+- ❌ `Return` statement (VB.NET syntax — use `Function = value` instead)
+- ❌ Parameter named `format` (conflicts with built-in `Format()`)
+- ❌ `Name:=` in `Application.OnTime` (must be `Procedure:=`)
+- ❌ `Const Array()` (runtime function in Const declaration)
+- ❌ UTF-8 encoding issues, missing headers, broken continuations
+
+Run `& "vbe-auto\vba-check.py"` before any build to catch issues.
+
 ## Verification
 Run `build.ps1` then `verify.ps1` — new checks validate:
 1. Barcode functions compile without errors
 2. `LookupBarcode` fallback chain complete
 3. All 5 symbology types encode without crashing
+
+## History
+| Version | Date | Changes |
+|---------|------|---------|
+| v1.1 | 2026-05-29 | Added pre-build validation section; documented fixes |
+| v1.0 | 2026-02-24 | Initial release — all 5 symbologies + label printing |

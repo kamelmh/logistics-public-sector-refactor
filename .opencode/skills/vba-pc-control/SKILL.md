@@ -1,4 +1,4 @@
-# VBA PC Control Skill (MCP-Style)
+# VBA PC Control Skill (MCP-Style) v1.1
 
 ## Overview
 Model Context Protocol (MCP)-style PC control toolset for VBA. Provides shell execution, WMI system queries, Registry access, FileSystem operations, Windows API window management, process control, clipboard, keyboard simulation, and network tools — all from Excel VBA.
@@ -105,6 +105,16 @@ output = mod_PCControl.Shell_CaptureOutput("systeminfo | findstr /i ""OS Name"""
 - Requires Windows (WMI, WinAPI, COM objects)
 - Excel 2010+ compatible
 
+## Pre-Build Validation
+This module is checked by `vba-check.py` (v1.2) which catches:
+- ❌ `Return` statement (VB.NET syntax — use `Function = value` instead) — **fixed in v1.1**
+- ❌ Parameter named `format` (conflicts with built-in `Format()`)
+- ❌ `Name:=` in `Application.OnTime`
+- ❌ `Const Array()` (runtime function in Const declaration)
+- ❌ UTF-8 encoding issues, missing headers, broken continuations
+
+**Known fix applied (v2026-05-29):** All `Return` statements replaced with `FunctionName = value` syntax (VBA doesn't support `Return`).
+
 ## Verification
 Run each `Pc*` macro from `Macros` menu or call via Immediate window:
 ```vb
@@ -112,3 +122,9 @@ Run each `Pc*` macro from `Macros` menu or call via Immediate window:
 ?mod_PCControl.Net_Ping("8.8.8.8")
 ?mod_PCControl.Process_List()
 ```
+
+## History
+| Version | Date | Changes |
+|---------|------|---------|
+| v1.1 | 2026-05-29 | Fixed `Return`→`Function=` syntax (VBA compatibility); added pre-build validation section |
+| v1.0 | 2026-02-24 | Initial release — MCP-style PC control, WMI, registry, clipboard |
