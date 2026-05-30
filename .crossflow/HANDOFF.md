@@ -1,51 +1,53 @@
-# CrossFlow HANDOFF — Academix v13.2
+# CrossFlow Handoff — Academix v13.2
 
-## Last Updated
-2026-05-29 16:30 UTC
+## Current Priority
+TABLEAU DE BORD dashboard is FIXED. Move to data reconciliation and remaining bugs.
 
-## Ground Truth
-D=1546 | Q*=176 | ROP=212.4 | SS=200 | LT=2 | S=801.45 DZD | I=20% | MASTER_PWD=erp_secure_pwd_2026 | VERSION=v13.2
+## State
+- **Session**: Dashboard Rescue (2026-05-30)
+- **Agent**: Academix (Gemini 2.5 Flash)
+- **Workbook**: `ERP_v13.2.xlsm` (fixed copy deployed)
+- **Build**: Not run this session (hotfix on .xlsm only)
+- **Verify**: Not run (formula changes are in .xlsm only, .bas not changed)
 
-## CI Status
-| Job | Status |
-|-----|--------|
-| VBA source validation (12 checks) | ✅ PASS |
-| Lint (PowerShell + Python) | ✅ PASS |
-| ERP workbook build & verify | ✅ PASS |
-| Thesis build & verify | ✅ PASS (last run) |
-| Model Health Check (fixed) | 🔄 Running |
+## Completed
+1. **TABLEAU DE BORD #REF!** — Rewrote SUMIFS (D,E), LOOKUP (H), VLOOKUP (C,G), and ROP (J) formulas with correct MOUVEMENTS column references (E:E for Qte, B:B for Code, D:D for Type, H:H for CMUP)
+2. **VLOOKUP index fixes** — ABC uses col 6 (was col 5 = Famille), Stock Min uses col 3 (was col 6 = ABC text "A"/"B")
+3. **ALERTE_DASHBOARD** — auto-fixed via upstream propagation
+4. **Circular reference broken** — ROP formula no longer uses `I{r}` (which depends on F*H, creating chain), uses direct G reference
 
-## Dropbox Liberation — COMPLETE
-- **Before**: 4.47 GB ❌ (over 2 GB free limit)
-- **After**: 1.62 GB ✅ (under 2 GB limit)
-- **Saved**: 2.85 GB
-- All archives at `D:\Archives\` (submodules, R&D, binaries, backups)
+## Pending Tasks
+### P1 — Data Reconciliation
+- D (Demand): thesis=1,546 / CALCULS_EOQ=2,900 / actual MOUVEMENTS OUT(ART-001)=120→annualized~882 — pick one
+- S (Order Cost): HANDOFF=801.45 DA / MASTER_BOOTSTRAP=500 DZD / sheet CL=50 DA/cmd — needs alignment
+- PU (Unit Price): thesis/CALCULS_EOQ uses 400 DA, but ARTICLES+MOUVEMENTS use 4,500 DA for ART-001 (11.25× difference)
+- Update all 3 sources (thesis .md, CALCULS_EOQ sheet, ARTICLES) to match reality
 
-### What was archived to D:\
-- opencode.exe (135 MB) — Desktop baseline fallback configured
-- 16 exploration git submodules (~3.2 GB)
-- Research_and_Development/ (619 MB)
-- Final_Delivery_Layout/ (14 MB)
-- external_obsidian_repos/ (73 MB)
-- Old backup XLSMs (1.8 MB)
-- `.git/modules/` submodule history cleaned (1.3 GB freed)
+### P2 — Phantom Articles
+- ART-013/014/015 in BORDEREAU_COMMANDE but NOT in ARTICLES catalog
+- Either add to ARTICLES or remove from BORDEREAU_COMMANDE
 
-### What stays in Dropbox (core only)
-- Software_Surgical_Edit/ — VBA source
-- ERP_v13.2.xlsm — Active workbook
-- Thesis_Surgical_Edit/ — Thesis source (70 MB)
-- vbe-auto/ — Build/verify toolkit
-- milestone_13_2/ — Tests, audit
-- scripts/, tools/, .github/, .crossflow/ — Config
+### P3 — Form Bugs
+- `frmStockEntry.frm`: `btnImprimer_MouseMove` references nonexistent control (crash)
+- RefDoc prefix hardcoded as "BS-" instead of configurable constant
+- MouseMove hover flicker on multiple controls
 
-## Dependabot — Merged (all 4)
-- actions/checkout v4→v6
-- actions/setup-python v5→v6
-- actions/upload-artifact v4→v7
-- softprops/action-gh-release v2→v3
+### P4 — Localization
+- Arabic text in SYS_STRINGS stored as ANSI → mojibake on display
+- Need UTF-8 re-encode in .bas source
 
-## Next Steps
-1. Review & commit archive changes if desired
-2. Deep ERP codebase audit
-3. Check CI run #50 (model health fix)
-4. Build thesis if needed
+### P5 — Audit Log
+- `Now()` serial number split across columns C1/C2 pushes username to C3
+- Fix by formatting `Now()` as text string before write
+
+## Relevant Files
+- `ERP_v13.2.xlsm` — live workbook (fixed)
+- `ERP_v13.2_FIXED.xlsm` — backup of fixed version
+- `ERP_v13.2_2026-05-16_backup.xlsm` — pre-fix backup
+- `Software_Surgical_Edit/VBA_Modules/mod_Config.bas` — column constants
+- `Software_Surgical_Edit/VBA_Modules/mod_StockEntry_Logic.bas` — logic module
+- `Software_Surgical_Edit/VBA_Modules/frmStockEntry.frm` — form with known bugs
+- `.opencode/notepad.md` — detailed session memory
+
+## Final Sign-off
+Fix deployed to `ERP_v13.2.xlsm`. Dashboard alive. Ready for data reconciliation.

@@ -10,13 +10,13 @@ Attribute VB_Name = "mod_StockEngine"
 Option Explicit
 
 ' ================================================================================
-' CONSTANTS ? Synchronized with Unité de traitement VBA GROUND_TRUTH
+' CONSTANTS ? Synchronized with Unitï¿½ de traitement VBA GROUND_TRUTH
 ' ================================================================================
 Private Const ORDER_COST_S  As Double = 801.45 ' DZD ? full order cycle cost (field-refined from 500)
 Private Const HOLDING_RATE  As Double = 0.2    ' 20% of unit price per year
 Private Const LEAD_TIME_DEFAULT As Integer = 2 ' Default delivery days
 
-' Article-specific safety stocks ? mirrors Unité de traitement VBA GROUND_TRUTH
+' Article-specific safety stocks ? mirrors Unitï¿½ de traitement VBA GROUND_TRUTH
 Public Function GetSafetyStock(ByVal sku As String) As Double
     Select Case UCase(Trim(sku))
         Case "ART-001": GetSafetyStock = 200
@@ -99,7 +99,7 @@ Public Function GetArticleStock(ByVal sku As String) As Double
         Exit Function
     End If
     
-    foundRow = Application.Match(sku, wsArt.Range("A:A"), 0)
+    foundRow = Application.Match(sku, wsArt.Columns(COL_ART_CODE), 0)
     
     If IsError(foundRow) Then
         GetArticleStock = 0
@@ -123,7 +123,7 @@ Public Sub UpdateArticleStockBalance(ByVal artCode As String, ByVal mvtSign As S
     
     If wsArt Is Nothing Then Exit Sub
     
-    foundRow = Application.Match(artCode, wsArt.Range("A:A"), 0)
+    foundRow = Application.Match(artCode, wsArt.Columns(COL_ART_CODE), 0)
     
     If Not IsError(foundRow) Then
         wsArt.Unprotect Password:=mod_Config.MASTER_PWD
@@ -152,10 +152,10 @@ Public Function GetAnnualDemandFromHistory(ByVal sku As String) As Double
     
     wsMouv.Unprotect Password:=mod_Config.MASTER_PWD
     GetAnnualDemandFromHistory = WorksheetFunction.SumIfs( _
-        wsMouv.Range("E:E"), _
-        wsMouv.Range("B:B"), sku, _
-        wsMouv.Range("D:D"), "OUT", _
-        wsMouv.Range("A:A"), ">=" & DateSerial(currentYear, 1, 1))
+        wsMouv.Columns(COL_MOUV_QTE), _
+        wsMouv.Columns(COL_MOUV_CODE_ARTICLE), sku, _
+        wsMouv.Columns(COL_MOUV_TYPE), "OUT", _
+        wsMouv.Columns(COL_MOUV_DATE), ">=" & DateSerial(currentYear, 1, 1))
     wsMouv.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
     On Error GoTo 0
 End Function
@@ -172,8 +172,8 @@ Public Function CalculateCMUP(ByVal sku As String) As Double
 
     Dim totalInQty As Double, TotalINValue As Double
     wsMouv.Unprotect Password:=mod_Config.MASTER_PWD
-    totalInQty = WorksheetFunction.SumIfs(wsMouv.Range("E:E"), wsMouv.Range("B:B"), sku, wsMouv.Range("D:D"), "IN")
-    TotalINValue = WorksheetFunction.SumIfs(wsMouv.Range("G:G"), wsMouv.Range("B:B"), sku, wsMouv.Range("D:D"), "IN")
+    totalInQty = WorksheetFunction.SumIfs(wsMouv.Columns(COL_MOUV_QTE), wsMouv.Columns(COL_MOUV_CODE_ARTICLE), sku, wsMouv.Columns(COL_MOUV_TYPE), "IN")
+    TotalINValue = WorksheetFunction.SumIfs(wsMouv.Columns(COL_MOUV_VALEUR), wsMouv.Columns(COL_MOUV_CODE_ARTICLE), sku, wsMouv.Columns(COL_MOUV_TYPE), "IN")
 
     ' CMUP = Total IN Value / Total IN Quantity (standard weighted average cost)
     If totalInQty > 0 Then
@@ -273,7 +273,7 @@ Public Sub UpdateAllABCClassifications(Optional ByVal silent As Boolean = False)
 
         ' Update ARTICLES sheet (Column F = COL_ART_CLASSE_ABC)
         Dim foundRow As Variant
-        foundRow = Application.Match(articleCodes(i), wsArt.Range("A:A"), 0)
+        foundRow = Application.Match(articleCodes(i), wsArt.Columns(COL_ART_CODE), 0)
         If Not IsError(foundRow) Then
             wsArt.Cells(foundRow, COL_ART_CLASSE_ABC).Value = abcClass
         End If

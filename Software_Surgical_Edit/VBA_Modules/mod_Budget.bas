@@ -365,7 +365,7 @@ Public Sub GenerateBudgetReport()
         Dim r As Long
         r = i - 3 + 6
         
-        wsReport.Cells(r, 1).Value = wsSource.Cells(i, 1).Value
+        wsReport.Cells(r, 1).Value = wsSource.Cells(i, COL_ART_CODE).Value
         wsReport.Cells(r, 2).Value = wsSource.Cells(i, 2).Value
         wsReport.Cells(r, 3).Value = wsSource.Cells(i, 3).Value
         wsReport.Cells(r, 4).Value = wsSource.Cells(i, 4).Value
@@ -373,13 +373,13 @@ Public Sub GenerateBudgetReport()
         
         ' Status
         Dim remaining As Double
-        remaining = mod_Utilities.SafeVal(wsSource.Cells(i, 4).Value)
+        remaining = mod_Utilities.SafeVal(wsSource.Cells(i, COL_ART_SEUIL_MIN).Value)
         
         If remaining < 0 Then
             wsReport.Cells(r, 6).Value = "EXCEDE"
             wsReport.Cells(r, 6).Interior.Color = RGB(255, 220, 220)
             wsReport.Cells(r, 6).Font.Color = RGB(204, 0, 0)
-        ElseIf remaining < wsSource.Cells(i, 2).Value * 0.2 Then
+        ElseIf remaining < wsSource.Cells(i, COL_ART_DESIGNATION).Value * 0.2 Then
             wsReport.Cells(r, 6).Value = "CRITIQUE"
             wsReport.Cells(r, 6).Interior.Color = RGB(255, 243, 224)
             wsReport.Cells(r, 6).Font.Color = RGB(255, 140, 0)

@@ -104,7 +104,7 @@ Public Sub ApplyTheme(ByRef frm As Object)
     Call ApplyButtonDangerTheme(frm, "btnSupprimerLigne")  ' Danger action
     Call ApplyButtonGhostTheme(frm, "btnAnnuler")          ' Ghost/cancel
     Call ApplyButtonGhostTheme(frm, "btnAutoRef")          ' Ghost/utility
-    Call ApplyButtonGhostTheme(frm, "btnImprimer")         ' Ghost/utility
+    Call ApplyButtonGhostTheme(frm, "btnImprimerBon")      ' Ghost/utility
     
     '-- Frame (banner)
     Call ApplyBannerTheme(frm)
@@ -406,7 +406,7 @@ Public Sub SetTabOrder(ByRef frm As Object)
         "cmbTypeDoc", "TxtDate", "txtRefDoc", "cmbService", _
         "cmbArticle", "cmbCategorie", "txtQuantite", "txtPrixUnitaire", _
         "btnAjouterLigne", "btnSupprimerLigne", "lstGrid", _
-        "btnEnregistrer", "btnAnnuler", "btnAutoRef", "btnImprimer" _
+        "btnEnregistrer", "btnAnnuler", "btnAutoRef", "btnImprimerBon" _
     )
     
     For tabIndex = 0 To UBound(ctrlNames)

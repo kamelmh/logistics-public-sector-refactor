@@ -49,7 +49,7 @@ Private Sub BuildUI()
     '- Set form dimensions
     Me.Width = 870
     Me.Height = 640
-    Me.Caption = "ERP Académie - Saisie des Mouvements"
+    Me.Caption = "ERP Acadï¿½mie - Saisie des Mouvements"
     Me.StartUpPosition = 1  ' CenterOwner
     
     '--------------------------------------------------------------------------
@@ -798,7 +798,7 @@ Private Sub btnSyncMasterData_Click()
     On Error Resume Next
     Call mod_SyncBridge.SyncMetricsFromLedger
     If Err.Number = 0 Then
-        MsgBox "Synchronisation réussie.", vbInformation, "Sync Master"
+        MsgBox "Synchronisation rï¿½ussie.", vbInformation, "Sync Master"
     Else
         MsgBox "Erreur: " & Err.Description, vbCritical, "Sync Error"
     End If
@@ -817,7 +817,7 @@ Private Sub btnImprimerBon_Click()
     If Len(docRef) > 0 Then
         Call mod_ExportEngine.ExportTransactionToPDF(docRef)
     Else
-        MsgBox "Veuillez générer une référence d'abord.", vbExclamation
+        MsgBox "Veuillez gï¿½nï¿½rer une rï¿½fï¿½rence d'abord.", vbExclamation
     End If
 End Sub
 
@@ -851,9 +851,9 @@ Private Sub txtRefDoc_Change()
     Dim raw As String
     raw = tb.Value
     
-    ' Auto-prefix "BS-" if missing and user typed something
-    If Len(raw) > 0 And Left(raw, 3) <> "BS-" Then
-        raw = "BS-" & raw
+    ' Auto-prefix using constant from mod_Config if missing and user typed something
+    If Len(raw) > 0 And Left(raw, Len(mod_Config.REFDOC_PREFIX)) <> mod_Config.REFDOC_PREFIX Then
+        raw = mod_Config.REFDOC_PREFIX & raw
     End If
     
     ' Strip everything except digits and dashes
@@ -868,10 +868,10 @@ Private Sub txtRefDoc_Change()
         End If
     Next i
     
-    ' Reconstruct: BS-YYYY-NNNN
-    Dim prefix As String: prefix = "BS-"
+    ' Reconstruct: PREFIX-YYYY-NNNN
+    Dim prefix As String: prefix = mod_Config.REFDOC_PREFIX
     Dim digitPart As String
-    digitPart = Replace(cleaned, "BS-", "", , , vbTextCompare)
+    digitPart = Replace(cleaned, mod_Config.REFDOC_PREFIX, "", , , vbTextCompare)
     digitPart = Replace(digitPart, "-", "")
     
     Dim formatted As String
@@ -953,7 +953,7 @@ Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
 End Sub
 
 '==============================================================================
-' HOVER EFFECTS - Button MouseMove handlers
+' HOVER EFFECTS - Button MouseMove handlers (via HoverButton helper)
 '==============================================================================
 
 Private Sub btnEnregistrer_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
@@ -976,8 +976,8 @@ Private Sub btnAutoRef_MouseMove(ByVal Button As Integer, ByVal Shift As Integer
     HoverButton Me.Controls("btnAutoRef"), RGB(220, 220, 225), RGB(30, 30, 30)
 End Sub
 
-Private Sub btnImprimer_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-    HoverButton Me.Controls("btnImprimer"), RGB(220, 220, 225), RGB(30, 30, 30)
+Private Sub btnImprimerBon_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
+    HoverButton Me.Controls("btnImprimerBon"), RGB(220, 220, 225), RGB(30, 30, 30)
 End Sub
 
 Private Sub btnQty1_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
@@ -998,7 +998,7 @@ Private Sub UserForm_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, 
     ResetButtonHover Me.Controls("btnSupprimerLigne"), RGB(252, 228, 236), RGB(192, 32, 32)
     ResetButtonHover Me.Controls("btnAnnuler"), RGB(245, 245, 250), RGB(51, 51, 51)
     ResetButtonHover Me.Controls("btnAutoRef"), RGB(245, 245, 250), RGB(51, 51, 51)
-    ResetButtonHover Me.Controls("btnImprimer"), RGB(245, 245, 250), RGB(51, 51, 51)
+    ResetButtonHover Me.Controls("btnImprimerBon"), RGB(245, 245, 250), RGB(51, 51, 51)
     ResetButtonHover Me.Controls("btnQty1"), RGB(232, 245, 233), RGB(40, 100, 40)
     ResetButtonHover Me.Controls("btnQty5"), RGB(232, 245, 233), RGB(40, 100, 40)
     ResetButtonHover Me.Controls("btnQty10"), RGB(232, 245, 233), RGB(40, 100, 40)

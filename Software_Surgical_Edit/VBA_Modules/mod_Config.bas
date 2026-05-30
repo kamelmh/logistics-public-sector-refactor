@@ -25,6 +25,14 @@ Public Const DOC_TYPE_DA As String = "Demande d'Achat"
 ' System constants
 Public Const WORKING_DAYS_PER_YEAR As Integer = 250
 Public Const OBSERVATION_DAYS As Integer = 38
+Public Const REFDOC_PREFIX As String = "BS-"
+
+' Column names for AUDIT_LOG sheet
+Public Const COL_AUDIT_DATE As Long = 1
+Public Const COL_AUDIT_TIME As Long = 2
+Public Const COL_AUDIT_USER As Long = 3
+Public Const COL_AUDIT_ACTION As Long = 4
+Public Const COL_AUDIT_REF As Long = 5
 
 ' ARTICLES sheet column indices
 Public Const COL_ART_CODE As Long = 1
@@ -61,6 +69,10 @@ Public Const COL_FOU_NIF As Long = 5
 Public Const COL_FOU_NIS As Long = 6
 Public Const COL_FOU_RC As Long = 7
 Public Const COL_FOU_ARTICLE_IMPOSITION As Long = 8
+
+' SYS_STRINGS sheet column indices
+Public Const COL_SYS_ID As Long = 1
+Public Const COL_SYS_VALUE As Long = 2
 
 ' Properties (must come after all Const declarations)
 Public Property Get SYS_TITLE() As String

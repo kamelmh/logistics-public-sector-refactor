@@ -27,7 +27,7 @@ Option Explicit
 ' SECTION 0 - MODULE-LEVEL CONSTANTS & STATE
 '================================================================================
 
-'-- Canonical ERP constants (mirrors Unité de traitement VBA GROUND_TRUTH)
+'-- Canonical ERP constants (mirrors Unitï¿½ de traitement VBA GROUND_TRUTH)
 Private Const CANON_ROP    As Double = 212.4
 Private Const CANON_SS     As Long = 200
 Private Const CANON_QSTAR  As Long = 176
@@ -181,10 +181,10 @@ Private Sub PopulateDropdowns(ByRef state As FormState)
         
         If Not wsStr Is Nothing Then
             Dim lastRowStr As Long, iStr As Long
-            lastRowStr = wsStr.Cells(wsStr.Rows.count, 1).End(xlUp).Row
+            lastRowStr = wsStr.Cells(wsStr.Rows.count, COL_SYS_ID).End(xlUp).Row
             For iStr = 2 To lastRowStr
-                If Left(Trim(CStr(wsStr.Cells(iStr, 1).Value)), 4) = "SVC_" Then
-                    .AddItem Trim(CStr(wsStr.Cells(iStr, 2).Value))
+                If Left(Trim(CStr(wsStr.Cells(iStr, COL_SYS_ID).Value)), 4) = "SVC_" Then
+                    .AddItem Trim(CStr(wsStr.Cells(iStr, COL_SYS_VALUE).Value))
                 End If
             Next iStr
         End If
@@ -422,7 +422,7 @@ Private Sub EvaluateStockStatus(ByVal artCode As String, ByRef state As FormStat
         Exit Sub
     End If
 
-    foundRow = Application.Match(artCode, wsArt.Range("A:A"), 0)
+    foundRow = Application.Match(artCode, wsArt.Columns(COL_ART_CODE), 0)
 
     If IsError(foundRow) Then
         state.StockInfoText = "Code Article :  " & artCode & "  |  Article introuvable"
@@ -440,10 +440,16 @@ Private Sub EvaluateStockStatus(ByVal artCode As String, ByRef state As FormStat
 
     ' Use mod_StockEngine for stock calculation (consolidated)
     Dim totalIn As Double, totalOut As Double
+    Dim wsMouv As Worksheet
     On Error Resume Next
-    totalIn = Application.SumIfs(wsArt.Parent.Range("E:E"), wsArt.Parent.Range("B:B"), artCode, wsArt.Parent.Range("D:D"), "IN")
-    totalOut = Application.SumIfs(wsArt.Parent.Range("E:E"), wsArt.Parent.Range("B:B"), artCode, wsArt.Parent.Range("D:D"), "OUT")
+    Set wsMouv = ThisWorkbook.Sheets(mod_Config.SHEET_MOUVEMENTS)
     On Error GoTo 0
+    If Not wsMouv Is Nothing Then
+        On Error Resume Next
+        totalIn = Application.SumIfs(wsMouv.Columns(COL_MOUV_QTE), wsMouv.Columns(COL_MOUV_CODE_ARTICLE), artCode, wsMouv.Columns(COL_MOUV_TYPE), "IN")
+        totalOut = Application.SumIfs(wsMouv.Columns(COL_MOUV_QTE), wsMouv.Columns(COL_MOUV_CODE_ARTICLE), artCode, wsMouv.Columns(COL_MOUV_TYPE), "OUT")
+        On Error GoTo 0
+    End If
     stock = CLng(totalIn - totalOut)
 
     m_StockActuel = stock
@@ -935,7 +941,7 @@ Public Function CommitTransaction(ByRef state As FormState) As Boolean
     
     '- Commit safety transaction (validates consistency)
     If Not mod_TransactionSafety.CommitTransaction Then
-        MsgBox "Validation de la transaction échouée. Annulation...", vbCritical
+        MsgBox "Validation de la transaction ï¿½chouï¿½e. Annulation...", vbCritical
         GoTo SaveError
     End If
     

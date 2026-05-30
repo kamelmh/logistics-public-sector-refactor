@@ -20,7 +20,7 @@ Public Sub ExportMouvementsToCSV()
     Dim i As Long
 
     Set ws = ThisWorkbook.Sheets(mod_Config.SHEET_MOUVEMENTS)
-    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    lastRow = ws.Cells(ws.Rows.Count, COL_MOUV_DATE).End(xlUp).Row
     If lastRow < 1 Then
         MsgBox "Aucune donn" & Chr(233) & "e trouv" & Chr(233) & "e dans MOUVEMENTS.", vbExclamation
         Exit Sub
@@ -40,15 +40,15 @@ Public Sub ExportMouvementsToCSV()
         Dim typeVal As Variant, qteVal As Variant, valVal As Variant
         Dim refVal As Variant, puVal As Variant, tpVal As Variant, notesVal As Variant
 
-        dateVal = ws.Cells(i, 1).Value
-        codeVal = ws.Cells(i, 2).Value
-        desigVal = ws.Cells(i, 3).Value
-        typeVal = ws.Cells(i, 4).Value
-        qteVal = ws.Cells(i, 5).Value
-        valVal = ws.Cells(i, 6).Value
-        refVal = ws.Cells(i, 7).Value
-        puVal = ws.Cells(i, 8).Value
-        tpVal = ws.Cells(i, 9).Value
+        dateVal = ws.Cells(i, COL_MOUV_DATE).Value
+        codeVal = ws.Cells(i, COL_MOUV_CODE_ARTICLE).Value
+        desigVal = ws.Cells(i, COL_MOUV_DESIGNATION).Value
+        typeVal = ws.Cells(i, COL_MOUV_TYPE).Value
+        qteVal = ws.Cells(i, COL_MOUV_QTE).Value
+        valVal = ws.Cells(i, COL_MOUV_VALEUR).Value
+        refVal = ws.Cells(i, COL_MOUV_REF_DOC).Value
+        puVal = ws.Cells(i, COL_MOUV_PU).Value
+        tpVal = ws.Cells(i, COL_MOUV_THIRD_PARTY).Value
         notesVal = ws.Cells(i, 12).Value
 
         csvContent = csvContent & vbCrLf & BuildCSVLine( _
@@ -76,7 +76,7 @@ Public Sub ExportArticlesToCSV()
     Dim i As Long
 
     Set ws = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
-    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    lastRow = ws.Cells(ws.Rows.Count, COL_ART_CODE).End(xlUp).Row
     If lastRow < 1 Then
         MsgBox "Aucune donn" & Chr(233) & "e trouv" & Chr(233) & "e dans ARTICLES.", vbExclamation
         Exit Sub
@@ -93,12 +93,12 @@ Public Sub ExportArticlesToCSV()
 
     For i = 2 To lastRow
         csvContent = csvContent & vbCrLf & BuildCSVLine( _
-            CStr(ws.Cells(i, 1).Value), _
-            CStr(ws.Cells(i, 2).Value), _
-            CStr(ws.Cells(i, 3).Value), _
-            CStr(ws.Cells(i, 4).Value), _
-            CStr(ws.Cells(i, 5).Value), _
-            CStr(ws.Cells(i, 6).Value))
+            CStr(ws.Cells(i, COL_ART_CODE).Value), _
+            CStr(ws.Cells(i, COL_ART_DESIGNATION).Value), _
+            CStr(ws.Cells(i, COL_ART_STOCK).Value), _
+            CStr(ws.Cells(i, COL_ART_SEUIL_MIN).Value), _
+            CStr(ws.Cells(i, COL_ART_CATEGORIE).Value), _
+            CStr(ws.Cells(i, COL_ART_CLASSE_ABC).Value))
     Next i
 
     WriteCSVFile savePath, csvContent
@@ -113,7 +113,7 @@ Public Sub ExportFournisseursToCSV()
     Dim i As Long
 
     Set ws = ThisWorkbook.Sheets(mod_Config.SHEET_FOURNISSEURS)
-    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    lastRow = ws.Cells(ws.Rows.Count, COL_FOU_CODE).End(xlUp).Row
     If lastRow < 3 Then
         MsgBox "Aucune donn" & Chr(233) & "e trouv" & Chr(233) & "e dans FOURNISSEURS.", vbExclamation
         Exit Sub
@@ -130,14 +130,14 @@ Public Sub ExportFournisseursToCSV()
 
     For i = 3 To lastRow
         csvContent = csvContent & vbCrLf & BuildCSVLine( _
-            CStr(ws.Cells(i, 1).Value), _
-            CStr(ws.Cells(i, 2).Value), _
-            CStr(ws.Cells(i, 3).Value), _
-            CStr(ws.Cells(i, 4).Value), _
-            CStr(ws.Cells(i, 5).Value), _
-            CStr(ws.Cells(i, 6).Value), _
-            CStr(ws.Cells(i, 7).Value), _
-            CStr(ws.Cells(i, 8).Value), _
+            CStr(ws.Cells(i, COL_FOU_CODE).Value), _
+            CStr(ws.Cells(i, COL_FOU_RAISON_SOCIALE).Value), _
+            CStr(ws.Cells(i, COL_FOU_ADRESSE).Value), _
+            CStr(ws.Cells(i, COL_FOU_TELEPHONE).Value), _
+            CStr(ws.Cells(i, COL_FOU_NIF).Value), _
+            CStr(ws.Cells(i, COL_FOU_NIS).Value), _
+            CStr(ws.Cells(i, COL_FOU_RC).Value), _
+            CStr(ws.Cells(i, COL_FOU_ARTICLE_IMPOSITION).Value), _
             CStr(ws.Cells(i, 9).Value))
     Next i
 
@@ -280,7 +280,7 @@ Public Sub ImportArticlesFromCSV()
     Set ws = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
     ws.Unprotect Password:=mod_Config.MASTER_PWD
 
-    nextRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row + 1
+    nextRow = ws.Cells(ws.Rows.Count, COL_ART_CODE).End(xlUp).Row + 1
     imported = 0
     errors = 0
     errorMsg = ""
@@ -301,12 +301,12 @@ Public Sub ImportArticlesFromCSV()
         End If
 
         On Error Resume Next
-        ws.Cells(nextRow, 1).Value = Trim(fields(0))
-        ws.Cells(nextRow, 2).Value = IIf(UBound(fields) >= 1, Trim(fields(1)), "")
-        ws.Cells(nextRow, 3).Value = IIf(UBound(fields) >= 2, mod_Utilities.SafeVal(fields(2)), 0)
-        ws.Cells(nextRow, 4).Value = IIf(UBound(fields) >= 3, mod_Utilities.SafeVal(fields(3)), 0)
-        ws.Cells(nextRow, 5).Value = IIf(UBound(fields) >= 4, Trim(fields(4)), "")
-        ws.Cells(nextRow, 6).Value = IIf(UBound(fields) >= 5, mod_Utilities.SafeVal(fields(5)), 0)
+        ws.Cells(nextRow, COL_ART_CODE).Value = Trim(fields(0))
+        ws.Cells(nextRow, COL_ART_DESIGNATION).Value = IIf(UBound(fields) >= 1, Trim(fields(1)), "")
+        ws.Cells(nextRow, COL_ART_STOCK).Value = IIf(UBound(fields) >= 2, mod_Utilities.SafeVal(fields(2)), 0)
+        ws.Cells(nextRow, COL_ART_SEUIL_MIN).Value = IIf(UBound(fields) >= 3, mod_Utilities.SafeVal(fields(3)), 0)
+        ws.Cells(nextRow, COL_ART_CATEGORIE).Value = IIf(UBound(fields) >= 4, Trim(fields(4)), "")
+        ws.Cells(nextRow, COL_ART_CLASSE_ABC).Value = IIf(UBound(fields) >= 5, mod_Utilities.SafeVal(fields(5)), 0)
 
         If Err.Number <> 0 Then
             errors = errors + 1
@@ -355,7 +355,7 @@ Public Sub ImportFournisseursFromCSV()
     Set ws = ThisWorkbook.Sheets(mod_Config.SHEET_FOURNISSEURS)
     ws.Unprotect Password:=mod_Config.MASTER_PWD
 
-    nextRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row + 1
+    nextRow = ws.Cells(ws.Rows.Count, COL_FOU_CODE).End(xlUp).Row + 1
     imported = 0
     errors = 0
 
@@ -375,14 +375,14 @@ Public Sub ImportFournisseursFromCSV()
         End If
 
         On Error Resume Next
-        ws.Cells(nextRow, 1).Value = Trim(fields(0))
-        ws.Cells(nextRow, 2).Value = IIf(UBound(fields) >= 1, Trim(fields(1)), "")
-        ws.Cells(nextRow, 3).Value = IIf(UBound(fields) >= 2, Trim(fields(2)), "")
-        ws.Cells(nextRow, 4).Value = IIf(UBound(fields) >= 3, Trim(fields(3)), "")
-        ws.Cells(nextRow, 5).Value = IIf(UBound(fields) >= 4, Trim(fields(4)), "")
-        ws.Cells(nextRow, 6).Value = IIf(UBound(fields) >= 5, Trim(fields(5)), "")
-        ws.Cells(nextRow, 7).Value = IIf(UBound(fields) >= 6, Trim(fields(6)), "")
-        ws.Cells(nextRow, 8).Value = IIf(UBound(fields) >= 7, Trim(fields(7)), "")
+        ws.Cells(nextRow, COL_FOU_CODE).Value = Trim(fields(0))
+        ws.Cells(nextRow, COL_FOU_RAISON_SOCIALE).Value = IIf(UBound(fields) >= 1, Trim(fields(1)), "")
+        ws.Cells(nextRow, COL_FOU_ADRESSE).Value = IIf(UBound(fields) >= 2, Trim(fields(2)), "")
+        ws.Cells(nextRow, COL_FOU_TELEPHONE).Value = IIf(UBound(fields) >= 3, Trim(fields(3)), "")
+        ws.Cells(nextRow, COL_FOU_NIF).Value = IIf(UBound(fields) >= 4, Trim(fields(4)), "")
+        ws.Cells(nextRow, COL_FOU_NIS).Value = IIf(UBound(fields) >= 5, Trim(fields(5)), "")
+        ws.Cells(nextRow, COL_FOU_RC).Value = IIf(UBound(fields) >= 6, Trim(fields(6)), "")
+        ws.Cells(nextRow, COL_FOU_ARTICLE_IMPOSITION).Value = IIf(UBound(fields) >= 7, Trim(fields(7)), "")
         ws.Cells(nextRow, 9).Value = IIf(UBound(fields) >= 8, Trim(fields(8)), "")
 
         If Err.Number <> 0 Then

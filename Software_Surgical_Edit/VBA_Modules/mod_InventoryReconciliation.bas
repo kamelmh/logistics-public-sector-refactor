@@ -71,7 +71,7 @@ Public Sub RunInventoryReconciliation()
         physCount = mod_Utilities.SafeVal(wsInv.Cells(i, 3).Value)
         totalItems = totalItems + 1
 
-        found = Application.Match(artCode, wsArt.Range("A:A"), 0)
+        found = Application.Match(artCode, wsArt.Columns(COL_ART_CODE), 0)
         If IsError(found) Then
             sysStock = 0
         Else

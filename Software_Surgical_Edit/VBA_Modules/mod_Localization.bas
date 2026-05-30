@@ -42,12 +42,12 @@ Public Function GetLocalizedString(ByVal stringID As String) As String
     End If
     
     Dim lastRow As Long
-    lastRow = ws.Cells(ws.Rows.count, 1).End(xlUp).Row
+    lastRow = ws.Cells(ws.Rows.count, COL_SYS_ID).End(xlUp).Row
     
     Dim i As Long
     For i = 2 To lastRow
-        If Trim(ws.Cells(i, 1).Value) = stringID Then
-            GetLocalizedString = Trim(ws.Cells(i, 2).Value)
+        If Trim(ws.Cells(i, COL_SYS_ID).Value) = stringID Then
+            GetLocalizedString = Trim(ws.Cells(i, COL_SYS_VALUE).Value)
             Exit Function
         End If
     Next i

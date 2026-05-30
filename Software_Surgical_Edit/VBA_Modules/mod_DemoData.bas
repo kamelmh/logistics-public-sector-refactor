@@ -237,7 +237,7 @@ Private Sub SeedMovements()
                     docCounters("BS") = bsNum + 1
                     
                     Dim bsRef As String
-                    bsRef = "BS-2026-" & Format(bsNum, "0000")
+                    bsRef = REFDOC_PREFIX & "2026-" & Format(bsNum, "0000")
                     
                     wsMouv.Cells(rowIdx, COL_MOUV_DATE).Value = mvtDate
                     wsMouv.Cells(rowIdx, COL_MOUV_CODE_ARTICLE).Value = artCode
@@ -383,7 +383,7 @@ Private Function GetArticlePU(ByVal artCode As String) As Double
     End If
     
     Dim foundRow As Variant
-    foundRow = Application.Match(artCode, wsArt.Range("A:A"), 0)
+    foundRow = Application.Match(artCode, wsArt.Columns(COL_ART_CODE), 0)
     
     If IsError(foundRow) Then
         GetArticlePU = 500
@@ -404,7 +404,7 @@ Private Function GetArticleSupplier(ByVal artCode As String) As String
     End If
     
     Dim foundRow As Variant
-    foundRow = Application.Match(artCode, wsArt.Range("A:A"), 0)
+    foundRow = Application.Match(artCode, wsArt.Columns(COL_ART_CODE), 0)
     
     If IsError(foundRow) Then
         GetArticleSupplier = "F-001"

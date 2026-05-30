@@ -121,14 +121,14 @@ Private Sub ValidateMouvements(ByRef issues As Collection)
         Exit Sub
     End If
 
-    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    lastRow = ws.Cells(ws.Rows.Count, COL_MOUV_DATE).End(xlUp).Row
 
     For i = 2 To lastRow
-        artCode = Trim(ws.Cells(i, 2).Value)
-        mvtType = Trim(ws.Cells(i, 4).Value)
-        refDoc = Trim(ws.Cells(i, 7).Value)
-        qty = mod_Utilities.SafeVal(ws.Cells(i, 5).Value)
-        mvtDate = ws.Cells(i, 1).Value
+        artCode = Trim(ws.Cells(i, COL_MOUV_CODE_ARTICLE).Value)
+        mvtType = Trim(ws.Cells(i, COL_MOUV_TYPE).Value)
+        refDoc = Trim(ws.Cells(i, COL_MOUV_REF_DOC).Value)
+        qty = mod_Utilities.SafeVal(ws.Cells(i, COL_MOUV_QTE).Value)
+        mvtDate = ws.Cells(i, COL_MOUV_DATE).Value
 
         If artCode = "" Then
             issues.Add Array("MOUVEMENTS", "CODE_VIDE", "Ligne " & i & " - Code article manquant", "", "CRITIQUE")
@@ -154,7 +154,7 @@ Private Sub ValidateMouvements(ByRef issues As Collection)
         End If
 
         If Not wsArt Is Nothing Then
-            found = Application.Match(artCode, wsArt.Range("A:A"), 0)
+            found = Application.Match(artCode, wsArt.Columns(COL_ART_CODE), 0)
                 If IsError(found) Then
                     issues.Add Array("MOUVEMENTS", "ARTICLE_ORPHELIN", "Ligne " & i & " - " & artCode & " n'existe pas dans ARTICLES" & SuggestSimilarArticles(artCode), artCode, "CRITIQUE")
                 End If
@@ -166,7 +166,7 @@ NextMvt:
     Dim refs As Object
     Set refs = CreateObject("Scripting.Dictionary")
     For i = 2 To lastRow
-        refDoc = Trim(ws.Cells(i, 7).Value)
+        refDoc = Trim(ws.Cells(i, COL_MOUV_REF_DOC).Value)
         If refDoc <> "" Then
             If refs.Exists(refDoc) Then
                 issues.Add Array("MOUVEMENTS", "REF_DUPLICATE", "Reference dupliquee: " & refDoc, refDoc, "AVERTISSEMENT")
@@ -192,11 +192,11 @@ Private Sub ValidateArticles(ByRef issues As Collection)
         Exit Sub
     End If
 
-    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    lastRow = ws.Cells(ws.Rows.Count, COL_ART_CODE).End(xlUp).Row
     Set codes = CreateObject("Scripting.Dictionary")
 
     For i = 2 To lastRow
-        artCode = Trim(ws.Cells(i, 1).Value)
+        artCode = Trim(ws.Cells(i, COL_ART_CODE).Value)
 
         If artCode = "" Then
             issues.Add Array("ARTICLES", "CODE_VIDE", "Ligne " & i & " - Code article manquant", "", "CRITIQUE")
@@ -209,18 +209,18 @@ Private Sub ValidateArticles(ByRef issues As Collection)
             codes.Add artCode, True
         End If
 
-        stock = mod_Utilities.SafeVal(ws.Cells(i, 3).Value)
+        stock = mod_Utilities.SafeVal(ws.Cells(i, COL_ART_STOCK).Value)
         If stock < 0 Then
             issues.Add Array("ARTICLES", "STOCK_NEGATIF", artCode & " - Stock negatif: " & stock, stock, "CRITIQUE")
         End If
 
-        pu = mod_Utilities.SafeVal(ws.Cells(i, 8).Value)
+        pu = mod_Utilities.SafeVal(ws.Cells(i, COL_ART_PU).Value)
         If pu <= 0 Then
             issues.Add Array("ARTICLES", "PRIX_INVALIDE", artCode & " - Prix unitaire <= 0", pu, "AVERTISSEMENT")
         End If
 
         Dim designation As String
-        designation = Trim(ws.Cells(i, 2).Value)
+        designation = Trim(ws.Cells(i, COL_ART_DESIGNATION).Value)
         If designation = "" Then
             issues.Add Array("ARTICLES", "DESIGNATION_VIDE", artCode & " - Designation manquante", artCode, "AVERTISSEMENT")
         End If
@@ -242,17 +242,17 @@ Private Sub ValidateSuppliers(ByRef issues As Collection)
         Exit Sub
     End If
 
-    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    lastRow = ws.Cells(ws.Rows.Count, COL_FOU_CODE).End(xlUp).Row
 
     For i = 3 To lastRow
-        fouCode = Trim(ws.Cells(i, 1).Value)
+        fouCode = Trim(ws.Cells(i, COL_FOU_CODE).Value)
         If fouCode = "" Then
             issues.Add Array("FOURNISSEURS", "CODE_VIDE", "Ligne " & i & " - Code fournisseur manquant", "", "AVERTISSEMENT")
             GoTo NextFou
         End If
 
-        nif = Trim(ws.Cells(i, 5).Value)
-        nis = Trim(ws.Cells(i, 6).Value)
+        nif = Trim(ws.Cells(i, COL_FOU_NIF).Value)
+        nis = Trim(ws.Cells(i, COL_FOU_NIS).Value)
         If Len(nif) < 10 Then
             issues.Add Array("FOURNISSEURS", "NIF_COURT", fouCode & " - NIF semble invalide: " & nif, nif, "AVERTISSEMENT")
         End If

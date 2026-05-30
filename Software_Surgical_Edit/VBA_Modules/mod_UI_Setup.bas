@@ -130,7 +130,7 @@ Private Sub FillKpiRow(ByVal ws As Worksheet, ByVal row As Long)
 
     DrawKpiCard ws, COL1, row, "Articles", CStr(totalSKUs), RGB(0, 102, 204), RGB(232, 240, 254)
     On Error Resume Next
-    countAlert = Application.WorksheetFunction.CountIf(wsArt.Range("G:G"), "<=" & 205)
+    countAlert = Application.WorksheetFunction.CountIf(wsArt.Columns(COL_ART_STOCK_ACTUEL), "<=" & 205)
     On Error GoTo 0
     DrawKpiCard ws, COL2, row, "Alertes Stock", IIf(countAlert > 0, CStr(countAlert), "0"), RGB(200, 30, 30), RGB(255, 235, 235)
     DrawKpiCard ws, COL3, row, "Mis " & Chr(224) & " jour", Format(Now, "HH:MM"), RGB(4, 90, 55), RGB(232, 245, 233)

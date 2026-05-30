@@ -71,7 +71,7 @@ Public Function GetArticleField(ByVal sku As String, ByVal fieldType As String) 
         Case Else:    colIdx = mod_Config.COL_ART_DESIGNATION
     End Select
     
-    foundRow = Application.Match(sku, wsArt.Range("A:A"), 0)
+    foundRow = Application.Match(sku, wsArt.Columns(COL_ART_CODE), 0)
     
     If IsError(foundRow) Then
         GetArticleField = ""
@@ -250,7 +250,7 @@ Public Sub ExportLowStockPDF()
     With wsReport
         .Range("A1").Value = "LOW STOCK ALERT - " & mod_Config.SYS_TITLE
         .Range("A2").Value = "Directorate of Education - El Bayadh"
-        .Range("A3").Value = "Date: " & Now
+        .Range("A3").Value = "Date: " & Format(Now, "DD/MM/YYYY HH:MM")
         
         .Range("A5").Value = "CODE"
         .Range("B5").Value = "DESIGNATION (AR)"

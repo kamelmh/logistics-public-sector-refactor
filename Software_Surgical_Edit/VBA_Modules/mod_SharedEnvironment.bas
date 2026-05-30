@@ -161,11 +161,11 @@ Public Sub CheckWorkbookAccess()
         owner = GetLockOwner()
         
         Dim response As VbMsgBoxResult
-        response = MsgBox("ATTENTION: Ce fichier est déjà ouvert par: " & owner & vbCrLf & _
+        response = MsgBox("ATTENTION: Ce fichier est dï¿½jï¿½ ouvert par: " & owner & vbCrLf & _
                          vbCrLf & _
-                         "L'ouverture en mode lecture seule est recommandée pour éviter" & vbCrLf & _
-                         "la corruption des données. Continuer en mode lecture/écriture?", _
-                         vbYesNo + vbExclamation, "Accès concurrent détecté")
+                         "L'ouverture en mode lecture seule est recommandï¿½e pour ï¿½viter" & vbCrLf & _
+                         "la corruption des donnï¿½es. Continuer en mode lecture/ï¿½criture?", _
+                         vbYesNo + vbExclamation, "Accï¿½s concurrent dï¿½tectï¿½")
         
         If response = vbNo Then
             ThisWorkbook.ChangeFileAccess Mode:=xlReadOnly
@@ -215,7 +215,7 @@ Public Sub BatchExportPDFs(ByVal startDate As Date, ByVal endDate As Date)
     Next i
     
     If docRefs.Count = 0 Then
-        MsgBox "Aucun document trouvé pour la période sélectionnée.", vbInformation
+        MsgBox "Aucun document trouvï¿½ pour la pï¿½riode sï¿½lectionnï¿½e.", vbInformation
         Exit Sub
     End If
     
@@ -245,8 +245,8 @@ Public Sub BatchExportPDFs(ByVal startDate As Date, ByVal endDate As Date)
         On Error GoTo 0
     Next key
     
-    MsgBox "Export par lot terminé:" & vbCrLf & _
-           "Succès: " & successCount & vbCrLf & _
+    MsgBox "Export par lot terminï¿½:" & vbCrLf & _
+           "Succï¿½s: " & successCount & vbCrLf & _
            "Echecs: " & failCount, _
            vbInformation, "Export par lot"
     
@@ -269,7 +269,7 @@ Public Sub BulkImportMovements(ByVal importSheetName As String)
     lastRow = wsImport.Cells(wsImport.Rows.Count, "A").End(xlUp).Row
     
     If lastRow < 2 Then
-        MsgBox "Aucune donnée à importer.", vbInformation
+        MsgBox "Aucune donnï¿½e ï¿½ importer.", vbInformation
         Exit Sub
     End If
     
@@ -323,8 +323,8 @@ Public Sub BulkImportMovements(ByVal importSheetName As String)
 NextRow:
     Next i
     
-    MsgBox "Import par lot terminé:" & vbCrLf & _
-           "Succès: " & successCount & vbCrLf & _
+    MsgBox "Import par lot terminï¿½:" & vbCrLf & _
+           "Succï¿½s: " & successCount & vbCrLf & _
            "Echecs: " & failCount, _
            vbInformation, "Import par lot"
     
@@ -373,11 +373,11 @@ Private Sub LogSessionEvent(ByVal eventType As String, ByVal message As String)
     
     wsAudit.Unprotect Password:=mod_Config.MASTER_PWD
     
-    wsAudit.Cells(lastRow, 1).Value = Now
-    wsAudit.Cells(lastRow, 2).Value = "SESSION_" & eventType
-    wsAudit.Cells(lastRow, 3).Value = m_CurrentUser.UserName
-    wsAudit.Cells(lastRow, 4).Value = message
-    wsAudit.Cells(lastRow, 5).Value = m_CurrentUser.Role
+    wsAudit.Cells(lastRow, COL_AUDIT_DATE).Value = Date
+    wsAudit.Cells(lastRow, COL_AUDIT_TIME).Value = Format(Now, "HH:mm:ss")
+    wsAudit.Cells(lastRow, COL_AUDIT_USER).Value = m_CurrentUser.UserName
+    wsAudit.Cells(lastRow, COL_AUDIT_ACTION).Value = "SESSION_" & eventType & ": " & message
+    wsAudit.Cells(lastRow, COL_AUDIT_REF).Value = m_CurrentUser.Role
     
     wsAudit.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
     On Error GoTo 0

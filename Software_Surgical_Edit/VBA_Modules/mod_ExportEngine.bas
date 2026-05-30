@@ -7,7 +7,7 @@ Attribute VB_Name = "mod_ExportEngine"
 ' All rights reserved. Unauthorized reproduction or distribution prohibited.
 ' ============================================================================
 
-'   - Engagement / Liquidation / Code Budgétaire lines
+'   - Engagement / Liquidation / Code Budgï¿½taire lines
 '   - QR code (generated BEFORE PDF export - embedded in document)
 '   - Verification code (deterministic hash)
 '   - NIF / NIS / RC / Article tax identifiers
@@ -402,7 +402,7 @@ Private Function PopulateTemplateBon(ByVal docRef As String, _
                 ' Lookup Arabic designation from ARTICLES
                 If Not wsArt Is Nothing Then
                     Dim artMatchRow As Variant
-                    artMatchRow = Application.Match(artCode, wsArt.Range("A:A"), 0)
+                    artMatchRow = Application.Match(artCode, wsArt.Columns(COL_ART_CODE), 0)
                     If Not IsError(artMatchRow) Then
                         Dim arLabel As String
                         arLabel = Trim(CStr(wsArt.Cells(artMatchRow, COL_ART_DESIGNATION).Value))

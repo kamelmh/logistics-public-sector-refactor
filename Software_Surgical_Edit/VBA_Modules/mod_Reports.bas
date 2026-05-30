@@ -66,12 +66,12 @@ Public Sub GenerateMonthlyReport(Optional ByVal rptMonth As Integer = 0)
             On Error Resume Next
             wsMouv.Unprotect Password:=mod_Config.MASTER_PWD
             On Error GoTo ReportError
-            monthIn = WorksheetFunction.SumIfs(wsMouv.Range("E:E"), wsMouv.Range("B:B"), sku, wsMouv.Range("D:D"), "IN", _
-                                             wsMouv.Range("A:A"), ">=" & DateSerial(Year(Date), rptMonth, 1), _
-                                             wsMouv.Range("A:A"), "<" & DateSerial(Year(Date), rptMonth + 1, 1))
-            monthOut = WorksheetFunction.SumIfs(wsMouv.Range("E:E"), wsMouv.Range("B:B"), sku, wsMouv.Range("D:D"), "OUT", _
-                                               wsMouv.Range("A:A"), ">=" & DateSerial(Year(Date), rptMonth, 1), _
-                                               wsMouv.Range("A:A"), "<" & DateSerial(Year(Date), rptMonth + 1, 1))
+            monthIn = WorksheetFunction.SumIfs(wsMouv.Columns(COL_MOUV_QTE), wsMouv.Columns(COL_MOUV_CODE_ARTICLE), sku, wsMouv.Columns(COL_MOUV_TYPE), "IN", _
+                                             wsMouv.Columns(COL_MOUV_DATE), ">=" & DateSerial(Year(Date), rptMonth, 1), _
+                                             wsMouv.Columns(COL_MOUV_DATE), "<" & DateSerial(Year(Date), rptMonth + 1, 1))
+            monthOut = WorksheetFunction.SumIfs(wsMouv.Columns(COL_MOUV_QTE), wsMouv.Columns(COL_MOUV_CODE_ARTICLE), sku, wsMouv.Columns(COL_MOUV_TYPE), "OUT", _
+                                               wsMouv.Columns(COL_MOUV_DATE), ">=" & DateSerial(Year(Date), rptMonth, 1), _
+                                               wsMouv.Columns(COL_MOUV_DATE), "<" & DateSerial(Year(Date), rptMonth + 1, 1))
             wsMouv.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
             
             Dim totalStock As Double: totalStock = wsArt.Cells(i, COL_ART_STOCK_ACTUEL).Value
@@ -153,7 +153,7 @@ Public Sub GenerateStockCard(Optional ByVal sku As String = "")
         If sku = "" Then Exit Sub
     End If
     
-    Dim artRow As Variant: artRow = Application.Match(sku, wsArt.Range("A:A"), 0)
+    Dim artRow As Variant: artRow = Application.Match(sku, wsArt.Columns(COL_ART_CODE), 0)
     If IsError(artRow) Then
         MsgBox "Article non trouv?: " & sku, vbExclamation
         Exit Sub

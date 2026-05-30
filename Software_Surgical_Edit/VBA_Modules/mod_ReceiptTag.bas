@@ -46,14 +46,14 @@ Public Sub GenerateReceiptTagPDF()
     End If
 
     ' 3. Read movement data
-    Dim mvtDate    As String: mvtDate = Format(wsData.Cells(activeRow, 1).Value, "DD/MM/YYYY")
-    Dim artCode    As String: artCode = wsData.Cells(activeRow, 2).Value
-    Dim artDesc    As String: artDesc = wsData.Cells(activeRow, 3).Value      ' auto from VLOOKUP
-    Dim mvtType    As String: mvtType = wsData.Cells(activeRow, 4).Value
-    Dim qty        As String: qty = wsData.Cells(activeRow, 5).Value
-    Dim prixUnit   As String: prixUnit = wsData.Cells(activeRow, 6).Value
-    Dim valeur     As String: valeur = wsData.Cells(activeRow, 7).Value
-    Dim refDoc     As String: refDoc = wsData.Cells(activeRow, 8).Value
+    Dim mvtDate    As String: mvtDate = Format(wsData.Cells(activeRow, COL_MOUV_DATE).Value, "DD/MM/YYYY")
+    Dim artCode    As String: artCode = wsData.Cells(activeRow, COL_MOUV_CODE_ARTICLE).Value
+    Dim artDesc    As String: artDesc = wsData.Cells(activeRow, COL_MOUV_DESIGNATION).Value      ' auto from VLOOKUP
+    Dim mvtType    As String: mvtType = wsData.Cells(activeRow, COL_MOUV_TYPE).Value
+    Dim qty        As String: qty = wsData.Cells(activeRow, COL_MOUV_QTE).Value
+    Dim prixUnit   As String: prixUnit = wsData.Cells(activeRow, COL_MOUV_VALEUR).Value
+    Dim valeur     As String: valeur = wsData.Cells(activeRow, COL_MOUV_REF_DOC).Value
+    Dim refDoc     As String: refDoc = wsData.Cells(activeRow, COL_MOUV_PU).Value
 
     receiptID = artCode & "-" & Format(Now, "YYYYMMDD-HHMM")
 

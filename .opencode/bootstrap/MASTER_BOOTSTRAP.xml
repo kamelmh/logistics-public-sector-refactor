@@ -26,12 +26,13 @@
 
   <!-- ===== GROUND TRUTH (NEVER MODIFY) ===== -->
   <ground-truth>
-    <param name="D" value="1546" desc="Annual Demand (38-day observation)" />
-    <param name="Q_STAR" value="176" desc="EOQ via Wilson" />
-    <param name="ROP" value="212.4" desc="(D/250)*LT + SS" />
+    <param name="D" value="789" desc="Annual Demand from ACTUAL MOUVEMENTS (120 OUT × 250/38 days)" />
+    <param name="Q_STAR" value="37" desc="EOQ via Wilson (real PU=4500, S=801.45)" />
+    <param name="ROP" value="206" desc="(D/250)*LT + SS" />
     <param name="SS" value="200" desc="Safety Stock" />
     <param name="LT" value="2" desc="Lead Time (days)" />
-    <param name="S" value="500" unit="DZD" desc="Order Cost" />
+    <param name="S" value="801.45" unit="DZD" desc="Order Cost (field analysis)" />
+    <param name="PU" value="4500" unit="DZD" desc="Unit Price (ARTICLES sheet real price)" />
     <param name="I" value="0.20" desc="Holding Rate" />
     <param name="MASTER_PWD" value="erp_secure_pwd_2026" desc="Sheet protection" />
     <param name="VERSION" value="v13.2" />

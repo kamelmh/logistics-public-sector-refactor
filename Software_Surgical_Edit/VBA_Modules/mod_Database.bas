@@ -31,17 +31,17 @@ Public Sub SecureWriteTransaction(docDate As Date, _
     Set ws = ThisWorkbook.Sheets(mod_Config.SHEET_MOUVEMENTS)
     ws.Unprotect Password:=mod_Config.MASTER_PWD
     
-    nextRow = ws.Cells(ws.Rows.count, 1).End(xlUp).Row + 1
+    nextRow = ws.Cells(ws.Rows.count, COL_MOUV_DATE).End(xlUp).Row + 1
     
-    ws.Cells(nextRow, 1).Value = docDate
-    ws.Cells(nextRow, 2).Value = codeArticle
-    ws.Cells(nextRow, 3).Value = designation
-    ws.Cells(nextRow, 4).Value = typeSign
-    ws.Cells(nextRow, 5).Value = quantity
-    ws.Cells(nextRow, 6).Value = lineValue
-    ws.Cells(nextRow, 7).Value = refDoc
-    ws.Cells(nextRow, 8).Value = unitPrice
-    ws.Cells(nextRow, 9).Value = thirdParty
+    ws.Cells(nextRow, COL_MOUV_DATE).Value = docDate
+    ws.Cells(nextRow, COL_MOUV_CODE_ARTICLE).Value = codeArticle
+    ws.Cells(nextRow, COL_MOUV_DESIGNATION).Value = designation
+    ws.Cells(nextRow, COL_MOUV_TYPE).Value = typeSign
+    ws.Cells(nextRow, COL_MOUV_QTE).Value = quantity
+    ws.Cells(nextRow, COL_MOUV_VALEUR).Value = lineValue
+    ws.Cells(nextRow, COL_MOUV_REF_DOC).Value = refDoc
+    ws.Cells(nextRow, COL_MOUV_PU).Value = unitPrice
+    ws.Cells(nextRow, COL_MOUV_THIRD_PARTY).Value = thirdParty
     ws.Cells(nextRow, 12).Value = notes
     
     ws.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True

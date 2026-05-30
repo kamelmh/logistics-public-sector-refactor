@@ -214,7 +214,7 @@ Private Function GetArticleSupplier(ByVal artCode As Variant) As String
     On Error GoTo 0
     If wsArt Is Nothing Then GetArticleSupplier = "": Exit Function
 
-    found = Application.Match(artCode, wsArt.Range("A:A"), 0)
+    found = Application.Match(artCode, wsArt.Columns(COL_ART_CODE), 0)
     If IsError(found) Then
         GetArticleSupplier = ""
     Else

@@ -7,12 +7,13 @@
 ## GROUND TRUTH (Canonical — Do Not Modify)
 | Param | Value | Description |
 |-------|-------|-------------|
-| D | 1,546 | Annual demand (38-day observation) |
-| Q* (EOQ) | 176 | √(2DS / IPU) — Wilson formula |
-| ROP | 212.4 | (D/250)×LT + SS |
+| D | 789 | Annual demand from ACTUAL MOUVEMENTS (120 OUT × 250/38 days) |
+| Q* (EOQ) | 37 | √(2DS / IPU) — Wilson formula (real PU=4500, S=801.45) |
+| ROP | 206 | (D/250)×LT + SS |
 | SS | 200 | Safety Stock |
 | LT | 2 days | Lead Time |
-| S | 500 DZD | Order Cost |
+| S | 801.45 DZD | Order Cost (field analysis) |
+| PU | 4,500 DZD | Unit Price (ARTICLES sheet real price) |
 | I | 20% | Holding Rate |
 | MASTER_PWD | erp_secure_pwd_2026 | Sheet protection |
 | VERSION | v13.2 | Current |

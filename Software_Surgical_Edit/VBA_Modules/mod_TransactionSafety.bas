@@ -342,10 +342,10 @@ Public Sub CheckCrashRecovery()
         
         ' Ask user if they want to rollback
         Dim response As VbMsgBoxResult
-        response = MsgBox("Une transaction incomplète a été détectée:" & vbCrLf & _
+        response = MsgBox("Une transaction incomplï¿½te a ï¿½tï¿½ dï¿½tectï¿½e:" & vbCrLf & _
                          "Doc: " & docRef & vbCrLf & vbCrLf & _
                          "Voulez-vous annuler cette transaction?", _
-                         vbYesNo + vbExclamation, "Récupération après crash")
+                         vbYesNo + vbExclamation, "Rï¿½cupï¿½ration aprï¿½s crash")
         
         If response = vbYes Then
             ' Rollback using stored snapshot
@@ -353,8 +353,44 @@ Public Sub CheckCrashRecovery()
             snapshotData = wsStaging.Range("Z3").Value
             
             If Len(snapshotData) > 0 Then
-                ' Decode and restore snapshot
-                Debug.Print "[Safety] Recovering from crash - rolling back " & docRef
+                ' Deserialize and restore snapshot
+                Dim recoveredSnapshot As Variant
+                recoveredSnapshot = DeserializeSnapshot(snapshotData)
+                
+                If IsArray(recoveredSnapshot) Then
+                    ' Unprotect staging to write recovery flag
+                    wsStaging.Unprotect Password:=mod_Config.MASTER_PWD
+                    
+                    ' Temporarily force m_CurrentTransaction.PreSnapshot for RestoreStockSnapshot
+                    m_CurrentTransaction.PreSnapshot = recoveredSnapshot
+                    
+                    ' Restore stock balances from recovered snapshot
+                    Call RestoreStockSnapshot(recoveredSnapshot)
+                    
+                    ' Remove partial MOUVEMENTS entries for this docRef
+                    Call RemovePartialMovements(docRef)
+                    
+                    ' Mark as recovered
+                    wsStaging.Range("Z1").Value = "RECOVERED"
+                    
+                    wsStaging.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
+                    
+                    Debug.Print "[Safety] Crash recovery complete: " & docRef & " rolled back"
+                    
+                    MsgBox "Transaction annulï¿½e avec succï¿½s." & vbCrLf & _
+                           "Les stocks ont ï¿½tï¿½ restaurï¿½s ï¿½ leur ï¿½tat d'avant la transaction.", _
+                           vbInformation, "Rï¿½cupï¿½ration rï¿½ussie"
+                Else
+                    Debug.Print "[Safety] ERROR: Failed to deserialize snapshot data"
+                    wsStaging.Range("Z1").Value = "RECOVERY_FAILED"
+                    MsgBox "Impossible de restaurer la transaction." & vbCrLf & _
+                           "Les donnï¿½es de sauvegarde sont corrompues.", _
+                           vbCritical, "Erreur de rï¿½cupï¿½ration"
+                End If
+            Else
+                ' No snapshot data -- just clean up partial movements
+                Debug.Print "[Safety] No snapshot data -- removing partial movements for " & docRef
+                Call RemovePartialMovements(docRef)
                 wsStaging.Range("Z1").Value = "RECOVERED"
             End If
         Else
@@ -423,11 +459,11 @@ Private Sub LogTransactionEvent(ByVal eventType As String, ByVal message As Stri
     
     wsAudit.Unprotect Password:=mod_Config.MASTER_PWD
     
-    wsAudit.Cells(lastRow, 1).Value = Now
-    wsAudit.Cells(lastRow, 2).Value = "TRANSACTION_" & eventType
-    wsAudit.Cells(lastRow, 3).Value = m_CurrentTransaction.DocRef
-    wsAudit.Cells(lastRow, 4).Value = message
-    wsAudit.Cells(lastRow, 5).Value = mod_SharedEnvironment.GetCurrentUserName
+    wsAudit.Cells(lastRow, COL_AUDIT_DATE).Value = Date
+    wsAudit.Cells(lastRow, COL_AUDIT_TIME).Value = Format(Now, "HH:mm:ss")
+    wsAudit.Cells(lastRow, COL_AUDIT_USER).Value = mod_SharedEnvironment.GetCurrentUserName
+    wsAudit.Cells(lastRow, COL_AUDIT_ACTION).Value = "TRANSACTION_" & eventType & ": " & message
+    wsAudit.Cells(lastRow, COL_AUDIT_REF).Value = m_CurrentTransaction.DocRef
     
     wsAudit.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
 End Sub
@@ -462,6 +498,62 @@ Private Function SerializeSnapshot(ByRef snapshot As Variant) As String
     If Len(result) > 0 Then result = Left(result, Len(result) - 1)
     
     SerializeSnapshot = result
+End Function
+
+' Deserialize snapshot string back to array (inverse of SerializeSnapshot)
+' Input format: "code1=value1|code2=value2|..."
+Private Function DeserializeSnapshot(ByVal data As String) As Variant
+    If Len(data) = 0 Then
+        DeserializeSnapshot = Array()
+        Exit Function
+    End If
+    
+    ' Count items by splitting on pipe
+    Dim items() As String
+    items = Split(data, "|")
+    
+    Dim itemCount As Long
+    itemCount = UBound(items) + 1
+    
+    ' Build array matching CaptureStockSnapshot format: (1 To 3, 1 To count)
+    ' Row 1 = article code, Row 2 = stock value, Row 3 = row index (lookup on restore)
+    Dim result() As Variant
+    ReDim result(1 To 3, 1 To itemCount)
+    
+    Dim i As Long
+    Dim pair() As String
+    
+    ' Get ARTICLES sheet for row index lookup
+    Dim wsArt As Worksheet
+    On Error Resume Next
+    Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
+    On Error GoTo 0
+    
+    For i = 0 To itemCount - 1
+        pair = Split(items(i), "=")
+        
+        result(1, i + 1) = pair(0)  ' Article code
+        result(2, i + 1) = Val(pair(1))  ' Stock value
+        
+        ' Look up row index in ARTICLES sheet
+        result(3, i + 1) = 0  ' Default: row unknown
+        If Not wsArt Is Nothing Then
+            Dim lastRow As Long
+            lastRow = wsArt.Cells(wsArt.Rows.Count, "A").End(xlUp).Row
+            
+            Dim r As Long
+            For r = 2 To lastRow
+                If Trim(wsArt.Cells(r, "A").Value) = pair(0) Then
+                    result(3, i + 1) = r
+                    Exit For
+                End If
+            Next r
+        End If
+    Next i
+    
+    DeserializeSnapshot = result
+    
+    Debug.Print "[Safety] Snapshot deserialized: " & itemCount & " articles"
 End Function
 
 ' Get current transaction status
