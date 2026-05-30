@@ -77,7 +77,7 @@ Private Sub SeedArticles()
     lastRow = wsArt.Cells(wsArt.Rows.Count, "A").End(xlUp).Row
     If lastRow > 1 Then wsArt.Rows("2:" & lastRow).Delete
     
-    ' 12 articles with realistic initial stock
+    ' 15 articles (incl. ART-013/014/015 for BORDEREAU_COMMANDE compatibility)
     Dim articles As Variant
     articles = Array( _
         Array("ART-001", "Toner imprimante G030 (noir)", "Informatique", "F-001", 500, 4500, 200, "A", "Fournitures d'impression"), _
@@ -91,7 +91,10 @@ Private Sub SeedArticles()
         Array("ART-009", "Sous-chemise carton", "Fournitures Bureau", "F-002", 600, 95, 70, "B", "Chemises classement"), _
         Array("ART-010", "Chemise cartonnee", "Fournitures Bureau", "F-002", 450, 120, 50, "B", "Chemises documents"), _
         Array("ART-011", "Rouleau papier fax", "Informatique", "F-001", 80, 550, 15, "C", "Consommables fax"), _
-        Array("ART-012", "Marqueur permanent noir", "Fournitures Bureau", "F-003", 350, 230, 40, "C", "Marquage etatiquetage") _
+        Array("ART-012", "Marqueur permanent noir", "Fournitures Bureau", "F-003", 350, 230, 40, "C", "Marquage etatiquetage"), _
+        Array("ART-013", "Encre pour cachets", "Fournitures Bureau", "F-001", 10, 450, 5, "C", "Encre sceaux officiels"), _
+        Array("ART-014", "Classeur a levier", "Admin", "F-003", 12, 550, 5, "C", "Classement archives"), _
+        Array("ART-015", "Cartouche toner generique", "Informatique", "F-001", 39, 4500, 10, "B", "Toner compatible HP") _
     )
     
     Dim i As Long
@@ -208,7 +211,10 @@ Private Sub SeedMovements()
         Array("ART-009", Array(5, 12, 19, 26, 34), Array(25, 30, 20, 28, 22), Array(18), Array(100)), _
         Array("ART-010", Array(7, 14, 21, 28, 35), Array(18, 22, 15, 20, 18), Array(20), Array(100)), _
         Array("ART-011", Array(10, 25), Array(2, 3), Array(0), Array(0)), _
-        Array("ART-012", Array(9, 18, 28), Array(8, 12, 10), Array(0), Array(0)) _
+        Array("ART-012", Array(9, 18, 28), Array(8, 12, 10), Array(0), Array(0)), _
+        Array("ART-013", Array(6, 20), Array(2, 3), Array(0), Array(0)), _
+        Array("ART-014", Array(12, 26), Array(3, 5), Array(0), Array(0)), _
+        Array("ART-015", Array(10, 22, 34), Array(5, 8, 6), Array(18), Array(30)) _
     )
     
     Dim docCounters As Object

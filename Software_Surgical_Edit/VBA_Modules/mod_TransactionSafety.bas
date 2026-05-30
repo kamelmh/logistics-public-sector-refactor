@@ -458,9 +458,10 @@ Private Sub LogTransactionEvent(ByVal eventType As String, ByVal message As Stri
     lastRow = wsAudit.Cells(wsAudit.Rows.Count, "A").End(xlUp).Row + 1
     
     wsAudit.Unprotect Password:=mod_Config.MASTER_PWD
-    
-    wsAudit.Cells(lastRow, COL_AUDIT_DATE).Value = Date
-    wsAudit.Cells(lastRow, COL_AUDIT_TIME).Value = Format(Now, "HH:mm:ss")
+
+    Dim ts As Date: ts = Now()
+    wsAudit.Cells(lastRow, COL_AUDIT_DATE).Value = ts
+    wsAudit.Cells(lastRow, COL_AUDIT_DATE).NumberFormat = "yyyy-mm-dd HH:mm:ss"
     wsAudit.Cells(lastRow, COL_AUDIT_USER).Value = mod_SharedEnvironment.GetCurrentUserName
     wsAudit.Cells(lastRow, COL_AUDIT_ACTION).Value = "TRANSACTION_" & eventType & ": " & message
     wsAudit.Cells(lastRow, COL_AUDIT_REF).Value = m_CurrentTransaction.DocRef

@@ -31,14 +31,14 @@ Public Sub LogTransaction(ByVal ActionType As String, ByVal RefNum As String)
 
     nextRow = wsAudit.Cells(wsAudit.Rows.count, 1).End(xlUp).Row + 1
 
+    Dim ts As Date: ts = Now()
+
     With wsAudit
-        .Cells(nextRow, 1).Value = Date
-        .Cells(nextRow, 2).Value = Format(Now, "HH:mm:ss")
-        .Cells(nextRow, 3).Value = userName
-        .Cells(nextRow, 4).Value = ActionType
-        .Cells(nextRow, 5).Value = RefNum
-        .Cells(nextRow, 1).NumberFormat = "yyyy-mm-dd"
-        .Cells(nextRow, 2).NumberFormat = "HH:mm:ss"
+        .Cells(nextRow, 1).Value = ts
+        .Cells(nextRow, 2).Value = userName
+        .Cells(nextRow, 3).Value = ActionType
+        .Cells(nextRow, 4).Value = RefNum
+        .Cells(nextRow, 1).NumberFormat = "yyyy-mm-dd HH:mm:ss"
     End With
 
     wsAudit.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
@@ -87,14 +87,14 @@ Public Sub LogAction(ByVal category As String, ByVal details As String, Optional
     userName = mod_SharedEnvironment.GetCurrentUserName
     If Len(userName) = 0 Then userName = Environ("USERNAME")
 
+    Dim ts As Date: ts = Now()
+
     With wsAudit
-        .Cells(nextRow, 1).Value = Date
-        .Cells(nextRow, 2).Value = Format(Now, "HH:mm:ss")
-        .Cells(nextRow, 3).Value = userName
-        .Cells(nextRow, 4).Value = IIf(moduleName <> "", moduleName & "." & procName, category)
-        .Cells(nextRow, 5).Value = details
-        .Cells(nextRow, 1).NumberFormat = "yyyy-mm-dd"
-        .Cells(nextRow, 2).NumberFormat = "HH:mm:ss"
+        .Cells(nextRow, 1).Value = ts
+        .Cells(nextRow, 2).Value = userName
+        .Cells(nextRow, 3).Value = IIf(moduleName <> "", moduleName & "." & procName, category)
+        .Cells(nextRow, 4).Value = details
+        .Cells(nextRow, 1).NumberFormat = "yyyy-mm-dd HH:mm:ss"
     End With
 
     wsAudit.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
