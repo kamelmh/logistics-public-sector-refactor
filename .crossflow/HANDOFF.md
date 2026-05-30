@@ -1,53 +1,51 @@
 # CrossFlow Handoff — Academix v13.2
 
 ## Current Priority
-TABLEAU DE BORD dashboard is FIXED. Move to data reconciliation and remaining bugs.
+P2 (phantom articles) DONE. P4 (Arabic mojibake) DONE. P5 (audit log) DONE. Next: Thesis update or new feature work.
 
 ## State
-- **Session**: Dashboard Rescue (2026-05-30)
-- **Agent**: Academix (Gemini 2.5 Flash)
-- **Workbook**: `ERP_v13.2.xlsm` (fixed copy deployed)
-- **Build**: Not run this session (hotfix on .xlsm only)
-- **Verify**: Not run (formula changes are in .xlsm only, .bas not changed)
+- **Session**: P2+P4+P5 — Articles, Localization, Audit (2026-05-31)
+- **Agent**: Academix (DeepSeek V4 Flash Free)
+- **Workbook**: `ERP_v13.2.xlsm` (rebuilt from .bas + golden master)
+- **Git**: `03a7a70` — pushed to origin/master
+- **Build**: ✅ COMPILE OK (42 .bas, 1 .frm, 0 errors)
+- **Verify**: ✅ 112/112 PASS (all 112 checks)
+- **Ground Truth**: D=789, Q*=37, ROP=206, PU=4500, S=801.45
 
 ## Completed
-1. **TABLEAU DE BORD #REF!** — Rewrote SUMIFS (D,E), LOOKUP (H), VLOOKUP (C,G), and ROP (J) formulas with correct MOUVEMENTS column references (E:E for Qte, B:B for Code, D:D for Type, H:H for CMUP)
-2. **VLOOKUP index fixes** — ABC uses col 6 (was col 5 = Famille), Stock Min uses col 3 (was col 6 = ABC text "A"/"B")
-3. **ALERTE_DASHBOARD** — auto-fixed via upstream propagation
-4. **Circular reference broken** — ROP formula no longer uses `I{r}` (which depends on F*H, creating chain), uses direct G reference
+### Session 3 (2026-05-31) — P2 Phantom Articles + P4 Arabic + P5 Audit Log
+1. **P2 — Phantom Articles**: Added ART-013 "Encre pour cachets", ART-014 "Classeur a levier", ART-015 "Cartouche toner generique" to `SeedArticles` array in `mod_DemoData.bas` (now 15 articles). Added matching movement patterns in `SeedMovements`. All codes now exist in ARTICLES catalog, resolving BORDEREAU_COMMANDE phantom reference errors.
+2. **P4 — Arabic Mojibake**: Rewrote all 87 Arabic strings in SYS_STRINGS sheet from ANSI-garbled `???????` to proper Unicode Arabic. Both GOLDEN and output workbooks updated. Strings include full UI translations (menus, buttons, alerts, labels, error messages, reports).
+3. **P5 — Audit Log Serial Split**: Consolidated all 3 audit writers (`LogTransaction`, `LogAction`, `LogTransactionEvent`) to use single `Now()` capture per call — eliminates race condition where separate `Date` and `Format(Now)` calls could produce mismatched day/time on midnight rollover. Time now stored as numeric fractional serial, not text. Single `yyyy-mm-dd HH:mm:ss` format on column A. Updated AUDIT_LOG sheet headers to match actual columns: Horodatage | Utilisateur | Action | Reference.
+
+### Session 2 (2026-05-30) — Data Reconciliation + Compile Fix
+1. **COMPILE ERROR FIXED** — Removed duplicate `btnAjouterLigne_MouseMove` in `frmStockEntry.frm`.
+2. **`mod_ThemingEngine.bas`** — Fixed `btnImprimer`→`btnImprimerBon` references.
+3. **`mod_DemoData.bas`** — Fixed hardcoded `"BS-"` to use `REFDOC_PREFIX` constant.
+4. **CALCULS_EOQ REBUILT with REAL DATA**: D=789, S=801.45, PU=4,500, Q*=37, ROP=206, N=21.
+5. **Ground truth updated**: MASTER_BOOTSTRAP.xml + erp-context-compact.md + AGENTS.md.
+6. **Git** — Commit `100abc1` pushed to GitHub.
+
+### Session 1 (prior) — TABLEAU DE BORD Dashboard Rescue
+- Rewrote SUMIFS, LOOKUP, VLOOKUP formulas. Fixed circular refs.
 
 ## Pending Tasks
-### P1 — Data Reconciliation
-- D (Demand): thesis=1,546 / CALCULS_EOQ=2,900 / actual MOUVEMENTS OUT(ART-001)=120→annualized~882 — pick one
-- S (Order Cost): HANDOFF=801.45 DA / MASTER_BOOTSTRAP=500 DZD / sheet CL=50 DA/cmd — needs alignment
-- PU (Unit Price): thesis/CALCULS_EOQ uses 400 DA, but ARTICLES+MOUVEMENTS use 4,500 DA for ART-001 (11.25× difference)
-- Update all 3 sources (thesis .md, CALCULS_EOQ sheet, ARTICLES) to match reality
+### Thesis Update (deferred)
+- Thesis still uses old values (D=1546, Q*=176, PU=400) — needs update to match real data (D=789, Q*=37, PU=4500)
 
-### P2 — Phantom Articles
-- ART-013/014/015 in BORDEREAU_COMMANDE but NOT in ARTICLES catalog
-- Either add to ARTICLES or remove from BORDEREAU_COMMANDE
-
-### P3 — Form Bugs
-- `frmStockEntry.frm`: `btnImprimer_MouseMove` references nonexistent control (crash)
-- RefDoc prefix hardcoded as "BS-" instead of configurable constant
-- MouseMove hover flicker on multiple controls
-
-### P4 — Localization
-- Arabic text in SYS_STRINGS stored as ANSI → mojibake on display
-- Need UTF-8 re-encode in .bas source
-
-### P5 — Audit Log
-- `Now()` serial number split across columns C1/C2 pushes username to C3
-- Fix by formatting `Now()` as text string before write
+### BORDEREAU_COMMANDE Descriptions (low priority)
+- ART-005 row says "Toner G030" but ARTICLES ART-005 is "Agrafeuse de bureau"
+- ART-011 says "Encre Cachet" but ARTICLES ART-011 is "Rouleau papier fax"
+- These are BORDEREAU_COMMANDE data entry discrepancies, not code issues
 
 ## Relevant Files
-- `ERP_v13.2.xlsm` — live workbook (fixed)
-- `ERP_v13.2_FIXED.xlsm` — backup of fixed version
-- `ERP_v13.2_2026-05-16_backup.xlsm` — pre-fix backup
-- `Software_Surgical_Edit/VBA_Modules/mod_Config.bas` — column constants
-- `Software_Surgical_Edit/VBA_Modules/mod_StockEntry_Logic.bas` — logic module
-- `Software_Surgical_Edit/VBA_Modules/frmStockEntry.frm` — form with known bugs
-- `.opencode/notepad.md` — detailed session memory
+- `Software_Surgical_Edit/VBA_Modules/mod_DemoData.bas` — 15 articles seeded
+- `Software_Surgical_Edit/VBA_Modules/mod_AuditTrail.bas` — consolidated timestamp
+- `Software_Surgical_Edit/VBA_Modules/mod_TransactionSafety.bas` — consolidated timestamp
+- `ERP_v13.2.xlsm` — both workbooks updated with Arabic strings + audit headers
+- `GOLDEN_ERP_v13.2.xlsm` — master workbook updated
+- `.opencode/bootstrap/MASTER_BOOTSTRAP.xml` — ground truth
+- `.opencode/erp-context-compact.md` — ground truth
 
 ## Final Sign-off
-Fix deployed to `ERP_v13.2.xlsm`. Dashboard alive. Ready for data reconciliation.
+P2 (phantom articles), P4 (Arabic localization), and P5 (audit log) all resolved. Build: COMPILE OK. Verify: 112/112 PASS. Pushed to GitHub as `03a7a70`. ERP workbook ready for use.
