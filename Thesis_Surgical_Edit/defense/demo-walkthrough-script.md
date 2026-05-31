@@ -116,22 +116,22 @@
 2. Pointer la ligne ART-001
 3. Afficher les colonnes de calcul (ou cliquer sur `[SYNC] Synchronisation` pour rafraîchir)
 4. Expliquer en pointant :
-   - **D = 1546** (demande annuelle extraite des mouvements réels)
+    - **D = 789** (demande annuelle extraite des mouvements réels)
    - **S = 801.45 DZD** (coût d'une commande)
    - **t = 20%** (taux de possession)
    - **PU** (prix unitaire) — le montrer dans la cellule
-5. Pointer la cellule de **Q\*** → **176**
-6. Pointer **ROP** → **212.4** (formule : demande quotidienne × délai + SS)
+5. Pointer la cellule de **Q\*** → **37**
+6. Pointer **ROP** → **206** (formule : demande quotidienne × délai + SS)
 7. Pointer **SS** → **200**
 8. Optionnel : cliquer sur `[CMUP] Rafraichir CMUP` pour montrer le calcul du coût moyen pondéré
 
 ### Discours (Arabe)
-> هنا نرى قلب النظام — النماذج الكمية مطبقة على بيانات حقيقية. الطلب السنوي D = 1546 حُسب تلقائياً من سجل الحركات. تكلفة الطلب S = 801.45 دينار جزائري، ومعدل الحيازة 20%. بتطبيق معادلة ويلسون: الجذر التربيعي لـ (2 × 1546 × 801.45) ÷ (السعر × 0.2) = كمية اقتصادية 176 وحدة. نقطة إعادة الطلب ROP = (1546 ÷ 250) × 2 + 200 = 212.4. هذا يعني: عندما يصل المخزون إلى 213 وحدة، يصدر النظام تنبيهاً آلياً.
+> هنا نرى قلب النظام — النماذج الكمية مطبقة على بيانات حقيقية. الطلب السنوي D = 789 حُسب تلقائياً من سجل الحركات. تكلفة الطلب S = 801.45 دينار جزائري، ومعدل الحيازة 20%. بتطبيق معادلة ويلسون: الجذر التربيعي لـ (2 × 789 × 801.45) ÷ (السعر × 0.2) = كمية اقتصادية 37 وحدة. نقطة إعادة الطلب ROP = (789 ÷ 250) × 2 + 200 = 206. هذا يعني: عندما يصل المخزون إلى 206 وحدة، يصدر النظام تنبيهاً آلياً.
 
 ### Métriques clés
-- **D = 1 546** unités/an (demande annuelle ART-001)
-- **Q\* = 176** unités (EOQ — Wilson)
-- **ROP = 212.4** unités
+- **D = 789** unités/an (demande annuelle ART-001)
+- **Q\* = 37** unités (EOQ — Wilson)
+- **ROP = 206** unités
 - **SS = 200** unités
 - **LT = 2** jours
 - **S = 801.45** DZD
@@ -186,14 +186,14 @@
 2. La feuille **BORDEREAU_COMMANDE** s'affiche ou se crée
 3. Pointer :
    - En-tête : SKU, Désignation, Stock Actuel, Seuil ROP, Suggestion (EOQ), PU, Total Estimé
-   - Ligne ART-001 : Stock = X, ROP = 212.4, Suggestion = 176, Total = 176 × PU
+   - Ligne ART-001 : Stock = X, ROP = 206, Suggestion = 37, Total = 37 × PU
 4. Mentionner que ce bordereau peut être exporté en PDF ou Excel
 
 ### Discours (Arabe)
-> بناءً على الوضع الحالي، يقترح النظام أمر تموين آلي. لكل صنف تجاوز نقطة إعادة الطلب، يقترح النظام كمية مساوية لكمية ويلسون الاقتصادية — 176 للصنف ART-001. هذا يلغي تماماً التخمين البشري والتقدير الذاتي. يمكن تصدير هذا الأمر مباشرة إلى PDF أو Excel لتقديمه إلى مصلحة المشتريات.
+> بناءً على الوضع الحالي، يقترح النظام أمر تموين آلي. لكل صنف تجاوز نقطة إعادة الطلب، يقترح النظام كمية مساوية لكمية ويلسون الاقتصادية — 37 للصنف ART-001. هذا يلغي تماماً التخمين البشري والتقدير الذاتي. يمكن تصدير هذا الأمر مباشرة إلى PDF أو Excel لتقديمه إلى مصلحة المشتريات.
 
 ### Métriques clés
-- Suggestion EOQ = 176 unités (ART-001)
+- Suggestion EOQ = 37 unités (ART-001)
 - Bordereau formaté et prêt à l'emploi
 - Exportable en PDF / Excel
 

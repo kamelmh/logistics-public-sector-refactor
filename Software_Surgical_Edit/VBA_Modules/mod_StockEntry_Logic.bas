@@ -40,6 +40,7 @@ Private Const COL_CAT    As Integer = 2
 Private Const COL_QTE    As Integer = 3
 Private Const COL_PU     As Integer = 4
 Private Const COL_VALEUR As Integer = 5
+Private Const COL_STOCK  As Integer = 6
 
 '-- Form state (isolated from UI controls)
 Private m_TotalGeneral   As Double
@@ -727,6 +728,7 @@ Public Function AddLineToGrid(ByRef state As FormState) As Boolean
     state.formRef.lstGrid.List(rowIdx, COL_DESIG) = Left(desig, 28)
     state.formRef.lstGrid.List(rowIdx, COL_CAT) = Left(cat, 14)
     state.formRef.lstGrid.List(rowIdx, COL_QTE) = CStr(qty)
+    state.formRef.lstGrid.List(rowIdx, COL_STOCK) = CStr(m_StockActuel)
     state.formRef.lstGrid.List(rowIdx, COL_PU) = Format(pu, "#,##0.00")
     state.formRef.lstGrid.List(rowIdx, COL_VALEUR) = Format(valLigne, "#,##0.00")
 

@@ -6,7 +6,7 @@ mahi.kamel@example.dz
 
 ## Abstract
 
-Public sector logistics in developing regions often rely on manual inventory methods prone to overstocking and stockouts, yet commercial Enterprise Resource Planning (ERP) systems are prohibitively expensive and depend on reliable connectivity. This paper presents Academix v13.2, an offline-first Decision Support System (DSS) implemented entirely in Pure VBA (Visual Basic for Applications) that requires zero external dependencies. The framework integrates ABC classification with the Wilson Economic Order Quantity (EOQ) model to automate reorder decisions. Empirical validation using 38 days of field data from the Education Directorate of El Bayadh, Algeria, demonstrates a 99.7% operational performance rate, with 105/105 verification checks passed and zero critical audit failures. For the benchmark article ART-001 (Toner G030), the system computed an Economic Order Quantity of 176 units and a Reorder Point of 212.4 units, effectively eliminating stockout risk. The results establish that mathematically rigorous, low-tech architectures can deliver sustainable digitalization for resource-constrained public administrations.
+Public sector logistics in developing regions often rely on manual inventory methods prone to overstocking and stockouts, yet commercial Enterprise Resource Planning (ERP) systems are prohibitively expensive and depend on reliable connectivity. This paper presents Academix v13.2, an offline-first Decision Support System (DSS) implemented entirely in Pure VBA (Visual Basic for Applications) that requires zero external dependencies. The framework integrates ABC classification with the Wilson Economic Order Quantity (EOQ) model to automate reorder decisions. Empirical validation using 38 days of field data from the Education Directorate of El Bayadh, Algeria, demonstrates a 99.7% operational performance rate, with 105/105 verification checks passed and zero critical audit failures. For the benchmark article ART-001 (Toner G030), the system computed an Economic Order Quantity of 37 units and a Reorder Point of 206 units, effectively eliminating stockout risk. The results establish that mathematically rigorous, low-tech architectures can deliver sustainable digitalization for resource-constrained public administrations.
 
 **Keywords:** Public Sector Logistics, Decision Support System, Pure VBA, Inventory Optimization, Wilson EOQ, Offline-First Architecture, ABC Classification
 
@@ -110,13 +110,13 @@ The system passed all 105 build verification checks, all 20 empirical macro test
 
 ### B. Case Study: ART-001 (Toner G030)
 
-The primary benchmark article, ART-001 (Toner G030), was analyzed over the 38-day observation period. The annual demand was computed as 1,546 units. Applying the Wilson formula with the parameters in Table II yielded an Economic Order Quantity of 176 units and a Reorder Point of 212.4 units.
+The primary benchmark article, ART-001 (Toner G030), was analyzed over the 38-day observation period. The annual demand was computed as 789 units. Applying the Wilson formula with the parameters in Table II yielded an Economic Order Quantity of 37 units and a Reorder Point of 206 units.
 
 **TABLE II: Model Parameters for ART-001**
 
 | Parameter | Symbol | Value | Unit |
 |-----------|--------|-------|------|
-| Annual Demand | D | 1,546 | units |
+| Annual Demand | D | 789 | units |
 | Ordering Cost | S | 801.45 | DZD |
 | Holding Rate | I | 20 | % |
 | Unit Price | PU | market | DZD |
@@ -130,12 +130,12 @@ Table III compares the manual (pre-DSS) approach with the Academix-driven method
 
 | Metric | Manual Method | Academix v13.2 | Impact |
 |--------|---------------|----------------|--------|
-| Order Quantity | Variable (user-defined) | 176 units (Q*) | Cost-optimized per order |
-| Reorder Trigger | Reactive (near stockout) | 212.4 units (ROP) | Stockout risk eliminated |
+| Order Quantity | Variable (user-defined) | 37 units (Q*) | Cost-optimized per order |
+| Reorder Trigger | Reactive (near stockout) | 206 units (ROP) | Stockout risk eliminated |
 | Safety Stock | None / Arbitrary | 200 units (SS) | 99.7% service level guaranteed |
 | Decision Basis | Intuition | Empirical (Wilson model) | Reproducible, auditable |
 
-The system's computed ROP of 212.4 ensures that a replenishment order is triggered when remaining stock can still cover the 2-day lead time plus the 200-unit safety buffer, effectively replacing panic-ordering cycles with data-driven precision.
+The system's computed ROP of 206 ensures that a replenishment order is triggered when remaining stock can still cover the 2-day lead time plus the 200-unit safety buffer, effectively replacing panic-ordering cycles with data-driven precision.
 
 ### C. ABC Classification Results
 

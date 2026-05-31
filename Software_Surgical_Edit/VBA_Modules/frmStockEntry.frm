@@ -222,9 +222,9 @@ Private Sub BuildUI()
     With ctrl
         .Left = 10
         .Top = 170
-        .Width = 610
+        .Width = 660
         .Height = 20
-        .Caption = "  Code  |  D" & Chr(233) & "signation  |  Cat" & Chr(233) & "gorie  | Qte |  PU (DZD) |  Valeur"
+        .Caption = "  Code  |  D" & Chr(233) & "signation  |  Cat" & Chr(233) & "gorie  | Qte | Stock |  PU (DZD) |  Valeur"
         .Font.name = "Courier New"
         .Font.Size = 8
         .ForeColor = RGB(71, 71, 90)
@@ -238,14 +238,14 @@ Private Sub BuildUI()
     With ctrl
         .Left = 10
         .Top = 195
-        .Width = 610
+        .Width = 660
         .Height = 250
         .Font.name = "Courier New"
         .Font.Size = 9
         .BackColor = RGB(248, 248, 252)
-        .ColumnCount = 6
+        .ColumnCount = 7
         .ColumnHeads = False
-        .ColumnWidths = "80;220;90;50;80;90"
+        .ColumnWidths = "80;200;75;50;55;70;80"
         .MultiSelect = fmMultiSelectSingle
         .ListStyle = fmListStylePlain
     End With

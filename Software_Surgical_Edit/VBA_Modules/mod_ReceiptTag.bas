@@ -86,11 +86,14 @@ Public Sub GenerateReceiptTagPDF()
     Dim verifyCode As String
     verifyCode = mod_Utilities.GenerateVerifyCode(receiptID & mvtDate & artCode & qty & mvtType)
 
-    ' Place verification code on the tag
+    ' Place verification code on the tag (compact, right side)
     With wsTemplate
-        .Range("E4:F9").Merge
+        On Error Resume Next
+        .Range("E4:F9").UnMerge
+        On Error GoTo 0
+        .Range("E4:F4").Merge
         .Range("E4").Value = verifyCode
-        .Range("E4").Font.Size = 9
+        .Range("E4").Font.Size = 8
         .Range("E4").Font.Bold = True
         .Range("E4").Font.name = "Courier New"
         .Range("E4").HorizontalAlignment = xlCenter
@@ -99,7 +102,12 @@ Public Sub GenerateReceiptTagPDF()
         .Range("E4").BorderAround Color:=RGB(0, 0, 0), Weight:=xlThin
     End With
 
-    ' 7. Export RECEIPT_TAG sheet as PDF
+    ' 7. Generate scannable Code128 barcode on the tag
+    On Error Resume Next
+    mod_BarcodeSim.GenerateBarcode "RECEIPT_TAG", "E6", receiptID, bcCode128, True, 30, 2
+    On Error GoTo 0
+
+    ' 8. Export RECEIPT_TAG sheet as PDF
     pdfPath = ThisWorkbook.Path & "\receipt_tags\ReceiptTag_" & receiptID & ".pdf"
 
     ' Create receipt_tags folder if needed
@@ -115,7 +123,7 @@ Public Sub GenerateReceiptTagPDF()
         IgnorePrintAreas:=False, _
         OpenAfterPublish:=True
 
-    ' 8. Confirmation message
+    ' 9. Confirmation message
     MsgBox "Bon de rception gn" & Chr(233) & "r" & Chr(233) & " avec succ" & Chr(232) & "s!" & vbCrLf & _
            "Fichier: " & pdfPath & vbCrLf & _
            "Code de v" & Chr(233) & "rification: " & verifyCode, vbInformation, "ERP Acad" & Chr(233) & "mie v13"
