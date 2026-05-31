@@ -200,7 +200,7 @@ Public Sub SetupDefaultBarcodes()
     Dim articles As Variant
     articles = Array("ART-001", "ART-002", "ART-003", "ART-004", "ART-005", _
                      "ART-006", "ART-007", "ART-008", "ART-009", "ART-010", _
-                     "ART-011", "ART-012")
+                     "ART-011", "ART-012", "ART-013", "ART-014", "ART-015")
 
     For i = LBound(articles) To UBound(articles)
         Dim code As String
@@ -209,7 +209,7 @@ Public Sub SetupDefaultBarcodes()
         ws.Cells(nextRow + 1 + i, 2).Value = code
     Next i
 
-    MsgBox "Codes-barres par d" & Chr(233) & "faut install" & Chr(233) & "s (12 articles).", vbInformation, "Setup Barcode"
+    MsgBox "Codes-barres par d" & Chr(233) & "faut install" & Chr(233) & "s (15 articles).", vbInformation, "Setup Barcode"
 
 CleanUpBarcode:
     On Error Resume Next
@@ -305,6 +305,9 @@ Private Function GetDefaultBarcodeMapping(ByVal barcode As String) As String
         Case "010": GetDefaultBarcodeMapping = "ART-010"
         Case "011": GetDefaultBarcodeMapping = "ART-011"
         Case "012": GetDefaultBarcodeMapping = "ART-012"
+        Case "013": GetDefaultBarcodeMapping = "ART-013"
+        Case "014": GetDefaultBarcodeMapping = "ART-014"
+        Case "015": GetDefaultBarcodeMapping = "ART-015"
         Case Else:  GetDefaultBarcodeMapping = ""
     End Select
 End Function

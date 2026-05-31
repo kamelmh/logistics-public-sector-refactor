@@ -1,18 +1,48 @@
 # CrossFlow Handoff — Academix v13.2
 
 ## Current Priority
-All 26 sheets fully data-connected. No #REF! anywhere. Build: 112/112 PASS. All systems operational.
+All 26 sheets fully data-connected. 15 articles across all sheets. No #REF! anywhere. Build: 112/112 PASS. All systems operational.
 
 ## State
-- **Session**: RAPPORTS + INVENTAIRE #REF! Fix (2026-05-31)
+- **Session**: Negative stock normalization + v14 form polish (2026-05-31)
 - **Agent**: Academix
-- **Workbook**: `ERP_v13.2.xlsm` (rebuilt from golden master)
-- **Git**: `44b6f86` — on origin/master
+- **Workbook**: `ERP_v13.2.xlsm` (986 KB, rebuilt from golden master)
+- **Git**: `0a9de12` — on origin/master (no tracked file changes — workbooks gitignored)
 - **Build**: ✅ COMPILE OK (42 .bas, 1 .frm, 0 errors)
 - **Verify**: ✅ **112/112 PASS**
 - **Ground Truth**: D=789, Q*=37, ROP=206, PU=4500, S=801.45
+- **Articles**: 15 real articles (ART-001 to ART-015), all with MOUVEMENTS records
 
 ## Completed
+### Session 8 (2026-05-31) — Negative Stock Normalization + v14 Form Polish
+**Two major tasks completed:**
+
+1. **Negative stock normalization (mod_DemoData.bas):**
+   - Audited all 15 articles — 9 had negative stock (OUT > IN or zero IN)
+   - Root cause: SeedMovements patterns had OUT movements with no matching IN for 7 articles
+   - Fix: Added balanced IN movements (days 2-6) so each article ends with small positive stock (2-5 units)
+   - ART-004 deliberately left at 0 as rupture case study
+   - ART-006/009 left below ROP to demonstrate ">> COMMANDER" alert
+   - **Result:** All 15 articles ≥ 0 stock, realistic demo data
+
+2. **v14 FORM_INPUT + label polish:**
+   - frmStockEntry: Theme green (RGB 4,90,55), Tahoma consistency, French button labels, v13.2/15 articles status bar
+   - ACCUEIL: Stale "12 مادة" → "15 مادة" in R13C3
+   - mod_Barcode.bas: "12 articles" → "15 articles"
+   - Build: COMPILE OK, Verify: **112/112 PASS**
+
+### Session 7 (2026-05-31) — TABLEAU DE BORD + RAPPORTS + INVENTAIRE 15-article expansion
+**Goal:** Make the entire ERP workbook work with 15 articles (was 12).
+
+**Done via openpyxl batch script (applied to GOLDEN_ERP master, then rebuilt):**
+1. **TABLEAU DE BORD (rows 4-18):** Added ART-013/014/015 rows with full formula chains (VLOOKUP, SUMIFS, LOOKUP, ROP, Statut). TOTAUX at row 19 (SUM F4:F18, I4:I18). LEGENDE at row 21. Header says "15 articles".
+2. **RAPPORTS (88 rows):** Full sheet rebuild — 4 report sections × 15 articles each = 60 data rows with SUMPRODUCT formulas, date-range filters, TOTAUX rows.
+3. **INVENTAIRE (rows 3-17):** 15 articles with SUMIFS stock formulas.
+4. **ACCUEIL:** KPI range references updated from F4:F15/K4:K15 to F4:F18/K4:K18.
+5. **ALERTE_DASHBOARD:** COUNTIF ranges updated to K4:K18, 3 new detail rows (R24-R26), labels say " / 15 articles".
+
+**Formula-integrity verified:** All 26 sheets — no #REF! after expansion. Every row wired to live MOUVEMENTS or ARTICLES data.
+
 ### Session 6 (2026-05-31) — RAPPORTS + INVENTAIRE #REF! Fix
 **Bug found:** Same MOUVEMENTS column reference corruption as TABLEAU DE BORD — SUMPRODUCT formulas in RAPPORTS (96 cells) and SUMIFS in INVENTAIRE (12 cells) had `MOUVEMENTS!#REF!` references due to column restructure.
 
@@ -59,27 +89,27 @@ All 26 sheets fully data-connected. No #REF! anywhere. Build: 112/112 PASS. All 
 ### Session 1 (prior) — TABLEAU DE BORD Dashboard Rescue
 
 ## Pending Tasks
-- **TABLEAU DE BORD expansion**: Add ART-013/014/015 rows (currently only 12 original)
-- **Thesis update**: Old values (D=1546, Q*=176, PU=400) — deferred
-- **Negative stock normalization**: 8 of 15 articles show negative stock (OUT > IN in demo data)
+- **Thesis update**: Old values (D=1546, Q*=176, PU=400) — still deferred
+- **v14: Printable reports**: RAPPORTS/INVENTAIRE page setup for print
+- **v14: FORM_INPUT Arabic**: Bilingual form labels via ChrW() (encoding constraint — deferred)
+- **Barcode integration**: Wire mod_Barcode to actual FORM_INPUT workflow
 
 ## Data Flow (how things connect)
 ```
-MOUVEMENTS ──SUMIFS──────▶ TABLEAU DE BORD (D,E,F,J,H)
-            ──SUMPRODUCT──▶ RAPPORTS (D,E — 4 sections)
-            ──SUMIFS──────▶ INVENTAIRE (C3:C14)
+MOUVEMENTS ──SUMIFS──────▶ TABLEAU DE BORD (D4:D18, E4:E18, F, J, H)
+            ──SUMPRODUCT──▶ RAPPORTS (D,E — 4 sections × 15 articles)
+            ──SUMIFS──────▶ INVENTAIRE (C3:C17 — 15 rows)
             ──SUMIFS──────▶ CALCULS_EOQ (D demand)
                    
-ARTICLES ──VLOOKUP──▶ TABLEAU DE BORD (B,C,G,H)
+ARTICLES ──VLOOKUP──▶ TABLEAU DE BORD (B4:B18, C, G, H)
          ──VLOOKUP──▶ CALCULS_EOQ (PU)
          ──VLOOKUP──▶ MOUVEMENTS (prix unit)
 
-TABLEAU DE BORD ──▶ ALERTE_DASHBOARD (C4 references TB!F)
-                  ──▶ ACCUEIL (R12=SUMPRODUCT F*H, R13-R15=COUNTIF K)
-                  ──▶ RAPPORTS (column C lookup)
+TABLEAU DE BORD ──▶ ALERTE_DASHBOARD (15 detail rows, references TB!F4:F18)
+                  ──▶ ACCUEIL (R12=SUMPRODUCT F4:F18*H4:H18, R13-R15=COUNTIF K4:K18)
 
 CALCULS_EOQ ──▶ ACCUEIL (R10,R11)
 ```
 
 ## Final Sign-off
-ERP is fully data-connected. Every single sheet traces back to MOUVEMENTS or ARTICLES live data. No #REF! anywhere across all 26 sheets. 108 formulas fixed across RAPPORTS + INVENTAIRE. Build: COMPILE OK. Verify: **112/112 PASS**. All 26 sheets protected. Ready for use.
+ERP is fully data-connected across all 26 sheets. **15 articles** — TABLEAU DE BORD, RAPPORTS (4 sections), INVENTAIRE, ACCUEIL, and ALERTE_DASHBOARD all wired to live MOUVEMENTS/ARTICLES data. No #REF! anywhere. Build: COMPILE OK. Verify: **112/112 PASS**. All sheets protected. Ready for production use.

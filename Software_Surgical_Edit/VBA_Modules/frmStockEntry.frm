@@ -49,7 +49,7 @@ Private Sub BuildUI()
     '- Set form dimensions
     Me.Width = 870
     Me.Height = 640
-    Me.Caption = "ERP Acad�mie - Saisie des Mouvements"
+    Me.Caption = "ERP Acad" & Chr(233) & "mie - Saisie des Mouvements"
     Me.StartUpPosition = 1  ' CenterOwner
     
     '--------------------------------------------------------------------------
@@ -61,7 +61,7 @@ Private Sub BuildUI()
         .Top = 10
         .Width = 840
         .Height = 50
-        .BackColor = RGB(100, 100, 100)
+        .BackColor = RGB(4, 90, 55)  ' Theme green
         .BorderStyle = 0
     End With
     
@@ -71,7 +71,7 @@ Private Sub BuildUI()
         .Top = 18
         .Width = 820
         .Height = 35
-        .Caption = "-- SELECTIONNEZ LE TYPE DE DOCUMENT --"
+        .Caption = "-- S" & Chr(233) & "LECTIONNEZ LE TYPE DE DOCUMENT --"
         .ForeColor = RGB(255, 255, 255)
         .Font.Bold = True
         .Font.Size = 14
@@ -208,7 +208,7 @@ Private Sub BuildUI()
         .Top = 162
         .Width = 840
         .Height = 14
-        .Caption = "Raccourcis: [Enter]=Ajouter ligne   [Esc]=Annuler   [Ctrl+S]=Enregistrer"
+        .Caption = "Raccourcis: [Enter]=Ajouter   [Esc]=Annuler   [Ctrl+S]=Enregistrer"
         .Font.Size = 7
         .Font.Name = "Tahoma"
         .ForeColor = RGB(150, 150, 150)
@@ -224,7 +224,7 @@ Private Sub BuildUI()
         .Top = 170
         .Width = 610
         .Height = 20
-        .Caption = "  Code  |  Designation  |  Categorie  | Qte |  PU (DZD) |  Valeur"
+        .Caption = "  Code  |  D" & Chr(233) & "signation  |  Cat" & Chr(233) & "gorie  | Qte |  PU (DZD) |  Valeur"
         .Font.name = "Courier New"
         .Font.Size = 8
         .ForeColor = RGB(71, 71, 90)
@@ -434,7 +434,7 @@ Private Sub BuildUI()
         .Top = 490
         .Width = 180
         .Height = 24
-        .Caption = "Sync Master Data"
+        .Caption = "Sync Donn" & Chr(233) & "es"
         .Font.Size = 8
         .Font.name = "Tahoma"
     End With
@@ -448,7 +448,7 @@ Private Sub BuildUI()
         .Top = 490
         .Width = 150
         .Height = 24
-        .Caption = "Generate Report"
+        .Caption = "G" & Chr(233) & "n" & Chr(233) & "rer Rapport"
         .Font.Size = 8
         .Font.name = "Tahoma"
     End With
@@ -504,7 +504,7 @@ Private Sub BuildUI()
         .Top = 525
         .Width = 840
         .Height = 20
-        .Caption = "ERP Acad" & Chr(233) & "mie v13.2  |  Session: " & Format(Now, "DD/MM/YYYY HH:MM")
+        .Caption = "ERP Acad" & Chr(233) & "mie v13.2  |  15 articles  |  Session: " & Format(Now, "DD/MM/YYYY HH:MM")
         .Font.Size = 8
         .Font.Name = "Tahoma"
         .ForeColor = RGB(150, 150, 150)
@@ -529,14 +529,14 @@ Private Sub ApplyProfessionalTheme()
     ' Form-level styling
     Me.BackColor = RGB(245, 245, 250)
     
-    ' Banner
+    ' Banner -- theme green (matching ERP dashboard)
     With Me.Controls("fraDocTypeBanner")
-        .BackColor = RGB(0, 70, 127)
+        .BackColor = RGB(4, 90, 55)
         .BorderStyle = 0
     End With
     
     With Me.Controls("lblBannerText")
-        .Font.Name = "Calibri"
+        .Font.Name = "Tahoma"
         .Font.Size = 14
         .Font.Bold = True
         .ForeColor = RGB(255, 255, 255)
@@ -559,7 +559,7 @@ Private Sub ApplyProfessionalTheme()
         .BorderStyle = 1
         .BorderColor = RGB(192, 192, 192)
         .BackColor = RGB(255, 255, 255)
-        .Font.Name = "Consolas"
+        .Font.Name = "Courier New"
         .Font.Size = 9
     End With
     
@@ -572,9 +572,9 @@ Private Sub ApplyProfessionalTheme()
     
     ' Buttons
     With Me.Controls("btnEnregistrer")
-        .BackColor = RGB(0, 102, 204)
+        .BackColor = RGB(4, 90, 55)  ' Theme green
         .ForeColor = RGB(255, 255, 255)
-        .Font.Name = "Calibri"
+        .Font.Name = "Tahoma"
         .Font.Size = 11
         .Font.Bold = True
         .BorderStyle = 0
@@ -582,8 +582,8 @@ Private Sub ApplyProfessionalTheme()
     
     With Me.Controls("btnAjouterLigne")
         .BackColor = RGB(232, 245, 233)
-        .ForeColor = RGB(40, 100, 40)
-        .Font.Name = "Calibri"
+        .ForeColor = RGB(4, 90, 55)
+        .Font.Name = "Tahoma"
         .Font.Size = 10
         .Font.Bold = True
         .BorderStyle = 0
@@ -592,7 +592,7 @@ Private Sub ApplyProfessionalTheme()
     With Me.Controls("btnSupprimerLigne")
         .BackColor = RGB(252, 228, 236)
         .ForeColor = RGB(204, 0, 0)
-        .Font.Name = "Calibri"
+        .Font.Name = "Tahoma"
         .Font.Size = 10
         .Font.Bold = True
         .BorderStyle = 0
@@ -601,15 +601,15 @@ Private Sub ApplyProfessionalTheme()
     With Me.Controls("btnAnnuler")
         .BackColor = RGB(245, 245, 250)
         .ForeColor = RGB(70, 70, 70)
-        .Font.Name = "Calibri"
+        .Font.Name = "Tahoma"
         .Font.Size = 10
         .BorderStyle = 0
     End With
     
     With Me.Controls("btnAutoRef")
         .BackColor = RGB(245, 245, 250)
-        .ForeColor = RGB(0, 102, 204)
-        .Font.Name = "Calibri"
+        .ForeColor = RGB(4, 90, 55)
+        .Font.Name = "Tahoma"
         .Font.Size = 9
         .Font.Bold = True
         .BorderStyle = 0
@@ -618,7 +618,7 @@ Private Sub ApplyProfessionalTheme()
     With Me.Controls("btnImprimerBon")
         .BackColor = RGB(245, 245, 250)
         .ForeColor = RGB(0, 102, 204)
-        .Font.Name = "Calibri"
+        .Font.Name = "Tahoma"
         .Font.Size = 9
         .BorderStyle = 0
     End With
@@ -626,7 +626,7 @@ Private Sub ApplyProfessionalTheme()
     With Me.Controls("btnSyncMasterData")
         .BackColor = RGB(245, 245, 250)
         .ForeColor = RGB(70, 70, 70)
-        .Font.Name = "Calibri"
+        .Font.Name = "Tahoma"
         .Font.Size = 8
         .BorderStyle = 0
     End With
@@ -634,14 +634,14 @@ Private Sub ApplyProfessionalTheme()
     With Me.Controls("btnGenerateReport")
         .BackColor = RGB(245, 245, 250)
         .ForeColor = RGB(70, 70, 70)
-        .Font.Name = "Calibri"
+        .Font.Name = "Tahoma"
         .Font.Size = 8
         .BorderStyle = 0
     End With
     
     ' Checkbox
     With Me.Controls("chkSyncInternal")
-        .Font.Name = "Calibri"
+        .Font.Name = "Tahoma"
         .Font.Size = 9
         .ForeColor = RGB(70, 70, 70)
     End With
@@ -653,7 +653,7 @@ Private Sub ApplyProfessionalTheme()
     
     ' Status bar
     With Me.Controls("lblStatusBar")
-        .Font.Name = "Calibri"
+        .Font.Name = "Tahoma"
         .Font.Size = 8
         .ForeColor = RGB(120, 120, 120)
         .BackColor = RGB(236, 236, 242)
@@ -661,7 +661,7 @@ Private Sub ApplyProfessionalTheme()
     
     ' Shortcut hints
     With Me.Controls("lblShortcutHints")
-        .Font.Name = "Calibri"
+        .Font.Name = "Tahoma"
         .Font.Size = 7
         .ForeColor = RGB(160, 160, 160)
     End With
@@ -681,7 +681,7 @@ Private Sub ApplyTextboxTheme(ByVal ctrlName As String)
         .BorderColor = RGB(192, 192, 192)
         .BackColor = RGB(255, 255, 255)
         .ForeColor = RGB(70, 70, 70)
-        .Font.Name = "Calibri"
+        .Font.Name = "Tahoma"
         .Font.Size = 10
     End With
 End Sub
@@ -693,7 +693,7 @@ Private Sub ApplyComboboxTheme(ByVal ctrlName As String)
         .BorderColor = RGB(192, 192, 192)
         .BackColor = RGB(255, 255, 255)
         .ForeColor = RGB(70, 70, 70)
-        .Font.Name = "Calibri"
+        .Font.Name = "Tahoma"
         .Font.Size = 10
     End With
 End Sub
@@ -702,7 +702,7 @@ Private Sub ApplyLabelTheme(ByVal ctrlName As String, ByVal foreColor As Long, B
     On Error Resume Next
     With Me.Controls(ctrlName)
         .ForeColor = foreColor
-        .Font.Name = "Calibri"
+        .Font.Name = "Tahoma"
         .Font.Size = fontSize
         .Font.Bold = isBold
     End With
@@ -713,7 +713,7 @@ Private Sub ApplySmallButtonTheme(ByVal ctrlName As String, ByVal bgColor As Lon
     With Me.Controls(ctrlName)
         .BackColor = bgColor
         .ForeColor = fgColor
-        .Font.Name = "Calibri"
+        .Font.Name = "Tahoma"
         .Font.Size = 9
         .Font.Bold = True
         .BorderStyle = 0

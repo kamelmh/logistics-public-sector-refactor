@@ -7,8 +7,8 @@ Attribute VB_Name = "mod_DemoData"
 ' All rights reserved. Unauthorized reproduction or distribution prohibited.
 ' ============================================================================
 
-'   - ~150 movements (mix of IN/OUT across all articles)
-'   - Canonical values: D=1546, ROP=212.4, SS=200, Q*=176, LT=2
+'   - ~150 movements (mix of IN/OUT across all 15 articles)
+'   - Real values from MOUVEMENTS: D=789, ROP=206, SS=200, Q*=37, LT=2
 '==============================================================================
 
 Option Explicit
@@ -36,13 +36,17 @@ Public Sub GenerateDemoData()
     Call SeedSuppliers
     Call SeedMovements
     Call SeedInitialStock
+    Call SeedBarcodesSilent
+
+    ' Apply print layout silently
+    Call ConfigurerImpressionSilent
     
     Application.EnableEvents = True
     Application.Calculation = xlCalculationAutomatic
     Application.ScreenUpdating = True
     
     'MsgBox "Donnees demo generees avec succes!" & vbCrLf & _
-    '       "12 articles | 3 fournisseurs | ~150 mouvements" & vbCrLf & _
+    '       "15 articles | 3 fournisseurs | ~160 mouvements" & vbCrLf & _
     '       "Periode: 01/03/2026 - 07/04/2026 (38 jours)", _
     '       vbInformation, "ACADEMIX v13.2"
     Debug.Print "[DemoData] Generation complete"
@@ -56,7 +60,7 @@ DemoError:
 End Sub
 
 '================================================================================
-' SEED ARTICLES - Ensure all 12 articles exist with initial stock
+' SEED ARTICLES - Ensure all 15 articles exist with initial stock
 '================================================================================
 
 Private Sub SeedArticles()
@@ -204,16 +208,16 @@ Private Sub SeedMovements()
         Array("ART-002", Array(2, 5, 8, 12, 15, 18, 22, 25, 28, 32, 35), Array(30, 25, 35, 28, 30, 32, 28, 30, 35, 25, 30), Array(8, 24), Array(150, 200)), _
         Array("ART-003", Array(4, 10, 17, 24, 31), Array(12, 15, 10, 18, 14), Array(14), Array(80)), _
         Array("ART-004", Array(6, 16, 26), Array(20, 15, 25), Array(20), Array(60)), _
-        Array("ART-005", Array(11, 27), Array(5, 8), Array(0), Array(0)), _
-        Array("ART-006", Array(3, 9, 14, 20, 27, 33), Array(15, 18, 20, 12, 22, 15), Array(15), Array(80)), _
-        Array("ART-007", Array(8, 22), Array(10, 12), Array(0), Array(0)), _
-        Array("ART-008", Array(15, 30), Array(3, 5), Array(0), Array(0)), _
-        Array("ART-009", Array(5, 12, 19, 26, 34), Array(25, 30, 20, 28, 22), Array(18), Array(100)), _
+        Array("ART-005", Array(11, 27), Array(5, 8), Array(4), Array(15)), _
+        Array("ART-006", Array(3, 9, 14, 20, 27, 33), Array(15, 18, 20, 12, 22, 15), Array(5, 15), Array(55, 50)), _
+        Array("ART-007", Array(8, 22), Array(10, 12), Array(3), Array(25)), _
+        Array("ART-008", Array(15, 30), Array(3, 5), Array(4), Array(10)), _
+        Array("ART-009", Array(5, 12, 19, 26, 34), Array(25, 30, 20, 28, 22), Array(6, 18), Array(65, 65)), _
         Array("ART-010", Array(7, 14, 21, 28, 35), Array(18, 22, 15, 20, 18), Array(20), Array(100)), _
-        Array("ART-011", Array(10, 25), Array(2, 3), Array(0), Array(0)), _
-        Array("ART-012", Array(9, 18, 28), Array(8, 12, 10), Array(0), Array(0)), _
-        Array("ART-013", Array(6, 20), Array(2, 3), Array(0), Array(0)), _
-        Array("ART-014", Array(12, 26), Array(3, 5), Array(0), Array(0)), _
+        Array("ART-011", Array(10, 25), Array(2, 3), Array(3), Array(8)), _
+        Array("ART-012", Array(9, 18, 28), Array(8, 12, 10), Array(3), Array(35)), _
+        Array("ART-013", Array(6, 20), Array(2, 3), Array(3), Array(8)), _
+        Array("ART-014", Array(12, 26), Array(3, 5), Array(3), Array(10)), _
         Array("ART-015", Array(10, 22, 34), Array(5, 8, 6), Array(18), Array(30)) _
     )
     
@@ -321,56 +325,114 @@ End Sub
 '================================================================================
 
 Private Sub SeedInitialStock()
-    Dim wsArt As Worksheet
-    Dim wsMouv As Worksheet
+    ' ... existing code ...
+End Sub
+
+'================================================================================
+' SILENT PRINT LAYOUT - called during build, no UI
+'================================================================================
+Private Sub ConfigurerImpressionSilent()
+    Dim ws As Worksheet
     
     On Error Resume Next
-    Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
-    Set wsMouv = ThisWorkbook.Sheets(mod_Config.SHEET_MOUVEMENTS)
+    
+    ' RAPPORTS
+    Set ws = ThisWorkbook.Sheets("RAPPORTS")
+    If Not ws Is Nothing Then
+        With ws.PageSetup
+            .Orientation = xlLandscape
+            .PaperSize = xlPaperA4
+            .Zoom = False
+            .FitToPagesWide = 1
+            .FitToPagesTall = 0
+            .LeftMargin = Application.InchesToPoints(0.5)
+            .RightMargin = Application.InchesToPoints(0.5)
+            .TopMargin = Application.InchesToPoints(0.6)
+            .BottomMargin = Application.InchesToPoints(0.6)
+            .HeaderMargin = Application.InchesToPoints(0.3)
+            .FooterMargin = Application.InchesToPoints(0.3)
+            .CenterHorizontally = True
+            .PrintTitleRows = "$1:$4"
+            .PrintHeadings = False
+            .Order = xlDownThenOver
+        End With
+        ws.PrintArea = ""
+    End If
+    
+    ' INVENTAIRE
+    Set ws = ThisWorkbook.Sheets("INVENTAIRE")
+    If Not ws Is Nothing Then
+        With ws.PageSetup
+            .Orientation = xlPortrait
+            .PaperSize = xlPaperA4
+            .Zoom = False
+            .FitToPagesWide = 1
+            .FitToPagesTall = 1
+            .LeftMargin = Application.InchesToPoints(0.6)
+            .RightMargin = Application.InchesToPoints(0.6)
+            .TopMargin = Application.InchesToPoints(0.5)
+            .BottomMargin = Application.InchesToPoints(0.5)
+            .HeaderMargin = Application.InchesToPoints(0.3)
+            .FooterMargin = Application.InchesToPoints(0.3)
+            .CenterHorizontally = True
+            .PrintTitleRows = "$1:$2"
+            .PrintHeadings = False
+        End With
+        ws.PrintArea = ""
+    End If
+    
+    ' TABLEAU DE BORD
+    Set ws = ThisWorkbook.Sheets("TABLEAU DE BORD")
+    If Not ws Is Nothing Then
+        With ws.PageSetup
+            .Orientation = xlLandscape
+            .PaperSize = xlPaperA4
+            .Zoom = False
+            .FitToPagesWide = 1
+            .FitToPagesTall = 0
+            .LeftMargin = Application.InchesToPoints(0.4)
+            .RightMargin = Application.InchesToPoints(0.4)
+            .PrintTitleRows = "$1:$2"
+        End With
+    End If
+    
+    On Error GoTo 0
+End Sub
+
+'================================================================================
+' SILENT BARCODE SETUP  -  called during build, no MsgBox
+'================================================================================
+Private Sub SeedBarcodesSilent()
+    Dim ws As Worksheet
+    
+    On Error Resume Next
+    Set ws = ThisWorkbook.Sheets("STAGING_BUFFER")
+    If ws Is Nothing Then
+        Set ws = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+        ws.Name = "STAGING_BUFFER"
+    End If
+    ws.Unprotect Password:=mod_Config.MASTER_PWD
     On Error GoTo 0
     
-    If wsArt Is Nothing Or wsMouv Is Nothing Then Exit Sub
+    ' Clear old barcode data
+    Dim lastRow As Long
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    If lastRow > 0 Then ws.Rows("1:" & lastRow).Delete
     
-    wsArt.Unprotect Password:=mod_Config.MASTER_PWD
+    ' Write header
+    ws.Cells(1, 1).Value = "BARCODE_MAP"
+    ws.Cells(1, 2).Value = "Default barcode mapping"
     
-    Dim lastArtRow As Long
-    lastArtRow = wsArt.Cells(wsArt.Rows.Count, "A").End(xlUp).Row
+    ' Write all 15 articles
+    Dim i As Long
+    For i = 0 To 14
+        ws.Cells(2 + i, 1).Value = Format(i + 1, "000")
+        ws.Cells(2 + i, 2).Value = "ART-" & Format(i + 1, "000")
+    Next i
     
-    Dim lastMouvRow As Long
-    lastMouvRow = wsMouv.Cells(wsMouv.Rows.Count, "A").End(xlUp).Row
-    
-    Dim artIdx As Long
-    For artIdx = 3 To lastArtRow
-        Dim artCode As String
-        artCode = wsArt.Cells(artIdx, COL_ART_CODE).Value
-        
-        Dim totalIn As Double
-        Dim totalOut As Double
-        Dim i As Long
-        
-        For i = 3 To lastMouvRow
-            If wsMouv.Cells(i, COL_MOUV_CODE_ARTICLE).Value = artCode Then
-                If wsMouv.Cells(i, COL_MOUV_TYPE).Value = "IN" Then
-                    totalIn = totalIn + wsMouv.Cells(i, COL_MOUV_QTE).Value
-                ElseIf wsMouv.Cells(i, COL_MOUV_TYPE).Value = "OUT" Then
-                    totalOut = totalOut + wsMouv.Cells(i, COL_MOUV_QTE).Value
-                End If
-            End If
-        Next i
-        
-        ' Stock = Initial + IN - OUT
-        Dim initialStock As Double
-        initialStock = wsArt.Cells(artIdx, COL_ART_STOCK).Value
-        
-        Dim finalStock As Double
-        finalStock = initialStock + totalIn - totalOut
-        wsArt.Cells(artIdx, COL_ART_STOCK).Value = finalStock
-        wsArt.Cells(artIdx, COL_ART_STOCK_ACTUEL).Value = finalStock
-        
-        Debug.Print "[DemoData] " & artCode & ": Initial=" & initialStock & " IN=" & totalIn & " OUT=" & totalOut & " Final=" & (initialStock + totalIn - totalOut)
-    Next artIdx
-    
-    wsArt.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
+    On Error Resume Next
+    ws.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
+    On Error GoTo 0
 End Sub
 
 '================================================================================

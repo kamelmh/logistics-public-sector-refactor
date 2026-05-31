@@ -48,7 +48,10 @@ Public Sub SetupAccueilSheet()
     rowCur = rowCur + 2
     AddAccueilButton ws, COL1, rowCur, "[ENTRY] Formulaire de Saisie", "mod_Navigation.OpenStockForm"
     AddAccueilButton ws, COL2, rowCur, "[BARCODE] Scanner Article", "mod_Barcode.ScanBarcode"
-    AddAccueilButton ws, COL3, rowCur, "[CSV] Importer Mouvements", "mod_CSVImportExport.ImportMouvementsFromCSV"
+    AddAccueilButton ws, COL3, rowCur, "[SCAN-IN] Entree par Code", "mod_Barcode.ScanBarcodeStockIn"
+    rowCur = rowCur + 3
+    AddAccueilButton ws, COL1, rowCur, "[SCAN-OUT] Sortie par Code", "mod_Barcode.ScanBarcodeStockOut"
+    AddAccueilButton ws, COL2, rowCur, "[CSV] Importer Mouvements", "mod_CSVImportExport.ImportMouvementsFromCSV"
 
     rowCur = rowCur + 10
     Call DrawSectionHeader(ws, rowCur, 2, "TABLEAU DE BORD", "KPIs, alertes et visualisation", RGB(4, 90, 55))
@@ -80,6 +83,10 @@ Public Sub SetupAccueilSheet()
     AddAccueilButton ws, COL1, rowCur, "[REPORT] Rapport Mensuel", "mod_Reports.GenerateMonthlyReport"
     AddAccueilButton ws, COL2, rowCur, "[CARD] Fiche de Stock", "mod_Reports.GenerateStockCard"
     AddAccueilButton ws, COL3, rowCur, "[ORDER] Rapport Approvisionnement", "mod_Procurement.GenerateOrderReport"
+    rowCur = rowCur + 3
+    AddAccueilButton ws, COL1, rowCur, "[PRINT] Config. Impression", "mod_Reports.ConfigurerImpression"
+    AddAccueilButton ws, COL2, rowCur, "[PRINT] Aper" & Chr(133) & "u RAPPORTS", "mod_Reports.PreviewRapports"
+    AddAccueilButton ws, COL3, rowCur, "[PRINT] Aper" & Chr(133) & "u INVENTAIRE", "mod_Reports.PreviewInventaire"
 
     rowCur = rowCur + 10
     Call DrawSectionHeader(ws, rowCur, 5, "UTILITAIRES", "Outils de maintenance et validation", RGB(100, 100, 100))

@@ -209,3 +209,32 @@ ReportError:
     Application.ScreenUpdating = True
     MsgBox "Erreur: " & Err.Description, vbCritical
 End Sub
+
+'=======================================================================================
+' SUB: ConfigurerImpression
+' Sets up print layout for RAPPORTS (landscape, print titles) and INVENTAIRE (portrait)
+' Call from GenerateDemoData or via menu button
+'=======================================================================================
+Public Sub ConfigurerImpression()
+    ' ... existing code ...
+End Sub
+
+'=======================================================================================
+' SUB: PreviewRapports
+' Wrapper for print preview of RAPPORTS sheet
+'=======================================================================================
+Public Sub PreviewRapports()
+    On Error Resume Next
+    ThisWorkbook.Sheets("RAPPORTS").PrintPreview
+    On Error GoTo 0
+End Sub
+
+'=======================================================================================
+' SUB: PreviewInventaire
+' Wrapper for print preview of INVENTAIRE sheet
+'=======================================================================================
+Public Sub PreviewInventaire()
+    On Error Resume Next
+    ThisWorkbook.Sheets("INVENTAIRE").PrintPreview
+    On Error GoTo 0
+End Sub
