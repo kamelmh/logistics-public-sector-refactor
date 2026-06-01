@@ -1,14 +1,14 @@
 # CrossFlow Handoff — Academix v13.2
 
 ## Current Priority
-112/112 PASS. All PageSetup properties restored including PrintArea. v13.2.2 tagged.
+112/112 PASS. FOURNISSEURS harmonised to 9-col evaluation layout. Button on ACCUEIL. v13.2.3 tagged.
 
 ## State
-- **Session**: v13.2.2 — Full PrintArea fix (2026-06-01)
+- **Session**: v13.2.3 — FOURNISSEURS harmonisation + ACCUEIL button (2026-06-01)
 - **Agent**: Academix
-- **Workbook**: `ERP_v13.2.xlsm` (1004.6 KB, clean build with demo data)
-- **Git**: `b191324` — fix: restore PrintArea clear with unprotect/protect pattern (pushed)
-- **Tag**: `v13.2.2` (pushed)
+- **Workbook**: `ERP_v13.2.xlsm` (1009.2 KB, clean build with demo data, button on ACCUEIL)
+- **Git**: `88a128b` — fix: harmonize FOURNISSEURS to 9-col evaluation layout (pushed)
+- **Tag**: `v13.2.3` (pushed)
 - **Build**: ✅ COMPILE OK (42 .bas, 1 .frm, 0 errors)
 - **Verify**: ✅ **112/112 PASS**
 - **Ground Truth**: D=789, Q*=37, ROP=206, PU=4500, S=801.45
@@ -111,6 +111,27 @@
 ### Session 1 (prior) — TABLEAU DE BORD Dashboard Rescue
 
 ## Completed
+### Session 10 (2026-06-01) — FOURNISSEURS Harmonisation + ACCUEIL Button
+**Three tasks completed this session:**
+
+1. **FOURNISSEURS column harmonisation (7 files patched):**
+   - Constants: New 9-col evaluation layout (NOM_ABREGE, RAISON_SOCIALE, WILAYA, TELEPHONE, CLASSE, DELAI, NOTE, SPECIALITE)
+   - SeedSuppliers: Writes proper evaluation data (Classe A/B/C, Delai 3-8d, Note 78-95/100, Specialité)
+   - CSV Import/Export: 9 evaluation columns (not old tax IDs)
+   - DataValidator: Validates Classe (A/B/C), Delai (0-365), Note (0-100) instead of NIF/NIS
+   - SetupFournisseursSheet: Evaluation-focused headers, writes via constants
+   - _inject_drawing.py: Marked DEPRECATED
+   - Builder now reads correct columns — no more misaligned data
+
+2. **"Actualiser le Tableau de Bord" button on ACCUEIL:**
+   - Added via COM Shapes.AddShape at D10:G12
+   - Rectangle with dark blue fill, white text, "RefreshDashboard" OnAction
+   - Survives full vbe-auto rebuild pipeline (golden master → strip/import → save)
+   - Old zip-injection script deprecated (corrupted xlsm structure)
+
+3. **Drawing injection script deprecated:**
+   - Marked as reference only — button now persists via golden master, not zip manipulation
+
 ### Session 9 (2026-05-31) — Thesis + ACCUEIL Bilingual + Barcode + Stock Column
 
 **All 4 ERP improvement tasks completed this session:**
@@ -140,8 +161,7 @@
    - `AddLineToGrid` populates stock from `m_StockActuel`
 
 ## Pending Tasks
-- [LOW] Add "Actualiser le Tableau de Bord" button shape to ACCUEIL sheet manually (drawing injection via Python corrupts xlsm zip structure)
-- [LOW] FOURNISSEURS column constant harmonisation: VBA expects 8 columns, sheet has 9
+- (none)
 
 ## Data Flow (how things connect)
 ```
@@ -160,6 +180,6 @@ TABLEAU DE BORD ──▶ ALERTE_DASHBOARD (15 detail rows, references TB!F4:F18
 CALCULS_EOQ ──▶ ACCUEIL (R10,R11)
 ```
 
-## Final Sign-off (v13.2.2)
-ERP is fully data-connected across all 26 sheets. **15 articles** — TABLEAU DE BORD, RAPPORTS (4 sections), INVENTAIRE, ACCUEIL, and ALERTE_DASHBOARD all wired to live MOUVEMENTS/ARTICLES data. No #REF! anywhere. Build: COMPILE OK. Verify: **112/112 PASS**. All PageSetup properties work (unprotect sheets first). Tag `v13.2.2` pushed. Workbook at Dropbox root: `1004.6 KB, 2026-06-01 02:32`.
-END OF SESSION (v13.2.2)
+## Final Sign-off (v13.2.3)
+All pending tasks resolved. FOURNISSEURS columns harmonised to golden master's 9-col evaluation layout (no more VBA/sheet mismatch). ACCUEIL has "Actualiser le Tableau de Bord" button (survives build pipeline). Drawing injection script deprecated. Build: COMPILE OK. Verify: **112/112 PASS**. Tag `v13.2.3` pushed. Workbook at Dropbox root: `1009.2 KB, 2026-06-01 17:35`.
+END OF SESSION (v13.2.3)
