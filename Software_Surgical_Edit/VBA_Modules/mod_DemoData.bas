@@ -318,9 +318,15 @@ End Sub
 Private Sub ConfigurerImpressionSilent()
     On Error Resume Next
     Dim ws As Worksheet
+    Dim pwd As String
+    pwd = mod_Config.MASTER_PWD
     
+    ' RAPPORTS
     Set ws = ThisWorkbook.Sheets("RAPPORTS")
     If Not ws Is Nothing Then
+        ws.Unprotect Password:=pwd
+        If Err.Number <> 0 Then Err.Clear
+        
         ws.PageSetup.Orientation = xlLandscape
         ws.PageSetup.PaperSize = xlPaperA4
         ws.PageSetup.FitToPagesWide = 1
@@ -328,23 +334,53 @@ Private Sub ConfigurerImpressionSilent()
         ws.PageSetup.CenterHorizontally = True
         ws.PageSetup.PrintHeadings = False
         ws.PageSetup.Order = xlDownThenOver
+        If Err.Number <> 0 Then Err.Clear
+        
+        ' Clear print area (unprotect first to avoid COM automation crash)
+        ws.PageSetup.PrintArea = vbNullString
+        If Err.Number <> 0 Then Err.Clear
+        
+        ws.Protect Password:=pwd, UserInterfaceOnly:=True
+        If Err.Number <> 0 Then Err.Clear
     End If
     
+    ' INVENTAIRE
     Set ws = ThisWorkbook.Sheets("INVENTAIRE")
     If Not ws Is Nothing Then
+        ws.Unprotect Password:=pwd
+        If Err.Number <> 0 Then Err.Clear
+        
         ws.PageSetup.Orientation = xlPortrait
         ws.PageSetup.PaperSize = xlPaperA4
         ws.PageSetup.FitToPagesTall = 1
         ws.PageSetup.CenterHorizontally = True
         ws.PageSetup.PrintHeadings = False
+        If Err.Number <> 0 Then Err.Clear
+        
+        ws.PageSetup.PrintArea = vbNullString
+        If Err.Number <> 0 Then Err.Clear
+        
+        ws.Protect Password:=pwd, UserInterfaceOnly:=True
+        If Err.Number <> 0 Then Err.Clear
     End If
     
+    ' TABLEAU DE BORD
     Set ws = ThisWorkbook.Sheets("TABLEAU DE BORD")
     If Not ws Is Nothing Then
+        ws.Unprotect Password:=pwd
+        If Err.Number <> 0 Then Err.Clear
+        
         ws.PageSetup.Orientation = xlLandscape
         ws.PageSetup.PaperSize = xlPaperA4
         ws.PageSetup.FitToPagesTall = 0
         ws.PageSetup.CenterHorizontally = True
+        If Err.Number <> 0 Then Err.Clear
+        
+        ws.PageSetup.PrintArea = vbNullString
+        If Err.Number <> 0 Then Err.Clear
+        
+        ws.Protect Password:=pwd, UserInterfaceOnly:=True
+        If Err.Number <> 0 Then Err.Clear
     End If
 End Sub
 
