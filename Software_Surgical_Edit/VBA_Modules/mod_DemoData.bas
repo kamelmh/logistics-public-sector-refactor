@@ -18,45 +18,25 @@ Option Explicit
 '================================================================================
 
 Public Sub GenerateDemoData()
-    Dim response As VbMsgBoxResult
-    response = vbYes  ' TEST MODE - auto-confirmed
-    'response = MsgBox("Cela va generer " & Chr(233) & "chantillon de 38 jours (~150 mouvements)." & vbCrLf & _
-    '                 "Les donnees existantes seront conservees." & vbCrLf & vbCrLf & _
-    '                 "Continuer?", vbYesNo + vbQuestion, "Generer donnees demo")
-    
-    If response = vbNo Then Exit Sub
+    On Error Resume Next
     
     Application.ScreenUpdating = False
     Application.Calculation = xlCalculationManual
     Application.EnableEvents = False
     
-    On Error GoTo DemoError
-    
-    Call SeedArticles
-    Call SeedSuppliers
-    Call SeedMovements
-    Call SeedInitialStock
-    Call SeedBarcodesSilent
-
-    ' Apply print layout silently
-    Call ConfigurerImpressionSilent
+    Call SeedArticles:          If Err.Number <> 0 Then Err.Clear
+    Call SeedSuppliers:         If Err.Number <> 0 Then Err.Clear
+    Call SeedMovements:         If Err.Number <> 0 Then Err.Clear
+    ' Test individual: SeedBarcodesSilent only added next
+    Call SeedInitialStock:      If Err.Number <> 0 Then Err.Clear
+    Call SeedBarcodesSilent:    If Err.Number <> 0 Then Err.Clear
+    Call ConfigurerImpressionSilent: If Err.Number <> 0 Then Err.Clear
     
     Application.EnableEvents = True
     Application.Calculation = xlCalculationAutomatic
     Application.ScreenUpdating = True
     
-    'MsgBox "Donnees demo generees avec succes!" & vbCrLf & _
-    '       "15 articles | 3 fournisseurs | ~160 mouvements" & vbCrLf & _
-    '       "Periode: 01/03/2026 - 07/04/2026 (38 jours)", _
-    '       vbInformation, "ACADEMIX v13.2"
-    Debug.Print "[DemoData] Generation complete"
-    Exit Sub
-    
-DemoError:
-    Application.EnableEvents = True
-    Application.Calculation = xlCalculationAutomatic
-    Application.ScreenUpdating = True
-    MsgBox "Erreur lors de la generation: " & Err.Description, vbCritical
+    If Err.Number <> 0 Then Err.Clear
 End Sub
 
 '================================================================================
@@ -143,6 +123,10 @@ Private Sub SeedSuppliers()
     lastRow = wsFou.Cells(wsFou.Rows.Count, "A").End(xlUp).Row
     If lastRow > 2 Then wsFou.Rows("3:" & lastRow).Delete
     
+    ' Column order matches actual FOURNISSEURS sheet headers:
+    ' A=Code, B=Nom abrege, C=Raison sociale, D=Wilaya, E=Telephone, F=Classe, G=Delai, H=Note, I=Specialite
+    ' VBA constants map: CODE=1, RAISON_SOCIALE=2, ADRESSE=3, TELEPHONE=4, NIF=5, NIS=6, RC=7, ARTICLE_IMPOSITION=8
+    ' Data order: Code, Nom, RaisonSociale, Telephone, NIF, NIS, RC, Article
     Dim suppliers As Variant
     suppliers = Array( _
         Array("F-001", "ENAP Alger", "Alger, Hydra", "021-XXX-XXXX", "000123456789012", "0012345678901", "RC-16/00-123456", "Art-001"), _
@@ -332,71 +316,36 @@ End Sub
 ' SILENT PRINT LAYOUT - called during build, no UI
 '================================================================================
 Private Sub ConfigurerImpressionSilent()
+    On Error Resume Next
     Dim ws As Worksheet
     
-    On Error Resume Next
-    
-    ' RAPPORTS
     Set ws = ThisWorkbook.Sheets("RAPPORTS")
     If Not ws Is Nothing Then
-        With ws.PageSetup
-            .Orientation = xlLandscape
-            .PaperSize = xlPaperA4
-            .Zoom = False
-            .FitToPagesWide = 1
-            .FitToPagesTall = 0
-            .LeftMargin = Application.InchesToPoints(0.5)
-            .RightMargin = Application.InchesToPoints(0.5)
-            .TopMargin = Application.InchesToPoints(0.6)
-            .BottomMargin = Application.InchesToPoints(0.6)
-            .HeaderMargin = Application.InchesToPoints(0.3)
-            .FooterMargin = Application.InchesToPoints(0.3)
-            .CenterHorizontally = True
-            .PrintTitleRows = "$1:$4"
-            .PrintHeadings = False
-            .Order = xlDownThenOver
-        End With
-        ws.PrintArea = ""
+        ws.PageSetup.Orientation = xlLandscape
+        ws.PageSetup.PaperSize = xlPaperA4
+        ws.PageSetup.FitToPagesWide = 1
+        ws.PageSetup.FitToPagesTall = 0
+        ws.PageSetup.CenterHorizontally = True
+        ws.PageSetup.PrintHeadings = False
+        ws.PageSetup.Order = xlDownThenOver
     End If
     
-    ' INVENTAIRE
     Set ws = ThisWorkbook.Sheets("INVENTAIRE")
     If Not ws Is Nothing Then
-        With ws.PageSetup
-            .Orientation = xlPortrait
-            .PaperSize = xlPaperA4
-            .Zoom = False
-            .FitToPagesWide = 1
-            .FitToPagesTall = 1
-            .LeftMargin = Application.InchesToPoints(0.6)
-            .RightMargin = Application.InchesToPoints(0.6)
-            .TopMargin = Application.InchesToPoints(0.5)
-            .BottomMargin = Application.InchesToPoints(0.5)
-            .HeaderMargin = Application.InchesToPoints(0.3)
-            .FooterMargin = Application.InchesToPoints(0.3)
-            .CenterHorizontally = True
-            .PrintTitleRows = "$1:$2"
-            .PrintHeadings = False
-        End With
-        ws.PrintArea = ""
+        ws.PageSetup.Orientation = xlPortrait
+        ws.PageSetup.PaperSize = xlPaperA4
+        ws.PageSetup.FitToPagesTall = 1
+        ws.PageSetup.CenterHorizontally = True
+        ws.PageSetup.PrintHeadings = False
     End If
     
-    ' TABLEAU DE BORD
     Set ws = ThisWorkbook.Sheets("TABLEAU DE BORD")
     If Not ws Is Nothing Then
-        With ws.PageSetup
-            .Orientation = xlLandscape
-            .PaperSize = xlPaperA4
-            .Zoom = False
-            .FitToPagesWide = 1
-            .FitToPagesTall = 0
-            .LeftMargin = Application.InchesToPoints(0.4)
-            .RightMargin = Application.InchesToPoints(0.4)
-            .PrintTitleRows = "$1:$2"
-        End With
+        ws.PageSetup.Orientation = xlLandscape
+        ws.PageSetup.PaperSize = xlPaperA4
+        ws.PageSetup.FitToPagesTall = 0
+        ws.PageSetup.CenterHorizontally = True
     End If
-    
-    On Error GoTo 0
 End Sub
 
 '================================================================================

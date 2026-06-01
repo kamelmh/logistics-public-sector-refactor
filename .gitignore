@@ -56,3 +56,6 @@ Research_and_Development/Thesis_Surgical_Edit/out/
 
 # CrossFlow handoff artifacts
 .crossflow/*.sari.md
+
+# Column constant harmonization scratch
+.opencode/skills/column-constant-harmonization/
