@@ -126,19 +126,21 @@ Public Sub ExportFournisseursToCSV()
 
     If savePath = False Then Exit Sub
 
-    csvContent = BuildCSVLine("Code", "Raison Sociale", "Adresse", "T" & Chr(233) & "l" & Chr(233) & "phone", "NIF", "NIS", "RC", "Art. Imposition", "Cat" & Chr(233) & "gorie")
+    csvContent = BuildCSVLine("Code", "Nom abr" & Chr(233) & "g" & Chr(233) & "", "Raison sociale", "Wilaya", _
+                              "T" & Chr(233) & "l" & Chr(233) & "phone", "Classe", "D" & Chr(233) & "lai (j)", _
+                              "Note /100", "Sp" & Chr(233) & "cialit" & Chr(233))
 
     For i = 3 To lastRow
         csvContent = csvContent & vbCrLf & BuildCSVLine( _
             CStr(ws.Cells(i, COL_FOU_CODE).Value), _
+            CStr(ws.Cells(i, COL_FOU_NOM_ABREGE).Value), _
             CStr(ws.Cells(i, COL_FOU_RAISON_SOCIALE).Value), _
-            CStr(ws.Cells(i, COL_FOU_ADRESSE).Value), _
+            CStr(ws.Cells(i, COL_FOU_WILAYA).Value), _
             CStr(ws.Cells(i, COL_FOU_TELEPHONE).Value), _
-            CStr(ws.Cells(i, COL_FOU_NIF).Value), _
-            CStr(ws.Cells(i, COL_FOU_NIS).Value), _
-            CStr(ws.Cells(i, COL_FOU_RC).Value), _
-            CStr(ws.Cells(i, COL_FOU_ARTICLE_IMPOSITION).Value), _
-            CStr(ws.Cells(i, 9).Value))
+            CStr(ws.Cells(i, COL_FOU_CLASSE).Value), _
+            CStr(ws.Cells(i, COL_FOU_DELAI).Value), _
+            CStr(ws.Cells(i, COL_FOU_NOTE).Value), _
+            CStr(ws.Cells(i, COL_FOU_SPECIALITE).Value))
     Next i
 
     WriteCSVFile savePath, csvContent
@@ -376,14 +378,14 @@ Public Sub ImportFournisseursFromCSV()
 
         On Error Resume Next
         ws.Cells(nextRow, COL_FOU_CODE).Value = Trim(fields(0))
-        ws.Cells(nextRow, COL_FOU_RAISON_SOCIALE).Value = IIf(UBound(fields) >= 1, Trim(fields(1)), "")
-        ws.Cells(nextRow, COL_FOU_ADRESSE).Value = IIf(UBound(fields) >= 2, Trim(fields(2)), "")
-        ws.Cells(nextRow, COL_FOU_TELEPHONE).Value = IIf(UBound(fields) >= 3, Trim(fields(3)), "")
-        ws.Cells(nextRow, COL_FOU_NIF).Value = IIf(UBound(fields) >= 4, Trim(fields(4)), "")
-        ws.Cells(nextRow, COL_FOU_NIS).Value = IIf(UBound(fields) >= 5, Trim(fields(5)), "")
-        ws.Cells(nextRow, COL_FOU_RC).Value = IIf(UBound(fields) >= 6, Trim(fields(6)), "")
-        ws.Cells(nextRow, COL_FOU_ARTICLE_IMPOSITION).Value = IIf(UBound(fields) >= 7, Trim(fields(7)), "")
-        ws.Cells(nextRow, 9).Value = IIf(UBound(fields) >= 8, Trim(fields(8)), "")
+        ws.Cells(nextRow, COL_FOU_NOM_ABREGE).Value = IIf(UBound(fields) >= 1, Trim(fields(1)), "")
+        ws.Cells(nextRow, COL_FOU_RAISON_SOCIALE).Value = IIf(UBound(fields) >= 2, Trim(fields(2)), "")
+        ws.Cells(nextRow, COL_FOU_WILAYA).Value = IIf(UBound(fields) >= 3, Trim(fields(3)), "")
+        ws.Cells(nextRow, COL_FOU_TELEPHONE).Value = IIf(UBound(fields) >= 4, Trim(fields(4)), "")
+        ws.Cells(nextRow, COL_FOU_CLASSE).Value = IIf(UBound(fields) >= 5, Trim(fields(5)), "")
+        ws.Cells(nextRow, COL_FOU_DELAI).Value = IIf(UBound(fields) >= 6, Trim(fields(6)), "")
+        ws.Cells(nextRow, COL_FOU_NOTE).Value = IIf(UBound(fields) >= 7, Trim(fields(7)), "")
+        ws.Cells(nextRow, COL_FOU_SPECIALITE).Value = IIf(UBound(fields) >= 8, Trim(fields(8)), "")
 
         If Err.Number <> 0 Then
             errors = errors + 1

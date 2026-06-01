@@ -231,7 +231,8 @@ End Sub
 Private Sub ValidateSuppliers(ByRef issues As Collection)
     Dim ws As Worksheet
     Dim lastRow As Long, i As Long
-    Dim fouCode As String, nif As String, nis As String
+    Dim fouCode As String, telephone As String
+    Dim classe As String, delaiVal As Variant, noteVal As Variant
 
     On Error Resume Next
     Set ws = ThisWorkbook.Sheets(mod_Config.SHEET_FOURNISSEURS)
@@ -251,13 +252,32 @@ Private Sub ValidateSuppliers(ByRef issues As Collection)
             GoTo NextFou
         End If
 
-        nif = Trim(ws.Cells(i, COL_FOU_NIF).Value)
-        nis = Trim(ws.Cells(i, COL_FOU_NIS).Value)
-        If Len(nif) < 10 Then
-            issues.Add Array("FOURNISSEURS", "NIF_COURT", fouCode & " - NIF semble invalide: " & nif, nif, "AVERTISSEMENT")
+        telephone = Trim(ws.Cells(i, COL_FOU_TELEPHONE).Value)
+        If Len(telephone) < 6 Then
+            issues.Add Array("FOURNISSEURS", "TEL_COURT", fouCode & " - T" & Chr(233) & "l" & Chr(233) & "phone semble invalide: " & telephone, telephone, "AVERTISSEMENT")
         End If
-        If Len(nis) < 10 Then
-            issues.Add Array("FOURNISSEURS", "NIS_COURT", fouCode & " - NIS semble invalide: " & nis, nis, "AVERTISSEMENT")
+
+        classe = Trim(ws.Cells(i, COL_FOU_CLASSE).Value)
+        If classe <> "" And classe <> "A" And classe <> "B" And classe <> "C" Then
+            issues.Add Array("FOURNISSEURS", "CLASSE_INVALIDE", fouCode & " - Classe doit etre A, B ou C: " & classe, classe, "AVERTISSEMENT")
+        End If
+
+        delaiVal = ws.Cells(i, COL_FOU_DELAI).Value
+        If IsNumeric(delaiVal) Then
+            If delaiVal < 0 Or delaiVal > 365 Then
+                issues.Add Array("FOURNISSEURS", "DELAI_ANORMAL", fouCode & " - D" & Chr(233) & "lai hors plage: " & delaiVal, delaiVal, "AVERTISSEMENT")
+            End If
+        ElseIf delaiVal <> "" Then
+            issues.Add Array("FOURNISSEURS", "DELAI_NON_NUM", fouCode & " - D" & Chr(233) & "lai non num" & Chr(233) & "rique: " & delaiVal, delaiVal, "AVERTISSEMENT")
+        End If
+
+        noteVal = ws.Cells(i, COL_FOU_NOTE).Value
+        If IsNumeric(noteVal) Then
+            If noteVal < 0 Or noteVal > 100 Then
+                issues.Add Array("FOURNISSEURS", "NOTE_HORS_PLAGE", fouCode & " - Note hors plage 0-100: " & noteVal, noteVal, "AVERTISSEMENT")
+            End If
+        ElseIf noteVal <> "" Then
+            issues.Add Array("FOURNISSEURS", "NOTE_NON_NUM", fouCode & " - Note non num" & Chr(233) & "rique: " & noteVal, noteVal, "AVERTISSEMENT")
         End If
 NextFou:
     Next i

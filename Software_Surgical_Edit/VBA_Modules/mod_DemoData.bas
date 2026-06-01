@@ -123,15 +123,14 @@ Private Sub SeedSuppliers()
     lastRow = wsFou.Cells(wsFou.Rows.Count, "A").End(xlUp).Row
     If lastRow > 2 Then wsFou.Rows("3:" & lastRow).Delete
     
-    ' Column order matches actual FOURNISSEURS sheet headers:
+    ' Column order matches actual FOURNISSEURS sheet headers (9-col evaluation layout):
     ' A=Code, B=Nom abrege, C=Raison sociale, D=Wilaya, E=Telephone, F=Classe, G=Delai, H=Note, I=Specialite
-    ' VBA constants map: CODE=1, RAISON_SOCIALE=2, ADRESSE=3, TELEPHONE=4, NIF=5, NIS=6, RC=7, ARTICLE_IMPOSITION=8
-    ' Data order: Code, Nom, RaisonSociale, Telephone, NIF, NIS, RC, Article
+    ' Data order: Code, NomAbrege, RaisonSociale, Wilaya, Telephone, Classe, Delai, Note, Specialite
     Dim suppliers As Variant
     suppliers = Array( _
-        Array("F-001", "ENAP Alger", "Alger, Hydra", "021-XXX-XXXX", "000123456789012", "0012345678901", "RC-16/00-123456", "Art-001"), _
-        Array("F-002", "Bureautique Oran", "Oran, Es Senia", "041-XXX-XXXX", "000987654321098", "0098765432109", "RC-31/00-654321", "Art-002"), _
-        Array("F-003", "Bureau Plus", "El Bayadh, Centre", "049-XXX-XXXX", "000456789123456", "0045678912345", "RC-32/00-789012", "Art-003") _
+        Array("F-001", "ENAP Alger", "Entreprise Nationale des Arts Plastiques, Alger", "Alger", "023-XXX-XXXX", "A", 5, 92, "Arts Graphiques & Papeterie"), _
+        Array("F-002", "Bureautique Oran", "Societe de Fournitures de Bureau, Oran", "Oran", "041-XXX-XXXX", "B", 8, 78, "Fournitures de Bureau"), _
+        Array("F-003", "Bureau Plus", "Bureau Plus Distribution, El Bayadh", "El Bayadh", "049-XXX-XXXX", "A", 3, 95, "Materiel Scolaire & Informatique") _
     )
     
     Dim i As Long
@@ -139,14 +138,15 @@ Private Sub SeedSuppliers()
         Dim rowIdx As Long
         rowIdx = 3 + i
         
-        wsFou.Cells(rowIdx, COL_FOU_CODE).Value = suppliers(i)(0)  ' CODE
-        wsFou.Cells(rowIdx, COL_FOU_RAISON_SOCIALE).Value = suppliers(i)(1)  ' RAISON_SOCIALE
-        wsFou.Cells(rowIdx, COL_FOU_ADRESSE).Value = suppliers(i)(2)  ' ADRESSE
-        wsFou.Cells(rowIdx, COL_FOU_TELEPHONE).Value = suppliers(i)(3)  ' TELEPHONE
-        wsFou.Cells(rowIdx, COL_FOU_NIF).Value = suppliers(i)(4)  ' NIF
-        wsFou.Cells(rowIdx, COL_FOU_NIS).Value = suppliers(i)(5)  ' NIS
-        wsFou.Cells(rowIdx, COL_FOU_RC).Value = suppliers(i)(6)  ' RC
-        wsFou.Cells(rowIdx, COL_FOU_ARTICLE_IMPOSITION).Value = suppliers(i)(7)  ' ARTICLE_IMPOSITION
+        wsFou.Cells(rowIdx, COL_FOU_CODE).Value = suppliers(i)(0)        ' Code
+        wsFou.Cells(rowIdx, COL_FOU_NOM_ABREGE).Value = suppliers(i)(1)  ' Nom abrege
+        wsFou.Cells(rowIdx, COL_FOU_RAISON_SOCIALE).Value = suppliers(i)(2) ' Raison sociale
+        wsFou.Cells(rowIdx, COL_FOU_WILAYA).Value = suppliers(i)(3)     ' Wilaya
+        wsFou.Cells(rowIdx, COL_FOU_TELEPHONE).Value = suppliers(i)(4)  ' Telephone
+        wsFou.Cells(rowIdx, COL_FOU_CLASSE).Value = suppliers(i)(5)     ' Classe
+        wsFou.Cells(rowIdx, COL_FOU_DELAI).Value = suppliers(i)(6)      ' Delai
+        wsFou.Cells(rowIdx, COL_FOU_NOTE).Value = suppliers(i)(7)       ' Note /100
+        wsFou.Cells(rowIdx, COL_FOU_SPECIALITE).Value = suppliers(i)(8) ' Specialite
     Next i
     
     wsFou.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True

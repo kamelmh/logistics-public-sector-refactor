@@ -9,8 +9,8 @@ Attribute VB_Name = "mod_SupplierRegistry"
 
 '
 ' Tax IDs per Algerian DGI requirements:
-'   NIF  - Numéro d'Identification Fiscale (15 digits)
-'   NIS  - Numéro d'Identification Statistique (13 digits)
+'   NIF  - Numï¿½ro d'Identification Fiscale (15 digits)
+'   NIS  - Numï¿½ro d'Identification Statistique (13 digits)
 '   RC   - Registre de Commerce (Alger/Oran/Alger)
 '   Art. - Article d'imposition (code fiscal)
 '==============================================================================
@@ -26,8 +26,8 @@ Public Type SupplierInfo
     Name            As String       ' Full legal name
     Address         As String       ' Physical address
     Phone           As String       ' Contact phone
-    NIF             As String       ' Numéro d'Identification Fiscale (15 digits)
-    NIS             As String       ' Numéro d'Identification Statistique (13 digits)
+    NIF             As String       ' Numï¿½ro d'Identification Fiscale (15 digits)
+    NIS             As String       ' Numï¿½ro d'Identification Statistique (13 digits)
     RC              As String       ' Registre de Commerce
     ArticleImpot    As String       ' Article d'imposition (fiscal code)
     Category        As String       ' Fourniture, Papeterie, etc.
@@ -47,13 +47,13 @@ Public Function GetSupplierInfo(ByVal supplierCode As String) As SupplierInfo
         Case "F-001"
             s.Code = "F-001"
             s.Name = "ENAP Alger - Entreprise Nationale des Arts Plastiques"
-            s.Address = "Rue des Frères Abdeslam, Bab Ezzouar, Alger 16000"
+            s.Address = "Rue des Frï¿½res Abdeslam, Bab Ezzouar, Alger 16000"
             s.Phone = "023 00 00 01"
             s.NIF = "000116010002500"
             s.NIS = "0161600100250"
             s.RC = "16/00-0012345B67"
             s.ArticleImpot = "250"
-            s.Category = "Fournitures pédagogiques"
+            s.Category = "Fournitures pï¿½dagogiques"
             s.IsActive = True
             s.Rating = 4.2
             
@@ -72,7 +72,7 @@ Public Function GetSupplierInfo(ByVal supplierCode As String) As SupplierInfo
             
         Case "F-003"
             s.Code = "F-003"
-            s.Name = "Bureau Plus SPA - Chaîne nationale"
+            s.Name = "Bureau Plus SPA - Chaï¿½ne nationale"
             s.Address = "Chemin Mackley, Hydra, Alger 16035"
             s.Phone = "021 60 00 03"
             s.NIF = "000416010004500"
@@ -192,11 +192,11 @@ Public Sub SetupFournisseursSheet()
     ws.Cells(1, 1).HorizontalAlignment = xlCenter
     ws.Rows(1).RowHeight = 25
     
-    ' Row 2: Headers
+    ' Row 2: Headers (evaluation-focused layout matching the golden master)
     Dim headers As Variant
-    headers = Array("Code", "Raison Sociale", "Adresse", "Téléphone", _
-                    "NIF (15 chiffres)", "NIS (13 chiffres)", "Registre Commerce", _
-                    "Art. Imposition", "Catégorie")
+    headers = Array("Code", "Nom abr" & Chr(233) & "g" & Chr(233), "Raison sociale", "Wilaya", _
+                    "T" & Chr(233) & "l" & Chr(233) & "phone", "Classe", "D" & Chr(233) & "lai (j)", _
+                    "Note /100", "Sp" & Chr(233) & "cialit" & Chr(233))
     
     Dim i As Integer
     For i = 0 To UBound(headers)
@@ -227,15 +227,15 @@ Public Sub SetupFournisseursSheet()
         Dim dataRow As Long
         dataRow = r + 3
         
-        ws.Cells(dataRow, 1).Value = sInfo.Code
-        ws.Cells(dataRow, 2).Value = sInfo.Name
-        ws.Cells(dataRow, 3).Value = sInfo.Address
-        ws.Cells(dataRow, 4).Value = sInfo.Phone
-        ws.Cells(dataRow, 5).Value = sInfo.NIF
-        ws.Cells(dataRow, 6).Value = sInfo.NIS
-        ws.Cells(dataRow, 7).Value = sInfo.RC
-        ws.Cells(dataRow, 8).Value = sInfo.ArticleImpot
-        ws.Cells(dataRow, 9).Value = sInfo.Category
+        ws.Cells(dataRow, COL_FOU_CODE).Value = sInfo.Code
+        ws.Cells(dataRow, COL_FOU_NOM_ABREGE).Value = sInfo.Name
+        ws.Cells(dataRow, COL_FOU_RAISON_SOCIALE).Value = sInfo.Address
+        ws.Cells(dataRow, COL_FOU_WILAYA).Value = "Alger"
+        ws.Cells(dataRow, COL_FOU_TELEPHONE).Value = sInfo.Phone
+        ws.Cells(dataRow, COL_FOU_CLASSE).Value = "A"
+        ws.Cells(dataRow, COL_FOU_DELAI).Value = 5
+        ws.Cells(dataRow, COL_FOU_NOTE).Value = 90
+        ws.Cells(dataRow, COL_FOU_SPECIALITE).Value = sInfo.Category
         
         ' Formatting
         Dim c As Integer

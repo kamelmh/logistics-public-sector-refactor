@@ -1,19 +1,20 @@
 # CrossFlow Handoff — Academix v13.2
 
 ## Current Priority
-All 26 sheets fully data-connected. 15 articles across all sheets. Stock ≥ 0. Barcode + print integration. Build: 112/112 PASS.
+112/112 PASS. All PageSetup properties restored including PrintArea. v13.2.2 tagged.
 
 ## State
-- **Session**: v14 Printable reports + Barcode buttons (2026-05-31)
+- **Session**: v13.2.2 — Full PrintArea fix (2026-06-01)
 - **Agent**: Academix
-- **Workbook**: `ERP_v13.2.xlsm` (725 KB, rebuilt from golden master)
-- **Git**: `8ffa850` — feat: 15-article expansion with barcode & print integration (pushed)
+- **Workbook**: `ERP_v13.2.xlsm` (1004.6 KB, clean build with demo data)
+- **Git**: `b191324` — fix: restore PrintArea clear with unprotect/protect pattern (pushed)
+- **Tag**: `v13.2.2` (pushed)
 - **Build**: ✅ COMPILE OK (42 .bas, 1 .frm, 0 errors)
 - **Verify**: ✅ **112/112 PASS**
 - **Ground Truth**: D=789, Q*=37, ROP=206, PU=4500, S=801.45
-- **Articles**: 15 articles, all stock ≥ 0. ART-004 rupture, ART-006/009 below ROP.
-- **Barcodes**: 15 articles mapped in STAGING_BUFFER. Scan buttons on ACCUEIL.
-- **Print**: ConfigurerImpression set for RAPPORTS/INVENTAIRE/TABLEAU DE BORD. Preview buttons.
+- **Articles**: 15 articles, all stock ≥ 0 (ART-001 through ART-015 seeded via demo data)
+- **Barcodes**: STAGING_BUFFER populated (15 barcodes)
+- **Print**: ConfigurerImpressionSilent sets ALL PageSetup properties (Orientation, PaperSize, FitToPages, CenterHorizontally, PrintHeadings, Order, PrintArea) — sheets unprotected first to avoid COM crash
 
 ## Completed
 ### Session 8 (2026-05-31) — Normalization + Form Polish + Print + Barcode
@@ -139,7 +140,8 @@ All 26 sheets fully data-connected. 15 articles across all sheets. Stock ≥ 0. 
    - `AddLineToGrid` populates stock from `m_StockActuel`
 
 ## Pending Tasks
-- (none — all deferred tasks completed)
+- [LOW] Add "Actualiser le Tableau de Bord" button shape to ACCUEIL sheet manually (drawing injection via Python corrupts xlsm zip structure)
+- [LOW] FOURNISSEURS column constant harmonisation: VBA expects 8 columns, sheet has 9
 
 ## Data Flow (how things connect)
 ```
@@ -158,6 +160,6 @@ TABLEAU DE BORD ──▶ ALERTE_DASHBOARD (15 detail rows, references TB!F4:F18
 CALCULS_EOQ ──▶ ACCUEIL (R10,R11)
 ```
 
-## Final Sign-off
-ERP is fully data-connected across all 26 sheets. **15 articles** — TABLEAU DE BORD, RAPPORTS (4 sections), INVENTAIRE, ACCUEIL, and ALERTE_DASHBOARD all wired to live MOUVEMENTS/ARTICLES data. No #REF! anywhere. Build: COMPILE OK. Verify: **112/112 PASS**. All sheets protected. Ready for production use.
-END OF SESSION
+## Final Sign-off (v13.2.2)
+ERP is fully data-connected across all 26 sheets. **15 articles** — TABLEAU DE BORD, RAPPORTS (4 sections), INVENTAIRE, ACCUEIL, and ALERTE_DASHBOARD all wired to live MOUVEMENTS/ARTICLES data. No #REF! anywhere. Build: COMPILE OK. Verify: **112/112 PASS**. All PageSetup properties work (unprotect sheets first). Tag `v13.2.2` pushed. Workbook at Dropbox root: `1004.6 KB, 2026-06-01 02:32`.
+END OF SESSION (v13.2.2)

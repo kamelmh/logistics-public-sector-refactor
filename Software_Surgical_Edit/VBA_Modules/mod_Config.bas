@@ -60,15 +60,16 @@ Public Const COL_MOUV_PU As Long = 8
 Public Const COL_MOUV_THIRD_PARTY As Long = 9
 Public Const COL_MOUV_NOTES As Long = 10
 
-' FOURNISSEURS sheet column indices
+' FOURNISSEURS sheet column indices (matches golden master 9-col evaluation layout)
 Public Const COL_FOU_CODE As Long = 1
-Public Const COL_FOU_RAISON_SOCIALE As Long = 2
-Public Const COL_FOU_ADRESSE As Long = 3
-Public Const COL_FOU_TELEPHONE As Long = 4
-Public Const COL_FOU_NIF As Long = 5
-Public Const COL_FOU_NIS As Long = 6
-Public Const COL_FOU_RC As Long = 7
-Public Const COL_FOU_ARTICLE_IMPOSITION As Long = 8
+Public Const COL_FOU_NOM_ABREGE As Long = 2
+Public Const COL_FOU_RAISON_SOCIALE As Long = 3
+Public Const COL_FOU_WILAYA As Long = 4
+Public Const COL_FOU_TELEPHONE As Long = 5
+Public Const COL_FOU_CLASSE As Long = 6
+Public Const COL_FOU_DELAI As Long = 7
+Public Const COL_FOU_NOTE As Long = 8
+Public Const COL_FOU_SPECIALITE As Long = 9
 
 ' SYS_STRINGS sheet column indices
 Public Const COL_SYS_ID As Long = 1
