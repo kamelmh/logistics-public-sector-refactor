@@ -3,23 +3,35 @@ Part of Academix v13.2 build pipeline
 Usage: python fix_thesis_all.py <path/to.docx> --save
 
 Fixes applied:
-1. Page numbering: Cover→none, Front→lowerRoman, Body→decimal
+1. Page numbering: all sections→decimal
 2. Table column widths: proportionally sized to content (no gaps)
 3. Table borders: simple gridlines on all tables
 4. Body formatting: Traditional Arabic 14pt, RTL, 1.5 spacing
 5. Empty paragraph cleanup
 6. Footnote RTL alignment
+7. Page field (PAGE) fix – remove cached result so Word recalculates
 
 Run without --save for a dry-run report of changes needed.
 """
 
-import sys, os, json, copy, zipfile
+import sys, os, json, copy, zipfile, re, subprocess
 from xml.etree import ElementTree as ET
 from docx import Document
 from docx.shared import Cm, Pt, Emu
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml.ns import qn, nsdecls
 from docx.oxml import parse_xml
+
+# Namespace declarations required by Word for mc:Ignorable references
+# python-docx saves footnotes.xml with ns0:/ns1: prefixes and mc:Ignorable
+# but omits the actual namespace declarations Word needs to validate the schema.
+REQUIRED_NS = [
+    ('w14', 'http://schemas.microsoft.com/office/word/2010/wordml'),
+    ('w15', 'http://schemas.microsoft.com/office/word/2012/wordml'),
+    ('w16se', 'http://schemas.microsoft.com/office/word/2015/wordml/symex'),
+    ('w16cid', 'http://schemas.microsoft.com/office/word/2016/wordml/cid'),
+    ('wp14', 'http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing'),
+]
 
 NS = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 W = NS
@@ -49,18 +61,9 @@ def fix_page_numbering(doc, changes):
         if existing is not None:
             sect_pr.remove(existing)
         
-        if i == 0:
-            # Cover: no page number
-            pg = parse_xml('<w:pgNumType %s w:fmt="none"/>' % nsdecls('w'))
-            changes['page_num_cover'] = 'fmt=none'
-        elif i == 1:
-            # Front matter (TOC, abstract): Roman numerals
-            pg = parse_xml('<w:pgNumType %s w:fmt="lowerRoman"/>' % nsdecls('w'))
-            changes['page_num_front'] = 'fmt=lowerRoman'
-        else:
-            # Body + back matter: decimal
-            pg = parse_xml('<w:pgNumType %s w:fmt="decimal"/>' % nsdecls('w'))
-            changes['page_num_body'] = 'fmt=decimal'
+        # Set all sections to decimal as requested by user
+        pg = parse_xml('<w:pgNumType %s w:fmt="decimal"/>' % nsdecls('w'))
+        changes['page_num_body'] = 'fmt=decimal'
         
         # Insert at the beginning of sectPr
         first = sect_pr.find(qn('w:type'))
@@ -248,54 +251,69 @@ def fix_headings(doc, changes):
 
 
 def fix_footnotes_rtl(docx_path, changes):
-    """Fix footnote RTL alignment via XML manipulation."""
+    """Fix footnote RTL alignment and namespace declarations via raw XML manipulation.
+    
+    Combines two fixes that both operate on footnotes.xml at zip level:
+    1. Add missing namespace declarations for mc:Ignorable references (Word schema)
+    2. Set jc val='right' on all footnote paragraphs (RTL alignment)
+    
+    Uses regex instead of ElementTree to avoid parse failures from python-docx artifacts.
+    """
     fn_file = 'word/footnotes.xml'
-    modified = False
     
     with zipfile.ZipFile(docx_path, 'r') as z:
         if fn_file not in z.namelist():
             return changes
-        
-        tree = ET.parse(z.open(fn_file))
-        root = tree.getroot()
+        content = z.read(fn_file).decode('utf-8')
     
-    fn_ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
-    w_uri = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
-    for fn in root.findall('.//w:footnote', fn_ns):
-        fid = fn.attrib.get(w_uri + 'id', '')
-        if fid in ('0', '-1'):
-            continue
-        for p in fn.findall('.//w:p', fn_ns):
-            pPr = p.find(w_uri + 'pPr')
-            if pPr is None:
-                pPr = ET.SubElement(p, w_uri + 'pPr')
-                p.remove(pPr)
-                p.insert(0, pPr)
-            jc = pPr.find(w_uri + 'jc')
-            if jc is not None:
-                val = jc.attrib.get(w_uri + 'val', '')
-                if val != 'right':
-                    jc.attrib[w_uri + 'val'] = 'right'
-                    modified = True
-                    changes['footnote_rtl_fixes'] += 1
+    modified = False
+    
+    # --- Fix 1: Add missing namespace declarations ---
+    for prefix, uri in REQUIRED_NS:
+        attr = 'xmlns:%s="' % prefix
+        if attr not in content:
+            # Find the > that closes the ROOT element opening tag (not the XML declaration)
+            # Skip past <?xml ... ?> first
+            decl_end = content.find('?>')
+            if decl_end > 0:
+                idx = content.find('>', decl_end + 2)
             else:
-                jc = ET.SubElement(pPr, w_uri + 'jc')
-                jc.attrib[w_uri + 'val'] = 'right'
+                idx = content.find('>')
+            if idx > 0:
+                content = content[:idx] + ' xmlns:%s="%s"' % (prefix, uri) + content[idx:]
                 modified = True
-                changes['footnote_rtl_fixes'] += 1
+                changes['footnote_ns_fixes'] = changes.get('footnote_ns_fixes', 0) + 1
     
+    # --- Fix 2: Set RTL (jc val=right) on all footnote paragraphs ---
+    # Match <w:jc w:val="..."/> or <w:jc w:val="..."> and replace val with "right"
+    # Also add <w:jc w:val="right"/> after <w:pPr> if missing
+    import re
+    
+    def add_jc(match):
+        """Add jc element inside pPr."""
+        ppr = match.group(0)
+        if 'w:jc' not in ppr:
+            modified = True
+            changes['footnote_rtl_fixes'] += 1
+            return ppr.replace('</w:pPr>', '<w:jc w:val="right"/></w:pPr>')
+        return ppr
+    
+    # Fix existing jc values
+    jc_pattern = re.compile(r'<w:jc\s+w:val="[^"]*"\s*/>')
+    for m in jc_pattern.finditer(content):
+        if m.group(0) != '<w:jc w:val="right"/>' :
+            modified = True
+            changes['footnote_rtl_fixes'] += 1
+    content = jc_pattern.sub('<w:jc w:val="right"/>', content)
+    
+    # Write fixed XML back
     if modified:
-        raw = ET.tostring(root, encoding='unicode')
-        # Preserve XML declaration required by OOXML (Word rejects missing declaration)
-        XML_DECL = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-        if not raw.startswith('<?xml'):
-            raw = XML_DECL + raw
         tmp = docx_path + '.tmp'
         with zipfile.ZipFile(docx_path, 'r') as zin:
             with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as zout:
                 for item in zin.namelist():
                     if item == fn_file:
-                        zout.writestr(item, raw)
+                        zout.writestr(item, content.encode('utf-8'))
                     else:
                         zout.writestr(item, zin.read(item))
         os.replace(tmp, docx_path)
@@ -353,6 +371,63 @@ def fix_table_cell_padding(doc, changes):
     return changes
 
 
+def _fix_word_compat_regex(docx_path):
+    """Fix python-docx namespace pollution using regex on raw XML.
+    
+    python-docx serializes footnotes/endnotes with ns0: and ns1: prefixes
+    and writes ns1:Ignorable instead of mc:Ignorable. Word rejects these.
+    This function replaces ns0->w, ns1->mc, adds missing namespace
+    declarations (mc, w14, w15, w16se, w16cid, wp14).
+    """
+    import re as _re
+    
+    MC_NS = 'http://schemas.openxmlformats.org/markup-compatibility/2006'
+    NS_DECLS = [
+        ('mc', MC_NS),
+        ('w14', 'http://schemas.microsoft.com/office/word/2010/wordml'),
+        ('w15', 'http://schemas.microsoft.com/office/word/2012/wordml'),
+        ('w16se', 'http://schemas.microsoft.com/office/word/2015/wordml/symex'),
+        ('w16cid', 'http://schemas.microsoft.com/office/word/2016/wordml/cid'),
+        ('wp14', 'http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing'),
+    ]
+    targets = ['word/footnotes.xml', 'word/endnotes.xml']
+    
+    with zipfile.ZipFile(docx_path, 'r') as z:
+        entries = {}
+        for name in z.namelist():
+            data = z.read(name)
+            if name in targets:
+                content = data.decode('utf-8')
+                # Replace ns1:Ignorable with mc:Ignorable (before ns1->mc)
+                content = content.replace('ns1:Ignorable', 'mc:Ignorable')
+                # Replace xmlns:ns0= with xmlns:w=
+                content = _re.sub(r'xmlns:ns0="([^"]+)"', r'xmlns:w="\1"', content)
+                # Replace xmlns:ns1= with xmlns:mc=
+                content = _re.sub(r'xmlns:ns1="([^"]+)"', r'xmlns:mc="\1"', content)
+                # Replace ns0: with w: (element/attribute names)
+                content = _re.sub(r'\bns0:', 'w:', content)
+                # Replace ns1: with mc:
+                content = _re.sub(r'\bns1:', 'mc:', content)
+                # Add missing xmlns declarations
+                for prefix, uri in NS_DECLS:
+                    if 'xmlns:%s=' % prefix not in content:
+                        match = _re.search(r'<w?:footnotes[\s>]', content)
+                        if match:
+                            gt_pos = content.find('>', match.start())
+                            if gt_pos > 0:
+                                content = (content[:gt_pos] +
+                                          ' xmlns:%s="%s"' % (prefix, uri) +
+                                          content[gt_pos:])
+                data = content.encode('utf-8')
+            entries[name] = data
+    
+    tmp = docx_path + '.tmp'
+    with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as zout:
+        for name, data in entries.items():
+            zout.writestr(name, data)
+    os.replace(tmp, docx_path)
+
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: python fix_thesis_all.py <path/to.docx> [--save]", file=sys.stderr)
@@ -379,6 +454,8 @@ def main():
         'table_cell_margins_set': False,
         'footnote_rtl_fixes': 0,
         'empty_paras_removed': 0,
+        'footnote_ns_fixes': 0,
+        'page_field_fixes': 0,
     }
     
     print("=" * 60)
@@ -389,28 +466,28 @@ def main():
     print()
     
     # 1. Fix page numbering
-    print("[1/7] Page numbering...")
+    print("[1/9] Page numbering...")
     doc = Document(path)
     changes = fix_page_numbering(doc, changes)
     print("  Cover: %s | Front: %s | Body: %s" % (
         changes['page_num_cover'], changes['page_num_front'], changes['page_num_body']))
     
     # 2. Fix table column widths
-    print("[2/7] Table column widths (minimizing gaps)...")
+    print("[2/9] Table column widths (minimizing gaps)...")
     changes = fix_table_column_widths(doc, changes)
     print("  %d tables sized" % len(changes['table_widths_set']))
     
     # 3. Add table borders
-    print("[3/7] Adding table borders (gridlines)...")
+    print("[3/9] Adding table borders (gridlines)...")
     changes = add_table_borders(doc, changes)
     print("  %d tables got borders" % len(changes['table_borders_added']))
     
     # 4. Fix table cell padding
-    print("[4/7] Setting compact cell margins...")
+    print("[4/9] Setting compact cell margins...")
     changes = fix_table_cell_padding(doc, changes)
     
     # 5. Fix body formatting
-    print("[5/7] Body formatting (font=%s %dpt, RTL, 1.5 spacing)..." % (
+    print("[5/9] Body formatting (font=%s %dpt, RTL, 1.5 spacing)..." % (
         GOLDEN['bodyFont'], GOLDEN['bodySize']))
     changes = fix_body_formatting(doc, changes)
     changes = fix_headings(doc, changes)
@@ -419,7 +496,7 @@ def main():
         changes['spacing_fixes'], changes['heading_fixes']))
     
     # 6. Clean empty paragraphs (consecutive)
-    print("[6/7] Cleaning consecutive empty paragraphs...")
+    print("[6/9] Cleaning consecutive empty paragraphs...")
     changes = clean_empty_paragraphs(doc, changes)
     print("  Removed: %d" % changes['empty_paras_removed'])
     
@@ -428,11 +505,35 @@ def main():
         doc.save(path)
         print("  [Saved doc-level changes]")
     
-    # 7. Fix footnotes RTL (needs zip-level manipulation)
-    print("[7/7] Footnote RTL alignment...")
+    # 7. Fix footnotes RTL + namespace declarations (needs zip-level manipulation)
+    print("[7/9] Footnote RTL + namespace fixes...")
     if save:
         changes = fix_footnotes_rtl(path, changes)
-    print("  Footnotes RTL fixes: %d" % changes['footnote_rtl_fixes'])
+    print("  RTL fixes: %d | NS fixes: %d" % (changes['footnote_rtl_fixes'], changes.get('footnote_ns_fixes', 0)))
+    
+    # 8. Final Word compatibility pass — fix ns0/ns1 → w/mc namespace prefixes
+    if save:
+        print("[8/9] Word compatibility (ns→w/mc, namespace declarations)...")
+        _fix_word_compat_regex(path)
+    
+    # 9. Fix broken PAGE field codes (remove cached result so Word recalculates)
+    if save:
+        print("[9/9] PAGE field fix (remove cached result for recalculation)...")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        fix_page_field_script = os.path.join(script_dir, 'fix_page_field.py')
+        fp_result = subprocess.run(
+            [sys.executable or 'python', fix_page_field_script, path, '--save'],
+            capture_output=True, text=True)
+        if fp_result.stdout:
+            for line in fp_result.stdout.strip().split('\n'):
+                print("  %s" % line.strip('\r'))
+                # Count lines like "  Fixed word/footer2.xml: 1 changes" (has leading spaces from subprocess)
+                if line.strip().startswith('Fixed') and 'changes' in line:
+                    changes['page_field_fixes'] += 1
+        if fp_result.returncode != 0 and fp_result.stderr:
+            print("  [ERROR] %s" % fp_result.stderr.strip())
+        if fp_result.returncode != 0:
+            print("  [WARNING] fix_page_field.py returned non-zero exit code")
     
     print()
     print("=" * 60)
