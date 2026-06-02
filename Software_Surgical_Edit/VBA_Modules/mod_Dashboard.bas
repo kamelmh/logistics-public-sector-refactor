@@ -327,6 +327,11 @@ Private Function GetOrCreateDashboardSheet() As Worksheet
         ws.name = "DASHBOARD"
     End If
     
+    ' Unprotect before clearing (sheet may be protected by FinalizeBuildProtection)
+    On Error Resume Next
+    ws.Unprotect Password:=mod_Config.MASTER_PWD
+    On Error GoTo 0
+    
     ' Basic Clean - UnMerge first to avoid merge persistence across calls
     ws.Cells.UnMerge
     ws.Cells.Clear
