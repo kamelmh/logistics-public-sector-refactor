@@ -1,40 +1,57 @@
 # CrossFlow Handoff — Academix v13.2
 
 ## Current Priority
-112/112 PASS. Pillar 2 UX quick wins implemented (Auto-Ref hidden, PU decimal masking, category auto-preselect). v13.2.4 candidate.
+All 4 DSS intelligence pillars implemented. 4 commits pushed. Ready for v13.3 tag + full build.
 
 ## State
-- **Session**: v13.2.4 candidate — Pillar 2 UX quick wins (2026-06-02)
+- **Session**: v13.3 candidate — Full DSS intelligence roadmap (2026-06-02)
 - **Agent**: Academix
-- **Workbook**: `ERP_v13.2.xlsm` (1013.8 KB, clean build with demo data)
-- **Build**: ✅ COMPILE OK (42 .bas, 1 .frm, 0 errors)
-- **Verify**: ✅ **112/112 PASS**
-- **Ground Truth**: D=789, Q*=37, ROP=206, PU=4500, S=801.45
-- **Articles**: 15 articles, all stock ≥ 0 (ART-001 through ART-015 seeded via demo data)
+- **Workbook**: `ERP_v13.2.xlsm` (needs rebuild with demo data)
+- **Pre-build**: 0 errors (44 files)
+- **Verify**: 112/112 PASS (on previous output)
+- **Commits**: `ea9e33b` (P2), `952cf9b` (P1), `35a98d0` (P3), `50d6556` (P4)
 - **Barcodes**: STAGING_BUFFER populated (15 barcodes)
 - **Print**: ConfigurerImpressionSilent sets ALL PageSetup properties (Orientation, PaperSize, FitToPages, CenterHorizontally, PrintHeadings, Order, PrintArea) — sheets unprotected first to avoid COM crash
 
 ## Completed
-### Session 9 (2026-06-02) — Pillar 2 UX Quick Wins
-**Three UX improvements implemented:**
+### Session 9 (2026-06-02) — Full DSS Intelligence Roadmap (4 Pillars)
+**All 4 pillars implemented in one session:**
 
-1. **Auto-Ref button hidden (frmStockEntry.frm):**
-   - `btnAutoRef.Visible = False` — ref is auto-generated on doc type change
-   - Reduces UI clutter; auto-ref logic already in `OnDocTypeChanged`
+#### Pillar 1: Print Engineering (`952cf9b`)
+- `mod_Reports.bas`: Full `ConfigurerImpression` with professional print settings
+- `mod_DemoData.bas`: Updated `ConfigurerImpressionSilent` to match
+- RAPPORTS: Landscape, print titles rows 1-5, page breaks every 50 rows
+- INVENTAIRE: Portrait, print titles rows 1-2
+- TABLEAU DE BORD: Landscape, print titles row 1
+- BON sheets: Portrait, fit-to-page
+- All sheets: Headers (title, date, logo placeholder), footers (Page X/Y)
+- Dynamic print areas based on actual data range
+- Consistent margins (0.5in sides, 0.75in top/bottom)
 
-2. **PU decimal masking (frmStockEntry.frm):**
-   - Added `txtPrixUnitaire_Change` handler — strips non-numeric chars, allows one decimal point, limits to 2 decimal places
-   - Visual feedback: green background when valid > 0, yellow otherwise
-   - Converts comma input to decimal point for French locale compatibility
-
-3. **Category auto-preselection (mod_StockEntry_Logic.bas):**
-   - `OnArticleChanged` now looks up article category from ARTICLES sheet
-   - Auto-selects matching category in `cmbCategorie` dropdown
-   - Reloads article list filtered by category (avoids OnCategoryChanged cascade)
+#### Pillar 2: UX Quick Wins (`ea9e33b`)
+- **Auto-Ref hidden**: `btnAutoRef.Visible = False` — ref auto-generates on doc type change
+- **PU decimal masking**: `txtPrixUnitaire_Change` handler — 2 decimal places, visual feedback
+- **Category auto-preselect**: `OnArticleChanged` auto-selects category filter from article metadata
    - Restores article selection after filter reload
 
 - **Build**: ✅ COMPILE OK, **Verify**: ✅ **112/112 PASS**
 - **Output**: ERP_v13.2.xlsm (1013.8 KB)
+
+#### Pillar 3: Stockout Projection (`35a98d0`)
+- `mod_UI_Setup.bas`: Added `DrawStockoutBanner` function
+- Scans ARTICLES for stock <= ROP or stock <= 0
+- Green banner if all OK, orange if alerts, red if ruptures
+- Shows article codes and stock levels in banner text
+- Banner placed between KPI cards and Section 1 (SAISIE)
+- Added [STOCKOUT] Prevision Ruptures button in TABLEAU DE BORD section
+
+#### Pillar 4: Fuzzy Search (`50d6556`)
+- `frmStockEntry.frm`: Article combo box type-to-filter
+- User can type partial text to filter article list
+- Matches against CODE | DESIGNATION (case-insensitive)
+- Full list saved on first keystroke, restored when selection made
+- Dropdown opens automatically when filter produces results
+- Prevents recursive filtering via `m_IsFiltering` flag
 
 ### Session 8 (2026-05-31) — Normalization + Form Polish + Print + Barcode
 **Four major tasks this session:**
