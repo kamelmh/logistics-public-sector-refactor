@@ -18,6 +18,8 @@ Option Explicit
 '- Module-level state
 Private m_State As FormState
 Private m_Initialized As Boolean
+Private m_FullArticleList() As String  ' Full article list for fuzzy search
+Private m_IsFiltering As Boolean       ' Prevent recursive filtering
 
 '==============================================================================
 ' FORM LIFECYCLE
@@ -732,11 +734,95 @@ Private Sub cmbTypeDoc_Change()
     Call mod_StockEntry_Logic.OnDocTypeChanged(m_State)
 End Sub
 
-'-- Article selection changed
+'-- Article selection changed (with fuzzy search filtering)
 Private Sub cmbArticle_Change()
     If Not m_Initialized Then Exit Sub
-    Call mod_StockEntry_Logic.OnArticleChanged(m_State)
+    If m_IsFiltering Then Exit Sub
+    
+    Dim cmb As MSForms.ComboBox
+    Set cmb = Me.Controls("cmbArticle")
+    
+    ' If user selected from dropdown (ListIndex >= 0), process as normal selection
+    If cmb.ListIndex >= 0 Then
+        Call mod_StockEntry_Logic.OnArticleChanged(m_State)
+        Exit Sub
+    End If
+    
+    ' Otherwise, user is typing — filter the list
+    Dim typed As String
+    typed = Trim(cmb.text)
+    
+    ' Save full list on first keystroke
+    If Len(typed) > 0 And Not m_IsFiltering Then
+        Call SaveFullArticleList(cmb)
+    End If
+    
+    ' Filter and repopulate
+    m_IsFiltering = True
+    Call FilterArticleList(cmb, typed)
+    m_IsFiltering = False
+    
+    ' Show dropdown if filtering produced results
+    If cmb.listCount > 0 And Len(typed) > 0 Then
+        cmb.DropDown
+    End If
 End Sub
+
+Private Sub SaveFullArticleList(ByVal cmb As MSForms.ComboBox)
+    If cmb.listCount = 0 Then Exit Sub
+    ReDim m_FullArticleList(0 To cmb.listCount - 1)
+    Dim i As Integer
+    For i = 0 To cmb.listCount - 1
+        m_FullArticleList(i) = cmb.List(i)
+    Next i
+End Sub
+
+Private Sub FilterArticleList(ByVal cmb As MSForms.ComboBox, ByVal filterText As String)
+    Dim savedIndex As Integer
+    savedIndex = cmb.ListIndex
+    
+    cmb.Clear
+    
+    If Len(filterText) = 0 Then
+        ' Restore full list
+        If IsArrayInitialized(m_FullArticleList) Then
+            Dim i As Integer
+            For i = LBound(m_FullArticleList) To UBound(m_FullArticleList)
+                cmb.AddItem m_FullArticleList(i)
+            Next i
+        End If
+        Exit Sub
+    End If
+    
+    ' Filter: match against code or designation (case-insensitive)
+    Dim searchUpper As String
+    searchUpper = UCase(filterText)
+    
+    If IsArrayInitialized(m_FullArticleList) Then
+        Dim j As Integer
+        For j = LBound(m_FullArticleList) To UBound(m_FullArticleList)
+            Dim item As String
+            item = m_FullArticleList(j)
+            ' Match against "CODE | DESIGNATION" format
+            If InStr(1, UCase(item), searchUpper) > 0 Then
+                cmb.AddItem item
+            End If
+        Next j
+    End If
+    
+    ' Restore selection if still in list
+    If savedIndex >= 0 And cmb.listCount > 0 Then
+        If savedIndex < cmb.listCount Then
+            cmb.ListIndex = savedIndex
+        End If
+    End If
+End Sub
+
+Private Function IsArrayInitialized(ByVal arr As Variant) As Boolean
+    On Error Resume Next
+    IsArrayInitialized = (Not Not arr) <> 0
+    On Error GoTo 0
+End Function
 
 '-- Category filter changed
 Private Sub cmbCategorie_Change()
