@@ -368,15 +368,8 @@ Private Sub ConfigurerImpressionSilent()
         End With
         If Err.Number <> 0 Then Err.Clear
         
-        ' Page breaks every 50 data rows
-        ws.HPageBreaks.Delete
-        If Err.Number <> 0 Then Err.Clear
-        Dim breakRow As Long: breakRow = 55
-        Do While breakRow < lastRow
-            ws.HPageBreaks.Add Before:=ws.Rows(breakRow)
-            breakRow = breakRow + 50
-        Loop
-        If Err.Number <> 0 Then Err.Clear
+        ' Note: Page breaks are managed automatically by Excel via FitToPagesWide/FitToPagesTall
+        ' Manual HPageBreaks.Add is extremely slow in COM automation (skipped for build speed)
         
         ws.Protect Password:=pwd, UserInterfaceOnly:=True
         If Err.Number <> 0 Then Err.Clear

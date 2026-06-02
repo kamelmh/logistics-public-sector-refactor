@@ -288,14 +288,8 @@ Public Sub ConfigurerImpression()
             .PrintTitleColumns = ""
         End With
         
-        ' Page breaks every 50 data rows (after header row 5)
-        ws.HPageBreaks.Delete
-        Dim breakRow As Long
-        breakRow = 55  ' First break at row 55 (5 header + 50 data)
-        Do While breakRow < lastRow
-            ws.HPageBreaks.Add Before:=ws.Rows(breakRow)
-            breakRow = breakRow + 50
-        Loop
+        ' Note: Page breaks managed automatically by Excel via FitToPagesWide/FitToPagesTall
+        ' Manual HPageBreaks.Add skipped (extremely slow in COM automation)
         
         ws.Protect Password:=pwd, UserInterfaceOnly:=True
     End If
