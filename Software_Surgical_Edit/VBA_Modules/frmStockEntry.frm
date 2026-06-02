@@ -507,7 +507,7 @@ Private Sub BuildUI()
         .Top = 525
         .Width = 840
         .Height = 20
-        .Caption = "ERP Acad" & Chr(233) & "mie v13.2  |  15 articles  |  Session: " & Format(Now, "DD/MM/YYYY HH:MM")
+        .Caption = "ERP Acad" & Chr(233) & "mie " & mod_Config.APP_VERSION & "  |  15 articles  |  Session: " & Format(Now, "DD/MM/YYYY HH:MM")
         .Font.Size = 8
         .Font.Name = "Segoe UI"
         .ForeColor = RGB(150, 150, 150)

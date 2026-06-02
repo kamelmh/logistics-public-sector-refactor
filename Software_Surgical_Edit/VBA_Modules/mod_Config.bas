@@ -93,5 +93,5 @@ Public Property Get MASTER_PWD() As String
 End Property
 
 Public Property Get APP_VERSION() As String
-    APP_VERSION = "v13.2"
+    APP_VERSION = "v13.3"
 End Property
