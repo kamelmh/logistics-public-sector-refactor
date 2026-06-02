@@ -7,7 +7,7 @@
 - **Institution:** Directorate of Education, Wilaya de El Bayadh
 - **Address:** BP 138, El Bayadh 32000, Algeria
 - **Email:** mahi.kamel@example.dz
-- **ORCID:** (pending registration)
+- **ORCID:** https://orcid.org/0009-0004-8958-3464
 - **Phone:** (pending)
 
 ## Paper Information

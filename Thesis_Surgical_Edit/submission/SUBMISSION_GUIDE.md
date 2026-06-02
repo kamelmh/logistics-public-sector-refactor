@@ -45,7 +45,7 @@
 - [x] PDF generated (158 KB, text searchable)
 - [x] Cover letter prepared (v13.3)
 - [x] Author metadata form prepared (v13.3)
-- [ ] ORCID ID included (pending registration)
+- [x] ORCID ID registered: `0009-0004-8958-3464`
 - [ ] All authors consent to submission
 - [ ] No duplicate submission to other venues
 - [ ] Submit via Microsoft CMT before August 15, 2026
