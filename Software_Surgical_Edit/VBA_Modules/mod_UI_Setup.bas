@@ -47,6 +47,8 @@ Public Sub SetupAccueilSheet()
     Call FillKpiRow(ws, rowCur)
 
     rowCur = rowCur + 15
+    Call DrawStockoutBanner(ws, rowCur)
+    rowCur = rowCur + 4
     Call DrawSectionHeader(ws, rowCur, 1, "SAISIE", "Saisie des mouvements de stock", "ACC_SEC_SAISIE", RGB(0, 102, 204))
     rowCur = rowCur + 2
     AddAccueilButton ws, COL1, rowCur, "[ENTRY] Formulaire de Saisie", "ACC_BTN_SAISIE", "mod_Navigation.OpenStockForm"
@@ -61,7 +63,7 @@ Public Sub SetupAccueilSheet()
     rowCur = rowCur + 2
     AddAccueilButton ws, COL1, rowCur, "[DASHBOARD] Actualiser les KPIs", "ACC_BTN_DASHBOARD", "mod_Dashboard.RefreshDashboard"
     AddAccueilButton ws, COL2, rowCur, "[HEATMAP] Appliquer Heatmap", "ACC_BTN_HEATMAP", "mod_Utilities.ApplyInventoryHeatmap"
-    AddAccueilButton ws, COL3, rowCur, "[PDF] Exporter Dashboard", "ACC_BTN_PDF_EXPORT", "mod_ExportEngine.ExportDashboardPDF"
+    AddAccueilButton ws, COL3, rowCur, "[STOCKOUT] Prevision Ruptures", "ACC_BTN_STOCKOUT", "mod_StockOutPredictor.RunStockOutPrediction"
 
     rowCur = rowCur + 10
     Call DrawSectionHeader(ws, rowCur, 3, "ANALYSE", "Calculs EOQ, CMUP, ABC, pr" & Chr(233) & "visions", "ACC_SEC_ANALYSE", RGB(120, 40, 120))
@@ -219,6 +221,110 @@ Private Sub AddAccueilButton(ByVal ws As Worksheet, ByVal leftPosCol As Long, _
         .Font.Size = 9
         .Font.Name = "Segoe UI"
     End With
+End Sub
+
+'--------------------------------------------------------------------------------------
+' HELPER: Draw Stockout Alert Banner
+' Scans ARTICLES for low-stock items and displays a warning banner on ACCUEIL.
+' Articles with stock <= ROP are listed. Color = orange (alerts) or red (rupture).
+'--------------------------------------------------------------------------------------
+Private Sub DrawStockoutBanner(ByVal ws As Worksheet, ByVal row As Long)
+    Dim wsArt As Worksheet
+    Dim lastRow As Long, i As Long
+    Dim artCode As String, designation As String
+    Dim stock As Double, pu As Double
+    Dim ss As Double, rop As Double
+    Dim atRiskCount As Long, ruptureCount As Long
+    Dim atRiskList As String
+    
+    On Error Resume Next
+    Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
+    On Error GoTo 0
+    If wsArt Is Nothing Then Exit Sub
+    
+    lastRow = wsArt.Cells(wsArt.Rows.Count, mod_Config.COL_ART_CODE).End(xlUp).Row
+    atRiskCount = 0
+    ruptureCount = 0
+    atRiskList = ""
+    
+    For i = 3 To lastRow
+        artCode = Trim(wsArt.Cells(i, mod_Config.COL_ART_CODE).Value)
+        If artCode <> "" Then
+            stock = mod_Utilities.SafeVal(wsArt.Cells(i, mod_Config.COL_ART_STOCK_ACTUEL).Value)
+            pu = mod_Utilities.SafeVal(wsArt.Cells(i, mod_Config.COL_ART_PU).Value)
+            
+            ' Get safety stock and ROP
+            ss = mod_StockEngine.GetSafetyStock(artCode)
+            Dim annualDemand As Double
+            annualDemand = mod_StockEngine.GetAnnualDemandFromHistory(artCode)
+            rop = mod_StockEngine.ComputeROP(annualDemand / mod_Config.WORKING_DAYS_PER_YEAR, artCode)
+            
+            If stock <= 0 Then
+                ruptureCount = ruptureCount + 1
+                atRiskList = atRiskList & artCode & " (RUPTURE), "
+            ElseIf stock <= rop Then
+                atRiskCount = atRiskCount + 1
+                designation = Left(Trim(wsArt.Cells(i, mod_Config.COL_ART_DESIGNATION).Value), 20)
+                atRiskList = atRiskList & artCode & " [" & stock & " u], "
+            End If
+        End If
+    Next i
+    
+    ' Trim trailing comma
+    If Len(atRiskList) > 2 Then atRiskList = Left(atRiskList, Len(atRiskList) - 2)
+    
+    ' Draw banner
+    Dim bannerColor As Long
+    Dim bannerText As String
+    Dim totalCount As Long
+    totalCount = ruptureCount + atRiskCount
+    
+    If totalCount = 0 Then
+        ' All clear - green banner
+        bannerColor = RGB(232, 245, 233)
+        bannerText = "  AUCUNE ALERTE - Stock OK pour tous les articles"
+        With ws.Range("B" & row & ":D" & row + 2)
+            .Merge
+            .Value = bannerText
+            .Font.Name = "Segoe UI"
+            .Font.Size = 10
+            .Font.Bold = True
+            .Font.Color = RGB(4, 90, 55)
+            .Interior.Color = bannerColor
+            .VerticalAlignment = xlCenter
+            .BorderAround xlContinuous, xlThin, RGB(4, 90, 55)
+        End With
+    ElseIf ruptureCount > 0 Then
+        ' Rupture - red banner
+        bannerColor = RGB(255, 220, 220)
+        bannerText = "  RUPTURE: " & ruptureCount & " article(s) en rupture  |  " & atRiskList
+        With ws.Range("B" & row & ":D" & row + 2)
+            .Merge
+            .Value = bannerText
+            .Font.Name = "Segoe UI"
+            .Font.Size = 9
+            .Font.Bold = True
+            .Font.Color = RGB(180, 0, 0)
+            .Interior.Color = bannerColor
+            .VerticalAlignment = xlCenter
+            .BorderAround xlContinuous, xlMedium, RGB(180, 0, 0)
+        End With
+    Else
+        ' Alerts only - orange banner
+        bannerColor = RGB(255, 243, 224)
+        bannerText = "  ALERTES: " & atRiskCount & " article(s) sous le seuil  |  " & atRiskList
+        With ws.Range("B" & row & ":D" & row + 2)
+            .Merge
+            .Value = bannerText
+            .Font.Name = "Segoe UI"
+            .Font.Size = 9
+            .Font.Bold = True
+            .Font.Color = RGB(160, 70, 0)
+            .Interior.Color = bannerColor
+            .VerticalAlignment = xlCenter
+            .BorderAround xlContinuous, xlThin, RGB(160, 70, 0)
+        End With
+    End If
 End Sub
 
 Private Sub DrawFooter(ByVal ws As Worksheet, ByVal row As Long)
