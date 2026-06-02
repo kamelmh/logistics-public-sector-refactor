@@ -111,6 +111,7 @@ Private Sub DrawHeader(ByVal ws As Worksheet, ByVal row As Long)
     With ws.Range("B" & row & ":D" & row)
         .Merge
         .Value = "ERP Acad" & Chr(233) & "mie  v13.2"
+        .Font.Name = "Segoe UI"
         .Font.Size = 20
         .Font.Bold = True
         .Font.Color = RGB(0, 70, 127)
@@ -120,6 +121,7 @@ Private Sub DrawHeader(ByVal ws As Worksheet, ByVal row As Long)
     ws.Range("B" & row + 1 & ":D" & row + 1).Merge
     ws.Range("B" & row + 1).Value = mod_Localization.GetBilingualLabel( _
         "Direction de l'Education - El Bayadh  |  Syst" & Chr(232) & "me de Gestion des Stocks", "ACC_HDR_SUBTITLE")
+    ws.Range("B" & row + 1).Font.Name = "Segoe UI"
     ws.Range("B" & row + 1).Font.Size = 10
     ws.Range("B" & row + 1).Font.Italic = True
     ws.Range("B" & row + 1).Font.Color = RGB(100, 100, 100)
@@ -159,6 +161,7 @@ Private Sub DrawKpiCard(ByVal ws As Worksheet, ByVal leftCol As Long, ByVal row 
     End With
 
     ws.Cells(row + 1, leftCol).Value = mod_Localization.GetBilingualLabel(label, arKey)
+    ws.Cells(row + 1, leftCol).Font.Name = "Segoe UI"
     ws.Cells(row + 1, leftCol).Font.Size = 9
     ws.Cells(row + 1, leftCol).Font.Color = RGB(120, 120, 120)
     ws.Cells(row + 1, leftCol).Font.Bold = False
@@ -166,6 +169,7 @@ Private Sub DrawKpiCard(ByVal ws As Worksheet, ByVal leftCol As Long, ByVal row 
 
     ws.Range(ws.Cells(row + 2, leftCol), ws.Cells(row + 3, leftCol + 1)).Merge
     ws.Cells(row + 2, leftCol).Value = value
+    ws.Cells(row + 2, leftCol).Font.Name = "Segoe UI"
     ws.Cells(row + 2, leftCol).Font.Size = 24
     ws.Cells(row + 2, leftCol).Font.Bold = True
     ws.Cells(row + 2, leftCol).Font.Color = accentColor
@@ -185,6 +189,7 @@ Private Sub DrawSectionHeader(ByVal ws As Worksheet, ByVal row As Long, _
     With rng
         .Merge
         .Value = "  " & sectionNum & ". " & title & "  -  " & subtitle
+        .Font.Name = "Segoe UI"
         .Font.Size = 11
         .Font.Bold = True
         .Font.Color = RGB(255, 255, 255)
@@ -212,7 +217,7 @@ Private Sub AddAccueilButton(ByVal ws As Worksheet, ByVal leftPosCol As Long, _
         .OnAction = action
         .Font.Bold = True
         .Font.Size = 9
-        .Font.Name = "Calibri"
+        .Font.Name = "Segoe UI"
     End With
 End Sub
 
@@ -220,6 +225,7 @@ Private Sub DrawFooter(ByVal ws As Worksheet, ByVal row As Long)
     With ws.Range("B" & row & ":D" & row)
         .Merge
         .Value = mod_Localization.GetBilingualLabel("Derni" & Chr(232) & "re actualisation", "ACC_FOOTER_LAST_UPD") & " : " & Format(Now, "DD/MM/YYYY HH:MM:SS")
+        .Font.Name = "Segoe UI"
         .Font.Size = 8
         .Font.Italic = True
         .Font.Color = RGB(150, 150, 150)

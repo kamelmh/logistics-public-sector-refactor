@@ -25,28 +25,37 @@ Option Explicit
 '--------------------------------------------------------------------------------------
 Public Sub RefreshDashboard()
     Dim ws As Worksheet
+    Dim procStep As String
     
-    ' 1. Get or Create Dashboard Sheet
+    On Error GoTo ErrorHandler
+    
+    procStep = "GetOrCreateDashboardSheet"
     Set ws = GetOrCreateDashboardSheet()
     
-    ' 2. Update Global KPIs
+    procStep = "UpdateKPIs"
     Call UpdateKPIs(ws)
     
-    ' 3. Update Critical Items Table
+    procStep = "UpdateCriticalTable"
     Call UpdateCriticalTable(ws)
     
-    ' 4. Update ABC-XYZ Summary
+    procStep = "UpdateABCXYZSummary"
     Call UpdateABCXYZSummary(ws)
     
-    ' 5. Update Stockout Projection Table
+    procStep = "UpdateProjection"
     Call UpdateProjection(ws)
     
-    ' 6. Final Touch: Update timestamp
+    ' Final Touch: Update timestamp
     ws.Range("B1").Value = "Derniere actualisation : " & Format(Now, "DD/MM/YYYY HH:MM:SS")
     ws.Range("B1").Font.Size = 8
     ws.Range("B1").Font.Italic = True
     
     MsgBox "Tableau de bord actualise avec succes !", vbInformation, "Dashboard Sync"
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox "Erreur lors de l'actualisation du tableau de bord." & vbCrLf & vbCrLf & _
+           "Etape: " & procStep & vbCrLf & _
+           "Erreur: " & Err.Description, vbCritical, "Dashboard Sync - Erreur"
 End Sub
 
 '--------------------------------------------------------------------------------------
@@ -318,7 +327,8 @@ Private Function GetOrCreateDashboardSheet() As Worksheet
         ws.name = "DASHBOARD"
     End If
     
-    ' Basic Clean
+    ' Basic Clean - UnMerge first to avoid merge persistence across calls
+    ws.Cells.UnMerge
     ws.Cells.Clear
     ws.Cells.Interior.Color = RGB(245, 245, 245)
     

@@ -54,7 +54,7 @@ Public Const CLR_BTN_DANGER      As Long = 2236991      ' RGB(34,34,139) -> Actu
 '================================================================================
 ' FONT CONSTANTS
 '================================================================================
-Public Const FONT_PRIMARY        As String = "Calibri"
+Public Const FONT_PRIMARY        As String = "Segoe UI"
 Public Const FONT_MONOSPACE      As String = "Consolas"
 Public Const FONT_SIZE_DEFAULT   As Integer = 10
 Public Const FONT_SIZE_SMALL     As Integer = 9

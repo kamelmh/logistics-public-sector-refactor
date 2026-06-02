@@ -398,8 +398,43 @@ Public Sub OnArticleChanged(ByRef state As FormState)
 
     Dim parts() As String
     parts = Split(raw, "|")
+    Dim prevArticle As String
+    prevArticle = m_CurrentArticle
     m_CurrentArticle = Trim(parts(0))
     state.ArticleCode = m_CurrentArticle
+
+    '- Only update category filter if article actually changed
+    If m_CurrentArticle <> prevArticle Then
+        Dim cat As String
+        cat = mod_Utilities.GetArticleField(m_CurrentArticle, "CAT")
+        
+        If Len(cat) > 0 And Trim(state.formRef.cmbCategorie.Value) <> cat Then
+            '- Update category dropdown to match article (without firing Change event)
+            Dim j As Integer
+            For j = 0 To state.formRef.cmbCategorie.listCount - 1
+                If state.formRef.cmbCategorie.List(j) = cat Then
+                    state.formRef.cmbCategorie.ListIndex = j
+                    Exit For
+                End If
+            Next j
+            
+            '- Reload article list filtered by category (avoids OnCategoryChanged cascade)
+            Dim prevArt As String
+            prevArt = m_CurrentArticle
+            Call LoadArticleComboBox(cat, state)
+            
+            '- Restore article selection in filtered list
+            If prevArt <> "" Then
+                Dim k As Integer
+                For k = 0 To state.formRef.cmbArticle.listCount - 1
+                    If Left(state.formRef.cmbArticle.List(k), Len(prevArt)) = prevArt Then
+                        state.formRef.cmbArticle.ListIndex = k
+                        Exit For
+                    End If
+                Next k
+            End If
+        End If
+    End If
 
     Call EvaluateStockStatus(m_CurrentArticle, state)
 End Sub

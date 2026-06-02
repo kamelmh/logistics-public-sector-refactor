@@ -1,14 +1,12 @@
 # CrossFlow Handoff — Academix v13.2
 
 ## Current Priority
-112/112 PASS. FOURNISSEURS harmonised to 9-col evaluation layout. Button on ACCUEIL. v13.2.3 tagged.
+112/112 PASS. Pillar 2 UX quick wins implemented (Auto-Ref hidden, PU decimal masking, category auto-preselect). v13.2.4 candidate.
 
 ## State
-- **Session**: v13.2.3 — FOURNISSEURS harmonisation + ACCUEIL button (2026-06-01)
+- **Session**: v13.2.4 candidate — Pillar 2 UX quick wins (2026-06-02)
 - **Agent**: Academix
-- **Workbook**: `ERP_v13.2.xlsm` (1009.2 KB, clean build with demo data, button on ACCUEIL)
-- **Git**: `88a128b` — fix: harmonize FOURNISSEURS to 9-col evaluation layout (pushed)
-- **Tag**: `v13.2.3` (pushed)
+- **Workbook**: `ERP_v13.2.xlsm` (1013.8 KB, clean build with demo data)
 - **Build**: ✅ COMPILE OK (42 .bas, 1 .frm, 0 errors)
 - **Verify**: ✅ **112/112 PASS**
 - **Ground Truth**: D=789, Q*=37, ROP=206, PU=4500, S=801.45
@@ -17,6 +15,27 @@
 - **Print**: ConfigurerImpressionSilent sets ALL PageSetup properties (Orientation, PaperSize, FitToPages, CenterHorizontally, PrintHeadings, Order, PrintArea) — sheets unprotected first to avoid COM crash
 
 ## Completed
+### Session 9 (2026-06-02) — Pillar 2 UX Quick Wins
+**Three UX improvements implemented:**
+
+1. **Auto-Ref button hidden (frmStockEntry.frm):**
+   - `btnAutoRef.Visible = False` — ref is auto-generated on doc type change
+   - Reduces UI clutter; auto-ref logic already in `OnDocTypeChanged`
+
+2. **PU decimal masking (frmStockEntry.frm):**
+   - Added `txtPrixUnitaire_Change` handler — strips non-numeric chars, allows one decimal point, limits to 2 decimal places
+   - Visual feedback: green background when valid > 0, yellow otherwise
+   - Converts comma input to decimal point for French locale compatibility
+
+3. **Category auto-preselection (mod_StockEntry_Logic.bas):**
+   - `OnArticleChanged` now looks up article category from ARTICLES sheet
+   - Auto-selects matching category in `cmbCategorie` dropdown
+   - Reloads article list filtered by category (avoids OnCategoryChanged cascade)
+   - Restores article selection after filter reload
+
+- **Build**: ✅ COMPILE OK, **Verify**: ✅ **112/112 PASS**
+- **Output**: ERP_v13.2.xlsm (1013.8 KB)
+
 ### Session 8 (2026-05-31) — Normalization + Form Polish + Print + Barcode
 **Four major tasks this session:**
 

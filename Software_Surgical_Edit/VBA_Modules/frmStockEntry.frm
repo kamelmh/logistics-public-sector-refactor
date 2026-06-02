@@ -75,7 +75,7 @@ Private Sub BuildUI()
         .ForeColor = RGB(255, 255, 255)
         .Font.Bold = True
         .Font.Size = 14
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .TextAlign = fmTextAlignCenter
         .BackStyle = fmBackStyleTransparent
     End With
@@ -90,7 +90,7 @@ Private Sub BuildUI()
         .Width = 200
         .Height = 24
         .Font.Size = 9
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Style = fmStyleDropDownList
     End With
     
@@ -104,7 +104,7 @@ Private Sub BuildUI()
         .Width = 200
         .Height = 24
         .Font.Size = 9
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Style = fmStyleDropDownList
     End With
     
@@ -118,7 +118,7 @@ Private Sub BuildUI()
         .Width = 150
         .Height = 24
         .Font.Size = 9
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Style = fmStyleDropDownList
     End With
     
@@ -132,14 +132,14 @@ Private Sub BuildUI()
         .Width = 100
         .Height = 24
         .Font.Size = 9
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .TextAlign = fmTextAlignCenter
         .BackColor = RGB(240, 240, 240)
         .Locked = True
     End With
     
     '--------------------------------------------------------------------------
-    ' 6. AUTO-REF BUTTON
+    ' 6. AUTO-REF BUTTON (hidden - auto-generated on doc type change)
     '--------------------------------------------------------------------------
     Set ctrl = Me.Controls.Add("Forms.CommandButton.1", "btnAutoRef", True)
     With ctrl
@@ -149,8 +149,9 @@ Private Sub BuildUI()
         .Height = 24
         .Caption = "Auto-Ref"
         .Font.Size = 9
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Bold = True
+        .Visible = False  ' Ref auto-generated on doc type change
     End With
     
     '--------------------------------------------------------------------------
@@ -163,7 +164,7 @@ Private Sub BuildUI()
         .Width = 500
         .Height = 24
         .Font.Size = 9
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Style = fmStyleDropDownCombo
     End With
     
@@ -178,7 +179,7 @@ Private Sub BuildUI()
         .Height = 24
         .Caption = "Code Article :  --"
         .Font.Size = 9
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .ForeColor = RGB(100, 100, 100)
     End With
     
@@ -193,7 +194,7 @@ Private Sub BuildUI()
         .Height = 20
         .Caption = ""
         .Font.Size = 8
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Bold = True
         .ForeColor = RGB(4, 90, 55)
         .Visible = False
@@ -210,7 +211,7 @@ Private Sub BuildUI()
         .Height = 14
         .Caption = "Raccourcis: [Enter]=Ajouter   [Esc]=Annuler   [Ctrl+S]=Enregistrer"
         .Font.Size = 7
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .ForeColor = RGB(150, 150, 150)
         .BackStyle = fmBackStyleTransparent
     End With
@@ -260,7 +261,7 @@ Private Sub BuildUI()
         .Width = 100
         .Height = 24
         .Font.Size = 11
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .TextAlign = fmTextAlignRight
         .BackColor = RGB(255, 255, 255)
     End With
@@ -276,7 +277,7 @@ Private Sub BuildUI()
         .Height = 24
         .Caption = "+1"
         .Font.Size = 8
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
     End With
 
     Set ctrl = Me.Controls.Add("Forms.CommandButton.1", "btnQty5", True)
@@ -287,7 +288,7 @@ Private Sub BuildUI()
         .Height = 24
         .Caption = "+5"
         .Font.Size = 8
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
     End With
 
     Set ctrl = Me.Controls.Add("Forms.CommandButton.1", "btnQty10", True)
@@ -298,7 +299,7 @@ Private Sub BuildUI()
         .Height = 24
         .Caption = "+10"
         .Font.Size = 8
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
     End With
 
     '--------------------------------------------------------------------------
@@ -311,7 +312,7 @@ Private Sub BuildUI()
         .Width = 100
         .Height = 24
         .Font.Size = 11
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .TextAlign = fmTextAlignRight
         .Enabled = False
         .BackColor = RGB(235, 235, 235)
@@ -328,7 +329,7 @@ Private Sub BuildUI()
         .Height = 20
         .Caption = "PU -- CMUP auto"
         .Font.Size = 8
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .ForeColor = RGB(128, 128, 128)
     End With
     
@@ -359,7 +360,7 @@ Private Sub BuildUI()
         .Height = 28
         .Caption = "+ Ajouter"
         .Font.Size = 9
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Bold = True
         .BackColor = RGB(198, 239, 206)
     End With
@@ -375,7 +376,7 @@ Private Sub BuildUI()
         .Height = 28
         .Caption = "- Supprimer"
         .Font.Size = 9
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
     End With
     
     '--------------------------------------------------------------------------
@@ -389,7 +390,7 @@ Private Sub BuildUI()
         .Height = 28
         .Caption = "TOTAL GENERAL :  0.00 DZD"
         .Font.Size = 12
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Bold = True
         .ForeColor = RGB(5, 100, 60)
     End With
@@ -405,7 +406,7 @@ Private Sub BuildUI()
         .Height = 32
         .Caption = "Enregistrer"
         .Font.Size = 10
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Bold = True
         .BackColor = RGB(0, 102, 204)
         .ForeColor = RGB(255, 255, 255)
@@ -422,7 +423,7 @@ Private Sub BuildUI()
         .Height = 32
         .Caption = "Annuler"
         .Font.Size = 10
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
     End With
     
     '--------------------------------------------------------------------------
@@ -436,7 +437,7 @@ Private Sub BuildUI()
         .Height = 24
         .Caption = "Sync Donn" & Chr(233) & "es"
         .Font.Size = 8
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
     End With
     
     '--------------------------------------------------------------------------
@@ -450,7 +451,7 @@ Private Sub BuildUI()
         .Height = 24
         .Caption = "G" & Chr(233) & "n" & Chr(233) & "rer Rapport"
         .Font.Size = 8
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
     End With
     
     '--------------------------------------------------------------------------
@@ -464,7 +465,7 @@ Private Sub BuildUI()
         .Height = 24
         .Caption = "Imprimer Bon"
         .Font.Size = 8
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
     End With
     
     '--------------------------------------------------------------------------
@@ -478,7 +479,7 @@ Private Sub BuildUI()
         .Height = 20
         .Caption = "Sync interne automatique"
         .Font.Size = 8
-        .Font.name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Value = True
     End With
     
@@ -506,7 +507,7 @@ Private Sub BuildUI()
         .Height = 20
         .Caption = "ERP Acad" & Chr(233) & "mie v13.2  |  15 articles  |  Session: " & Format(Now, "DD/MM/YYYY HH:MM")
         .Font.Size = 8
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .ForeColor = RGB(150, 150, 150)
         .BackStyle = fmBackStyleOpaque
         .BackColor = RGB(240, 240, 245)
@@ -536,7 +537,7 @@ Private Sub ApplyProfessionalTheme()
     End With
     
     With Me.Controls("lblBannerText")
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Size = 14
         .Font.Bold = True
         .ForeColor = RGB(255, 255, 255)
@@ -574,7 +575,7 @@ Private Sub ApplyProfessionalTheme()
     With Me.Controls("btnEnregistrer")
         .BackColor = RGB(4, 90, 55)  ' Theme green
         .ForeColor = RGB(255, 255, 255)
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Size = 11
         .Font.Bold = True
         .BorderStyle = 0
@@ -583,7 +584,7 @@ Private Sub ApplyProfessionalTheme()
     With Me.Controls("btnAjouterLigne")
         .BackColor = RGB(232, 245, 233)
         .ForeColor = RGB(4, 90, 55)
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Size = 10
         .Font.Bold = True
         .BorderStyle = 0
@@ -592,7 +593,7 @@ Private Sub ApplyProfessionalTheme()
     With Me.Controls("btnSupprimerLigne")
         .BackColor = RGB(252, 228, 236)
         .ForeColor = RGB(204, 0, 0)
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Size = 10
         .Font.Bold = True
         .BorderStyle = 0
@@ -601,7 +602,7 @@ Private Sub ApplyProfessionalTheme()
     With Me.Controls("btnAnnuler")
         .BackColor = RGB(245, 245, 250)
         .ForeColor = RGB(70, 70, 70)
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Size = 10
         .BorderStyle = 0
     End With
@@ -609,7 +610,7 @@ Private Sub ApplyProfessionalTheme()
     With Me.Controls("btnAutoRef")
         .BackColor = RGB(245, 245, 250)
         .ForeColor = RGB(4, 90, 55)
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Size = 9
         .Font.Bold = True
         .BorderStyle = 0
@@ -618,7 +619,7 @@ Private Sub ApplyProfessionalTheme()
     With Me.Controls("btnImprimerBon")
         .BackColor = RGB(245, 245, 250)
         .ForeColor = RGB(0, 102, 204)
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Size = 9
         .BorderStyle = 0
     End With
@@ -626,7 +627,7 @@ Private Sub ApplyProfessionalTheme()
     With Me.Controls("btnSyncMasterData")
         .BackColor = RGB(245, 245, 250)
         .ForeColor = RGB(70, 70, 70)
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Size = 8
         .BorderStyle = 0
     End With
@@ -634,14 +635,14 @@ Private Sub ApplyProfessionalTheme()
     With Me.Controls("btnGenerateReport")
         .BackColor = RGB(245, 245, 250)
         .ForeColor = RGB(70, 70, 70)
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Size = 8
         .BorderStyle = 0
     End With
     
     ' Checkbox
     With Me.Controls("chkSyncInternal")
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Size = 9
         .ForeColor = RGB(70, 70, 70)
     End With
@@ -653,7 +654,7 @@ Private Sub ApplyProfessionalTheme()
     
     ' Status bar
     With Me.Controls("lblStatusBar")
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Size = 8
         .ForeColor = RGB(120, 120, 120)
         .BackColor = RGB(236, 236, 242)
@@ -661,7 +662,7 @@ Private Sub ApplyProfessionalTheme()
     
     ' Shortcut hints
     With Me.Controls("lblShortcutHints")
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Size = 7
         .ForeColor = RGB(160, 160, 160)
     End With
@@ -681,7 +682,7 @@ Private Sub ApplyTextboxTheme(ByVal ctrlName As String)
         .BorderColor = RGB(192, 192, 192)
         .BackColor = RGB(255, 255, 255)
         .ForeColor = RGB(70, 70, 70)
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Size = 10
     End With
 End Sub
@@ -693,7 +694,7 @@ Private Sub ApplyComboboxTheme(ByVal ctrlName As String)
         .BorderColor = RGB(192, 192, 192)
         .BackColor = RGB(255, 255, 255)
         .ForeColor = RGB(70, 70, 70)
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Size = 10
     End With
 End Sub
@@ -702,7 +703,7 @@ Private Sub ApplyLabelTheme(ByVal ctrlName As String, ByVal foreColor As Long, B
     On Error Resume Next
     With Me.Controls(ctrlName)
         .ForeColor = foreColor
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Size = fontSize
         .Font.Bold = isBold
     End With
@@ -713,7 +714,7 @@ Private Sub ApplySmallButtonTheme(ByVal ctrlName As String, ByVal bgColor As Lon
     With Me.Controls(ctrlName)
         .BackColor = bgColor
         .ForeColor = fgColor
-        .Font.Name = "Tahoma"
+        .Font.Name = "Segoe UI"
         .Font.Size = 9
         .Font.Bold = True
         .BorderStyle = 0
@@ -910,6 +911,63 @@ Private Sub txtPrixUnitaire_Enter()
 End Sub
 Private Sub txtPrixUnitaire_Exit(ByVal Cancel As MSForms.ReturnBoolean)
     Call mod_ThemingEngine.ApplyInputBlur(Me.Controls("txtPrixUnitaire"))
+End Sub
+Private Sub txtPrixUnitaire_Change()
+    If Not m_Initialized Then Exit Sub
+    Dim tb As MSForms.TextBox
+    Set tb = Me.Controls("txtPrixUnitaire")
+    
+    Static prevVal As String
+    If tb.Value = prevVal Then Exit Sub
+    
+    Dim raw As String
+    raw = tb.Value
+    
+    ' Strip everything except digits and one decimal point
+    Dim cleaned As String
+    cleaned = ""
+    Dim hasDot As Boolean
+    Dim i As Integer
+    For i = 1 To Len(raw)
+        Dim ch As String
+        ch = Mid(raw, i, 1)
+        If ch Like "[0-9]" Then
+            cleaned = cleaned & ch
+        ElseIf ch = "," Or ch = "." Then
+            If Not hasDot Then
+                cleaned = cleaned & "."
+                hasDot = True
+            End If
+        End If
+    Next i
+    
+    ' Limit to 2 decimal places
+    Dim dotPos As Integer
+    dotPos = InStr(cleaned, ".")
+    If dotPos > 0 And Len(cleaned) - dotPos > 2 Then
+        cleaned = Left(cleaned, dotPos + 2)
+    End If
+    
+    ' Remove trailing dot with no decimals
+    If Right(cleaned, 1) = "." And Len(cleaned) = dotPos Then
+        cleaned = Left(cleaned, dotPos - 1)
+    End If
+    
+    prevVal = cleaned
+    If tb.Value <> cleaned Then
+        tb.Value = cleaned
+        tb.SelStart = Len(tb.Value)
+    End If
+    
+    ' Update state
+    m_State.unitPrice = cleaned
+    
+    ' Visual feedback: green if valid > 0, white otherwise
+    If Len(cleaned) > 0 And IsNumeric(cleaned) And CDbl(cleaned) > 0 Then
+        tb.BackColor = RGB(220, 255, 220)
+    Else
+        tb.BackColor = RGB(255, 252, 196)
+    End If
 End Sub
 Private Sub cmbTypeDoc_Enter()
     Call mod_ThemingEngine.ApplyInputFocus(Me.Controls("cmbTypeDoc"))
