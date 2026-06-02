@@ -1,7 +1,7 @@
 # CrossFlow Master Context — Academix v13.2
 > Unified context payload shared across OpenCode, Claude Code, OMC, ECC, FCC.
 > Auto-loaded by all agents via CROSSFLOW block in their CLAUDE.md files.
-> Last updated: 2026-05-17
+> Last updated: 2026-06-02
 
 ## PROJECT IDENTITY
 - **Project**: Logistics Public Sector Refactor — Academix v13.2
