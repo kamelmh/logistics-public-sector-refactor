@@ -314,74 +314,198 @@ End Sub
 
 '================================================================================
 ' SILENT PRINT LAYOUT - called during build, no UI
+' Mirrors mod_Reports.ConfigurerImpression settings
 '================================================================================
 Private Sub ConfigurerImpressionSilent()
     On Error Resume Next
     Dim ws As Worksheet
     Dim pwd As String
+    Dim lastRow As Long, lastCol As Long
+    Dim printArea As String
     pwd = mod_Config.MASTER_PWD
     
-    ' RAPPORTS
+    ' Common header/footer
+    Dim hdrLeft As String:  hdrLeft = mod_Config.SYS_TITLE & "  -  Direction de l'Education, El Bayadh"
+    Dim hdrRight As String: hdrRight = "[Logo]"
+    Dim ftrLeft As String:   ftrLeft = "ERP Academie v" & mod_Config.APP_VERSION
+    Dim ftrRight As String:  ftrRight = "Page " & Chr(38) & "P" & " / " & Chr(38) & "N"
+    
+    ' RAPPORTS - Landscape, print titles, dynamic area, page breaks
     Set ws = ThisWorkbook.Sheets("RAPPORTS")
     If Not ws Is Nothing Then
         ws.Unprotect Password:=pwd
         If Err.Number <> 0 Then Err.Clear
         
-        ws.PageSetup.Orientation = xlLandscape
-        ws.PageSetup.PaperSize = xlPaperA4
-        ws.PageSetup.FitToPagesWide = 1
-        ws.PageSetup.FitToPagesTall = 0
-        ws.PageSetup.CenterHorizontally = True
-        ws.PageSetup.PrintHeadings = False
-        ws.PageSetup.Order = xlDownThenOver
+        lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+        lastCol = ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+        If lastRow < 2 Then lastRow = 2
+        printArea = "A1:" & Chr(64 + lastCol) & lastRow
+        ws.PageSetup.PrintArea = printArea
         If Err.Number <> 0 Then Err.Clear
         
-        ' Clear print area (unprotect first to avoid COM automation crash)
-        ws.PageSetup.PrintArea = vbNullString
+        With ws.PageSetup
+            .Orientation = xlLandscape
+            .PaperSize = xlPaperA4
+            .FitToPagesWide = 1
+            .FitToPagesTall = False
+            .CenterHorizontally = True
+            .PrintHeadings = False
+            .PrintGridlines = False
+            .Order = xlDownThenOver
+            .LeftMargin = Application.InchesToPoints(0.5)
+            .RightMargin = Application.InchesToPoints(0.5)
+            .TopMargin = Application.InchesToPoints(0.75)
+            .BottomMargin = Application.InchesToPoints(0.75)
+            .HeaderMargin = Application.InchesToPoints(0.3)
+            .FooterMargin = Application.InchesToPoints(0.3)
+            .LeftHeader = hdrLeft
+            .CenterHeader = Format(Date, "DD/MM/YYYY")
+            .RightHeader = hdrRight
+            .LeftFooter = ftrLeft
+            .RightFooter = ftrRight
+            .PrintTitleRows = "$1:$5"
+            .PrintTitleColumns = ""
+        End With
+        If Err.Number <> 0 Then Err.Clear
+        
+        ' Page breaks every 50 data rows
+        ws.HPageBreaks.Delete
+        If Err.Number <> 0 Then Err.Clear
+        Dim breakRow As Long: breakRow = 55
+        Do While breakRow < lastRow
+            ws.HPageBreaks.Add Before:=ws.Rows(breakRow)
+            breakRow = breakRow + 50
+        Loop
         If Err.Number <> 0 Then Err.Clear
         
         ws.Protect Password:=pwd, UserInterfaceOnly:=True
         If Err.Number <> 0 Then Err.Clear
     End If
     
-    ' INVENTAIRE
+    ' INVENTAIRE - Portrait, print titles, dynamic area
     Set ws = ThisWorkbook.Sheets("INVENTAIRE")
     If Not ws Is Nothing Then
         ws.Unprotect Password:=pwd
         If Err.Number <> 0 Then Err.Clear
         
-        ws.PageSetup.Orientation = xlPortrait
-        ws.PageSetup.PaperSize = xlPaperA4
-        ws.PageSetup.FitToPagesTall = 1
-        ws.PageSetup.CenterHorizontally = True
-        ws.PageSetup.PrintHeadings = False
+        lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+        lastCol = ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+        If lastRow < 2 Then lastRow = 2
+        printArea = "A1:" & Chr(64 + lastCol) & lastRow
+        ws.PageSetup.PrintArea = printArea
         If Err.Number <> 0 Then Err.Clear
         
-        ws.PageSetup.PrintArea = vbNullString
+        With ws.PageSetup
+            .Orientation = xlPortrait
+            .PaperSize = xlPaperA4
+            .FitToPagesWide = 1
+            .FitToPagesTall = False
+            .CenterHorizontally = True
+            .PrintHeadings = False
+            .PrintGridlines = False
+            .LeftMargin = Application.InchesToPoints(0.5)
+            .RightMargin = Application.InchesToPoints(0.5)
+            .TopMargin = Application.InchesToPoints(0.75)
+            .BottomMargin = Application.InchesToPoints(0.75)
+            .HeaderMargin = Application.InchesToPoints(0.3)
+            .FooterMargin = Application.InchesToPoints(0.3)
+            .LeftHeader = hdrLeft
+            .CenterHeader = Format(Date, "DD/MM/YYYY")
+            .RightHeader = hdrRight
+            .LeftFooter = ftrLeft
+            .RightFooter = ftrRight
+            .PrintTitleRows = "$1:$2"
+            .PrintTitleColumns = ""
+        End With
         If Err.Number <> 0 Then Err.Clear
         
         ws.Protect Password:=pwd, UserInterfaceOnly:=True
         If Err.Number <> 0 Then Err.Clear
     End If
     
-    ' TABLEAU DE BORD
+    ' TABLEAU DE BORD - Landscape, print titles, dynamic area
     Set ws = ThisWorkbook.Sheets("TABLEAU DE BORD")
     If Not ws Is Nothing Then
         ws.Unprotect Password:=pwd
         If Err.Number <> 0 Then Err.Clear
         
-        ws.PageSetup.Orientation = xlLandscape
-        ws.PageSetup.PaperSize = xlPaperA4
-        ws.PageSetup.FitToPagesTall = 0
-        ws.PageSetup.CenterHorizontally = True
+        lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+        lastCol = ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+        If lastRow < 2 Then lastRow = 2
+        printArea = "A1:" & Chr(64 + lastCol) & lastRow
+        ws.PageSetup.PrintArea = printArea
         If Err.Number <> 0 Then Err.Clear
         
-        ws.PageSetup.PrintArea = vbNullString
+        With ws.PageSetup
+            .Orientation = xlLandscape
+            .PaperSize = xlPaperA4
+            .FitToPagesWide = 1
+            .FitToPagesTall = False
+            .CenterHorizontally = True
+            .PrintHeadings = False
+            .PrintGridlines = False
+            .LeftMargin = Application.InchesToPoints(0.5)
+            .RightMargin = Application.InchesToPoints(0.5)
+            .TopMargin = Application.InchesToPoints(0.75)
+            .BottomMargin = Application.InchesToPoints(0.75)
+            .HeaderMargin = Application.InchesToPoints(0.3)
+            .FooterMargin = Application.InchesToPoints(0.3)
+            .LeftHeader = hdrLeft
+            .CenterHeader = Format(Date, "DD/MM/YYYY")
+            .RightHeader = hdrRight
+            .LeftFooter = ftrLeft
+            .RightFooter = ftrRight
+            .PrintTitleRows = "$1:$1"
+            .PrintTitleColumns = ""
+        End With
         If Err.Number <> 0 Then Err.Clear
         
         ws.Protect Password:=pwd, UserInterfaceOnly:=True
         If Err.Number <> 0 Then Err.Clear
     End If
+    
+    ' BON sheets - Portrait, dynamic area
+    Dim bonSheets As Variant
+    bonSheets = Array("BON_RECEPTION", "BON_SORTIE", "BON_COMMANDE", "DA_DEMANDE_ACHAT")
+    Dim idx As Integer
+    For idx = LBound(bonSheets) To UBound(bonSheets)
+        Set ws = Nothing
+        On Error Resume Next
+        Set ws = ThisWorkbook.Sheets(CStr(bonSheets(idx)))
+        On Error GoTo 0
+        If Not ws Is Nothing Then
+            ws.Unprotect Password:=pwd
+            If Err.Number <> 0 Then Err.Clear
+            
+            lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+            lastCol = ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+            If lastRow < 2 Then lastRow = 2
+            printArea = "A1:" & Chr(64 + lastCol) & lastRow
+            ws.PageSetup.PrintArea = printArea
+            If Err.Number <> 0 Then Err.Clear
+            
+            With ws.PageSetup
+                .Orientation = xlPortrait
+                .PaperSize = xlPaperA4
+                .FitToPagesWide = 1
+                .FitToPagesTall = 1
+                .CenterHorizontally = True
+                .PrintHeadings = False
+                .LeftMargin = Application.InchesToPoints(0.75)
+                .RightMargin = Application.InchesToPoints(0.75)
+                .TopMargin = Application.InchesToPoints(1)
+                .BottomMargin = Application.InchesToPoints(0.75)
+                .LeftHeader = hdrLeft
+                .RightHeader = hdrRight
+                .LeftFooter = ftrLeft
+                .RightFooter = ftrRight
+            End With
+            If Err.Number <> 0 Then Err.Clear
+            
+            ws.Protect Password:=pwd, UserInterfaceOnly:=True
+            If Err.Number <> 0 Then Err.Clear
+        End If
+    Next idx
 End Sub
 
 '================================================================================

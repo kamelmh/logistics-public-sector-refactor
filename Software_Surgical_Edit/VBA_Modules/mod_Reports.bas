@@ -212,11 +212,248 @@ End Sub
 
 '=======================================================================================
 ' SUB: ConfigurerImpression
-' Sets up print layout for RAPPORTS (landscape, print titles) and INVENTAIRE (portrait)
-' Call from GenerateDemoData or via menu button
+' Sets up professional print layout for all printable sheets:
+'   - RAPPORTS: Landscape, print titles (rows 1-5), dynamic area, page breaks every 50 rows
+'   - INVENTAIRE: Portrait, print titles (rows 1-2), dynamic area
+'   - TABLEAU DE BORD: Landscape, print titles (row 1), dynamic area
+' Headers: Left=Title, Center=Date, Right="[Logo]"
+' Footers: Left=Direction, Center="", Right="Page X/Y"
+' Call from GenerateDemoData (silent) or via ACCUEIL button
 '=======================================================================================
 Public Sub ConfigurerImpression()
-    ' ... existing code ...
+    On Error GoTo PrintError
+    Dim ws As Worksheet
+    Dim pwd As String
+    Dim lastRow As Long
+    Dim lastCol As Long
+    Dim printArea As String
+    
+    pwd = mod_Config.MASTER_PWD
+    Application.ScreenUpdating = False
+    
+    ' --- Common header/footer strings ---
+    Dim hdrLeft As String:  hdrLeft = mod_Config.SYS_TITLE & "  -  Direction de l'Education, El Bayadh"
+    Dim hdrCenter As String: hdrCenter = Format(Date, "DD/MM/YYYY")
+    Dim hdrRight As String: hdrRight = "[Logo]"
+    Dim ftrLeft As String:   ftrLeft = "ERP Academie v" & mod_Config.APP_VERSION
+    Dim ftrRight As String:  ftrRight = "Page " & Chr(38) & "P" & " / " & Chr(38) & "N"
+    
+    ' ====================================================================
+    ' RAPPORTS - Landscape, print titles, dynamic area, page breaks
+    ' ====================================================================
+    Set ws = Nothing
+    On Error Resume Next
+    Set ws = ThisWorkbook.Sheets("RAPPORTS")
+    On Error GoTo PrintError
+    If Not ws Is Nothing Then
+        ws.Unprotect Password:=pwd
+        
+        ' Dynamic print area (data range)
+        lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+        lastCol = ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+        If lastRow < 2 Then lastRow = 2
+        printArea = "A1:" & Chr(64 + lastCol) & lastRow
+        ws.PageSetup.PrintArea = printArea
+        
+        ' Page setup
+        With ws.PageSetup
+            .Orientation = xlLandscape
+            .PaperSize = xlPaperA4
+            .FitToPagesWide = 1
+            .FitToPagesTall = False  ' Allow multiple pages vertically
+            .CenterHorizontally = True
+            .CenterVertically = False
+            .PrintHeadings = False
+            .PrintGridlines = False
+            .Order = xlDownThenOver
+            
+            ' Margins (inches)
+            .LeftMargin = Application.InchesToPoints(0.5)
+            .RightMargin = Application.InchesToPoints(0.5)
+            .TopMargin = Application.InchesToPoints(0.75)
+            .BottomMargin = Application.InchesToPoints(0.75)
+            .HeaderMargin = Application.InchesToPoints(0.3)
+            .FooterMargin = Application.InchesToPoints(0.3)
+            
+            ' Headers and footers
+            .LeftHeader = hdrLeft
+            .CenterHeader = hdrCenter
+            .RightHeader = hdrRight
+            .LeftFooter = ftrLeft
+            .CenterFooter = ""
+            .RightFooter = ftrRight
+            
+            ' Print titles - repeat rows 1-5 on every page
+            .PrintTitleRows = "$1:$5"
+            .PrintTitleColumns = ""
+        End With
+        
+        ' Page breaks every 50 data rows (after header row 5)
+        ws.HPageBreaks.Delete
+        Dim breakRow As Long
+        breakRow = 55  ' First break at row 55 (5 header + 50 data)
+        Do While breakRow < lastRow
+            ws.HPageBreaks.Add Before:=ws.Rows(breakRow)
+            breakRow = breakRow + 50
+        Loop
+        
+        ws.Protect Password:=pwd, UserInterfaceOnly:=True
+    End If
+    
+    ' ====================================================================
+    ' INVENTAIRE - Portrait, print titles, dynamic area
+    ' ====================================================================
+    Set ws = Nothing
+    On Error Resume Next
+    Set ws = ThisWorkbook.Sheets("INVENTAIRE")
+    On Error GoTo PrintError
+    If Not ws Is Nothing Then
+        ws.Unprotect Password:=pwd
+        
+        lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+        lastCol = ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+        If lastRow < 2 Then lastRow = 2
+        printArea = "A1:" & Chr(64 + lastCol) & lastRow
+        ws.PageSetup.PrintArea = printArea
+        
+        With ws.PageSetup
+            .Orientation = xlPortrait
+            .PaperSize = xlPaperA4
+            .FitToPagesWide = 1
+            .FitToPagesTall = False
+            .CenterHorizontally = True
+            .PrintHeadings = False
+            .PrintGridlines = False
+            
+            .LeftMargin = Application.InchesToPoints(0.5)
+            .RightMargin = Application.InchesToPoints(0.5)
+            .TopMargin = Application.InchesToPoints(0.75)
+            .BottomMargin = Application.InchesToPoints(0.75)
+            .HeaderMargin = Application.InchesToPoints(0.3)
+            .FooterMargin = Application.InchesToPoints(0.3)
+            
+            .LeftHeader = hdrLeft
+            .CenterHeader = hdrCenter
+            .RightHeader = hdrRight
+            .LeftFooter = ftrLeft
+            .CenterFooter = ""
+            .RightFooter = ftrRight
+            
+            ' Print titles - repeat rows 1-2 on every page
+            .PrintTitleRows = "$1:$2"
+            .PrintTitleColumns = ""
+        End With
+        
+        ws.Protect Password:=pwd, UserInterfaceOnly:=True
+    End If
+    
+    ' ====================================================================
+    ' TABLEAU DE BORD - Landscape, print titles, dynamic area
+    ' ====================================================================
+    Set ws = Nothing
+    On Error Resume Next
+    Set ws = ThisWorkbook.Sheets("TABLEAU DE BORD")
+    On Error GoTo PrintError
+    If Not ws Is Nothing Then
+        ws.Unprotect Password:=pwd
+        
+        lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+        lastCol = ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+        If lastRow < 2 Then lastRow = 2
+        printArea = "A1:" & Chr(64 + lastCol) & lastRow
+        ws.PageSetup.PrintArea = printArea
+        
+        With ws.PageSetup
+            .Orientation = xlLandscape
+            .PaperSize = xlPaperA4
+            .FitToPagesWide = 1
+            .FitToPagesTall = False
+            .CenterHorizontally = True
+            .PrintHeadings = False
+            .PrintGridlines = False
+            
+            .LeftMargin = Application.InchesToPoints(0.5)
+            .RightMargin = Application.InchesToPoints(0.5)
+            .TopMargin = Application.InchesToPoints(0.75)
+            .BottomMargin = Application.InchesToPoints(0.75)
+            .HeaderMargin = Application.InchesToPoints(0.3)
+            .FooterMargin = Application.InchesToPoints(0.3)
+            
+            .LeftHeader = hdrLeft
+            .CenterHeader = hdrCenter
+            .RightHeader = hdrRight
+            .LeftFooter = ftrLeft
+            .CenterFooter = ""
+            .RightFooter = ftrRight
+            
+            ' Print titles - repeat row 1 on every page
+            .PrintTitleRows = "$1:$1"
+            .PrintTitleColumns = ""
+        End With
+        
+        ws.Protect Password:=pwd, UserInterfaceOnly:=True
+    End If
+    
+    ' ====================================================================
+    ' BON_RECEPTION / BON_SORTIE / BON_COMMANDE - Portrait, dynamic area
+    ' ====================================================================
+    Dim bonSheets As Variant
+    bonSheets = Array("BON_RECEPTION", "BON_SORTIE", "BON_COMMANDE", "DA_DEMANDE_ACHAT")
+    Dim idx As Integer
+    For idx = LBound(bonSheets) To UBound(bonSheets)
+        Set ws = Nothing
+        On Error Resume Next
+        Set ws = ThisWorkbook.Sheets(CStr(bonSheets(idx)))
+        On Error GoTo PrintError
+        If Not ws Is Nothing Then
+            ws.Unprotect Password:=pwd
+            
+            lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+            lastCol = ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+            If lastRow < 2 Then lastRow = 2
+            printArea = "A1:" & Chr(64 + lastCol) & lastRow
+            ws.PageSetup.PrintArea = printArea
+            
+            With ws.PageSetup
+                .Orientation = xlPortrait
+                .PaperSize = xlPaperA4
+                .FitToPagesWide = 1
+                .FitToPagesTall = 1
+                .CenterHorizontally = True
+                .PrintHeadings = False
+                
+                .LeftMargin = Application.InchesToPoints(0.75)
+                .RightMargin = Application.InchesToPoints(0.75)
+                .TopMargin = Application.InchesToPoints(1)
+                .BottomMargin = Application.InchesToPoints(0.75)
+                .HeaderMargin = Application.InchesToPoints(0.3)
+                .FooterMargin = Application.InchesToPoints(0.3)
+                
+                .LeftHeader = hdrLeft
+                .CenterHeader = ""
+                .RightHeader = hdrRight
+                .LeftFooter = ftrLeft
+                .CenterFooter = ""
+                .RightFooter = ftrRight
+            End With
+            
+            ws.Protect Password:=pwd, UserInterfaceOnly:=True
+        End If
+    Next idx
+    
+    Application.ScreenUpdating = True
+    MsgBox "Configuration d'impression appliquee :" & vbCrLf & _
+           "  - RAPPORTS (paysage, titres repeteurs, sauts toutes les 50 lignes)" & vbCrLf & _
+           "  - INVENTAIRE (portrait, titres repeteurs)" & vbCrLf & _
+           "  - TABLEAU DE BORD (paysage, titres repeteurs)" & vbCrLf & _
+           "  - Bons de reception/sortie/commande (portrait)" & vbCrLf & vbCrLf & _
+           "En-tetes et pieds de page configures (Page X/Y, date, logo).", _
+           vbInformation, "Configuration Impression"
+    Exit Sub
+    
+PrintError:
+    Application.ScreenUpdating = True
+    MsgBox "Erreur impression: " & Err.Description, vbCritical
 End Sub
 
 '=======================================================================================
