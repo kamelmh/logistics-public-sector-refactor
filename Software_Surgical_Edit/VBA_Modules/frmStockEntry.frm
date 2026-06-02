@@ -748,7 +748,7 @@ Private Sub cmbArticle_Change()
         Exit Sub
     End If
     
-    ' Otherwise, user is typing — filter the list
+    ' Otherwise, user is typing - filter the list
     Dim typed As String
     typed = Trim(cmb.text)
     
