@@ -11,7 +11,7 @@
 - **Phone:** (pending)
 
 ## Paper Information
-- **Title:** An Offline-First Decision Support System for Inventory Optimization in Public Sector Logistics: The Academix v13.2 Framework
+- **Title:** An Offline-First Decision Support System for Inventory Optimization in Public Sector Logistics: The Academix v13.3 Framework
 - **Keywords:** Public Sector Logistics, Decision Support System, Pure VBA, Inventory Optimization, Wilson EOQ, Offline-First Architecture, ABC Classification
 - **Topics:** Optimization and Operational Research, Decision Support Systems, Software Engineering
 - **Pages:** 6 (IEEE double-column format)
