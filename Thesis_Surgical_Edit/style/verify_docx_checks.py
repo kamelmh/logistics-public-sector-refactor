@@ -7,6 +7,25 @@ from docx import Document
 from docx.shared import Cm, Pt
 
 W_NS = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+import re as _re
+
+def _fix_xml_namespace(xml_bytes):
+    """Normalize ns0/ns1 prefixes from python-docx corruption so ElementTree can parse.
+    
+    python-docx saves footnotes/endnotes with ns0:/ns1: prefixes instead of
+    w:/mc:, which breaks ElementTree namespace-aware parsing. This function
+    restores proper namespace prefixes via regex before parsing.
+    """
+    content = xml_bytes.decode('utf-8')
+    # Replace ns1:Ignorable with mc:Ignorable (before ns1->mc)
+    content = content.replace('ns1:Ignorable', 'mc:Ignorable')
+    # Replace namespace declarations
+    content = _re.sub(r'xmlns:ns0="([^"]+)"', r'xmlns:w="\1"', content)
+    content = _re.sub(r'xmlns:ns1="([^"]+)"', r'xmlns:mc="\1"', content)
+    # Replace element/attribute prefixes
+    content = _re.sub(r'\bns0:', 'w:', content)
+    content = _re.sub(r'\bns1:', 'mc:', content)
+    return content.encode('utf-8')
 
 def check(name, ok, msg=""):
     return {"name": name, "passed": bool(ok), "message": str(msg)}
@@ -54,7 +73,10 @@ def run_checks(docx_path, strict_headings=False, size_threshold=50000):
     try:
         with zipfile.ZipFile(docx_path, 'r') as z:
             if 'word/footnotes.xml' in z.namelist():
-                tree = ET.parse(z.open('word/footnotes.xml')); root = tree.getroot()
+                # Fix ns0/ns1 namespace corruption before parsing
+                raw = z.read('word/footnotes.xml')
+                fixed = _fix_xml_namespace(raw)
+                root = ET.fromstring(fixed)
                 for fn in root.findall('.//w:footnote', W_NS):
                     fid = fn.attrib.get(f'{{{W_NS["w"]}}}id', '')
                     if fid in ('0','-1'): continue

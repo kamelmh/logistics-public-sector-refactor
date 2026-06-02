@@ -24,6 +24,16 @@ from docx.oxml.ns import qn
 NS = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
 
+def _fix_xml_namespace(xml_bytes):
+    """Normalize ns0/ns1 prefixes from python-docx corruption for ElementTree parsing."""
+    content = xml_bytes.decode('utf-8')
+    content = content.replace('ns1:Ignorable', 'mc:Ignorable')
+    content = re.sub(r'xmlns:ns0="([^"]+)"', r'xmlns:w="\1"', content)
+    content = re.sub(r'xmlns:ns1="([^"]+)"', r'xmlns:mc="\1"', content)
+    content = re.sub(r'\bns0:', 'w:', content)
+    content = re.sub(r'\bns1:', 'mc:', content)
+    return content.encode('utf-8')
+
 def emu_to_cm(emu):
     return round(emu / 914400 * 2.54, 2) if emu else 0
 
@@ -117,8 +127,9 @@ def run_audit(docx_path):
     try:
         with zipfile.ZipFile(docx_path, 'r') as z:
             if 'word/footnotes.xml' in z.namelist():
-                tree = ET.parse(z.open('word/footnotes.xml'))
-                root = tree.getroot()
+                raw = z.read('word/footnotes.xml')
+                fixed = _fix_xml_namespace(raw)
+                root = ET.fromstring(fixed)
                 for fn in root.findall('.//w:footnote', ns):
                     fid = fn.attrib.get(NS+'id', '')
                     if fid in ('0','-1'): continue
