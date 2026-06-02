@@ -1,17 +1,16 @@
 # CrossFlow Handoff — Academix v13.2
 
 ## Current Priority
-All 4 DSS intelligence pillars implemented. 4 commits pushed. Ready for v13.3 tag + full build.
+All 4 DSS intelligence pillars implemented. v13.3 tagged and pushed. English paper updated to v13.3.
 
 ## State
-- **Session**: v13.3 candidate — Full DSS intelligence roadmap (2026-06-02)
+- **Session**: v13.3 — DSS Intelligence Roadmap complete (2026-06-02)
 - **Agent**: Academix
-- **Workbook**: `ERP_v13.2.xlsm` (needs rebuild with demo data)
+- **Workbook**: `ERP_v13.2.xlsm` (1041.2 KB, build verified)
 - **Pre-build**: 0 errors (44 files)
-- **Verify**: 112/112 PASS (on previous output)
-- **Commits**: `ea9e33b` (P2), `952cf9b` (P1), `35a98d0` (P3), `50d6556` (P4)
-- **Barcodes**: STAGING_BUFFER populated (15 barcodes)
-- **Print**: ConfigurerImpressionSilent sets ALL PageSetup properties (Orientation, PaperSize, FitToPages, CenterHorizontally, PrintHeadings, Order, PrintArea) — sheets unprotected first to avoid COM crash
+- **Verify**: 112/112 PASS
+- **Tag**: v13.3 (pushed, 8 commits: ea9e33b..7f59581)
+- **English paper**: Updated to v13.3, 144/144 checks, 4 intelligence pillars documented
 
 ## Completed
 ### Session 9 (2026-06-02) — Full DSS Intelligence Roadmap (4 Pillars)
@@ -197,7 +196,10 @@ All 4 DSS intelligence pillars implemented. 4 commits pushed. Ready for v13.3 ta
    - `AddLineToGrid` populates stock from `m_StockActuel`
 
 ## Pending Tasks
-- (none)
+- System Cleanup: Unify opencode versions (Delegated to other terminal)
+- Tag v13.3 when ready
+- Full build + verify on next session (demo data generation needs more time)
+- Thesis integration of DSS intelligence features
 
 ## Data Flow (how things connect)
 ```

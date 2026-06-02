@@ -10,16 +10,17 @@ Mohamed Boudiaf University of M'sila, Algeria
 
 Dear Program Committee,
 
-Please find attached our original research paper entitled **"An Offline-First Decision Support System for Inventory Optimization in Public Sector Logistics: The Academix v13.2 Framework"** for consideration for presentation at the 7th International Symposium on Informatics and its Applications (ISIA 2026).
+Please find attached our original research paper entitled **"An Offline-First Decision Support System for Inventory Optimization in Public Sector Logistics: The Academix v13.3 Framework"** for consideration for presentation at the 7th International Symposium on Informatics and its Applications (ISIA 2026).
 
 ## Summary
-This paper presents Academix v13.2, a Decision Support System (DSS) implemented entirely in Pure VBA for inventory optimization in public sector administrations. The system integrates ABC classification with the Wilson Economic Order Quantity (EOQ) model and was validated using 38 days of field data from the Education Directorate of El Bayadh, Algeria, achieving a 99.7% operational performance rate with 141/141 verification checks passed.
+This paper presents Academix v13.3, a Decision Support System (DSS) implemented entirely in Pure VBA for inventory optimization in public sector administrations. The system integrates ABC classification with the Wilson Economic Order Quantity (EOQ) model, augmented by four DSS intelligence pillars (print engineering, UX optimization, stockout projection, fuzzy search), and was validated using 38 days of field data from the Education Directorate of El Bayadh, Algeria, achieving a 99.7% operational performance rate with 144/144 verification checks passed.
 
 ## Novelty and Contribution
 1. A zero-dependency, offline-first architecture suitable for resource-constrained public administrations
 2. Hybrid ABC-EOQ-ROP mathematical model implemented entirely in Pure VBA
-3. Rigorous 141-point verification framework for institutional confidence
-4. Empirical evidence from a real-world deployment in the Algerian public education sector
+3. Four DSS intelligence pillars enhancing operational usability within Pure VBA constraints
+4. Rigorous 144-point verification framework for institutional confidence
+5. Empirical evidence from a real-world deployment in the Algerian public education sector
 
 ## Author Declaration
 - This paper is original and has not been submitted to any other conference, workshop, or journal
