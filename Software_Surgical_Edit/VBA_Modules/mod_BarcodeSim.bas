@@ -1,114 +1,20 @@
 Attribute VB_Name = "mod_BarcodeSim"
 ' ============================================================================
-' Academix v13.2 - DSS Logistique El Bayadh
+' Academix v13.3 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
 ' Direction de l'Education - Wilaya d'El Bayadh
-' Advanced Barcode Simulation and Generation Engine
-' Supports: Code128 (A/B/C), EAN-13, Code39, Interleaved 2of5
-' Generates visual barcodes in Excel cells, labels, and scanner simulation
+' Barcode Rendering and Simulation Engine
+' Visual barcodes in Excel cells, labels, scanner simulation
+' Encoding logic separated to mod_BarcodeEncoder
 ' ============================================================================
 
 Option Explicit
-
-' ============================================================================
-' CONSTANTS
-' ============================================================================
-
-' Symbology types
-Public Enum BarcodeSymbology
-    bcCode128 = 0
-    bcEAN13 = 1
-    bcCode39 = 2
-    bcInterleaved2of5 = 3
-    bcQR_Visual = 4
-End Enum
-
-' Code128 encoding tables
-Private Const C128_START_A As String = "211412"
-Private Const C128_START_B As String = "211214"
-Private Const C128_START_C As String = "211232"
-Private Const C128_STOP As String = "2331112"
-
-' Code128 character patterns (6 digits each, total 107 chars)
-Private m_C128Patterns(0 To 106) As String
-Private m_C128InitDone As Boolean
-
-' Code39 character patterns (9 digits each, 43 chars)
-Private m_C39Patterns(0 To 42) As String
-Private m_C39Chars As String
-Private m_C39InitDone As Boolean
 
 ' Module state
 Private Const BARCODE_SIM_SHEET As String = "BARCODE_LABELS"
 Private Const BARCODE_REG_RANGE As String = "BARCODE_REGISTRY"
 
-' ============================================================================
-' INITIALIZATION - Load encoding tables
-' ============================================================================
-
-Private Sub InitCode128()
-    If m_C128InitDone Then Exit Sub
-    
-    ' Code128 character encodings (value 0-105)
-    ' Format: 6 digits (bar1,space1,bar2,space2,bar3,space3)
-    m_C128Patterns(0) = "212222":  m_C128Patterns(1) = "222122"
-    m_C128Patterns(2) = "222221":  m_C128Patterns(3) = "121223"
-    m_C128Patterns(4) = "121322":  m_C128Patterns(5) = "131222"
-    m_C128Patterns(6) = "122213":  m_C128Patterns(7) = "122312"
-    m_C128Patterns(8) = "132212":  m_C128Patterns(9) = "221213"
-    m_C128Patterns(10) = "221312": m_C128Patterns(11) = "231212"
-    m_C128Patterns(12) = "112232": m_C128Patterns(13) = "122132"
-    m_C128Patterns(14) = "122231": m_C128Patterns(15) = "113222"
-    m_C128Patterns(16) = "123122": m_C128Patterns(17) = "123221"
-    m_C128Patterns(18) = "223211": m_C128Patterns(19) = "221132"
-    m_C128Patterns(20) = "221231": m_C128Patterns(21) = "213212"
-    m_C128Patterns(22) = "223112": m_C128Patterns(23) = "312131"
-    m_C128Patterns(24) = "311222": m_C128Patterns(25) = "321122"
-    m_C128Patterns(26) = "321221": m_C128Patterns(27) = "312212"
-    m_C128Patterns(28) = "322112": m_C128Patterns(29) = "322211"
-    m_C128Patterns(30) = "212123": m_C128Patterns(31) = "212321"
-    m_C128Patterns(32) = "232121": m_C128Patterns(33) = "111323"
-    m_C128Patterns(34) = "131123": m_C128Patterns(35) = "131321"
-    m_C128Patterns(36) = "112313": m_C128Patterns(37) = "132113"
-    m_C128Patterns(38) = "132311": m_C128Patterns(39) = "211313"
-    m_C128Patterns(40) = "231113": m_C128Patterns(41) = "231311"
-    m_C128Patterns(42) = "112133": m_C128Patterns(43) = "112331"
-    m_C128Patterns(44) = "132131": m_C128Patterns(45) = "113123"
-    m_C128Patterns(46) = "113321": m_C128Patterns(47) = "133121"
-    m_C128Patterns(48) = "313121": m_C128Patterns(49) = "211331"
-    m_C128Patterns(50) = "231131": m_C128Patterns(51) = "213113"
-    m_C128Patterns(52) = "213311": m_C128Patterns(53) = "213131"
-    m_C128Patterns(54) = "311123": m_C128Patterns(55) = "311321"
-    m_C128Patterns(56) = "331121": m_C128Patterns(57) = "312113"
-    m_C128Patterns(58) = "312311": m_C128Patterns(59) = "332111"
-    m_C128Patterns(60) = "314111": m_C128Patterns(61) = "221411"
-    m_C128Patterns(62) = "431111": m_C128Patterns(63) = "111224"
-    m_C128Patterns(64) = "111422": m_C128Patterns(65) = "121124"
-    m_C128Patterns(66) = "121421": m_C128Patterns(67) = "141122"
-    m_C128Patterns(68) = "141221": m_C128Patterns(69) = "112214"
-    m_C128Patterns(70) = "112412": m_C128Patterns(71) = "122114"
-    m_C128Patterns(72) = "122411": m_C128Patterns(73) = "142112"
-    m_C128Patterns(74) = "142211": m_C128Patterns(75) = "241211"
-    m_C128Patterns(76) = "221114": m_C128Patterns(77) = "413111"
-    m_C128Patterns(78) = "241112": m_C128Patterns(79) = "134111"
-    m_C128Patterns(80) = "111242": m_C128Patterns(81) = "121142"
-    m_C128Patterns(82) = "121241": m_C128Patterns(83) = "114212"
-    m_C128Patterns(84) = "124112": m_C128Patterns(85) = "124211"
-    m_C128Patterns(86) = "411212": m_C128Patterns(87) = "421112"
-    m_C128Patterns(88) = "421211": m_C128Patterns(89) = "212141"
-    m_C128Patterns(90) = "214121": m_C128Patterns(91) = "412121"
-    m_C128Patterns(92) = "111143": m_C128Patterns(93) = "111341"
-    m_C128Patterns(94) = "131141": m_C128Patterns(95) = "114113"
-    m_C128Patterns(96) = "114311": m_C128Patterns(97) = "411113"
-    m_C128Patterns(98) = "411311": m_C128Patterns(99) = "113141"
-    m_C128Patterns(100) = "114131": m_C128Patterns(101) = "311141"
-    m_C128Patterns(102) = "411131": m_C128Patterns(103) = "211412" ' Start A
-    m_C128Patterns(104) = "211214"  ' Start B
-    m_C128Patterns(105) = "211232"  ' Start C
-    m_C128Patterns(106) = "2331112" ' Stop
-    
-    m_C128InitDone = True
-End Sub
+' Encoding moved to mod_BarcodeEncoder
 
 Private Sub InitCode39()
     If m_C39InitDone Then Exit Sub
@@ -163,74 +69,7 @@ Private Sub InitCode39()
     m_C39InitDone = True
 End Sub
 
-' ============================================================================
-' PUBLIC API - Code128 Encoding
-' ============================================================================
-
-Public Function Code128_Encode(ByVal text As String, _
-                               Optional ByVal subset As String = "B") As String
-    ' Returns binary string representation of Code128 barcode
-    ' '1' = bar (black), '0' = space (white)
-    
-    InitCode128
-    
-    Dim i As Integer
-    Dim checksum As Integer
-    Dim codeVals() As Integer
-    Dim result As String
-    Dim startCode As Integer
-    Dim startPattern As String
-    
-    On Error GoTo EncodeError
-    
-    If Len(text) = 0 Then
-        Code128_Encode = ""
-        Exit Function
-    End If
-    
-    ' Determine start code and convert text to values
-    Select Case UCase(Left(subset, 1))
-        Case "A"
-            startCode = 103
-            startPattern = C128_START_A
-            codeVals = TextToCode128A(text)
-        Case "C"
-            startCode = 105
-            startPattern = C128_START_C
-            codeVals = TextToCode128C(text)
-        Case Else
-            startCode = 104
-            startPattern = C128_START_B
-            codeVals = TextToCode128B(text)
-    End Select
-    
-    If UBound(codeVals) < 0 Then Exit Function
-    
-    ' Build pattern
-    result = startPattern
-    
-    ' Checksum starts with start code value
-    checksum = startCode - 100  ' Start A=3, B=4, C=5
-    
-    For i = LBound(codeVals) To UBound(codeVals)
-        checksum = checksum + (codeVals(i) * (i + 1))
-        result = result & ModulePattern(codeVals(i))
-    Next i
-    
-    ' Append checksum character
-    checksum = checksum Mod 103
-    result = result & ModulePattern(checksum)
-    
-    ' Append stop pattern
-    result = result & C128_STOP
-    
-    ' Convert to binary string (1=bar, 0=space)
-    Code128_Encode = PatternToBinary(result)
-    Exit Function
-    
-EncodeError:
-    Code128_Encode = ""
-End Function
+' Encoding API moved to mod_BarcodeEncoder (Code128_Encode, EAN13_Encode, Code39_Encode, etc.)
 
 Public Function Code128_Decode(ByVal data As String) As String
     ' Decode a previously encoded string - validation use
@@ -393,10 +232,10 @@ Public Sub GenerateBarcode(ByVal targetSheet As String, _
     ' Encode based on symbology
     Select Case symbology
         Case bcCode128
-            binaryPattern = Code128_Encode(cleanData)
+            binaryPattern = mod_BarcodeEncoder.Code128_Encode(cleanData)
             barcodeText = cleanData
         Case bcEAN13
-            binaryPattern = EAN13_Encode(cleanData)
+            binaryPattern = mod_BarcodeEncoder.EAN13_Encode(cleanData)
             ' Extract checksum from binary pattern
             If InStr(binaryPattern, "|") > 0 Then
                 barcodeText = cleanData & Mid(binaryPattern, InStr(binaryPattern, "|") + 1)
@@ -405,10 +244,10 @@ Public Sub GenerateBarcode(ByVal targetSheet As String, _
                 barcodeText = cleanData
             End If
         Case bcCode39
-            binaryPattern = Code39_Encode(cleanData)
+            binaryPattern = mod_BarcodeEncoder.Code39_Encode(cleanData)
             barcodeText = cleanData
         Case bcInterleaved2of5
-            binaryPattern = Interleaved2of5_Encode(cleanData)
+            binaryPattern = mod_BarcodeEncoder.Interleaved2of5_Encode(cleanData)
             barcodeText = cleanData
         Case bcQR_Visual
             Call GenerateQRVisualBlock(ws, targetCell, cleanData)
@@ -605,7 +444,7 @@ Public Sub PrintBarcodeLabels()
     wsLabels.Unprotect Password:=mod_Config.MASTER_PWD
     
     ' Setup label template
-    wsLabels.Cells(1, 1).Value = "ACADEMIX v13.2 - " & Chr(201) & "tiquettes Codes-Barres"
+    wsLabels.Cells(1, 1).Value = "ACADEMIX v13.3 - " & Chr(201) & "tiquettes Codes-Barres"
     wsLabels.Cells(1, 1).Font.Bold = True
     wsLabels.Cells(1, 1).Font.Size = 14
     wsLabels.Range("A1:F1").Merge
@@ -897,226 +736,6 @@ Private Sub GenerateQRVisualBlock(ByRef ws As Worksheet, _
     labelCell.Font.Color = RGB(128, 128, 128)
     labelCell.Font.Name = "Courier New"
 End Sub
-
-' ============================================================================
-' PRIVATE - Encoding Helpers
-' ============================================================================
-
-Private Function TextToCode128B(ByVal text As String) As Integer()
-    Dim vals() As Integer
-    Dim i As Integer
-    Dim count As Integer
-    
-    count = 0
-    ReDim vals(0 To Len(text) - 1)
-    
-    For i = 1 To Len(text)
-        Dim ch As Integer
-        ch = Asc(Mid(text, i, 1))
-        
-        If ch >= 32 Then
-            vals(count) = ch - 32
-            count = count + 1
-        End If
-    Next i
-    
-    If count = 0 Then
-        ReDim vals(-1 To -1)
-    Else
-        ReDim Preserve vals(0 To count - 1)
-    End If
-    
-    TextToCode128B = vals
-End Function
-
-Private Function TextToCode128A(ByVal text As String) As Integer()
-    ' Simplified: uses Code128B mapping for most chars
-    TextToCode128A = TextToCode128B(text)
-End Function
-
-Private Function TextToCode128C(ByVal text As String) As Integer()
-    ' Code128C: pairs of digits
-    Dim vals() As Integer
-    Dim i As Integer
-    Dim count As Integer
-    Dim cleanText As String
-    
-    ' Extract only digits
-    cleanText = ""
-    For i = 1 To Len(text)
-        If IsNumeric(Mid(text, i, 1)) Then
-            cleanText = cleanText & Mid(text, i, 1)
-        End If
-    Next i
-    
-    If Len(cleanText) Mod 2 <> 0 Then
-        cleanText = "0" & cleanText  ' Pad odd length
-    End If
-    
-    count = 0
-    ReDim vals(0 To (Len(cleanText) \ 2) - 1)
-    
-    For i = 1 To Len(cleanText) Step 2
-        vals(count) = CInt(Mid(cleanText, i, 2))
-        count = count + 1
-    Next i
-    
-    TextToCode128C = vals
-End Function
-
-Private Function ModulePattern(ByVal charVal As Integer) As String
-    If charVal >= 0 And charVal <= 106 Then
-        ModulePattern = m_C128Patterns(charVal)
-    Else
-        ModulePattern = ""
-    End If
-End Function
-
-Private Function PatternToBinary(ByVal pattern As String) As String
-    ' Convert module pattern to binary (1=bar, 0=space)
-    Dim i As Integer
-    Dim result As String
-    Dim isBar As Boolean
-    
-    result = ""
-    isBar = True
-    
-    For i = 1 To Len(pattern)
-        Dim moduleCount As Integer
-        moduleCount = CInt(Mid(pattern, i, 1))
-        
-        Dim j As Integer
-        For j = 1 To moduleCount
-            If isBar Then
-                result = result & "1"
-            Else
-                result = result & "0"
-            End If
-        Next j
-        
-        isBar = Not isBar
-    Next i
-    
-    PatternToBinary = result
-End Function
-
-Private Function EAN13_ParityTable(ByVal firstDigit As Integer) As String
-    ' Parity encoding for EAN-13 left group based on first digit
-    ' O=Odd parity, E=Even parity
-    Select Case firstDigit
-        Case 0: EAN13_ParityTable = "OOOOOO"
-        Case 1: EAN13_ParityTable = "OOEOEE"
-        Case 2: EAN13_ParityTable = "OOEEOE"
-        Case 3: EAN13_ParityTable = "OOEEEO"
-        Case 4: EAN13_ParityTable = "OEOOEE"
-        Case 5: EAN13_ParityTable = "OEEOOE"
-        Case 6: EAN13_ParityTable = "OEEEOO"
-        Case 7: EAN13_ParityTable = "OEOEOE"
-        Case 8: EAN13_ParityTable = "OEOEEO"
-        Case 9: EAN13_ParityTable = "OEEOEO"
-        Case Else: EAN13_ParityTable = "OOOOOO"
-    End Select
-End Function
-
-Private Function EAN13_LeftPattern(ByVal digit As Integer) As String
-    ' EAN-13 left-side encoding (even parity)
-    Select Case digit
-        Case 0: EAN13_LeftPattern = "0001101"
-        Case 1: EAN13_LeftPattern = "0011001"
-        Case 2: EAN13_LeftPattern = "0010011"
-        Case 3: EAN13_LeftPattern = "0111101"
-        Case 4: EAN13_LeftPattern = "0100011"
-        Case 5: EAN13_LeftPattern = "0110001"
-        Case 6: EAN13_LeftPattern = "0101111"
-        Case 7: EAN13_LeftPattern = "0111011"
-        Case 8: EAN13_LeftPattern = "0110111"
-        Case 9: EAN13_LeftPattern = "0001011"
-        Case Else: EAN13_LeftPattern = "0001101"
-    End Select
-End Function
-
-Private Function EAN13_RightPattern(ByVal digit As Integer) As String
-    ' EAN-13 right-side encoding (all odd parity)
-    Select Case digit
-        Case 0: EAN13_RightPattern = "1110010"
-        Case 1: EAN13_RightPattern = "1100110"
-        Case 2: EAN13_RightPattern = "1101100"
-        Case 3: EAN13_RightPattern = "1000010"
-        Case 4: EAN13_RightPattern = "1011100"
-        Case 5: EAN13_RightPattern = "1001110"
-        Case 6: EAN13_RightPattern = "1010000"
-        Case 7: EAN13_RightPattern = "1000100"
-        Case 8: EAN13_RightPattern = "1001000"
-        Case 9: EAN13_RightPattern = "1110100"
-        Case Else: EAN13_RightPattern = "1110010"
-    End Select
-End Function
-
-Private Function Interleaved2of5_Encode(ByVal data As String) As String
-    ' Interleaved 2 of 5 encoding
-    Dim i As Integer
-    Dim result As String
-    Dim digits() As String
-    Dim pairIndex As Integer
-    Dim barPattern As String, spacePattern As String
-    
-    ' Clean data to digits only
-    Dim cleanData As String
-    cleanData = ""
-    For i = 1 To Len(data)
-        If IsNumeric(Mid(data, i, 1)) Then
-            cleanData = cleanData & Mid(data, i, 1)
-        End If
-    Next i
-    
-    ' Must have even number of digits
-    If Len(cleanData) Mod 2 <> 0 Then
-        cleanData = "0" & cleanData
-    End If
-    
-    ' Start pattern
-    result = "1010"
-    
-    ' Process pairs
-    For pairIndex = 1 To Len(cleanData) Step 2
-        barPattern = I2of5_Digit(CInt(Mid(cleanData, pairIndex, 1)), True)
-        spacePattern = I2of5_Digit(CInt(Mid(cleanData, pairIndex + 1, 1)), False)
-        
-        ' Interleave: bar1, space1, bar2, space2, bar3, space3, bar4, space4, bar5, space5
-        For i = 1 To 5
-            result = result & Mid(barPattern, i, 1) & Mid(spacePattern, i, 1)
-        Next i
-    Next pairIndex
-    
-    ' Stop pattern
-    result = result & "1101"
-    
-    Interleaved2of5_Encode = result
-End Function
-
-Private Function I2of5_Digit(ByVal digit As Integer, ByVal isBar As Boolean) As String
-    ' Interleaved 2 of 5 digit pattern
-    ' 1 = wide (bar or space), 0 = narrow
-    ' Each digit has exactly 2 wide elements and 3 narrow
-    
-    Dim pattern As String
-    
-    Select Case digit
-        Case 0: pattern = "00101"
-        Case 1: pattern = "10001"
-        Case 2: pattern = "01001"
-        Case 3: pattern = "11000"
-        Case 4: pattern = "00110"
-        Case 5: pattern = "10100"
-        Case 6: pattern = "01100"
-        Case 7: pattern = "00011"
-        Case 8: pattern = "10010"
-        Case 9: pattern = "01010"
-        Case Else: pattern = "00101"
-    End Select
-    
-    I2of5_Digit = pattern
-End Function
 
 ' ============================================================================
 ' PRIVATE - Utility Functions

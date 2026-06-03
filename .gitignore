@@ -1,5 +1,6 @@
 # Google Drive temporary files
 *.tmp
+tmp_*
 .tmp.driveupload/
 bin/
 
@@ -11,8 +12,9 @@ tesseract-ocr-w64-setup.exe
 # Session transcripts (not project code)
 session-ses_*.md
 
-# Archive & backup directories
+# Archive & backup directories (both naming conventions)
 _archive/
+ARCHIVED/
 backups/
 
 # External dependencies
@@ -47,12 +49,9 @@ desktop.ini
 # Generated output directories
 Thesis_Surgical_Edit/output/
 Thesis_Surgical_Edit/style/__pycache__/
-# Thesis output (build artifacts)
-Thesis_Surgical_Edit/output/
 .opencode/skills_spectrum/
 media-*/
 external_obsidian_repos/
-node_modules/
 
 # Exploration repos (not project code)
 sari/

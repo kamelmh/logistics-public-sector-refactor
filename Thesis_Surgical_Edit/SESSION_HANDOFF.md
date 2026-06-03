@@ -1,32 +1,27 @@
-# Thesis Session Handoff — Academix v13.2
-> Last updated: 2026-05-22 18:30 UTC
+# Thesis Session Handoff — Academix v13.3
+> Last updated: 2026-06-03 22:30 UTC
 
 ## STATE: THESIS PRINT-READY ✅
 
 | Asset | Status | Notes |
 |-------|--------|-------|
-| Source MD | ✅ 993 lines | `Memoire_DSS_Logistique_ElBayadh.md` — Ch4 embedded |
-| DOCX | ✅ 94 KB | 8 footnotes in full CNEPD format |
-| PDF | ✅ 952 KB | Fully rendered |
-| ERP Workbook (Golden) | ✅ 696 KB, 43 clean modules | `GOLDEN_ERP_v13.2.xlsm` |
-| ERP Workbook (Active) | ✅ 696 KB, 43 modules | `ERP_v13.2.xlsm` |
-| ERP Workbook (Archive) | 📦 Archival, 50 dead modules | `ARCHIVE_LEGACY_Copy_of_ERP_v13.2.xlsm` |
-| Build | ✅ 33/36 (3 non-critical) | DOCX size threshold, manifest hash |
-| Verify | ✅ 105/105 PASS | Today |
-| Audit | ✅ 16/16 PASS | 5-phase DSS |
-| Tests | ✅ 20/20 PASS | Macro suite |
-| Defense files | ✅ RESTORED 4/4 | presentation, Q&A (22), demo (8-step), checklist (T-14) |
+| Source MD | ✅ 1,125 lines (154 KB) | `Memoire_DSS_Logistique_ElBayadh.md` |
+| DOCX | ✅ 143 KB | 8 footnotes in full CNEPD format |
+| PDF | ⚠️ Not in output dir | Only English paper PDF present — needs rebuild |
+| ERP Workbook (Golden) | ✅ 1,009 KB, 44 modules | `GOLDEN_ERP_v13.3.xlsm` |
+| ERP Workbook (Active) | ✅ 1,041 KB, 70 modules | `ERP_v13.3.xlsm` |
+| Build | ✅ 44/44 OK (0 errors) | Pre-build validator + compile |
+| Verify | ✅ 112/112 PASS | 5 consecutive clean runs |
+| English Paper | ✅ v13.3, 144/144 checks | IEEE double-column blind PDF (69 KB) |
+| CCA'2026 Package | ✅ Submission ready | Deadline Aug 15, 2026 |
+| Defense files | ✅ 4/4 | presentation, Q&A, demo, checklist |
 
-## WINDOW D CONDITIONAL SIGN-OFF (2026-05-17)
-- 2 mandatory footnote fixes: ✅ BOTH EXECUTED
-- All 8 footnotes in full CNEPD format
-- Pending: unconditional sign-off
+## NEXT PHASE: DEFENSE PREPARATION
+- Jury Q&A guide refresh
+- Demo walkthrough test with v13.3 workbook
+- Presentation alignment with v13.3 features
+- Timeline: TBD
 
-## NEXT PHASE: B — ENGLISH PAPER
-- IMRaD format, 6-8pp, target CIIA/DOAJ journal
-- Est. 2-3 sessions
-
-## MISSING ITEMS RESTORED (Today)
-- `defense/` — 4 files (presentation script, Q&A guide, demo walkthrough, checklist)
-- `Software_Surgical_Edit/build.ps1` — delegation wrapper to vbe-auto
-- `Software_Surgical_Edit/verify.ps1` — delegation wrapper to vbe-auto
+## MISSING ITEMS
+- Arabic thesis PDF not in output dir — run `build-thesis.ps1` to regenerate
+- Verify defense file references still point to v13.2 filenames (cosmetic)

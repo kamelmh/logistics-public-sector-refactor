@@ -9,6 +9,15 @@ Attribute VB_Name = "mod_Config"
 
 Option Explicit
 
+' Barcode symbology types (used by mod_BarcodeSim and mod_BarcodeEncoder)
+Public Enum BarcodeSymbology
+    bcCode128 = 0
+    bcEAN13 = 1
+    bcCode39 = 2
+    bcInterleaved2of5 = 3
+    bcQR_Visual = 4
+End Enum
+
 ' Sheet names
 Public Const SHEET_MOUVEMENTS As String = "MOUVEMENTS"
 Public Const SHEET_ARTICLES As String = "ARTICLES"
