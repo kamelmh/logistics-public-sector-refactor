@@ -700,7 +700,7 @@ Public Sub ExportAllToPDF()
     End If
     
     Dim erpPath As String
-    erpPath = basePath & "ERP_v13.2.xlsm"
+    erpPath = basePath & "ERP_v13.3.xlsm"
     If Len(Dir(erpPath)) > 0 Then
         If ConvertDocument(erpPath) Then
             Debug.Print "[LO] ERP PDF generated"
@@ -708,7 +708,7 @@ Public Sub ExportAllToPDF()
     End If
     
     Application.StatusBar = "Export PDF termin" & Chr(233)
-    MsgBox "Export PDF termin" & Chr(233) & ".", vbInformation, "Academix v13.2"
+    MsgBox "Export PDF termin" & Chr(233) & ".", vbInformation, "Academix v13.3"
 End Sub
 
 Public Sub ConvertDocumentInteractive()

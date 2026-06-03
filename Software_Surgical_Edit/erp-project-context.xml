@@ -18,7 +18,7 @@
       <param name="S" value="500 DZD" desc="Order Cost" />
       <param name="I" value="20%" desc="Holding Rate" />
       <param name="MASTER_PWD" value="erp_secure_pwd_2026" />
-      <param name="VERSION" value="v13.2" />
+      <param name="VERSION" value="v13.3" />
     </ground-truth>
     <warnings-status>ALL RESOLVED (W001-W010). Dead code removed: Module1, Module2, mod_Config_Test, mod_StockEntry_Logic_Enhanced, mod_TestHarness, frmSystemLog, frmStockEntry_Enhanced</warnings-status>
     <known-issues>

@@ -3,8 +3,8 @@
 ## Supported Versions
 | Version | Supported |
 |---------|-----------|
-| v13.2   | ✅ Active development |
-| < v13.2 | ❌ Not supported |
+| v13.3   | ✅ Active development |
+| < v13.3 | ❌ Not supported |
 
 ## Reporting a Vulnerability
 This is a student research project for the Direction de l'Education, Wilaya de El Bayadh.
@@ -15,7 +15,7 @@ If you discover a security issue:
 3. Allow 48 hours for an initial response.
 
 ## Scope
-- The ERP workbook (`ERP_v13.2.xlsm`) — VBA macros and sheet protection
+- The ERP workbook (`ERP_v13.3.xlsm`) — VBA macros and sheet protection
 - CI/CD pipeline — secrets and token management
 - Thesis documents — no executable content
 

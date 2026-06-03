@@ -137,7 +137,7 @@ function Invoke-Pipeline {
 
 # ─── Main ─────────────────────────────────────────────────────────────────────
 Write-Host "`n" + ("=" * 50) -ForegroundColor Cyan
-Write-Host "  ACADEMIX v13.2 — Autonomous Mode" -ForegroundColor Cyan
+Write-Host "  ACADEMIX v13.3 — Autonomous Mode" -ForegroundColor Cyan
 Write-Host "  $(Get-Date -Format 'yyyy-MM-dd HH:mm')" -ForegroundColor Gray
 Write-Host ("=" * 50) -ForegroundColor Cyan
 

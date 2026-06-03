@@ -9,7 +9,7 @@ $ROOT = Split-Path -Parent $PSCommandPath
 
 Write-Host @"
 ╔══════════════════════════════════════════════════════╗
-║         ACADEMIX v13.2 — Workzone Control           ║
+║         ACADEMIX v13.3 — Workzone Control           ║
 ║  Direction de l'Éducation, El Bayadh                ║
 ║  $(Get-Date -Format 'yyyy-MM-dd HH:mm')                    ║
 ╚══════════════════════════════════════════════════════╝
@@ -78,7 +78,7 @@ switch ($Mode) {
         Write-Host "  Thesis:       $(if (Test-Path (Join-Path $ROOT 'Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md')) { '✓' } else { '✗' })"
         Write-Host "  ERP Source:   $('✓' * ((Get-ChildItem (Join-Path $ROOT 'Software_Surgical_Edit\VBA_Modules') -Filter '*.bas' -ErrorAction SilentlyContinue).Count -gt 0 -or (Get-ChildItem (Join-Path $ROOT 'Software_Surgical_Edit') -Filter '*.bas' -ErrorAction SilentlyContinue).Count -gt 0))"
         Write-Host "  Delivery:     $(if (Test-Path (Join-Path $ROOT 'Final_Delivery_Layout\Memoire_DSS_Logistique_ElBayadh.pdf')) { '✓' } else { '✗' })"
-        Write-Host "  Desktop:      $(if (Test-Path "C:\Users\Administrator\Desktop\Academix_v13.2_Delivery") { '✓' } else { '✗' })"
+        Write-Host "  Desktop:      $(if (Test-Path "C:\Users\Administrator\Desktop\Academix_v13.3_Delivery") { '✓' } else { '✗' })"
         Write-Host "  Build:        $(if (Test-Path (Join-Path $ROOT 'vbe-auto\build.ps1')) { '✓' } else { '✗' })"
         Write-Host "  Verify:       $(if (Test-Path (Join-Path $ROOT 'vbe-auto\verify.ps1')) { '✓' } else { '✗' })"
         Write-Host "  Checkpoints:  $(@(Get-ChildItem (Join-Path $ROOT '.checkpoints') -Directory -ErrorAction SilentlyContinue).Count)"

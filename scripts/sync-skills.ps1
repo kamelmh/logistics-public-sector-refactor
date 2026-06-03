@@ -192,7 +192,7 @@ Write-Host "Written $($spectrumSkills.Count + $simpleSpectrum.Count) Spectrum Dr
 # Write Spectrum REGISTRY.md
 $registry = @"
 # AI OS Spectrum — Driver Registry
-> Academic v13.2 Project Workspace
+> Academic v13.3 Project Workspace
 > Auto-generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm')
 
 ## Layers

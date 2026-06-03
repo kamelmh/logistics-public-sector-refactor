@@ -119,7 +119,7 @@ $sb = [System.Text.StringBuilder]::new()
 
 $sb.AppendLine("# Project Directory Classification") | Out-Null
 $sb.AppendLine() | Out-Null
-$sb.AppendLine("**Academix v13.2** — Direction de l'Éducation, El Bayadh") | Out-Null
+$sb.AppendLine("**Academix v13.3** — Direction de l'Éducation, El Bayadh") | Out-Null
 $sb.AppendLine("**Author:** Mahi Kamel Abdelghani") | Out-Null
 $sb.AppendLine("**Auto-generated:** $(Get-Date -Format 'yyyy-MM-dd HH:mm')") | Out-Null
 $sb.AppendLine() | Out-Null

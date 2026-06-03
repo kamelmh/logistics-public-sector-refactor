@@ -18,7 +18,7 @@
     Path to save the pipeline report JSON. Default: vbe-auto/results/pipeline-report.json
 
 .PARAMETER WorkbookPath
-    Path to the workbook for verify/test-macros/dss-audit. Default: ERP_v13.2.xlsm
+    Path to the workbook for verify/test-macros/dss-audit. Default: ERP_v13.3.xlsm
 
 .EXAMPLE
     & "vbe-auto\pipeline-full.ps1"
@@ -34,7 +34,7 @@
 
 .NOTES
     Version: 1.0
-    Author: Academix v13.2
+    Author: Academix v13.3
     Source: https://github.com/kamelmh/logistics-public-sector-refactor
 #>
 
@@ -61,7 +61,7 @@ if (-not $OutputPath) {
 if (-not (Test-Path $ReportDir)) { New-Item -ItemType Directory -Path $ReportDir -Force | Out-Null }
 
 if (-not $WorkbookPath) {
-    $WorkbookPath = "$ProjectRoot\ERP_v13.2.xlsm"
+    $WorkbookPath = "$ProjectRoot\ERP_v13.3.xlsm"
 }
 
 # ─── Stage definitions ───────────────────────────────────────────────────────
@@ -148,7 +148,7 @@ function Invoke-Stage {
 }
 
 # ─── MAIN PIPELINE ──────────────────────────────────────────────────────────
-Write-Banner "ACADEMIX v13.2 — FULL PIPELINE"
+Write-Banner "ACADEMIX v13.3 — FULL PIPELINE"
 
 Write-Host ""
 Write-Host "  Project:  $ProjectRoot"
@@ -223,7 +223,7 @@ Write-Host "══════════════════════�
 
 # ─── Save report ─────────────────────────────────────────────────────────────
 $report = [PSCustomObject]@{
-    Pipeline = "Academix v13.2 — Full Pipeline"
+    Pipeline = "Academix v13.3 — Full Pipeline"
     Timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
     Duration = $totalDurationMs
     ContinueOnError = $ContinueOnError.IsPresent

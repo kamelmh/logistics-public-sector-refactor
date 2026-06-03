@@ -21,7 +21,7 @@
       <lines>~12535</lines>
       <compile-errors>0</compile-errors>
     </modules>
-    <workbook active="ERP_v13.2.xlsm" compiled="ERP_Academie_v13_2.xlsm" sheets="26" />
+    <workbook active="ERP_v13.3.xlsm" compiled="ERP_v13.3.xlsm" sheets="26" />
   </session-context>
   <agents>
     <agent name="build" model="groq/llama-3.3-70b-versatile">
@@ -131,7 +131,7 @@
     <param name="S" value="500 DZD">Order Cost</param>
     <param name="I" value="20%">Holding Rate</param>
     <param name="MASTER_PWD" value="erp_secure_pwd_2026" />
-    <param name="VERSION" value="v13.2" />
+    <param name="VERSION" value="v13.3" />
   </ground-truth>
 </agent-handoff>
 

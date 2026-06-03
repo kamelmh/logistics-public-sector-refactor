@@ -148,7 +148,7 @@ if ($hasError) {
     Write-Host "═══════════════════════════════════════════════" -ForegroundColor Green
     Write-Host "  ✅ AUTOFIX COMPLETE - Workbook rebuilt!" -ForegroundColor Green
     Write-Host "  Error: $errorType in $errorModule" -ForegroundColor Green
-    Write-Host "  Reopen ERP_v13.2.xlsm to test" -ForegroundColor Green
+    Write-Host "  Reopen ERP_v13.3.xlsm to test" -ForegroundColor Green
     Write-Host "═══════════════════════════════════════════════" -ForegroundColor Green
 } else {
     Write-Host "[5/6] ✅ No compile error detected" -ForegroundColor Green

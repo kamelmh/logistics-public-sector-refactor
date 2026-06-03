@@ -1,4 +1,4 @@
-# Academix v13.2 — Collaboration & DevOps Guide
+# Academix v13.3 — Collaboration & DevOps Guide
 
 ## GitHub Repository
 **Remote:** `https://github.com/kamelmh/logistics-public-sector-refactor.git`
@@ -44,8 +44,8 @@ Examples:
 
 ## Project Structure
 ```
-├── ERP_v13.2.xlsm              # Built ERP workbook (output)
-├── GOLDEN_ERP_v13.2.xlsm       # Master workbook (VBA template) — 43 modules, clean
+├── ERP_v13.3.xlsm              # Built ERP workbook (output)
+├── GOLDEN_ERP_v13.3.xlsm       # Master workbook (VBA template) — 43 modules, clean
 ├── SOFTWARE_SURGICAL_EDIT/
 │   └── VBA_Modules/            # All VBA source files (.bas, .frm, .cls)
 │       ├── mod_Barcode.bas     # Original barcode lookup
@@ -106,7 +106,7 @@ All new modules follow this pattern:
 ```vb
 Attribute VB_Name = "mod_ModuleName"
 ' ============================================================================
-' Academix v13.2 - DSS Logistique El Bayadh
+' Academix v13.3 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
 ' Direction de l'Éducation - Wilaya d'El Bayadh
 ' <Description>

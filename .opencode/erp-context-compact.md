@@ -1,4 +1,4 @@
-# ERP Académie v13.2 — Compact Context Snapshot
+# ERP Académie v13.3 — Compact Context Snapshot
 # Institution: Direction de l'Education, Wilaya de El Bayadh (Algeria)
 # User: Mahi Kamel Abdelghani | Stack: Pure VBA Excel | Offline-First | Zero Dependencies
 # Compliance: CNEPD BTS Public Sector Standards | Locale: fr-FR/ar-DZ
@@ -16,7 +16,7 @@
 | PU | 4,500 DZD | Unit Price (ARTICLES sheet real price) |
 | I | 20% | Holding Rate |
 | MASTER_PWD | erp_secure_pwd_2026 | Sheet protection |
-| VERSION | v13.2 | Current |
+| VERSION | v13.3 | Current |
 | Article Case | ART-001 Toner G030 (HP LaserJet) | Thesis case study |
 
 ## 25 Sheets
@@ -176,7 +176,7 @@ Workflows: feature (explore→plan→build) | fix (debug→build→test) | quali
 |------|----------|
 | Root | C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor |
 | VBA source | Software_Surgical_Edit\VBA_Modules\*.bas |
-| Active workbook | C:\Users\Administrator\Dropbox\ERP_v13.2.xlsm |
+| Active workbook | C:\Users\Administrator\Dropbox\ERP_v13.3.xlsm |
 | Compiled | Software_Surgical_Edit\ERP_Academie_v13_2.xlsm |
 | Config dir | .config\opencode\ |
 | Context XMLs | Software_Surgical_Edit\erp-*.xml (4 files) |
