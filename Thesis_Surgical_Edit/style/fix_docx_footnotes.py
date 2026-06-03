@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: fix_golden_footnotes.py + fix_thesis_all.py step 6
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """fix_docx_footnotes.py — Fix footnotes.xml namespace issue for Word compatibility
 """
 import zipfile, os, shutil, re, sys

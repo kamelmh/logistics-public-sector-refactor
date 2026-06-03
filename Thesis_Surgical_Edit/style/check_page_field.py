@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: fix_page_field.py
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """Quick script to verify PAGE field fix in output DOCX."""
 import zipfile
 import sys

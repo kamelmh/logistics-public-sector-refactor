@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: fix_thesis_all.py + fix_docx_sections.py
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """format-cover.py -- Academix v13.2
 Post-processes the cover page of the generated DOCX
 to match the exact formatting of the reference DOCX:

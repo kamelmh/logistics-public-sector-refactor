@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: audit_thesis_comprehensive.py
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """audit-thesis.py — Full thesis completeness audit against BTS/GSL public sector standards
 Usage: python audit-thesis.py <path/to.docx> [--json] [--threshold N]
 """

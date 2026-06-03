@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: fix_thesis_all.py (fonts/borders)
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """customize-reference.py -- Academix v13.2
 Creates a styled reference DOCX for pandoc by:
 1. Copying styles from user's original complete DOCX

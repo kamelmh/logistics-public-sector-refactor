@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: fix_thesis_all.py (steps 2-3: tables)
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """format-baseline.py — Academix v13.2
 Comprehensive DOCX post-processor. Run after pandoc build + all other formatters.
 Enforces: 14pt body, 22/18/16pt headings, 4cm margins, RTL, 1.5 spacing,

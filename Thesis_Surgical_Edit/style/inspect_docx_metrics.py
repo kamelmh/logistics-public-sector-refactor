@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: verify_docx_checks.py (29 checks covers this)
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """inspect_docx_metrics.py — Fast DOCX metrics via python-docx + lxml (no COM)
 Outputs JSON to stdout, callable from thesis-doctor.ps1.
 

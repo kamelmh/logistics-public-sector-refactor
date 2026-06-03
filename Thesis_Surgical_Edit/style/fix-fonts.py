@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: fix_thesis_all.py (step 4: body formatting)
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """fix-fonts.py — Academix v13.2
 Post-processes DOCX to fix font sizes.
 Removes explicit 12pt from Normal/Heading runs so style-defined sizes show through.

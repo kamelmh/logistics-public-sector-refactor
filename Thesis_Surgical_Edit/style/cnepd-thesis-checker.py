@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: verify_docx_checks.py
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """cnepd-thesis-checker.py -- Academix v13.2
 Validates thesis markdown against CNEPD ground truth:
 ART codes, constants, structure, footnotes, performance claims.

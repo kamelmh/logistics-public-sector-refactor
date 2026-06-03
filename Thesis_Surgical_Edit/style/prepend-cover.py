@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: fix_docx_sections.py + fix_thesis_all.py
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """prepend-cover.py -- Academix v13.2
 Prepends cover-page.docx to the generated thesis DOCX at zip level.
 """

@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: verify_docx_checks.py (includes measurement)
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """measure-thesis.py — Record thesis metrics, matching thesis-doctor format
 Usage: python measure-thesis.py <docx_path> <source_path> [--verify-passed N] [--verify-failed N]
 """

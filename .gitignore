@@ -29,6 +29,11 @@ MiniCPM-V/
 # Plugin installations (local dependencies)
 .opencode/plugins/
 
+# Thesis pipeline temp files (regenerated on each build)
+tmp_docx/
+pipeline-reports/
+thesis_screenshot*.png
+
 # Build artifacts
 vbe-auto/results/*.json
 

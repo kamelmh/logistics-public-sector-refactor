@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: Manual sync (no automated replacement)
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 #!/usr/bin/env python
 """
 docx_md_sync.py — ACADEMIX v13.2 DOCX ↔ MD sync & validation tool

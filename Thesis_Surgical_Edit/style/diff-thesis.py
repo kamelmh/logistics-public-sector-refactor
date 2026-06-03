@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: Standalone — kept as utility
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """diff-thesis.py — Compare two thesis DOCX files structurally and textually
 Usage: python diff-thesis.py <reference.docx> <comparison.docx> [--json] [--output report.txt]
 """

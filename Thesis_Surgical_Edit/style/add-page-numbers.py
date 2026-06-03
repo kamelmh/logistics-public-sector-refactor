@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: fix_thesis_all.py (step 1: page numbering)
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """add-page-numbers.py — Academix v13.2
 Adds section breaks and page numbering to the thesis DOCX:
 - Pre-chapters (cover → فهرس → قائمة الجداول → المقدمة): Arabic Abjad letters (أ، ب، ج...)

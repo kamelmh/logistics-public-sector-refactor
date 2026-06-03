@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: fix_thesis_all.py (all steps)
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """fix_docx_formatting.py — Apply formatting fixes to DOCX via python-docx (no COM)
 Usage: python fix_docx_formatting.py <path/to.docx> [--save]
        Without --save: dry run (report changes)

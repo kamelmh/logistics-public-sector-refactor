@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: diff-thesis.py (for comparison only)
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """compare-thesis.py — Compare last 2 thesis builds from metrics history
 Usage: python compare-thesis.py [--json]
 """

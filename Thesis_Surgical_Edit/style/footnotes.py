@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: fix_golden_footnotes.py
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """footnotes.py — Academix v13.2 (Titan)
 Phase 2: Convert inline (Author, Year) citations to Word footnotes (CNEPD format).
 Creates the footnotes XML part if it doesn't exist.

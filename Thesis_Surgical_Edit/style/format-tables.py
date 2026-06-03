@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: fix_thesis_all.py (step 2: column widths + step 3: borders)
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """format-tables.py -- Academix v13.2
 Post-processes DOCX to apply user's table formatting:
 - Header row: dark blue fill (#0C447C), white bold text

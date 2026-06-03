@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: fix_thesis_all.py (handles all formatting)
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """add-toc.py — Academix v13.2
 Inserts TOC and ListOfTables field codes into the DOCX:
 - After paragraph containing "فهرس المحتويات" → TOC field (levels 1-3)

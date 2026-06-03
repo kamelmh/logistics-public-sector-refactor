@@ -1,3 +1,8 @@
+"""
+⚠️  DEPRECATED — Replaced by: fix_golden_footnotes.py
+    This script is superseded and no longer part of the active pipeline.
+    Kept for reference only. Do not use in new workflows.
+"""
 """all-footnotes.py — Academix v13.2
 Convert ALL 56 bibliography entries to footnotes in the thesis DOCX.
 Strategy: Add footnote references at the end of each relevant section/chapter
