@@ -1,10 +1,10 @@
 # CrossFlow Handoff — Academix v13.3
 
 ## Current Priority
-All ground truth aligned, page numbering fixed, pipeline skill created. VERSION=v13.3 everywhere.
+System fully cleaned. Desktop pruned from ~60 to 10 essentials. Archives on D: drive. Handoff ready for next phase.
 
 ## State
-- **Session**: v13.3.1 release (2026-06-03)
+- **Session**: v13.3.1 + System Cleanup (2026-06-03)
 - **Agent**: Academix
 - **Workbook**: `ERP_v13.2.xlsm` (1041.2 KB, build verified)
 - **Pre-build**: 0 errors (44 files)
@@ -13,16 +13,25 @@ All ground truth aligned, page numbering fixed, pipeline skill created. VERSION=
 - **English paper**: v13.3, 144/144 checks, IEEE double-column blind PDF (158 KB)
 - **Arabic thesis**: v13.3, 25/25 pipeline PASS (29/29 verify), PAGE field fixed, namespace clean
 - **CCA'2026**: Submission package ready, deadline Aug 15, 2026
+- **Desktop**: 10 items (golden source, OpenCode.bat.lnk, Claude, utilities)
+- **D: Archives**: stale_backup_20260603 (203 files, 10.2 MB) + thesis intermediates + obsolete scripts
 
 ## Completed
+### Session 13 (2026-06-03) — System Cleanup: Desktop, Archives, Shortcuts, Project
+- **Desktop pruned**: ~60 files → 10 essentials. Stale thesis builds (9), screenshots (31),
+  portal artifacts (7), OCR output (86), delivery folder (64), redundant launchers (5)
+  all archived to `D:\_ARCHIVE_THESIS\stale_backup_20260603\` (10.2 MB)
+- **Shortcuts created**: `OpenCode.bat.lnk` (43-mode launcher) + `Fix-OMC-Launcher.bat.lnk`
+  Both point to project root `.bat` files. Redundant `OpenCode — Cerebras GPT-OSS.lnk` archived.
+- **Thesis output cleaned**: 5 intermediate build artifacts moved to
+  `D:\_ARCHIVE_THESIS\thesis_output_intermediates\`. Only final deliverables remain.
+- **22 superseded Python scripts** tagged with DEPRECATED headers + replacement mapping
+- **`.gitignore`** extended: tmp_docx/, pipeline-reports/, thesis_screenshot*.png
+- **Obsolete scripts archived**: `update_shortcuts.ps1`, `Sari_Launch.bat` (orphaned)
+- **Old verify results pruned**: kept only 3 most recent (removed 6 stale)
+- Commit: 47bad4a, pushed
+
 ### Session 12 (2026-06-03) — Ground truth alignment + page numbering fix + pipeline skill
-- **Ground truth aligned**: instructions.md, AGENTS.md, MASTER_BOOTSTRAP.xml now consistent:
-  D=789 / Q*=37 / ROP=206 / S=801.45 / VERSION=v13.3 everywhere
-- **Page numbering fixed**: cover→none, TOC→lowerRoman, body→decimal (was all-decimal)
-- **Pipeline skill created**: `.opencode/skills/thesis-pipeline/SKILL.md`
-- **`/thesis` command created**: for run-thesis-pipeline.ps1
-- **Tagged v13.3.1**: HEAD (a019664) pushed with tag
-- Commit: a019664, pushed
 
 ### Session 11 (2026-06-03) — Thesis PAGE field fix + comprehensive pipeline v2
 - **PAGE field root cause**: python-docx doc.save() regenerates cached `<w:t>1</w:t>` in PAGE field
@@ -224,9 +233,19 @@ All ground truth aligned, page numbering fixed, pipeline skill created. VERSION=
    - `AddLineToGrid` populates stock from `m_StockActuel`
 
 ## Pending Tasks
-- System Cleanup: Unify opencode versions (Delegated to other terminal)
-- Full build + verify on next session (demo data generation needs more time)
-- Submit to CCA'2026 via Microsoft CMT before Aug 15, 2026
+### HIGH
+- [ ] **Submit to CCA'2026** via Microsoft CMT before Aug 15, 2026 (package ready)
+- [ ] **Full ERP build + verify** on next session (takes 5-10 min, demo data generation)
+- [ ] **Unify opencode versions** — /opencode/windows-x64-baseline vs installed version
+
+### MEDIUM
+- [ ] **Ground truth explanation in thesis** — document D=789 (38-day observed) vs ERP annualized data
+- [ ] **Rename ERP_v13.2.xlsm → ERP_v13.3.xlsm** to match actual version inside
+
+### LOW / LONG-TERM
+- [ ] v13.4 feature planning (real barcode scanning? ML forecasting? mobile?)
+- [ ] Defense preparation (jury Q&A, demo walkthrough, presentation refresh)
+- [ ] Check `Claude.lnk` — resolves to empty target, may need fixing
 
 ## Data Flow (how things connect)
 ```
