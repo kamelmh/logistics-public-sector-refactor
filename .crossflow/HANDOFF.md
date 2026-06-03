@@ -1,20 +1,29 @@
 # CrossFlow Handoff — Academix v13.3
 
 ## Current Priority
-Comprehensive thesis pipeline v2 operational. Manual testing pending. All builds verified.
+All ground truth aligned, page numbering fixed, pipeline skill created. VERSION=v13.3 everywhere.
 
 ## State
-- **Session**: v13.3 complete + pipeline v2 (2026-06-03)
+- **Session**: v13.3.1 release (2026-06-03)
 - **Agent**: Academix
 - **Workbook**: `ERP_v13.2.xlsm` (1041.2 KB, build verified)
 - **Pre-build**: 0 errors (44 files)
 - **Verify**: 112/112 PASS
-- **Tag**: v13.3 pending
+- **Tag**: v13.3.1 (pushed)
 - **English paper**: v13.3, 144/144 checks, IEEE double-column blind PDF (158 KB)
 - **Arabic thesis**: v13.3, 25/25 pipeline PASS (29/29 verify), PAGE field fixed, namespace clean
 - **CCA'2026**: Submission package ready, deadline Aug 15, 2026
 
 ## Completed
+### Session 12 (2026-06-03) — Ground truth alignment + page numbering fix + pipeline skill
+- **Ground truth aligned**: instructions.md, AGENTS.md, MASTER_BOOTSTRAP.xml now consistent:
+  D=789 / Q*=37 / ROP=206 / S=801.45 / VERSION=v13.3 everywhere
+- **Page numbering fixed**: cover→none, TOC→lowerRoman, body→decimal (was all-decimal)
+- **Pipeline skill created**: `.opencode/skills/thesis-pipeline/SKILL.md`
+- **`/thesis` command created**: for run-thesis-pipeline.ps1
+- **Tagged v13.3.1**: HEAD (a019664) pushed with tag
+- Commit: a019664, pushed
+
 ### Session 11 (2026-06-03) — Thesis PAGE field fix + comprehensive pipeline v2
 - **PAGE field root cause**: python-docx doc.save() regenerates cached `<w:t>1</w:t>` in PAGE field
 - **Step 9**: fix_thesis_all.py → fix_page_field.py (removes cached result from footer2.xml)
@@ -216,12 +225,8 @@ Comprehensive thesis pipeline v2 operational. Manual testing pending. All builds
 
 ## Pending Tasks
 - System Cleanup: Unify opencode versions (Delegated to other terminal)
-- Tag v13.3 when ready
 - Full build + verify on next session (demo data generation needs more time)
-- Manual testing of v13.3 features (fuzzy search, PU masking, stockout banner, print preview)
 - Submit to CCA'2026 via Microsoft CMT before Aug 15, 2026
-- Create pipeline skill for automation (run-thesis-pipeline.ps1, build-thesis.ps1)
-- Create run-thesis-pipeline.ps1 alias/command for quick access
 
 ## Data Flow (how things connect)
 ```
