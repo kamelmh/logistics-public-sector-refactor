@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<master-bootstrap version="13.2" date="2026-05-09">
+<master-bootstrap version="13.3" date="2026-06-03">
   <!-- ===== AUTO-LOAD PROTOCOL (READ FIRST, EVERY SESSION) ===== -->
   <bootstrap order="mandatory">
     <step order="1">Read this MASTER_BOOTSTRAP.xml — complete system context</step>
@@ -35,7 +35,7 @@
     <param name="PU" value="4500" unit="DZD" desc="Unit Price (ARTICLES sheet real price)" />
     <param name="I" value="0.20" desc="Holding Rate" />
     <param name="MASTER_PWD" value="erp_secure_pwd_2026" desc="Sheet protection" />
-    <param name="VERSION" value="v13.2" />
+    <param name="VERSION" value="v13.3" />
     <case-study>ART-001: Toner G030 (HP LaserJet) — primary case study in Ch4</case-study>
   </ground-truth>
 

@@ -3,7 +3,7 @@ Part of Academix v13.2 build pipeline
 Usage: python fix_thesis_all.py <path/to.docx> --save
 
 Fixes applied:
-1. Page numbering: all sections→decimal
+1. Page numbering: cover→none, TOC→lowerRoman, body→decimal
 2. Table column widths: proportionally sized to content (no gaps)
 3. Table borders: simple gridlines on all tables
 4. Body formatting: Traditional Arabic 14pt, RTL, 1.5 spacing
@@ -54,16 +54,23 @@ def emu_to_cm(emu):
 
 
 def fix_page_numbering(doc, changes):
-    """Set proper page number format per section."""
+    """Set proper page number format per section.
+    
+    Convention:
+      Section 0 (cover):     no page number (fmt="none")
+      Section 1 (TOC/abstr): lower Roman (i, ii, iii)
+      Section 2+ (body):     decimal (1, 2, 3)
+    """
+    formats = ['none', 'lowerRoman', 'decimal', 'decimal']
     for i, sec in enumerate(doc.sections):
         sect_pr = sec._sectPr
         existing = sect_pr.find(qn('w:pgNumType'))
         if existing is not None:
             sect_pr.remove(existing)
         
-        # Set all sections to decimal as requested by user
-        pg = parse_xml('<w:pgNumType %s w:fmt="decimal"/>' % nsdecls('w'))
-        changes['page_num_body'] = 'fmt=decimal'
+        fmt = formats[i] if i < len(formats) else 'decimal'
+        pg = parse_xml('<w:pgNumType %s w:fmt="%s"/>' % (nsdecls('w'), fmt))
+        changes['page_num_sec%d' % i] = 'fmt=%s' % fmt
         
         # Insert at the beginning of sectPr
         first = sect_pr.find(qn('w:type'))
