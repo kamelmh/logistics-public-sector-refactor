@@ -61,7 +61,7 @@
   Do NOT modify any files. Output a structured refactoring plan.
 - **Token Budget**: ~12K input, ~6K output
 - **Priority**: MED
-- **Status**: DONE
+- **Status: PENDING
 
 ### [TASK-004] Defense Q&A Generation
 - **Type**: defense-qa
@@ -78,7 +78,7 @@
   Format: Q&A pairs in French. Each answer: 2-3 sentences max.
 - **Token Budget**: ~20K input, ~8K output
 - **Priority**: MED
-- **Status**: PENDING
+- **Status**: DONE
 
 ---
 
@@ -89,6 +89,8 @@
 ## Completed Tasks
 <!-- Moved here after execution -->
 (none)
+
+
 
 
 
