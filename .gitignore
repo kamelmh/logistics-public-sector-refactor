@@ -63,3 +63,11 @@ Research_and_Development/Thesis_Surgical_Edit/out/
 
 # Column constant harmonization scratch
 .opencode/skills/column-constant-harmonization/
+
+# Python bytecode cache
+__pycache__/
+*.pyc
+*.pyo
+
+# External tools (not project code)
+harness/
