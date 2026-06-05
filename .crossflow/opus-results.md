@@ -843,7 +843,7 @@ We are given a VBA module (mod_StockEntry_Logic.bas) that is monolithic and hand
 | 3 | **knowledge‑base.json** – contains extracted knowledge items | File exists and holds at least one knowledge item (JSON array/object) extracted from completed tasks | *Unable to inspect the file contents.* | **FAIL (cannot verify)** | No access to `knowledge‑base.json` to confirm knowledge extraction. |
 | 4 | **.crossflow/skills/** – auto‑generated SKILL.md files | Directory exists and contains one `.md` file per skill that was auto‑generated from the learning loop | *Unable to inspect the directory.* | **FAIL (cannot verify)** | No access to `.crossflow/skills/` to confirm skill files. |
 | 5 | **Ground‑truth parameters** – D=789, Q*=37, ROP=206, SS=200, LT=2, S=801.45, PU=4500, I=20% | All values match the canonical ground‑truth table | Values are explicitly provided in the task description and match the canonical table. | **PASS** | The supplied ground‑truth data is correct per the canonical table. |
-| 6 | **MASTER_PWD** – not exposed in any file | The string `erp_secure_pwd_2026` does **not** appear in any of the repository files (source, docs, config, etc.) | *Unable to search the repository.* | **FAIL (cannot verify)** | No file‑search capability available to confirm the password is absent. |
+| 6 | **MASTER_PWD** – not exposed in any file | The string `[REDACTED]` does **not** appear in any of the repository files (source, docs, config, etc.) | *Unable to search the repository.* | **FAIL (cannot verify)** | No file‑search capability available to confirm the password is absent. |
 
 ### Summary
 - **Passed:** Ground‑truth parameter verification (Item 5).  
@@ -852,3 +852,4 @@ We are given a VBA module (mod_StockEntry_Logic.bas) that is monolithic and hand
 **Overall Status:** **INCONCLUSIVE** – the closed learning loop cannot be fully validated without access to the referenced files. To achieve a definitive pass/fail outcome, please provide the contents of `opus‑tasks.md`, `opus-results.md`, `knowledge‑base.json`, and the `.crossflow/skills/` directory, or run a file‑search to confirm that `MASTER_PWD` is not exposed.
 
 ---
+
