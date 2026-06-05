@@ -313,6 +313,17 @@ def fix_footnotes_rtl(docx_path, changes):
             changes['footnote_rtl_fixes'] += 1
     content = jc_pattern.sub('<w:jc w:val="right"/>', content)
     
+    # Add missing jc elements (pandoc footnotes lack <w:jc> entirely)
+    ppr_pattern = re.compile(r'(<w:pPr(?:\s[^>]*)?>)(.*?)</w:pPr>', re.DOTALL)
+    def add_missing_jc(match):
+        ppr_open = match.group(1)
+        ppr_inner = match.group(2)
+        if 'w:jc' not in ppr_inner:
+            changes['footnote_rtl_fixes'] += 1
+            return ppr_open + ppr_inner + '<w:jc w:val="right"/></w:pPr>'
+        return match.group(0)
+    content = ppr_pattern.sub(add_missing_jc, content)
+    
     # Write fixed XML back
     if modified:
         tmp = docx_path + '.tmp'
