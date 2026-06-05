@@ -29,7 +29,7 @@
   Keep findings concise — max 2 lines per finding.
 - **Token Budget**: ~8K input, ~4K output
 - **Priority**: HIGH
-- **Status: PENDING
+- **Status**: DONE
 
 ### [TASK-002] Thesis Chapter 3 Review — Field Diagnosis
 - **Type**: review-thesis
@@ -46,41 +46,26 @@
   Output: chapter review with specific paragraph references.
 - **Token Budget**: ~15K input, ~5K output
 - **Priority**: HIGH
-- **Status: PENDING
+- **Status**: DONE
 
 ### [TASK-003] Refactoring Plan — mod_StockEntry_Logic.bas
 - **Type**: refactor-plan
 - **Input**: Software_Surgical_Edit/VBA_Modules/mod_StockEntry_Logic.bas
 - **Prompt**: |
-  Review this Arabic thesis chapter (الفصل الثالث: تصميم وإنجاز نظام دعم القرار).
-  The thesis is a French BTS but written in Arabic with French technical terms.
-  Review in ENGLISH, covering:
-  1. Technical accuracy of formulas (EOQ, ROP, CMUP) — verify against ground truth:
-     D=789, Q*=37, ROP=206, SS=200, LT=2, S=801.45 DZD, PU=4500 DZD, I=20%
-  2. VBA implementation completeness — check if all 42 modules are referenced
-  3. Table formatting and data presentation
-  4. Missing sections or weak arguments
-  5. Code architecture assessment (monolithic vs modular)
-  Format: numbered findings with severity (CRITICAL/HIGH/MED/LOW) and specific line refs.
+  Analyze this 1063-line VBA module and produce a refactoring plan.
+  Current state: monolithic, handles stock entry + 6 guard validations + CMUP + ABC-XYZ + alerts.
+  Requirements:
+  1. Identify logical sub-components (guards, CMUP calc, ABC-XYZ, UI)
+  2. Propose 4-6 focused modules with clear responsibilities
+  3. Define public API for each new module
+  4. List dependencies between new modules
+  5. Estimate effort (hours) per module
+  6. Identify risks (p-code cache, breaking changes)
+  Output: refactoring roadmap with phases and dependencies.
+  Constraints: Pure VBA only, no Python/Flask/databases, Excel 2010 compatible.
 - **Token Budget**: ~25K input, ~8K output
-- **Priority**: HIGH
-- **Status**: DONE
-
-### [TASK-006] VBA Module Inventory — All 37 Modules
-- **Type**: custom
-- **Input**: Software_Surgical_Edit/VBA_Modules/ (directory listing)
-- **Prompt**: |
-  Read all 37 .bas files in the VBA_Modules directory.
-  For each module, extract:
-  1. Module name and type (bas/frm/cls)
-  2. Public functions/subs (API surface)
-  3. Dependencies (what other modules it calls)
-  4. Line count
-  5. Any TODO/FIXME/HACK comments
-  Output as a JSON array for machine consumption.
-- **Token Budget**: ~40K input, ~15K output
 - **Priority**: MED
-- **Status**: PENDING
+- **Status**: DONE
 
 ---
 
@@ -91,6 +76,8 @@
 ## Completed Tasks
 <!-- Moved here after execution -->
 (none)
+
+
 
 
 
