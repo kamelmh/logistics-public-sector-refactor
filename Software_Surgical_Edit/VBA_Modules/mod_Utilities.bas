@@ -44,6 +44,58 @@ Public Function SafeVal(ByVal v As Variant) As Double
     End If
 End Function
 
+'=======================================================================================
+' FUNCTION: CleanNumericString
+' Strips all non-numeric characters except one decimal point
+'=======================================================================================
+Public Function CleanNumericString(ByVal raw As String) As String
+    Dim cleaned As String
+    Dim hasDot As Boolean
+    Dim i As Integer
+    
+    cleaned = ""
+    hasDot = False
+    
+    For i = 1 To Len(raw)
+        Dim ch As String
+        ch = Mid(raw, i, 1)
+        If ch Like "[0-9]" Then
+            cleaned = cleaned & ch
+        ElseIf ch = "," Or ch = "." Then
+            If Not hasDot Then
+                cleaned = cleaned & "."
+                hasDot = True
+            End If
+        End If
+    Next i
+    
+    ' Limit to 2 decimal places
+    Dim dotPos As Integer
+    dotPos = InStr(cleaned, ".")
+    If dotPos > 0 And Len(cleaned) - dotPos > 2 Then
+        cleaned = Left(cleaned, dotPos + 2)
+    End If
+    
+    ' Remove trailing dot
+    If Right(cleaned, 1) = "." And Len(cleaned) = dotPos Then
+        cleaned = Left(cleaned, dotPos - 1)
+    End If
+    
+    CleanNumericString = cleaned
+End Function
+
+'=======================================================================================
+' FUNCTION: FormatCurrencyString
+' Formats a numeric string into a localized currency format (e.g., 1,234.56)
+'=======================================================================================
+Public Function FormatCurrencyString(ByVal val As Variant) As String
+    If IsNumeric(val) Then
+        FormatCurrencyString = Format(CDbl(val), "#,##0.00")
+    Else
+        FormatCurrencyString = "0.00"
+    End If
+End Function
+
 '-------------------------------------------------------------------------------------' FUNCTION: GetArticleField
 ' Retrieves a specific field (CODE, DESIG, QTE, PU, CAT) for a given SKU from the ARTICLES sheet
 '--------------------------------------------------------------------------------------

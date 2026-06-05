@@ -2,12 +2,20 @@ Attribute VB_Name = "mod_StockEngine"
 ' ============================================================================
 ' Academix v13.2 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
-' Direction de l'Education - Wilaya d'El Bayadh
-' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
-' All rights reserved. Unauthorized reproduction or distribution prohibited.
 ' ============================================================================
 
 Option Explicit
+
+Public Type ArticleDetails
+    Code        As String
+    Designation As String
+    Category    As String
+    PU          As Double
+    Stock       As Long
+End Type
+
+' ... (existing code)
+
 
 ' ================================================================================
 ' CONSTANTS ? Synchronized with Unit� de traitement VBA GROUND_TRUTH
@@ -45,14 +53,77 @@ Public Function ComputeEOQ(ByVal AnnualDemand As Double, _
 End Function
 
 ' ================================================================================
-' FUNCTION: ComputeROP
-' Formula: ROP = (avg_daily_demand x lead_time) + safety_stock
+' FUNCTION: GetServices
+' Returns a list of services from the SYS_STRINGS sheet.
 ' ================================================================================
-Public Function ComputeROP(ByVal AvgDailyDemand As Double, _
-                            ByVal sku As String, _
-                            Optional ByVal LeadTimeDays As Integer = LEAD_TIME_DEFAULT) As Double
-    ComputeROP = (AvgDailyDemand * LeadTimeDays) + GetSafetyStock(sku)
+Public Function GetServices() As Collection
+    Dim services As New Collection
+    Dim wsStr As Worksheet
+    Dim lastRow As Long, i As Long
+    
+    On Error Resume Next
+    Set wsStr = ThisWorkbook.Sheets(mod_Config.SHEET_SYS_STRINGS)
+    On Error GoTo 0
+    
+    If Not wsStr Is Nothing Then
+        lastRow = wsStr.Cells(wsStr.Rows.count, COL_SYS_ID).End(xlUp).Row
+        For i = 2 To lastRow
+            If Left(Trim(CStr(wsStr.Cells(i, COL_SYS_ID).Value)), 4) = "SVC_" Then
+                services.Add Trim(CStr(wsStr.Cells(i, COL_SYS_VALUE).Value))
+            End If
+        Next i
+    End If
+    
+    If services.count = 0 Then
+        services.Add "Service 1"
+        services.Add "Service 2"
+        services.Add "Fournisseur Externe"
+    End If
+    
+    Set GetServices = services
 End Function
+
+' ================================================================================
+' FUNCTION: GetArticles
+' Returns a list of articles (Code | Designation) from the ARTICLES sheet.
+' ================================================================================
+Public Function GetArticles(ByVal filterCat As String) As Collection
+    Dim articles As New Collection
+    Dim wsArt As Worksheet
+    Dim lastRow As Long, i As Long
+    Dim code As String, desig As String, cat As String
+    Dim noFilter As Boolean
+
+    On Error Resume Next
+    Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
+    On Error GoTo 0
+
+    If wsArt Is Nothing Then
+        articles.Add "ART-001 | Papier A4"
+        articles.Add "ART-002 | Papier A3"
+        articles.Add "ART-003 | Sous-Chemise"
+        Set GetArticles = articles
+        Exit Function
+    End If
+
+    noFilter = (filterCat = "" Or filterCat = "(Toutes)")
+    lastRow = wsArt.Cells(wsArt.Rows.count, COL_ART_CODE).End(xlUp).Row
+
+    For i = 3 To lastRow
+        code = Trim(CStr(wsArt.Cells(i, COL_ART_CODE).Value))
+        desig = Trim(CStr(wsArt.Cells(i, COL_ART_DESIGNATION).Value))
+        cat = Trim(CStr(wsArt.Cells(i, COL_ART_CATEGORIE).Value))
+
+        If code <> "" Then
+            If noFilter Or (cat = filterCat) Then
+                articles.Add code & " | " & desig
+            End If
+        End If
+    Next i
+
+    Set GetArticles = articles
+End Function
+
 
 ' ================================================================================
 ' SUB: ValidateStockLevel
@@ -83,10 +154,11 @@ Public Sub ValidateStockLevel(ByVal sku As String, _
 End Sub
 
 ' ================================================================================
-' FUNCTION: GetArticleStock
-' Returns current stock quantity for an article (reads from ARTICLES column C)
+' FUNCTION: GetArticleDetails
+' Returns a complete ArticleDetails struct for a given SKU.
 ' ================================================================================
-Public Function GetArticleStock(ByVal sku As String) As Double
+Public Function GetArticleDetails(ByVal sku As String) As ArticleDetails
+    Dim details As ArticleDetails
     Dim wsArt As Worksheet
     Dim foundRow As Variant
     
@@ -95,18 +167,27 @@ Public Function GetArticleStock(ByVal sku As String) As Double
     On Error GoTo 0
     
     If wsArt Is Nothing Then
-        GetArticleStock = 0
+        details.Code = sku
+        GetArticleDetails = details
         Exit Function
     End If
     
     foundRow = Application.Match(sku, wsArt.Columns(COL_ART_CODE), 0)
     
     If IsError(foundRow) Then
-        GetArticleStock = 0
+        details.Code = sku
+        details.Stock = 0
+        GetArticleDetails = details
         Exit Function
     End If
     
-    GetArticleStock = mod_Utilities.SafeVal(wsArt.Cells(foundRow, COL_ART_STOCK).Value)
+    details.Code = Trim(CStr(wsArt.Cells(foundRow, COL_ART_CODE).Value))
+    details.Designation = Trim(CStr(wsArt.Cells(foundRow, COL_ART_DESIGNATION).Value))
+    details.Category = Trim(CStr(wsArt.Cells(foundRow, COL_ART_CATEGORIE).Value))
+    details.PU = CDbl(mod_Utilities.SafeVal(wsArt.Cells(foundRow, COL_ART_PU).Value))
+    details.Stock = CLng(mod_Utilities.SafeVal(wsArt.Cells(foundRow, COL_ART_STOCK).Value))
+    
+    GetArticleDetails = details
 End Function
 
 ' ================================================================================
@@ -212,76 +293,29 @@ Public Sub RefreshAllCMUP()
 End Sub
 
 ' ================================================================================
-' SUB: UpdateAllABCClassifications
-' Calculates ABC classification based on annual consumption value.
-' A: Top 80%, B: 15%, C: 5%
+' FUNCTION: GetArticleStock
+' Returns current stock quantity for an article (reads from ARTICLES column C)
 ' ================================================================================
-Public Sub UpdateAllABCClassifications(Optional ByVal silent As Boolean = False)
-    Dim wsArt As Worksheet: Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
-    Dim lastRow As Long: lastRow = wsArt.Cells(wsArt.Rows.count, COL_ART_CODE).End(xlUp).Row
-    If lastRow < 2 Then Exit Sub
-
-    Dim i As Long
-    Dim totalValue As Double: totalValue = 0
-    Dim articleValues() As Double: ReDim articleValues(2 To lastRow)
-    Dim articleCodes() As String: ReDim articleCodes(2 To lastRow)
-
-    wsArt.Unprotect Password:=mod_Config.MASTER_PWD
-
-    ' 1. Calculate total value for each article
-    For i = 2 To lastRow
-        Dim sku As String: sku = Trim(wsArt.Cells(i, COL_ART_CODE).Value)
-        If sku <> "" Then
-            Dim AnnualDemand As Double: AnnualDemand = GetAnnualDemandFromHistory(sku)
-            Dim pu As Double: pu = Val(wsArt.Cells(i, COL_ART_PU).Value) ' Column H: PU
-            articleValues(i) = AnnualDemand * pu
-            articleCodes(i) = sku
-            totalValue = totalValue + articleValues(i)
-        End If
-    Next i
-
-    If totalValue = 0 Then
-        wsArt.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
-        Exit Sub
+Public Function GetArticleStock(ByVal sku As String) As Double
+    Dim wsArt As Worksheet
+    Dim foundRow As Variant
+    
+    On Error Resume Next
+    Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
+    On Error GoTo 0
+    
+    If wsArt Is Nothing Then
+        GetArticleStock = 0
+        Exit Function
     End If
-
-    ' 2. Sort articles by value (Simple Bubble Sort for small lists)
-    Dim j As Long, tempVal As Double, tempCode As String
-    For i = 2 To lastRow - 1
-        For j = i + 1 To lastRow
-            If articleValues(i) < articleValues(j) Then
-                tempVal = articleValues(i): articleValues(i) = articleValues(j): articleValues(j) = tempVal
-                tempCode = articleCodes(i): articleCodes(i) = articleCodes(j): articleCodes(j) = tempCode
-            End If
-        Next j
-    Next i
-
-    ' 3. Assign classes
-    Dim cumulativeValue As Double: cumulativeValue = 0
-    For i = 2 To lastRow
-        cumulativeValue = cumulativeValue + articleValues(i)
-        Dim ratio As Double: ratio = cumulativeValue / totalValue
-        Dim abcClass As String
-        
-        If ratio <= 0.8 Then
-            abcClass = "A"
-        ElseIf ratio <= 0.95 Then
-            abcClass = "B"
-        Else
-            abcClass = "C"
-        End If
-
-        ' Update ARTICLES sheet (Column F = COL_ART_CLASSE_ABC)
-        Dim foundRow As Variant
-        foundRow = Application.Match(articleCodes(i), wsArt.Columns(COL_ART_CODE), 0)
-        If Not IsError(foundRow) Then
-            wsArt.Cells(foundRow, COL_ART_CLASSE_ABC).Value = abcClass
-        End If
-    Next i
-
-    wsArt.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
-    If Not silent Then
-        MsgBox "Classifications ABC mises a jour.", vbInformation, mod_Config.SYS_TITLE
+    
+    foundRow = Application.Match(sku, wsArt.Columns(COL_ART_CODE), 0)
+    
+    If IsError(foundRow) Then
+        GetArticleStock = 0
+        Exit Function
     End If
-End Sub
+    
+    GetArticleStock = mod_Utilities.SafeVal(wsArt.Cells(foundRow, COL_ART_STOCK).Value)
+End Function
 

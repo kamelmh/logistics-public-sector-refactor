@@ -27,7 +27,7 @@ Option Explicit
 ' SECTION 0 - MODULE-LEVEL CONSTANTS & STATE
 '================================================================================
 
-'-- Canonical ERP constants (mirrors Unit� de traitement VBA GROUND_TRUTH)
+'-- Canonical ERP constants (mirrors Unit de traitement VBA GROUND_TRUTH)
 Private Const CANON_ROP    As Double = 212.4
 Private Const CANON_SS     As Long = 200
 Private Const CANON_QSTAR  As Long = 176
@@ -42,12 +42,6 @@ Private Const COL_PU     As Integer = 4
 Private Const COL_VALEUR As Integer = 5
 Private Const COL_STOCK  As Integer = 6
 
-'-- Form state (isolated from UI controls)
-Private m_TotalGeneral   As Double
-Private m_CurrentArticle As String
-Private m_StockActuel    As Long
-Private m_IsBRMode       As Boolean
-
 '================================================================================
 ' SECTION 0A - FORM STATE STRUCT (Decoupled data transfer)
 '================================================================================
@@ -57,46 +51,75 @@ Private m_IsBRMode       As Boolean
 ' This eliminates direct frmStockEntry.{control} coupling.
 
 Public Type FormState
-    '- Input fields
-    docType        As String      ' BS / BR / DA / BC
-    docRef         As String      ' Auto-generated reference
-    TransDate      As String      ' DD/MM/YYYY format
-    ArticleCode    As String      ' ART-001 etc.
-    ArticleDesign  As String      ' Full designation
-    ArticleCat     As String      ' Category filter
-    qty            As String      ' Quantity text
-    unitPrice      As String      ' PU text
-    Service        As String      ' Service/Fournisseur
+    '- Input values (from UI)
+    docType        As String
+    docRef         As String
+    TransDate      As String
+    ArticleCode    As String
+    ArticleDesign  As String
+    ArticleCat     As String
+    qty            As String
+    unitPrice      As String
+    Service        As String
     
-    '- Grid data (semicolon-delimited rows for VBA compatibility)
-    '   Format: "CODE|DESIG|CAT|QTY|PU|VAL;CODE|DESIG|CAT|QTY|PU|VAL;..."
+    '- Grid data
     GridData       As String
     GridRowCount   As Integer
     
-    '- Display outputs (logic sets these, form renders them)
+    '- Visual state (to be applied by UI)
     StockInfoText      As String
-    StockInfoColor     As Long     ' RGB value
+    StockInfoColor     As Long
     WilsonAlertText    As String
     WilsonAlertVisible As Boolean
     BannerText         As String
-    BannerColor        As Long     ' RGB value
-    QtyBackColor       As Long     ' RGB value
+    BannerColor        As Long
+    QtyBackColor       As Long
+    PrixUnitaireBackColor As Long
+    PrixUnitaireEnabled   As Boolean
+    RefDocBackColor       As Long
     TotalGeneralText   As String
     TotalGeneral       As Double
-    
-    '- Mode flags
     IsBRMode       As Boolean
     PUEditable     As Boolean
     PULabel        As String
     
-    '- Article metadata (populated on selection)
+    '- Article metadata
     ArticleStock   As Long
     ArticlePU      As Double
+    FullArticleList() As String
+    m_CurrentArticle As String
+    m_StockActuel    As Long
+    m_IsBRMode       As Boolean
+    m_TotalGeneral   As Double
     
-    '- Controls (passed as objects for SetFocus etc.)
-    '- Form reference for UI operations (only when absolutely needed)
-    formRef        As Object
+    '- Error/Validation state
+    LastErrorMsg   As String
+    ErrorControl   As String
+    
+    '- Form properties (to be applied by UI)
+    FormCaption    As String
+    FormWidth      As Single
+    FormHeight     As Single
+    
+    '- Dropdown data (to be applied by UI)
+    DocTypes       () As String
+    Services       () As String
+    Categories     () As String
+    Articles       () As String
+    
+    '- Grid configuration (to be applied by UI)
+    GridColumnCount     As Integer
+    GridColumnWidths    As String
+    GridFontName        As String
+    GridFontSize        As Integer
+    GridBackColor       As Long
+    GridHeaderCaption   As String
+    GridHeaderFontName  As String
+    GridHeaderFontSize  As Integer
+    GridHeaderForeColor As Long
 End Type
+
+
 
 '================================================================================
 ' SECTION 1 - FORM INITIALIZE (Controller sets up state)
@@ -106,7 +129,38 @@ Public Sub InitializeForm(ByRef state As FormState)
     Call SetupFormAppearance(state)
     Call PopulateDropdowns(state)
     Call ConfigureGrid(state)
-    Call ResetToDefaultState(state)
+
+Public Sub SaveFullArticleList(ByRef state As FormState, ByVal cmb As Object)
+    Dim i As Integer
+    Dim count As Integer
+    count = cmb.ListCount
+    If count = 0 Then Exit Sub
+    
+    ReDim state.FullArticleList(0 To count - 1)
+    For i = 0 To count - 1
+        state.FullArticleList(i) = cmb.List(i)
+    Next i
+End Sub
+
+Public Sub FilterArticleList(ByRef state As FormState, ByVal cmb As Object, ByVal typed As String)
+    Dim i As Integer
+    Dim count As Integer
+    Dim item As String
+    Dim newCount As Integer
+    
+    count = UBound(state.FullArticleList) - LBound(state.FullArticleList) + 1
+    If count <= 0 Then Exit Sub
+    
+    cmb.Clear
+    newCount = 0
+    
+    For i = 0 To count - 1
+        item = state.FullArticleList(i)
+        If InStr(1, item, typed, vbTextCompare) > 0 Then
+            cmb.AddItem item
+            newCount = newCount + 1
+        End If
+    Next i
 End Sub
 
 Private Sub SetupFormAppearance(ByRef state As FormState)
@@ -121,45 +175,42 @@ Private Sub SetupFormAppearance(ByRef state As FormState)
     '- Banner (idle state)
     state.BannerText = "-- SELECTIONNEZ LE TYPE DE DOCUMENT --"
     state.BannerColor = RGB(100, 100, 100)
-    state.formRef.lblBannerText.Caption = state.BannerText
-    state.formRef.lblBannerText.BackColor = state.BannerColor
-    state.formRef.lblBannerText.ForeColor = RGB(255, 255, 255)
-    state.formRef.lblBannerText.Font.Bold = True
-    state.formRef.lblBannerText.TextAlign = fmTextAlignCenter
     
     '- Wilson alert (hidden by default)
     state.WilsonAlertVisible = False
-    state.formRef.lblWilsonAlert.Visible = False
     
     '- Stock info (idle)
     state.StockInfoText = "Code Article :  --"
     state.StockInfoColor = RGB(100, 100, 100)
-    state.formRef.lblStockInfo.Caption = state.StockInfoText
-    state.formRef.lblStockInfo.ForeColor = state.StockInfoColor
     
     '- Total footer
     state.TotalGeneralText = "TOTAL GENERAL :  0.00 DZD"
-    state.formRef.lblTotalGeneral.Caption = state.TotalGeneralText
-    state.formRef.lblTotalGeneral.Font.Bold = True
-    state.formRef.lblTotalGeneral.ForeColor = RGB(5, 100, 60)
+    state.TotalGeneral = 0
     
     '- Sync toggle default
-    state.formRef.chkSyncInternal.Value = True
+    ' (This is a control property, we'll handle it in the form)
     
     '- Button captions
-    state.formRef.btnAjouterLigne.Caption = "Ajouter Ligne"
-    state.formRef.btnSupprimerLigne.Caption = "Supprimer Ligne"
-    state.formRef.btnEnregistrer.Caption = "Enregistrer"
-    state.formRef.btnAutoRef.Caption = "Auto-Ref"
-    state.formRef.btnAnnuler.Caption = "Annuler"
-    If HasControl(state.formRef, "lblPU") Then
-        state.formRef.lblPU.Caption = "PU -- CMUP auto"
-    End If
-    
-    '- Date default
+    ' (We'll handle these in the form or via state if we want to be very strict)
+
+Private Sub ResetToDefaultState(ByRef state As FormState)
     state.TransDate = Format(Date, "DD/MM/YYYY")
-    state.formRef.TxtDate.Value = state.TransDate
+    state.docRef = ""
+    state.qty = ""
+    state.unitPrice = ""
+    state.GridData = ""
+    state.GridRowCount = 0
+    state.TotalGeneral = 0
+    state.m_CurrentArticle = ""
+    state.ArticleCode = ""
+    state.m_StockActuel = 0
+    state.ArticleStock = 0
+    state.StockInfoText = "Code Article :  --"
+    state.StockInfoColor = RGB(100, 100, 100)
+    state.WilsonAlertVisible = False
+    state.QtyBackColor = RGB(255, 255, 255)
 End Sub
+
 
 Private Sub PopulateDropdowns(ByRef state As FormState)
     '- Document types
@@ -273,38 +324,21 @@ End Sub
 
 Private Sub ResetToDefaultState(ByRef state As FormState)
     state.TransDate = Format(Date, "DD/MM/YYYY")
-    state.formRef.TxtDate.Value = state.TransDate
     state.docRef = ""
-    state.formRef.txtRefDoc.Value = state.docRef
     state.qty = ""
-    state.formRef.txtQuantite.Value = ""
     state.unitPrice = ""
-    state.formRef.txtPrixUnitaire.Value = ""
-    state.formRef.cmbArticle.ListIndex = -1
-    state.formRef.lstGrid.Clear
     state.GridData = ""
     state.GridRowCount = 0
-
-    m_TotalGeneral = 0
     state.TotalGeneral = 0
-    m_CurrentArticle = ""
+    state.m_CurrentArticle = ""
     state.ArticleCode = ""
-    m_StockActuel = 0
     state.ArticleStock = 0
-
     state.StockInfoText = "Code Article :  --"
     state.StockInfoColor = RGB(100, 100, 100)
-    state.formRef.lblStockInfo.Caption = state.StockInfoText
-    state.formRef.lblStockInfo.ForeColor = state.StockInfoColor
-    
     state.WilsonAlertVisible = False
-    state.formRef.lblWilsonAlert.Visible = False
-    
     state.QtyBackColor = RGB(255, 255, 255)
-    state.formRef.txtQuantite.BackColor = state.QtyBackColor
-
-    Call UpdateTotalDisplay(state)
 End Sub
+
 
 
 '==============================================================================
@@ -318,57 +352,50 @@ Public Sub OnDocTypeChanged(ByRef state As FormState)
         Case mod_Config.DOC_TYPE_BS
             state.BannerText = "  MODE SORTIE  --  Bon de Sortie"
             state.BannerColor = RGB(160, 70, 0)
-            m_IsBRMode = False
+            state.m_IsBRMode = False
             state.IsBRMode = False
             state.PUEditable = False
             state.PULabel = "PU -- CMUP auto"
-            state.formRef.txtPrixUnitaire.Enabled = False
-            state.formRef.txtPrixUnitaire.BackColor = RGB(235, 235, 235)
+            state.PrixUnitaireEnabled = False
+            state.PrixUnitaireBackColor = RGB(235, 235, 235)
 
         Case mod_Config.DOC_TYPE_BR
             state.BannerText = "  MODE ENTREE  --  Bon de R" & Chr(201) & "ception"
             state.BannerColor = RGB(4, 90, 55)
-            m_IsBRMode = True
+            state.m_IsBRMode = True
             state.IsBRMode = True
             state.PUEditable = True
             state.PULabel = "Prix Unitaire (saisir)"
-            state.formRef.txtPrixUnitaire.Enabled = True
-            state.formRef.txtPrixUnitaire.BackColor = RGB(255, 252, 196)
+            state.PrixUnitaireEnabled = True
+            state.PrixUnitaireBackColor = RGB(255, 252, 196)
 
         Case mod_Config.DOC_TYPE_DA
             state.BannerText = "  Demande d'Achat"
             state.BannerColor = RGB(30, 80, 180)
-            m_IsBRMode = False
+            state.m_IsBRMode = False
             state.IsBRMode = False
             state.PUEditable = False
             state.PULabel = "PU (estime)"
-            state.formRef.txtPrixUnitaire.Enabled = False
-            state.formRef.txtPrixUnitaire.BackColor = RGB(235, 235, 235)
+            state.PrixUnitaireEnabled = False
+            state.PrixUnitaireBackColor = RGB(235, 235, 235)
 
         Case mod_Config.DOC_TYPE_BC
             state.BannerText = "  COMMANDE  --  Bon de Commande"
             state.BannerColor = RGB(120, 40, 120)
-            m_IsBRMode = False
+            state.m_IsBRMode = False
             state.IsBRMode = False
             state.PUEditable = True
             state.PULabel = "Prix Unitaire (devis)"
-            state.formRef.txtPrixUnitaire.Enabled = True
-            state.formRef.txtPrixUnitaire.BackColor = RGB(255, 252, 196)
+            state.PrixUnitaireEnabled = True
+            state.PrixUnitaireBackColor = RGB(255, 252, 196)
 
         Case Else
             state.BannerText = "-- SELECTIONNEZ LE TYPE DE DOCUMENT --"
             state.BannerColor = RGB(100, 100, 100)
     End Select
-
-    '- Apply state to form
-    state.formRef.fraDocTypeBanner.BackColor = state.BannerColor
-    state.formRef.lblBannerText.Caption = state.BannerText
-    If HasControl(state.formRef, "lblPU") Then
-        state.formRef.lblPU.Caption = state.PULabel
-    End If
     
     '- Refresh stock display if article selected
-    If m_CurrentArticle <> "" Then Call EvaluateStockStatus(m_CurrentArticle, state)
+    If state.m_CurrentArticle <> "" Then Call EvaluateStockStatus(state.m_CurrentArticle, state)
     
     '- Auto-generate reference if empty
     If Len(Trim(state.docRef)) = 0 Then Call GenerateAutoRef(state)
@@ -382,7 +409,6 @@ Public Function GetDocPrefixFromType(ByVal docType As String) As String
         Case mod_Config.DOC_TYPE_DA:  GetDocPrefixFromType = "DA"
         Case Else:    GetDocPrefixFromType = "TXN"
     End Select
-End Function
 
 
 '==============================================================================
@@ -399,84 +425,82 @@ Public Sub OnArticleChanged(ByRef state As FormState)
     Dim parts() As String
     parts = Split(raw, "|")
     Dim prevArticle As String
-    prevArticle = m_CurrentArticle
-    m_CurrentArticle = Trim(parts(0))
-    state.ArticleCode = m_CurrentArticle
+    prevArticle = state.m_CurrentArticle
+    state.m_CurrentArticle = Trim(parts(0))
+    state.ArticleCode = state.m_CurrentArticle
 
     '- Only update category filter if article actually changed
-    If m_CurrentArticle <> prevArticle Then
-        Dim cat As String
-        cat = mod_Utilities.GetArticleField(m_CurrentArticle, "CAT")
+    If state.m_CurrentArticle <> prevArticle Then
+        Dim details As mod_StockEngine.ArticleDetails
+        details = mod_StockEngine.GetArticleDetails(state.m_CurrentArticle)
         
-        If Len(cat) > 0 And Trim(state.formRef.cmbCategorie.Value) <> cat Then
-            '- Update category dropdown to match article (without firing Change event)
-            Dim j As Integer
-            For j = 0 To state.formRef.cmbCategorie.listCount - 1
-                If state.formRef.cmbCategorie.List(j) = cat Then
-                    state.formRef.cmbCategorie.ListIndex = j
-                    Exit For
-                End If
-            Next j
+        If details.Code <> "" Then
+            Dim cat As String: cat = details.Category
             
-            '- Reload article list filtered by category (avoids OnCategoryChanged cascade)
-            Dim prevArt As String
-            prevArt = m_CurrentArticle
-            Call LoadArticleComboBox(cat, state)
-            
-            '- Restore article selection in filtered list
-            If prevArt <> "" Then
-                Dim k As Integer
-                For k = 0 To state.formRef.cmbArticle.listCount - 1
-                    If Left(state.formRef.cmbArticle.List(k), Len(prevArt)) = prevArt Then
-                        state.formRef.cmbArticle.ListIndex = k
+            If Len(cat) > 0 And Trim(state.formRef.cmbCategorie.Value) <> cat Then
+                '- Update category dropdown to match article (without firing Change event)
+                Dim j As Integer
+                For j = 0 To state.formRef.cmbCategorie.listCount - 1
+                    If state.formRef.cmbCategorie.List(j) = cat Then
+                        state.formRef.cmbCategorie.ListIndex = j
                         Exit For
                     End If
-                Next k
+                Next j
+                
+                '- Reload article list filtered by category (avoids OnCategoryChanged cascade)
+                Dim prevArt As String
+                prevArt = state.m_CurrentArticle
+                Call LoadArticleComboBox(cat, state)
+                
+                '- Restore article selection in filtered list
+                If prevArt <> "" Then
+                    Dim k As Integer
+                    For k = 0 To state.formRef.cmbArticle.listCount - 1
+                        If Left(state.formRef.cmbArticle.List(k), Len(prevArt)) = prevArt Then
+                            state.formRef.cmbArticle.ListIndex = k
+                            Exit For
+                        End If
+                    Next k
+                End If
             End If
         End If
     End If
 
-    Call EvaluateStockStatus(m_CurrentArticle, state)
+    Call EvaluateStockStatus(state.m_CurrentArticle, state)
 End Sub
 
 Private Sub EvaluateStockStatus(ByVal artCode As String, ByRef state As FormState)
-    Dim wsArt    As Worksheet
+    Dim details As mod_StockEngine.ArticleDetails
     Dim foundRow As Variant
     Dim stock    As Long
     Dim pu       As Double
     Dim cat      As String
     Dim ropVal   As Double
     Dim ssVal    As Long
+    Dim wsMouv   As Worksheet
+    Dim totalIn  As Double, totalOut As Double
 
-    On Error Resume Next
-    Set wsArt = ThisWorkbook.Sheets(mod_Config.SHEET_ARTICLES)
-    On Error GoTo 0
-
-    If wsArt Is Nothing Then
-        state.StockInfoText = "Code Article :  " & artCode & "  |  [Feuille ARTICLES introuvable]"
-        state.StockInfoColor = RGB(180, 0, 0)
-        Exit Sub
-    End If
-
-    foundRow = Application.Match(artCode, wsArt.Columns(COL_ART_CODE), 0)
-
-    If IsError(foundRow) Then
+    details = mod_StockEngine.GetArticleDetails(artCode)
+    
+    If details.Code = "" Then
         state.StockInfoText = "Code Article :  " & artCode & "  |  Article introuvable"
         state.StockInfoColor = RGB(180, 0, 0)
-        m_StockActuel = -1
+        state.m_StockActuel = -1
         state.ArticleStock = -1
         state.WilsonAlertVisible = False
         Exit Sub
     End If
 
-    pu = CDbl(mod_Utilities.SafeVal(wsArt.Cells(foundRow, COL_ART_PU).Value))
-    cat = Trim(CStr(wsArt.Cells(foundRow, COL_ART_CATEGORIE).Value))
+    pu = details.PU
+    cat = details.Category
+    stock = details.Stock
+    
     state.ArticlePU = pu
     state.ArticleCat = cat
+    state.m_StockActuel = stock
+    state.ArticleStock = stock
 
-    ' Use mod_StockEngine for stock calculation (consolidated)
-    Dim totalIn As Double, totalOut As Double
-    Dim wsMouv As Worksheet
+    ' Calculate stock from movements (to ensure consistency with ledger)
     On Error Resume Next
     Set wsMouv = ThisWorkbook.Sheets(mod_Config.SHEET_MOUVEMENTS)
     On Error GoTo 0
@@ -487,8 +511,7 @@ Private Sub EvaluateStockStatus(ByVal artCode As String, ByRef state As FormStat
         On Error GoTo 0
     End If
     stock = CLng(totalIn - totalOut)
-
-    m_StockActuel = stock
+    state.m_StockActuel = stock
     state.ArticleStock = stock
 
     If artCode = "ART-001" Then
@@ -519,33 +542,24 @@ Private Sub EvaluateStockStatus(ByVal artCode As String, ByRef state As FormStat
     state.StockInfoText = "Code Article :  " & artCode & "   |   Stock :  " & stock & " u" & "   |   " & statusText
     state.StockInfoColor = statusColor
 
-    '- Auto-fill PU for non-BR modes
-    If Not m_IsBRMode And pu > 0 Then
+    ' Auto-fill PU for non-BR modes
+    If Not state.m_IsBRMode And pu > 0 Then
         state.formRef.txtPrixUnitaire.Value = Format(pu, "0.00")
         state.unitPrice = Format(pu, "0.00")
     End If
 
-    '- Wilson alert for case study article
+    ' Wilson alert for case study article
     If artCode = "ART-001" Then
         state.WilsonAlertText = "Wilson EOQ -- Q* = " & CANON_QSTAR & " u  |  SS = " & CANON_SS & " u"
         state.WilsonAlertVisible = True
     Else
         state.WilsonAlertVisible = False
     End If
-    
-    '- Apply to form
-    state.formRef.lblStockInfo.Caption = state.StockInfoText
-    state.formRef.lblStockInfo.ForeColor = state.StockInfoColor
-    state.formRef.lblWilsonAlert.Visible = state.WilsonAlertVisible
-    If state.WilsonAlertVisible Then
-        state.formRef.lblWilsonAlert.Caption = state.WilsonAlertText
-        state.formRef.lblWilsonAlert.ForeColor = RGB(4, 90, 55)
-    End If
 End Sub
 
 Public Sub OnCategoryChanged(ByRef state As FormState)
     Dim prevSKU As String
-    prevSKU = m_CurrentArticle
+    prevSKU = state.m_CurrentArticle
 
     Call LoadArticleComboBox(Trim(state.formRef.cmbCategorie.Value), state)
 
@@ -571,17 +585,16 @@ Public Sub OnQuantityChanged(ByRef state As FormState)
     
     If Not IsNumeric(state.qty) Then
         state.QtyBackColor = RGB(255, 199, 199)
-        state.formRef.txtQuantite.BackColor = state.QtyBackColor
         Exit Sub
     End If
-
+    
     Dim qty As Long
     qty = CLng(state.qty)
     If qty <= 0 Then Exit Sub
 
-    If Not m_IsBRMode And m_StockActuel >= 0 Then
+    If Not state.m_IsBRMode And state.m_StockActuel >= 0 Then
         Dim projected As Long
-        projected = m_StockActuel - qty
+        projected = state.m_StockActuel - qty
 
         Select Case True
             Case projected < 0
@@ -596,8 +609,6 @@ Public Sub OnQuantityChanged(ByRef state As FormState)
     Else
         state.QtyBackColor = RGB(255, 255, 255)
     End If
-    
-    state.formRef.txtQuantite.BackColor = state.QtyBackColor
 End Sub
 
 
@@ -610,49 +621,8 @@ Public Sub GenerateAutoRef(ByRef state As FormState)
     Dim seq    As Long
 
     prefix = GetDocPrefixFromType(state.docType)
-    seq = GetNextSequence(prefix)
+    seq = mod_StockEngine.GetNextSequence(prefix)
 
-    state.docRef = prefix & "-" & Format(Date, "YYYY") & "-" & Format(seq, "0000")
-    state.formRef.txtRefDoc.Value = state.docRef
-End Sub
-
-Private Function GetNextSequence(ByVal prefix As String) As Long
-    Dim wsMouv   As Worksheet
-    Dim lastRow As Long
-    Dim i       As Long
-    Dim maxSeq  As Long
-    Dim refStr  As String
-
-    maxSeq = 0
-
-    On Error Resume Next
-    Set wsMouv = ThisWorkbook.Sheets(mod_Config.SHEET_MOUVEMENTS)
-    On Error GoTo 0
-
-    If wsMouv Is Nothing Then
-        GetNextSequence = 1
-        Exit Function
-    End If
-
-    lastRow = wsMouv.Cells(wsMouv.Rows.count, COL_MOUV_REF_DOC).End(xlUp).Row
-    
-    For i = 3 To lastRow
-        refStr = CStr(wsMouv.Cells(i, COL_MOUV_REF_DOC).Value)
-        If Left(refStr, Len(prefix)) = prefix And InStr(refStr, "-") > 0 Then
-            Dim parts() As String
-            parts = Split(refStr, "-")
-            If UBound(parts) >= 2 Then
-                Dim seqNum As Long
-                On Error Resume Next
-                seqNum = CLng(parts(UBound(parts)))
-                If Err.Number = 0 And seqNum > maxSeq Then maxSeq = seqNum
-                On Error GoTo 0
-            End If
-        End If
-    Next i
-
-    GetNextSequence = maxSeq + 1
-End Function
 
 
 '==============================================================================
@@ -668,11 +638,10 @@ Public Function AddLineToGrid(ByRef state As FormState) As Boolean
     Dim desig      As String
     Dim cat        As String
     Dim ropSeuil   As Double
-    Dim rowIdx     As Integer
-
+    
     '- Init: Clear all field errors
     Call mod_ThemingEngine.ClearAllFieldErrors(state.formRef)
-
+    
     '- Guard 1: Date validation
     If Not mod_Utilities.IsValidDate(state.TransDate) Then
         Call mod_ThemingEngine.HighlightFieldError(state.formRef.TxtDate)
@@ -680,7 +649,7 @@ Public Function AddLineToGrid(ByRef state As FormState) As Boolean
         state.formRef.TxtDate.SetFocus
         Exit Function
     End If
-
+    
     '- Guard 2: Document reference
     If Len(Trim(state.docRef)) = 0 Then
         Call mod_ThemingEngine.HighlightFieldError(state.formRef.txtRefDoc)
@@ -688,21 +657,21 @@ Public Function AddLineToGrid(ByRef state As FormState) As Boolean
         state.formRef.txtRefDoc.SetFocus
         Exit Function
     End If
-
+    
     '- Guard 3: Article selection
-    If Len(Trim(m_CurrentArticle)) = 0 Then
+    If Len(Trim(state.m_CurrentArticle)) = 0 Then
         Call mod_ThemingEngine.HighlightFieldError(state.formRef.cmbArticle)
         MsgBox "Selectionnez un article.", vbExclamation
         state.formRef.cmbArticle.SetFocus
         Exit Function
     End If
-
+    
     '- Guard 4: Article exists
-    If m_StockActuel = -1 Then
+    If state.m_StockActuel = -1 Then
         MsgBox "Article introuvable dans le catalogue.", vbCritical
         Exit Function
     End If
-
+    
     '- Guard 5: Quantity valid
     If Not IsNumeric(state.qty) Then
         Call mod_ThemingEngine.HighlightFieldError(state.formRef.txtQuantite)
@@ -710,7 +679,7 @@ Public Function AddLineToGrid(ByRef state As FormState) As Boolean
         state.formRef.txtQuantite.SetFocus
         Exit Function
     End If
-
+    
     qty = CLng(state.qty)
     If qty <= 0 Then
         Call mod_ThemingEngine.HighlightFieldError(state.formRef.txtQuantite)
@@ -718,9 +687,9 @@ Public Function AddLineToGrid(ByRef state As FormState) As Boolean
         state.formRef.txtQuantite.SetFocus
         Exit Function
     End If
-
+    
     '- Guard 6: PU required for BR mode
-    If m_IsBRMode Then
+    If state.m_IsBRMode Then
         state.unitPrice = state.formRef.txtPrixUnitaire.Value
         If Not IsNumeric(state.unitPrice) Or CDbl(mod_Utilities.SafeVal(state.unitPrice)) <= 0 Then
             Call mod_ThemingEngine.HighlightFieldError(state.formRef.txtPrixUnitaire)
@@ -729,20 +698,20 @@ Public Function AddLineToGrid(ByRef state As FormState) As Boolean
             Exit Function
         End If
     End If
-
+    
     pu = CDbl(mod_Utilities.SafeVal(state.unitPrice))
-
+    
     '- Guard 7: Stock sufficiency (non-BR only)
-    If Not m_IsBRMode Then
+    If Not state.m_IsBRMode Then
         Dim netProjected As Long
-        netProjected = m_StockActuel - qty
-
+        netProjected = state.m_StockActuel - qty
+        
         If netProjected < 0 Then
-            MsgBox "Stock insuffisant ! Stock dispo: " & m_StockActuel & " u, Qte demandee: " & qty & " u", vbCritical
+            MsgBox "Stock insuffisant ! Stock dispo: " & state.m_StockActuel & " u, Qte demandee: " & qty & " u", vbCritical
             Exit Function
         End If
-
-        ropSeuil = IIf(m_CurrentArticle = "ART-001", CANON_ROP, 60)
+        
+        ropSeuil = IIf(state.m_CurrentArticle = "ART-001", CANON_ROP, 60)
         If netProjected <= ropSeuil Then
             Dim ropResp As VbMsgBoxResult
             ropResp = MsgBox("ALERTE -- Point de commande atteint." & vbCrLf & _
@@ -750,78 +719,97 @@ Public Function AddLineToGrid(ByRef state As FormState) As Boolean
             If ropResp = vbNo Then Exit Function
         End If
     End If
-
+    
     '- Add line to grid
     valLigne = qty * pu
-    desig = mod_Utilities.GetArticleField(m_CurrentArticle, "DESIG")
-    cat = mod_Utilities.GetArticleField(m_CurrentArticle, "CAT")
-
-    state.formRef.lstGrid.AddItem ""
-    rowIdx = state.formRef.lstGrid.listCount - 1
-
-    state.formRef.lstGrid.List(rowIdx, COL_CODE) = m_CurrentArticle
-    state.formRef.lstGrid.List(rowIdx, COL_DESIG) = Left(desig, 28)
-    state.formRef.lstGrid.List(rowIdx, COL_CAT) = Left(cat, 14)
-    state.formRef.lstGrid.List(rowIdx, COL_QTE) = CStr(qty)
-    state.formRef.lstGrid.List(rowIdx, COL_STOCK) = CStr(m_StockActuel)
-    state.formRef.lstGrid.List(rowIdx, COL_PU) = Format(pu, "#,##0.00")
-    state.formRef.lstGrid.List(rowIdx, COL_VALEUR) = Format(valLigne, "#,##0.00")
-
-    state.GridRowCount = state.formRef.lstGrid.listCount
+    desig = mod_Utilities.GetArticleField(state.m_CurrentArticle, "DESIG")
+    cat = mod_Utilities.GetArticleField(state.m_CurrentArticle, "CAT")
+    
+    Dim newLine As String
+    newLine = state.m_CurrentArticle & "|" & Left(desig, 28) & "|" & Left(cat, 14) & "|" & _
+              CStr(qty) & "|" & Format(pu, "#,##0.00") & "|" & Format(valLigne, "#,##0.00")
+    
+    If Len(state.GridData) > 0 Then
+        state.GridData = state.GridData & ";" & newLine
+    Else
+        state.GridData = newLine
+    End If
+    
+    Dim lines() As String
+    lines = Split(state.GridData, ";")
+    state.GridRowCount = UBound(lines) + 1
     
     Call UpdateTotalDisplay(state)
-
+    
     '- Reset input fields
-    state.formRef.cmbArticle.ListIndex = -1
-    state.formRef.txtQuantite.Value = ""
-    state.formRef.txtPrixUnitaire.Value = ""
-    state.formRef.txtQuantite.BackColor = RGB(255, 255, 255)
-    m_CurrentArticle = ""
+    state.qty = ""
+    state.unitPrice = ""
+    state.QtyBackColor = RGB(255, 255, 255)
+    state.m_CurrentArticle = ""
     state.ArticleCode = ""
-    m_StockActuel = 0
+    state.m_StockActuel = 0
     state.ArticleStock = 0
     state.StockInfoText = "Code Article :  --"
     state.StockInfoColor = RGB(100, 100, 100)
-    state.formRef.lblStockInfo.Caption = state.StockInfoText
-    state.formRef.lblStockInfo.ForeColor = state.StockInfoColor
     state.WilsonAlertVisible = False
-    state.formRef.lblWilsonAlert.Visible = False
-    state.qty = ""
-    state.unitPrice = ""
-
+    
     state.formRef.cmbArticle.SetFocus
     AddLineToGrid = True
-End Function
 
 Public Sub RemoveLineFromGrid(ByRef state As FormState)
-    If state.formRef.lstGrid.ListIndex < 0 Then
+    Dim idx As Integer
+    idx = state.formRef.lstGrid.ListIndex
+    
+    If idx < 0 Then
         MsgBox "Selectionnez une ligne a supprimer.", vbInformation
         Exit Sub
     End If
 
-    state.formRef.lstGrid.RemoveItem state.formRef.lstGrid.ListIndex
-    state.GridRowCount = state.formRef.lstGrid.listCount
+    Dim lines() As String
+    lines = Split(state.GridData, ";")
+    
+    Dim i As Integer
+    Dim newLines() As String
+    ReDim newLines(UBound(lines) - 1)
+    
+    Dim k As Integer: k = 0
+    For i = 0 To UBound(lines)
+        If i <> idx Then
+            newLines(k) = lines(i)
+            k = k + 1
+        End If
+    Next i
+    
+    state.GridData = Join(newLines, ";")
+    state.GridRowCount = UBound(newLines) + 1
+    
     Call UpdateTotalDisplay(state)
 End Sub
 
 Private Sub UpdateTotalDisplay(ByRef state As FormState)
     Dim runningTotal As Double
     Dim i            As Integer
+    Dim lines()      As String
     runningTotal = 0
 
-    For i = 0 To state.formRef.lstGrid.listCount - 1
-        On Error Resume Next
-        Dim rawVal As String
-        rawVal = state.formRef.lstGrid.List(i, COL_VALEUR)
-        rawVal = Replace(rawVal, ",", "")
-        If IsNumeric(rawVal) Then runningTotal = runningTotal + CDbl(rawVal)
-        On Error GoTo 0
-    Next i
+    If Len(state.GridData) > 0 Then
+        lines = Split(state.GridData, ";")
+        For i = 0 To UBound(lines)
+            If Len(Trim(lines(i))) > 0 Then
+                Dim parts() As String
+                parts = Split(lines(i), "|")
+                If UBound(parts) >= 5 Then
+                    Dim valStr As String
+                    valStr = Replace(parts(5), ",", "")
+                    If IsNumeric(valStr) Then runningTotal = runningTotal + CDbl(valStr)
+                End If
+            End If
+        Next i
+    End If
 
-    m_TotalGeneral = runningTotal
+    state.m_TotalGeneral = runningTotal
     state.TotalGeneral = runningTotal
-    state.TotalGeneralText = "TOTAL GENERAL :  " & Format(m_TotalGeneral, "#,##0.00") & " DZD"
-    state.formRef.lblTotalGeneral.Caption = state.TotalGeneralText
+    state.TotalGeneralText = "TOTAL GENERAL :  " & Format(state.m_TotalGeneral, "#,##0.00") & " DZD"
 End Sub
 
 Private Function GetQtyInGridForSKU(ByVal sku As String, ByRef state As FormState) As Long
@@ -838,7 +826,6 @@ Private Function GetQtyInGridForSKU(ByVal sku As String, ByRef state As FormStat
     Next i
 
     GetQtyInGridForSKU = total
-End Function
 
 
 '==============================================================================
@@ -848,11 +835,10 @@ End Function
 Public Function CommitTransaction(ByRef state As FormState) As Boolean
     CommitTransaction = False
     
-    ' Read current state from form
+    ' Capture current form input into state
     state.Service = state.formRef.cmbService.Value
     state.docType = state.formRef.cmbTypeDoc.Value
     state.docRef = Trim(state.formRef.txtRefDoc.Value)
-    state.GridRowCount = state.formRef.lstGrid.listCount
     
     '- Guard: Empty grid
     If state.GridRowCount = 0 Then
@@ -860,9 +846,6 @@ Public Function CommitTransaction(ByRef state As FormState) As Boolean
         Exit Function
     End If
     
-    '- Init: Clear all field errors
-    Call mod_ThemingEngine.ClearAllFieldErrors(state.formRef)
-
     '- Guard: Service required
     If Len(Trim(state.Service)) = 0 Then
         Call mod_ThemingEngine.HighlightFieldError(state.formRef.cmbService)
@@ -878,24 +861,34 @@ Public Function CommitTransaction(ByRef state As FormState) As Boolean
         state.formRef.cmbTypeDoc.SetFocus
         Exit Function
     End If
-
+    
     '- Guard: Validate grid data
     Dim gridRow As Integer
+    Dim lines() As String
+    lines = Split(state.GridData, ";")
+    
     For gridRow = 0 To state.GridRowCount - 1
-        If Not IsNumeric(state.formRef.lstGrid.List(gridRow, COL_QTE)) Or _
-           Not IsNumeric(state.formRef.lstGrid.List(gridRow, COL_PU)) Then
+        Dim parts() As String
+        parts = Split(lines(gridRow), "|")
+        If UBound(parts) < 5 Then
             MsgBox "Donn" & Chr(233) & "es invalides a la ligne " & gridRow + 1, vbCritical
             Exit Function
         End If
-        If CLng(state.formRef.lstGrid.List(gridRow, COL_QTE)) <= 0 Then
+        
+        If Not IsNumeric(parts(3)) Or Not IsNumeric(parts(4)) Then
+            MsgBox "Donn" & Chr(233) & "es invalides a la ligne " & gridRow + 1, vbCritical
+            Exit Function
+        End If
+        
+        If CLng(parts(3)) <= 0 Then
             MsgBox "La quantite doit " & Chr(234) & "tre > 0 (ligne " & gridRow + 1 & ")", vbCritical
             Exit Function
         End If
     Next gridRow
-
+    
     '- Confirmation dialog
     Dim typeSign As String
-    typeSign = IIf(m_IsBRMode, "IN -- Entree", "OUT -- Sortie")
+    typeSign = IIf(state.m_IsBRMode, "IN -- Entree", "OUT -- Sortie")
     
     Dim confMsg As String
     confMsg = "Confirmer l'enregistrement ?" & vbCrLf & vbCrLf & _
@@ -924,20 +917,21 @@ Public Function CommitTransaction(ByRef state As FormState) As Boolean
     On Error GoTo SaveError
     
     docDate = Date
-    mvtSign = IIf(m_IsBRMode, "IN", "OUT")
+    mvtSign = IIf(state.m_IsBRMode, "IN", "OUT")
     
     Application.ScreenUpdating = False
     Application.Calculation = xlCalculationManual
     Application.EnableEvents = False
-
+    
     Dim wsMouv As Worksheet: Set wsMouv = ThisWorkbook.Sheets(mod_Config.SHEET_MOUVEMENTS)
     
     For i = 0 To state.GridRowCount - 1
-        lineCode = state.formRef.lstGrid.List(i, COL_CODE)
-        lineDesig = state.formRef.lstGrid.List(i, COL_DESIG)
-        lineQty = CLng(state.formRef.lstGrid.List(i, COL_QTE))
-        linePU = CDbl(Replace(state.formRef.lstGrid.List(i, COL_PU), ",", ""))
-        lineVal = CDbl(Replace(state.formRef.lstGrid.List(i, COL_VALEUR), ",", ""))
+        parts = Split(lines(i), "|")
+        lineCode = parts(0)
+        lineDesig = parts(1)
+        lineQty = CLng(parts(3))
+        linePU = CDbl(Replace(parts(4), ",", ""))
+        lineVal = CDbl(Replace(parts(5), ",", ""))
         
         '- Pre-write stock check (OUT only)
         If mvtSign = "OUT" Then
@@ -971,14 +965,14 @@ Public Function CommitTransaction(ByRef state As FormState) As Boolean
             GoTo SaveError
         End If
     Next i
-
+    
     Application.EnableEvents = True
     Application.Calculation = xlCalculationAutomatic
     Application.ScreenUpdating = True
     
     '- Commit safety transaction (validates consistency)
     If Not mod_TransactionSafety.CommitTransaction Then
-        MsgBox "Validation de la transaction �chou�e. Annulation...", vbCritical
+        MsgBox "Validation de la transaction choue. Annulation...", vbCritical
         GoTo SaveError
     End If
     
@@ -1015,7 +1009,6 @@ SaveError:
     Application.Calculation = xlCalculationAutomatic
     Application.ScreenUpdating = True
     MsgBox "Une erreur s'est produite lors de l'enregistrement. Transaction annul" & Chr(233) & "e.", vbCritical
-End Function
 
 Private Function SyncTransactionInternal(ByVal artCode As String, _
                                           ByVal mvtType As String, _
@@ -1026,7 +1019,6 @@ Private Function SyncTransactionInternal(ByVal artCode As String, _
     SyncTransactionInternal = mod_SyncBridge.SyncTransactionInternal(artCode, mvtType, qty, unitPrice, refDoc)
     If Err.Number <> 0 Then SyncTransactionInternal = -1
     On Error GoTo 0
-End Function
 
 
 '==============================================================================
@@ -1055,9 +1047,72 @@ Public Function HasControl(ByVal formRef As Object, ByVal ctrlName As String) As
     Set ctrl = formRef.Controls(ctrlName)
     HasControl = (Err.Number = 0)
     On Error GoTo 0
-End Function
 
 '==============================================================================
 ' END -- mod_StockEntry_Logic.bas
 '==============================================================================
 
+
+'==============================================================================
+' SECTION 11 - KEYBOARD SHORTCUTS (Moved from frmStockEntry)
+'==============================================================================
+
+Public Sub FormatRefDoc(ByRef state As FormState, ByVal tb As Object)
+    Static prevVal As String
+    If tb.Value = prevVal Then Exit Sub
+    
+    Dim raw As String
+    raw = tb.Value
+    
+    ' Auto-prefix using constant from mod_Config if missing and user typed something
+    If Len(raw) > 0 And Left(raw, Len(mod_Config.REFDOC_PREFIX)) <> mod_Config.REFDOC_PREFIX Then
+        raw = mod_Config.REFDOC_PREFIX & raw
+    End If
+    
+    ' Strip everything except digits and dashes
+    Dim cleaned As String
+    cleaned = ""
+    Dim i As Integer
+    For i = 1 To Len(raw)
+        Dim ch As String
+        ch = Mid(raw, i, 1)
+        If ch Like "[0-9]" Or ch = "-" Then
+            cleaned = cleaned & ch
+        End If
+    Next i
+    
+    ' Reconstruct: PREFIX-YYYY-NNNN
+    Dim prefix As String: prefix = mod_Config.REFDOC_PREFIX
+    Dim digitPart As String
+    digitPart = Replace(cleaned, mod_Config.REFDOC_PREFIX, "", , , vbTextCompare)
+    digitPart = Replace(digitPart, "-", "")
+    
+    Dim formatted As String
+    formatted = prefix
+    If Len(digitPart) >= 1 Then
+        formatted = formatted & Left(digitPart, 4)
+        If Len(digitPart) > 4 Then
+            formatted = formatted & "-" & Mid(digitPart, 5, 4)
+        End If
+    End If
+    
+    ' Limit to max length
+    If Len(formatted) > 13 Then formatted = Left(formatted, 13)
+    
+    prevVal = formatted
+    If tb.Value <> formatted Then
+        tb.Value = formatted
+        tb.SelStart = Len(tb.Value)
+    End If
+    
+    ' Live format hint via tag color
+    If Len(tb.Value) = 13 Then
+        tb.BackColor = RGB(220, 255, 220)
+    ElseIf Len(tb.Value) > 3 Then
+        tb.BackColor = RGB(255, 252, 196)
+    End If
+End Sub
+
+'==============================================================================
+' END -- mod_StockEntry_Logic.bas
+'==============================================================================

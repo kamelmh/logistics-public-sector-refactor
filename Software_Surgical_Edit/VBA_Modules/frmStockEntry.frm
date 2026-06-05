@@ -18,7 +18,6 @@ Option Explicit
 '- Module-level state
 Private m_State As FormState
 Private m_Initialized As Boolean
-Private m_FullArticleList() As String  ' Full article list for fuzzy search
 Private m_IsFiltering As Boolean       ' Prevent recursive filtering
 
 '==============================================================================
@@ -732,6 +731,7 @@ End Sub
 Private Sub cmbTypeDoc_Change()
     If Not m_Initialized Then Exit Sub
     Call mod_StockEntry_Logic.OnDocTypeChanged(m_State)
+    Call ApplyStateToUI(m_State)
 End Sub
 
 '-- Article selection changed (with fuzzy search filtering)
@@ -745,6 +745,7 @@ Private Sub cmbArticle_Change()
     ' If user selected from dropdown (ListIndex >= 0), process as normal selection
     If cmb.ListIndex >= 0 Then
         Call mod_StockEntry_Logic.OnArticleChanged(m_State)
+        Call ApplyStateToUI(m_State)
         Exit Sub
     End If
     
@@ -754,12 +755,12 @@ Private Sub cmbArticle_Change()
     
     ' Save full list on first keystroke
     If Len(typed) > 0 And Not m_IsFiltering Then
-        Call SaveFullArticleList(cmb)
+        Call mod_StockEntry_Logic.SaveFullArticleList(m_State, cmb)
     End If
     
     ' Filter and repopulate
     m_IsFiltering = True
-    Call FilterArticleList(cmb, typed)
+    Call mod_StockEntry_Logic.FilterArticleList(m_State, cmb, typed)
     m_IsFiltering = False
     
     ' Show dropdown if filtering produced results
@@ -768,73 +769,60 @@ Private Sub cmbArticle_Change()
     End If
 End Sub
 
-Private Sub SaveFullArticleList(ByVal cmb As MSForms.ComboBox)
-    If cmb.listCount = 0 Then Exit Sub
-    ReDim m_FullArticleList(0 To cmb.listCount - 1)
-    Dim i As Integer
-    For i = 0 To cmb.listCount - 1
-        m_FullArticleList(i) = cmb.List(i)
-    Next i
-End Sub
-
-Private Sub FilterArticleList(ByVal cmb As MSForms.ComboBox, ByVal filterText As String)
-    Dim savedIndex As Integer
-    savedIndex = cmb.ListIndex
-    
-    cmb.Clear
-    
-    If Len(filterText) = 0 Then
-        ' Restore full list
-        If IsArrayInitialized(m_FullArticleList) Then
-            Dim i As Integer
-            For i = LBound(m_FullArticleList) To UBound(m_FullArticleList)
-                cmb.AddItem m_FullArticleList(i)
-            Next i
-        End If
-        Exit Sub
-    End If
-    
-    ' Filter: match against code or designation (case-insensitive)
-    Dim searchUpper As String
-    searchUpper = UCase(filterText)
-    
-    If IsArrayInitialized(m_FullArticleList) Then
-        Dim j As Integer
-        For j = LBound(m_FullArticleList) To UBound(m_FullArticleList)
-            Dim item As String
-            item = m_FullArticleList(j)
-            ' Match against "CODE | DESIGNATION" format
-            If InStr(1, UCase(item), searchUpper) > 0 Then
-                cmb.AddItem item
-            End If
-        Next j
-    End If
-    
-    ' Restore selection if still in list
-    If savedIndex >= 0 And cmb.listCount > 0 Then
-        If savedIndex < cmb.listCount Then
-            cmb.ListIndex = savedIndex
-        End If
-    End If
-End Sub
-
-Private Function IsArrayInitialized(ByVal arr As Variant) As Boolean
-    On Error Resume Next
-    IsArrayInitialized = (Not Not arr) <> 0
-    On Error GoTo 0
-End Function
 
 '-- Category filter changed
 Private Sub cmbCategorie_Change()
     If Not m_Initialized Then Exit Sub
     Call mod_StockEntry_Logic.OnCategoryChanged(m_State)
+    Call ApplyStateToUI(m_State)
 End Sub
 
 '-- Quantity field changed (live validation)
 Private Sub txtQuantite_Change()
     If Not m_Initialized Then Exit Sub
+    
+    Dim tb As MSForms.TextBox
+    Set tb = Me.Controls("txtQuantite")
+    
+    Dim cleaned As String
+    cleaned = mod_Utilities.CleanNumericString(tb.Value)
+    
+    If tb.Value <> cleaned Then
+        tb.Value = cleaned
+        tb.SelStart = Len(tb.Value)
+    End If
+    
     Call mod_StockEntry_Logic.OnQuantityChanged(m_State)
+    Call ApplyStateToUI(m_State)
 End Sub
+
+Private Sub txtPrixUnitaire_Change()
+    If Not m_Initialized Then Exit Sub
+    
+    Dim tb As MSForms.TextBox
+    Set tb = Me.Controls("txtPrixUnitaire")
+    
+    Dim cleaned As String
+    cleaned = mod_Utilities.CleanNumericString(tb.Value)
+    
+    If tb.Value <> cleaned Then
+        tb.Value = cleaned
+        tb.SelStart = Len(tb.Value)
+    End If
+    
+    ' Update state
+    m_State.unitPrice = cleaned
+    
+    ' Update state for visual feedback
+    If Len(cleaned) > 0 And IsNumeric(cleaned) And CDbl(cleaned) > 0 Then
+        m_State.PrixUnitaireBackColor = RGB(220, 255, 220)
+    Else
+        m_State.PrixUnitaireBackColor = RGB(255, 252, 196)
+    End If
+    
+    Call ApplyStateToUI(m_State)
+End Sub
+
 
 '-- Auto-generate reference
 Private Sub btnAutoRef_Click()
@@ -929,182 +917,24 @@ Private Sub txtRefDoc_Exit(ByVal Cancel As MSForms.ReturnBoolean)
     Call mod_ThemingEngine.ApplyInputBlur(Me.Controls("txtRefDoc"))
 End Sub
 Private Sub txtRefDoc_Change()
+    If Not m_Initialized Then Exit Sub
+    
     Dim tb As MSForms.TextBox
     Set tb = Me.Controls("txtRefDoc")
     
-    Static prevVal As String
-    If tb.Value = prevVal Then Exit Sub
+    Call mod_StockEntry_Logic.FormatRefDoc(m_State, tb)
     
-    Dim raw As String
-    raw = tb.Value
-    
-    ' Auto-prefix using constant from mod_Config if missing and user typed something
-    If Len(raw) > 0 And Left(raw, Len(mod_Config.REFDOC_PREFIX)) <> mod_Config.REFDOC_PREFIX Then
-        raw = mod_Config.REFDOC_PREFIX & raw
-    End If
-    
-    ' Strip everything except digits and dashes
-    Dim cleaned As String
-    cleaned = ""
-    Dim i As Integer
-    For i = 1 To Len(raw)
-        Dim ch As String
-        ch = Mid(raw, i, 1)
-        If ch Like "[0-9]" Or ch = "-" Then
-            cleaned = cleaned & ch
-        End If
-    Next i
-    
-    ' Reconstruct: PREFIX-YYYY-NNNN
-    Dim prefix As String: prefix = mod_Config.REFDOC_PREFIX
-    Dim digitPart As String
-    digitPart = Replace(cleaned, mod_Config.REFDOC_PREFIX, "", , , vbTextCompare)
-    digitPart = Replace(digitPart, "-", "")
-    
-    Dim formatted As String
-    formatted = prefix
-    If Len(digitPart) >= 1 Then
-        formatted = formatted & Left(digitPart, 4)
-        If Len(digitPart) > 4 Then
-            formatted = formatted & "-" & Mid(digitPart, 5, 4)
-        End If
-    End If
-    
-    ' Limit to max length
-    If Len(formatted) > 13 Then formatted = Left(formatted, 13)
-    
-    prevVal = formatted
-    If tb.Value <> formatted Then
-        tb.Value = formatted
-        tb.SelStart = Len(tb.Value)
-    End If
-    
-    ' Live format hint via tag color
+    ' Update state for live format hint
     If Len(tb.Value) = 13 Then
-        tb.BackColor = RGB(220, 255, 220)
+        m_State.RefDocBackColor = RGB(220, 255, 220)
     ElseIf Len(tb.Value) > 3 Then
-        tb.BackColor = RGB(255, 252, 196)
-    End If
-End Sub
-Private Sub txtQuantite_Enter()
-    Call mod_ThemingEngine.ApplyInputFocus(Me.Controls("txtQuantite"))
-End Sub
-Private Sub txtQuantite_Exit(ByVal Cancel As MSForms.ReturnBoolean)
-    Call mod_ThemingEngine.ApplyInputBlur(Me.Controls("txtQuantite"))
-End Sub
-Private Sub txtPrixUnitaire_Enter()
-    Call mod_ThemingEngine.ApplyInputFocus(Me.Controls("txtPrixUnitaire"))
-End Sub
-Private Sub txtPrixUnitaire_Exit(ByVal Cancel As MSForms.ReturnBoolean)
-    Call mod_ThemingEngine.ApplyInputBlur(Me.Controls("txtPrixUnitaire"))
-End Sub
-Private Sub txtPrixUnitaire_Change()
-    If Not m_Initialized Then Exit Sub
-    Dim tb As MSForms.TextBox
-    Set tb = Me.Controls("txtPrixUnitaire")
-    
-    Static prevVal As String
-    If tb.Value = prevVal Then Exit Sub
-    
-    Dim raw As String
-    raw = tb.Value
-    
-    ' Strip everything except digits and one decimal point
-    Dim cleaned As String
-    cleaned = ""
-    Dim hasDot As Boolean
-    Dim i As Integer
-    For i = 1 To Len(raw)
-        Dim ch As String
-        ch = Mid(raw, i, 1)
-        If ch Like "[0-9]" Then
-            cleaned = cleaned & ch
-        ElseIf ch = "," Or ch = "." Then
-            If Not hasDot Then
-                cleaned = cleaned & "."
-                hasDot = True
-            End If
-        End If
-    Next i
-    
-    ' Limit to 2 decimal places
-    Dim dotPos As Integer
-    dotPos = InStr(cleaned, ".")
-    If dotPos > 0 And Len(cleaned) - dotPos > 2 Then
-        cleaned = Left(cleaned, dotPos + 2)
-    End If
-    
-    ' Remove trailing dot with no decimals
-    If Right(cleaned, 1) = "." And Len(cleaned) = dotPos Then
-        cleaned = Left(cleaned, dotPos - 1)
-    End If
-    
-    prevVal = cleaned
-    If tb.Value <> cleaned Then
-        tb.Value = cleaned
-        tb.SelStart = Len(tb.Value)
-    End If
-    
-    ' Update state
-    m_State.unitPrice = cleaned
-    
-    ' Visual feedback: green if valid > 0, white otherwise
-    If Len(cleaned) > 0 And IsNumeric(cleaned) And CDbl(cleaned) > 0 Then
-        tb.BackColor = RGB(220, 255, 220)
+        m_State.RefDocBackColor = RGB(255, 252, 196)
     Else
-        tb.BackColor = RGB(255, 252, 196)
+        m_State.RefDocBackColor = RGB(255, 252, 196)
     End If
+    
+    Call ApplyStateToUI(m_State)
 End Sub
-Private Sub cmbTypeDoc_Enter()
-    Call mod_ThemingEngine.ApplyInputFocus(Me.Controls("cmbTypeDoc"))
-End Sub
-Private Sub cmbTypeDoc_Exit(ByVal Cancel As MSForms.ReturnBoolean)
-    Call mod_ThemingEngine.ApplyInputBlur(Me.Controls("cmbTypeDoc"))
-End Sub
-Private Sub cmbArticle_Enter()
-    Call mod_ThemingEngine.ApplyInputFocus(Me.Controls("cmbArticle"))
-End Sub
-Private Sub cmbArticle_Exit(ByVal Cancel As MSForms.ReturnBoolean)
-    Call mod_ThemingEngine.ApplyInputBlur(Me.Controls("cmbArticle"))
-End Sub
-Private Sub cmbService_Enter()
-    Call mod_ThemingEngine.ApplyInputFocus(Me.Controls("cmbService"))
-End Sub
-Private Sub cmbService_Exit(ByVal Cancel As MSForms.ReturnBoolean)
-    Call mod_ThemingEngine.ApplyInputBlur(Me.Controls("cmbService"))
-End Sub
-Private Sub cmbCategorie_Enter()
-    Call mod_ThemingEngine.ApplyInputFocus(Me.Controls("cmbCategorie"))
-End Sub
-Private Sub cmbCategorie_Exit(ByVal Cancel As MSForms.ReturnBoolean)
-    Call mod_ThemingEngine.ApplyInputBlur(Me.Controls("cmbCategorie"))
-End Sub
-
-Private Sub UserForm_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, _
-                              ByVal Shift As Integer)
-    Select Case KeyCode
-        Case 27: Call btnAnnuler_Click
-        Case 13: If Me.ActiveControl Is Me.Controls("lstGrid") Then Else Call btnAjouterLigne_Click
-        Case 83: If Shift = 2 Then Call btnEnregistrer_Click  ' Ctrl+S
-    End Select
-End Sub
-
-Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
-    If CloseMode = vbFormControlMenu Then
-        Cancel = True
-        Call btnAnnuler_Click
-    End If
-End Sub
-
-'==============================================================================
-' HOVER EFFECTS - Button MouseMove handlers (via HoverButton helper)
-'==============================================================================
-
-Private Sub btnEnregistrer_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-    HoverButton Me.Controls("btnEnregistrer"), RGB(51, 153, 238), RGB(255, 255, 255)
-End Sub
-
-Private Sub btnAjouterLigne_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     HoverButton Me.Controls("btnAjouterLigne"), RGB(200, 230, 200), RGB(20, 90, 40)
 End Sub
 
@@ -1158,9 +988,74 @@ Private Sub ResetButtonHover(ByRef ctrl As Object, ByVal origBg As Long, ByVal o
     ctrl.ForeColor = origFg
 End Sub
 
-'==============================================================================
-' END -- frmStockEntry.frm
-' All business logic in mod_StockEntry_Logic.bas
-'==============================================================================
+Public Sub ApplyStateToUI(ByRef state As FormState)
+    On Error Resume Next
+    
+    ' 1. Banner
+    With Me.Controls("lblBannerText")
+        .Caption = state.BannerText
+        .BackColor = state.BannerColor
+    End With
+    
+    ' 2. Wilson Alert
+    With Me.Controls("lblWilsonAlert")
+        .Visible = state.WilsonAlertVisible
+        If state.WilsonAlertVisible Then
+            .Caption = state.WilsonAlertText
+            .ForeColor = RGB(4, 90, 55)
+        End If
+    End With
+    
+    ' 3. Stock Info
+    With Me.Controls("lblStockInfo")
+        .Caption = state.StockInfoText
+        .ForeColor = state.StockInfoColor
+    End With
+    
+    ' 4. Total General
+    Me.Controls("lblTotalGeneral").Caption = state.TotalGeneralText
+    
+    ' 5. Inputs
+    Me.Controls("TxtDate").Value = state.TransDate
+    Me.Controls("txtRefDoc").Value = state.docRef
+    Me.Controls("txtRefDoc").BackColor = state.RefDocBackColor
+    Me.Controls("txtQuantite").Value = state.qty
+    Me.Controls("txtQuantite").BackColor = state.QtyBackColor
+    Me.Controls("txtPrixUnitaire").Value = state.unitPrice
+    Me.Controls("txtPrixUnitaire").BackColor = state.PrixUnitaireBackColor
+    Me.Controls("txtPrixUnitaire").Enabled = state.PrixUnitaireEnabled
+    
+    ' 6. Dropdowns
+    Me.Controls("cmbTypeDoc").Value = state.docType
+    Me.Controls("cmbService").Value = state.Service
+    Me.Controls("cmbCategorie").Value = state.ArticleCat
+    Me.Controls("cmbArticle").Value = state.ArticleCode
+    
+    ' 7. Grid (Rebuild from GridData)
+    Dim lst As Object
+    Set lst = Me.Controls("lstGrid")
+    lst.Clear
+    If Len(state.GridData) > 0 Then
+        Dim gridLines() As String
+        gridLines = Split(state.GridData, ";")
+        Dim i As Integer, parts() As String
+        For i = 0 To UBound(gridLines)
+            If Len(Trim(gridLines(i))) > 0 Then
+                parts = Split(gridLines(i), "|")
+                If UBound(parts) >= 5 Then
+                    lst.AddItem parts(0)
+                    lst.List(lst.ListCount - 1, 1) = parts(1)
+                    lst.List(lst.ListCount - 1, 2) = parts(2)
+                    lst.List(lst.ListCount - 1, 3) = parts(3)
+                    lst.List(lst.ListCount - 1, 4) = parts(4)
+                    lst.List(lst.ListCount - 1, 5) = parts(5)
+                End If
+            End If
+        Next i
+    End If
+    
+    On Error GoTo 0
+End Sub
+End Sub
 
 
