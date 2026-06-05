@@ -33,9 +33,10 @@
 
 ### [TASK-002] Thesis Chapter 3 Review — Field Diagnosis
 - **Type**: review-thesis
-- **Input**: Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md (Chapter 3 only)
+- **Input**: .crossflow/temp-chapter3.md
 - **Prompt**: |
   Read Chapter 3 (Chapitre 3: Diagnostic de terrain) of this French BTS thesis.
+  The chapter starts with "Chapitre 3" or "Chapitre III" and covers field diagnosis.
   Review for:
   1. Academic tone consistency (formal French)
   2. Formula correctness: Wilson EOQ (Q*=37), ROP (206), CMUP
@@ -61,24 +62,43 @@
   Do NOT modify any files. Output a structured refactoring plan.
 - **Token Budget**: ~12K input, ~6K output
 - **Priority**: MED
-- **Status: PENDING
-
-### [TASK-004] Defense Q&A Generation
-- **Type**: defense-qa
-- **Input**: Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md, .opencode/erp-context-compact.md
-- **Prompt**: |
-  Based on the thesis and ERP system context, generate 20 likely jury questions
-  for a BTS defense in Algeria. Cover:
-  - Wilson EOQ formula derivation and application (5 questions)
-  - ABC/XYZ classification methodology (3 questions)
-  - VBA architecture decisions (4 questions)
-  - Data integrity and security (3 questions)
-  - Practical impact and field results (3 questions)
-  - Limitations and future work (2 questions)
-  Format: Q&A pairs in French. Each answer: 2-3 sentences max.
-- **Token Budget**: ~20K input, ~8K output
-- **Priority**: MED
 - **Status**: DONE
+
+### [TASK-005] RTL/LTR Direction Audit — Thesis DOCX
+- **Type**: custom
+- **Input**: Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md
+- **Prompt**: |
+  Audit this Arabic thesis for RTL/LTR text direction issues. The thesis mixes:
+  - Arabic text (should be RTL — right-to-left)
+  - French text/headings (should be LTR — left-to-right)
+  - Code/technical terms (should be LTR)
+  - Tables with mixed content
+  Scan the markdown and identify:
+  1. Lines where Arabic text is incorrectly marked as LTR
+  2. Lines where French text is incorrectly marked as RTL
+  3. Table columns with wrong alignment
+  4. Mixed-direction lines that need explicit direction markers
+  Output a list: Line# | Current Direction | Expected Direction | Fix Needed
+  Focus on chapters 3 and 4 (most likely to have issues).
+- **Token Budget**: ~25K input, ~8K output
+- **Priority**: HIGH
+- **Status**: PENDING
+
+### [TASK-006] VBA Module Inventory — All 37 Modules
+- **Type**: custom
+- **Input**: Software_Surgical_Edit/VBA_Modules/ (directory listing)
+- **Prompt**: |
+  Read all 37 .bas files in the VBA_Modules directory.
+  For each module, extract:
+  1. Module name and type (bas/frm/cls)
+  2. Public functions/subs (API surface)
+  3. Dependencies (what other modules it calls)
+  4. Line count
+  5. Any TODO/FIXME/HACK comments
+  Output as a JSON array for machine consumption.
+- **Token Budget**: ~40K input, ~15K output
+- **Priority**: MED
+- **Status**: PENDING
 
 ---
 
@@ -89,6 +109,10 @@
 ## Completed Tasks
 <!-- Moved here after execution -->
 (none)
+
+
+
+
 
 
 
