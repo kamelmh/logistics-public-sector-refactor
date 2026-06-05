@@ -1,0 +1,1361 @@
+[
+  {
+    "embedding_text": "metric 801.45 DZD",
+    "id": "TASK-002-20260605022104-7573",
+    "metadata": {
+      "unit": "DZD",
+      "value": 801.45
+    },
+    "type": "metric",
+    "task_id": "TASK-002",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "801.45 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 500 DZD",
+    "id": "TASK-002-20260605022105-2014",
+    "metadata": {
+      "unit": "DZD",
+      "value": 500.0
+    },
+    "type": "metric",
+    "task_id": "TASK-002",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "500 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 20 %",
+    "id": "TASK-002-20260605022105-2288",
+    "metadata": {
+      "unit": "%",
+      "value": 20.0
+    },
+    "type": "metric",
+    "task_id": "TASK-002",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "20 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 20 %",
+    "id": "TASK-002-20260605022105-3410",
+    "metadata": {
+      "unit": "%",
+      "value": 20.0
+    },
+    "type": "metric",
+    "task_id": "TASK-002",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "20 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 45 DZD",
+    "id": "TASK-002-20260605022105-3685",
+    "metadata": {
+      "unit": "DZD",
+      "value": 45.0
+    },
+    "type": "metric",
+    "task_id": "TASK-002",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "45 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 500 DZD",
+    "id": "TASK-002-20260605022105-1685",
+    "metadata": {
+      "unit": "DZD",
+      "value": 500.0
+    },
+    "type": "metric",
+    "task_id": "TASK-002",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "500 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 20 %",
+    "id": "TASK-002-20260605022105-6917",
+    "metadata": {
+      "unit": "%",
+      "value": 20.0
+    },
+    "type": "metric",
+    "task_id": "TASK-002",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "20 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 45 DZD",
+    "id": "TASK-002-20260605022105-6393",
+    "metadata": {
+      "unit": "DZD",
+      "value": 45.0
+    },
+    "type": "metric",
+    "task_id": "TASK-002",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "45 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 500 DZD",
+    "id": "TASK-002-20260605022105-4427",
+    "metadata": {
+      "unit": "DZD",
+      "value": 500.0
+    },
+    "type": "metric",
+    "task_id": "TASK-002",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "500 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 20 %",
+    "id": "TASK-002-20260605022105-6558",
+    "metadata": {
+      "unit": "%",
+      "value": 20.0
+    },
+    "type": "metric",
+    "task_id": "TASK-002",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "20 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "recommendation Module 1: mod_FormState (only the Type definition) -> but note: we cannot have a module with only a Type? Actually we can.",
+    "id": "TASK-003-20260605022105-4261",
+    "metadata": {},
+    "type": "recommendation",
+    "task_id": "TASK-003",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "Module 1: mod_FormState (only the Type definition) -> but note: we cannot have a module with only a Type? Actually we can.",
+    "severity": "MED"
+  },
+  {
+    "embedding_text": "recommendation mod_FormStateHandler: ",
+    "id": "TASK-003-20260605022105-6296",
+    "metadata": {},
+    "type": "recommendation",
+    "task_id": "TASK-003",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "mod_FormStateHandler: ",
+    "severity": "MED"
+  },
+  {
+    "embedding_text": "recommendation We will keep mod_StockEntry_Logic.bas as the main module, but we will break its internal procedures into the new modules.",
+    "id": "TASK-003-20260605022105-5435",
+    "metadata": {},
+    "type": "recommendation",
+    "task_id": "TASK-003",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "We will keep mod_StockEntry_Logic.bas as the main module, but we will break its internal procedures into the new modules.",
+    "severity": "MED"
+  },
+  {
+    "embedding_text": "metric 789 unités",
+    "id": "TASK-004-20260605022105-9993",
+    "metadata": {
+      "unit": "unités",
+      "value": 789.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "789 unités",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 45 DZD",
+    "id": "TASK-004-20260605022105-711",
+    "metadata": {
+      "unit": "DZD",
+      "value": 45.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "45 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 500 DZD",
+    "id": "TASK-004-20260605022105-6841",
+    "metadata": {
+      "unit": "DZD",
+      "value": 500.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "500 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 20 %",
+    "id": "TASK-004-20260605022105-1530",
+    "metadata": {
+      "unit": "%",
+      "value": 20.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:05",
+      "line": "",
+      "file": ""
+    },
+    "content": "20 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 37 unités",
+    "id": "TASK-004-20260605022106-2112",
+    "metadata": {
+      "unit": "unités",
+      "value": 37.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "37 unités",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 070 DZD",
+    "id": "TASK-004-20260605022106-9477",
+    "metadata": {
+      "unit": "DZD",
+      "value": 70.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "070 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 650 DZD",
+    "id": "TASK-004-20260605022106-2126",
+    "metadata": {
+      "unit": "DZD",
+      "value": 650.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "650 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 20 %",
+    "id": "TASK-004-20260605022106-6112",
+    "metadata": {
+      "unit": "%",
+      "value": 20.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "20 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 25 %",
+    "id": "TASK-004-20260605022106-2380",
+    "metadata": {
+      "unit": "%",
+      "value": 25.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "25 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 81 DZD",
+    "id": "TASK-004-20260605022106-7188",
+    "metadata": {
+      "unit": "DZD",
+      "value": 81.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "81 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 41 unités",
+    "id": "TASK-004-20260605022106-6893",
+    "metadata": {
+      "unit": "unités",
+      "value": 41.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "41 unités",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 10 %",
+    "id": "TASK-004-20260605022106-4835",
+    "metadata": {
+      "unit": "%",
+      "value": 10.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "10 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 81 DZD",
+    "id": "TASK-004-20260605022106-5726",
+    "metadata": {
+      "unit": "DZD",
+      "value": 81.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "81 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 20 %",
+    "id": "TASK-004-20260605022106-7054",
+    "metadata": {
+      "unit": "%",
+      "value": 20.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "20 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 10 %",
+    "id": "TASK-004-20260605022106-904",
+    "metadata": {
+      "unit": "%",
+      "value": 10.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "10 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 52 unités",
+    "id": "TASK-004-20260605022106-1086",
+    "metadata": {
+      "unit": "unités",
+      "value": 52.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "52 unités",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 30 %",
+    "id": "TASK-004-20260605022106-4105",
+    "metadata": {
+      "unit": "%",
+      "value": 30.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "30 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 30 unités",
+    "id": "TASK-004-20260605022106-14",
+    "metadata": {
+      "unit": "unités",
+      "value": 30.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "30 unités",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 20 %",
+    "id": "TASK-004-20260605022106-7907",
+    "metadata": {
+      "unit": "%",
+      "value": 20.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "20 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 80 %",
+    "id": "TASK-004-20260605022106-3942",
+    "metadata": {
+      "unit": "%",
+      "value": 80.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "80 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 25 %",
+    "id": "TASK-004-20260605022106-2175",
+    "metadata": {
+      "unit": "%",
+      "value": 25.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "25 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 10 %",
+    "id": "TASK-004-20260605022106-4358",
+    "metadata": {
+      "unit": "%",
+      "value": 10.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "10 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 500 DZD",
+    "id": "TASK-004-20260605022106-6371",
+    "metadata": {
+      "unit": "DZD",
+      "value": 500.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "500 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 70 %",
+    "id": "TASK-004-20260605022106-725",
+    "metadata": {
+      "unit": "%",
+      "value": 70.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "70 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 500 DZD",
+    "id": "TASK-004-20260605022106-2709",
+    "metadata": {
+      "unit": "DZD",
+      "value": 500.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "500 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 100 unités",
+    "id": "TASK-004-20260605022106-4069",
+    "metadata": {
+      "unit": "unités",
+      "value": 100.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "100 unités",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 400 DZD",
+    "id": "TASK-004-20260605022106-5130",
+    "metadata": {
+      "unit": "DZD",
+      "value": 400.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "400 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 50 unités",
+    "id": "TASK-004-20260605022106-3218",
+    "metadata": {
+      "unit": "unités",
+      "value": 50.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "50 unités",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 600 DZD",
+    "id": "TASK-004-20260605022106-292",
+    "metadata": {
+      "unit": "DZD",
+      "value": 600.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "600 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 400 DZD",
+    "id": "TASK-004-20260605022106-5912",
+    "metadata": {
+      "unit": "DZD",
+      "value": 400.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "400 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 000 DZD",
+    "id": "TASK-004-20260605022106-3094",
+    "metadata": {
+      "unit": "DZD",
+      "value": 0.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "000 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 150 unités",
+    "id": "TASK-004-20260605022106-7772",
+    "metadata": {
+      "unit": "unités",
+      "value": 150.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "150 unités",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 67 DZD",
+    "id": "TASK-004-20260605022106-6908",
+    "metadata": {
+      "unit": "DZD",
+      "value": 67.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "67 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 500 DZD",
+    "id": "TASK-004-20260605022106-1185",
+    "metadata": {
+      "unit": "DZD",
+      "value": 500.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "500 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 500 DZD",
+    "id": "TASK-004-20260605022106-5835",
+    "metadata": {
+      "unit": "DZD",
+      "value": 500.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "500 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 20 %",
+    "id": "TASK-004-20260605022106-789",
+    "metadata": {
+      "unit": "%",
+      "value": 20.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "20 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 206 unités",
+    "id": "TASK-004-20260605022106-2601",
+    "metadata": {
+      "unit": "unités",
+      "value": 206.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "206 unités",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 100 unités",
+    "id": "TASK-004-20260605022106-3148",
+    "metadata": {
+      "unit": "unités",
+      "value": 100.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "100 unités",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 070 DZD",
+    "id": "TASK-004-20260605022106-5334",
+    "metadata": {
+      "unit": "DZD",
+      "value": 70.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "070 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 650 DZD",
+    "id": "TASK-004-20260605022106-9371",
+    "metadata": {
+      "unit": "DZD",
+      "value": 650.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "650 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 720 DZD",
+    "id": "TASK-004-20260605022106-7294",
+    "metadata": {
+      "unit": "DZD",
+      "value": 720.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "720 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 330 DZD",
+    "id": "TASK-004-20260605022106-403",
+    "metadata": {
+      "unit": "DZD",
+      "value": 330.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "330 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 000 DZD",
+    "id": "TASK-004-20260605022106-2600",
+    "metadata": {
+      "unit": "DZD",
+      "value": 0.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "000 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 330 DZD",
+    "id": "TASK-004-20260605022106-262",
+    "metadata": {
+      "unit": "DZD",
+      "value": 330.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "330 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 600 DZD",
+    "id": "TASK-004-20260605022106-3763",
+    "metadata": {
+      "unit": "DZD",
+      "value": 600.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "600 DZD",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 20 %",
+    "id": "TASK-004-20260605022106-1962",
+    "metadata": {
+      "unit": "%",
+      "value": 20.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "20 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 50 %",
+    "id": "TASK-004-20260605022106-1913",
+    "metadata": {
+      "unit": "%",
+      "value": 50.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "50 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 20 %",
+    "id": "TASK-004-20260605022106-4110",
+    "metadata": {
+      "unit": "%",
+      "value": 20.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "20 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 20 %",
+    "id": "TASK-004-20260605022106-511",
+    "metadata": {
+      "unit": "%",
+      "value": 20.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "20 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 10 %",
+    "id": "TASK-004-20260605022106-5814",
+    "metadata": {
+      "unit": "%",
+      "value": 10.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "10 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "metric 15 %",
+    "id": "TASK-004-20260605022106-3476",
+    "metadata": {
+      "unit": "%",
+      "value": 15.0
+    },
+    "type": "metric",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "15 %",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Expliquez la dérivation mathématique de la formule de Wilson (EOQ) à partir du modèle de coût total annuel.",
+    "id": "TASK-004-20260605022106-4130",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Expliquez la dérivation mathématique de la formule de Wilson (EOQ) à partir du modèle de coût total annuel.",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question En utilisant les données du cas ART‑001, calculez le lot économique Q* et interprétez son sens opérationnel.",
+    "id": "TASK-004-20260605022106-7385",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "En utilisant les données du cas ART‑001, calculez le lot économique Q* et interprétez son sens opérationnel.",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Quelle serait l’impact sur Q* si le coût de commande S augmentait de 25 % ?",
+    "id": "TASK-004-20260605022106-7291",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Quelle serait l’impact sur Q* si le coût de commande S augmentait de 25 % ?",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Comment le taux de détention I influence‑t‑il la sensibilité du modèle EOQ ? Montrez‑le par une analyse de sensibilité simple.",
+    "id": "TASK-004-20260605022106-3251",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Comment le taux de détention I influence‑t‑il la sensibilité du modèle EOQ ? Montrez‑le par une analyse de sensibilité simple.",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Justifiez pourquoi le modèle de Wilson reste pertinent malgré les hypothèses irréalistes (demande constante, lead‑time fixe) dans un contexte ERP algérien.",
+    "id": "TASK-004-20260605022106-7190",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Justifiez pourquoi le modèle de Wilson reste pertinent malgré les hypothèses irréalistes (demande constante, lead‑time fixe) dans un contexte ERP algérien.",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Décrivez la méthodologie ABC basée sur la valeur de consommation annuelle et expliquez comment vous l’appliqueriez à l’article ART‑001.",
+    "id": "TASK-004-20260605022106-3439",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Décrivez la méthodologie ABC basée sur la valeur de consommation annuelle et expliquez comment vous l’appliqueriez à l’article ART‑001.",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Expliquez la logique de la classification XYZ et comment elle complète l’ABC pour gérer la variabilité de la demande.",
+    "id": "TASK-004-20260605022106-1859",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Expliquez la logique de la classification XYZ et comment elle complète l’ABC pour gérer la variabilité de la demande.",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Donnez un exemple concret de combinaison AX, BY ou CZ tiré du jeu de données du mémoire et justifiez le choix de la politique de réapprovisionnement associée.",
+    "id": "TASK-004-20260605022106-1108",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Donnez un exemple concret de combinaison AX, BY ou CZ tiré du jeu de données du mémoire et justifiez le choix de la politique de réapprovisionnement associée.",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Définissez le CMUP (Coût Moyen Unitaire Pondéré) et détaillez son calcul périodique dans un système de stock perpétuel.",
+    "id": "TASK-004-20260605022106-2940",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Définissez le CMUP (Coût Moyen Unitaire Pondéré) et détaillez son calcul périodique dans un système de stock perpétuel.",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question En utilisant les données d’achat suivantes : première livraison 100 unités à 4 400 DZD, deuxième livraison 50 unités à 4 600 DZD, calculez le CMUP après chaque opération.",
+    "id": "TASK-004-20260605022106-6194",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "En utilisant les données d’achat suivantes : première livraison 100 unités à 4 400 DZD, deuxième livraison 50 unités à 4 600 DZD, calculez le CMUP après chaque opération.",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Quel est l’avantage du CMUP par rapport au coût moyen simple lorsqu’on traite des lots de tailles et de prix hétérogènes ?",
+    "id": "TASK-004-20260605022106-2828",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Quel est l’avantage du CMUP par rapport au coût moyen simple lorsqu’on traite des lots de tailles et de prix hétérogènes ?",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Décrivez l’architecture générale d’une application VBA utilisée dans le mémoire pour automatiser le calcul de l’EOQ et la génération des rapports de stock.",
+    "id": "TASK-004-20260605022106-9241",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Décrivez l’architecture générale d’une application VBA utilisée dans le mémoire pour automatiser le calcul de l’EOQ et la génération des rapports de stock.",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Expliquez comment vous avez protégé la feuille de calcul contenant les paramètres sensibles (ex. mot de passe) et pourquoi cette mesure est nécessaire dans un contexte académique/industriel.",
+    "id": "TASK-004-20260605022106-1364",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Expliquez comment vous avez protégé la feuille de calcul contenant les paramètres sensibles (ex. mot de passe) et pourquoi cette mesure est nécessaire dans un contexte académique/industriel.",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Justifiez le choix d’utiliser des fonctions VBA personnalisées plutôt que des formules Excel natives pour le calcul de l’EOQ dans ce projet.",
+    "id": "TASK-004-20260605022106-6964",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Justifiez le choix d’utiliser des fonctions VBA personnalisées plutôt que des formules Excel natives pour le calcul de l’EOQ dans ce projet.",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Décrivez comment vous avez intégré le calcul du point de commande (ROP) dans le même module VBA et quelle formule vous avez utilisée.",
+    "id": "TASK-004-20260605022106-5547",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Décrivez comment vous avez intégré le calcul du point de commande (ROP) dans le même module VBA et quelle formule vous avez utilisée.",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Analysez les résultats obtenus (EOQ=37, ROP=206, SS=200) en termes de coût total annuel et comparez‑les à une politique de commande actuelle (lot de 100 unités).",
+    "id": "TASK-004-20260605022106-9421",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Analysez les résultats obtenus (EOQ=37, ROP=206, SS=200) en termes de coût total annuel et comparez‑les à une politique de commande actuelle (lot de 100 unités).",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Quelles sont les principales limites du modèle EOQ telles que mises en évidence dans votre étude de cas (ex. variabilité de la demande, lead‑time stochastique) ?",
+    "id": "TASK-004-20260605022106-5872",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Quelles sont les principales limites du modèle EOQ telles que mises en évidence dans votre étude de cas (ex. variabilité de la demande, lead‑time stochastique) ?",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Discutez de l’impact du taux de détention I sur la sensibilité du coût total : que se passe‑t‑il si I est sous‑estimé de 50 % ?",
+    "id": "TASK-004-20260605022106-6452",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Discutez de l’impact du taux de détention I sur la sensibilité du coût total : que se passe‑t‑il si I est sous‑estimé de 50 % ?",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Proposez deux améliorations méthodologiques que vous apporteriez au modèle de gestion de stock présenté dans le mémoire pour mieux refléter la réalité des entreprises algériennes.",
+    "id": "TASK-004-20260605022106-3257",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Proposez deux améliorations méthodologiques que vous apporteriez au modèle de gestion de stock présenté dans le mémoire pour mieux refléter la réalité des entreprises algériennes.",
+    "severity": "LOW"
+  },
+  {
+    "embedding_text": "question Envisagez l’utilisation de l’intelligence artificielle (prévision de la demande) dans le cadre de votre outil VBA : comment cela modifierait‑il l’architecture actuelle et quels bénéfices attendez‑vous ?",
+    "id": "TASK-004-20260605022106-6856",
+    "metadata": {},
+    "type": "question",
+    "task_id": "TASK-004",
+    "source": {
+      "timestamp": "2026-06-05 02:21:06",
+      "line": "",
+      "file": ""
+    },
+    "content": "Envisagez l’utilisation de l’intelligence artificielle (prévision de la demande) dans le cadre de votre outil VBA : comment cela modifierait‑il l’architecture actuelle et quels bénéfices attendez‑vous ?",
+    "severity": "LOW"
+  }
+]
