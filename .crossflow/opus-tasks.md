@@ -52,37 +52,19 @@
 - **Type**: refactor-plan
 - **Input**: Software_Surgical_Edit/VBA_Modules/mod_StockEntry_Logic.bas
 - **Prompt**: |
-  Read this VBA module (1063 lines, heaviest consumer in the ERP).
-  Analyze and propose a refactoring plan:
-  1. Identify functions that can be extracted into new modules
-  2. Map dependencies (what calls what)
-  3. Propose new module boundaries (max ~300 lines each)
-  4. Estimate before/after line counts
-  5. List risks and migration steps
-  Do NOT modify any files. Output a structured refactoring plan.
-- **Token Budget**: ~12K input, ~6K output
-- **Priority**: MED
-- **Status**: DONE
-
-### [TASK-005] RTL/LTR Direction Audit — Thesis DOCX
-- **Type**: custom
-- **Input**: Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md
-- **Prompt**: |
-  Audit this Arabic thesis for RTL/LTR text direction issues. The thesis mixes:
-  - Arabic text (should be RTL — right-to-left)
-  - French text/headings (should be LTR — left-to-right)
-  - Code/technical terms (should be LTR)
-  - Tables with mixed content
-  Scan the markdown and identify:
-  1. Lines where Arabic text is incorrectly marked as LTR
-  2. Lines where French text is incorrectly marked as RTL
-  3. Table columns with wrong alignment
-  4. Mixed-direction lines that need explicit direction markers
-  Output a list: Line# | Current Direction | Expected Direction | Fix Needed
-  Focus on chapters 3 and 4 (most likely to have issues).
+  Review this Arabic thesis chapter (الفصل الثالث: تصميم وإنجاز نظام دعم القرار).
+  The thesis is a French BTS but written in Arabic with French technical terms.
+  Review in ENGLISH, covering:
+  1. Technical accuracy of formulas (EOQ, ROP, CMUP) — verify against ground truth:
+     D=789, Q*=37, ROP=206, SS=200, LT=2, S=801.45 DZD, PU=4500 DZD, I=20%
+  2. VBA implementation completeness — check if all 42 modules are referenced
+  3. Table formatting and data presentation
+  4. Missing sections or weak arguments
+  5. Code architecture assessment (monolithic vs modular)
+  Format: numbered findings with severity (CRITICAL/HIGH/MED/LOW) and specific line refs.
 - **Token Budget**: ~25K input, ~8K output
 - **Priority**: HIGH
-- **Status**: PENDING
+- **Status**: DONE
 
 ### [TASK-006] VBA Module Inventory — All 37 Modules
 - **Type**: custom
@@ -109,6 +91,8 @@
 ## Completed Tasks
 <!-- Moved here after execution -->
 (none)
+
+
 
 
 
