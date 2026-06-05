@@ -40,6 +40,7 @@ title OpenCode Launcher v3.6 ^| CrossFlow ^| Academix v13.2
 ::   OpenCode crossflow          CrossFlow status + handoff overview
 ::   OpenCode crossflow-sync     Sync CROSSFLOW block to all CLAUDE.md files
 ::   OpenCode status             Quick project health overview
+::   OpenCode update             Self-update opencode to latest version
 ::   OpenCode academix-agent / aa  Full context agent mode (resume prompt + agent profile)
 ::   OpenCode <mode> <name>      Launch with named session (multi-session)
 ::   OpenCode help               Show this help
@@ -107,12 +108,12 @@ set "QUASAR_MODEL=openrouter/openrouter/quasar-alpha"
 :: ---- Mode Registry (Single Source of Truth) ----
 set "CLI_MODES=cli groq llama llama-405b mixtral gemini gemini3 gemma gemma-31b gemma-local phi4 qwen3 hermes3 nemotron ring deepseek-free freellm completions deepseek deepseek-flash kimi quasar ollama windsurf windsurf-anthropic model-health verify-sonnet"
 set "OLLAMA_MODES=phi4 qwen3 hermes3 gemma-local"
-set "PIPELINE_MODES=autobuild autoverify autotest autoaudit autothesis autocheck autofix autoplan autolog automenu autoclean status crossflow crossflow-sync sync mem sandbox"
-set "SPECIAL_MODES=gui fcc proxy academix academix-agent restore picker help sari sari-build sari-scan sari-shell"
+set "PIPELINE_MODES=autobuild autoverify autotest autoaudit autothesis autocheck autofix autoplan autolog automenu autoclean status crossflow crossflow-sync sync mem sandbox opus"
+set "SPECIAL_MODES=gui fcc proxy academix academix-agent restore picker help sari sari-build sari-scan sari-shell update"
 :: Menu display categories
 set "MENU_AUTO=autobuild autoverify autotest autoaudit autofix autocheck"
 set "MENU_CROSS=crossflow crossflow-sync"
-set "MENU_OTHER=academix gui picker freellm autoclean status sari sari-build sari-scan sari-shell help"
+set "MENU_OTHER=academix gui picker freellm autoclean status update sari sari-build sari-scan sari-shell help"
 set "FCC_DIR=%USERPROFILE%\.opencode\plugins\fcc-proxy"
 set "FCC_PORT=8082"
 set "FREELM_DIR=%USERPROFILE%\.opencode\plugins\freellm"
@@ -150,6 +151,18 @@ set "MODE=%~1"
 set "SESSION_NAME=%~2"
 if "%MODE%"=="" set "MODE=cli"
 if "%SESSION_NAME%"=="" set "SESSION_NAME=default"
+
+:: ---- Background version check (non-blocking, skip for pipeline/special modes) ----
+set "DO_UPDATE_CHECK=1"
+for %%m in (%PIPELINE_MODES%) do if /i "%MODE%"=="%%m" set "DO_UPDATE_CHECK=0"
+for %%m in (%SPECIAL_MODES%) do if /i "%MODE%"=="%%m" set "DO_UPDATE_CHECK=0"
+:: Save current version for comparison
+for /f "tokens=*" %%v in ('"%OC_EXE%" --version 2^>nul') do set "OC_CURRENT_VER=%%v"
+if "%DO_UPDATE_CHECK%"=="1" (
+    if not exist "%USERPROFILE%\.config\opencode\.skip-update-check" (
+        start "" /b cmd /c "npm view opencode-ai version 2>nul >"%TEMP%\oc-latest-ver.txt""
+    )
+)
 
 set "WINDOW_TITLE=OpenCode [%MODE%] - %SESSION_NAME%"
 echo %MODE% > "%LAST_SESSION%"
@@ -994,6 +1007,7 @@ for %%o in (%MENU_OTHER%) do (
     if "%%o"=="gui" set "_d=Desktop GUI"
     if "%%o"=="autoclean" set "_d=Purge old files (30-day)"
     if "%%o"=="status" set "_d=Project health overview"
+    if "%%o"=="update" set "_d=Self-update opencode"
     if "%%o"=="sari" set "_d=Sari micro-ERP dashboard"
     if "%%o"=="sari-build" set "_d=Build Sari workbook"
     if "%%o"=="sari-scan" set "_d=Scan Sari for VBA errors"
@@ -1094,6 +1108,8 @@ echo   sync       Incremental context sync (CocoIndex pattern)
 echo   mem        Semantic memory utilities (capture/search)
 echo   sandbox    Worktree sandbox iteration loop
 echo   status     Project health overview
+echo   update     Self-update opencode to latest version
+echo   opus       CrossFlow-Opus task executor (queue tasks for Claude Opus)
 echo   sari       Sari micro-ERP dashboard
 echo   sari-build Build Sari workbook
 echo   sari-scan  Scan Sari workbook for VBA errors
@@ -1103,6 +1119,73 @@ echo.
 echo Multi-Session: OpenCode groq thesis  -- named session "thesis"
 echo.
 goto :end
+
+:: ==============================================================
+:: Self-Update
+:: ==============================================================
+:update
+title OpenCode [UPDATE] - %SESSION_NAME%
+echo   === OPENCODE SELF-UPDATE ===
+echo.
+echo  Current version:
+"%OC_EXE%" --version 2>nul
+echo.
+echo  Checking npm for latest version...
+for /f "tokens=*" %%v in ('npm view opencode-ai version 2^>nul') do set "NPM_LATEST=%%v"
+if not defined NPM_LATEST (
+    echo  [ERROR] Could not reach npm registry. Check internet connection.
+    pause
+    goto :end
+)
+echo  Latest on npm: %NPM_LATEST%
+echo.
+if /i "%SESSION_NAME%"=="auto" goto :do-update
+echo  Update to latest? [Y/n]
+set /p UPDATE_CHOICE=
+if /i "%UPDATE_CHOICE%"=="n" goto :end
+if /i "%UPDATE_CHOICE%"=="N" goto :end
+:do-update
+echo.
+echo  Updating opencode...
+echo  (this may take a minute — downloading from npm)
+echo.
+"%OC_EXE%" upgrade 2>&1
+set "UPGRADE_RC=%ERRORLEVEL%"
+if "%UPGRADE_RC%"=="0" (
+    echo.
+    echo  Update complete! New version:
+    "%OC_EXE%" --version 2>nul
+    echo.
+    echo  Restart your terminal for changes to take effect.
+) else (
+    echo.
+    echo  [WARN] Upgrade command returned code %UPGRADE_RC%
+    echo  Trying direct npm install as fallback...
+    echo.
+    npm install -g opencode-ai@latest --prefer-offline 2>&1
+    if errorlevel 1 (
+        echo.
+        echo  [ERROR] Update failed. Try running as Administrator.
+    ) else (
+        echo.
+        echo  Update complete via npm! New version:
+        "%OC_EXE%" --version 2>nul
+    )
+)
+pause
+goto :end
+
+:: ==============================================================
+:: Background Version Check (non-blocking, runs on launcher start)
+:: ==============================================================
+:check-update
+:: Skip if flag file exists (user opted out)
+if exist "%USERPROFILE%\.config\opencode\.skip-update-check" goto :eof
+:: Skip if running pipeline or silent mode
+for %%m in (%PIPELINE_MODES%) do if /i "%MODE%"=="%%m" goto :eof
+:: Run in background — 5 second timeout, don't block launcher
+start "" /b cmd /c "timeout /t 1 /nobreak >nul & npm view opencode-ai version 2>nupl >"%TEMP%\oc-latest.txt" & for /f "" %%v in ('type "%TEMP%\oc-latest.txt"') do @if not ""=="%%v" echo %%v >"%TEMP%\oc-check-done.txt""
+goto :eof
 
 :: ==============================================================
 :: CrossFlow Modes
@@ -1190,6 +1273,59 @@ echo   === INCREMENTAL CONTEXT SYNC ===
 pause
 goto :end
 
+:: ==============================================================
+:opus
+title OpenCode [OPUS] - %SESSION_NAME%
+echo   === CROSSFLOW-OPUS TASK EXECUTOR ===
+echo.
+if not exist "%PROJECT_ROOT%\.crossflow\opus-execute.ps1" (
+    echo ERROR: opus-execute.ps1 not found at:
+    echo %PROJECT_ROOT%\.crossflow\opus-execute.ps1
+    pause
+    exit /b 1
+)
+if /i "%SESSION_NAME%"=="list" (
+    %PWSH% -Command "Get-Content '%PROJECT_ROOT%\.crossflow\opus-tasks.md' | Select-String 'TASK-|Status|Priority'"
+    pause
+    goto :end
+)
+if /i "%SESSION_NAME%"=="results" (
+    if exist "%PROJECT_ROOT%\.crossflow\opus-results.md" (
+        %PWSH% -Command "Get-Content '%PROJECT_ROOT%\.crossflow\opus-results.md' | Select-Object -Last 50"
+    ) else (
+        echo   No results yet.
+    )
+    pause
+    goto :end
+)
+if /i "%SESSION_NAME%"=="status" (
+    echo   Task Board:
+    %PWSH% -Command "Select-String -Path '%PROJECT_ROOT%\.crossflow\opus-tasks.md' -Pattern 'TASK-|Status' | ForEach-Object { $_.Line.Trim() }"
+    echo.
+    echo   Results file:
+    if exist "%PROJECT_ROOT%\.crossflow\opus-results.md" (
+        for %%F in ("%PROJECT_ROOT%\.crossflow\opus-results.md") do echo   Size: %%~zF bytes, Modified: %%~tF
+    ) else (
+        echo   No results yet.
+    )
+    pause
+    goto :end
+)
+if /i "%SESSION_NAME%"=="--dry-run" (
+    %PWSH% -NoProfile -ExecutionPolicy Bypass -File "%PROJECT_ROOT%\.crossflow\opus-execute.ps1" -DryRun
+    pause
+    goto :end
+)
+if /i "%SESSION_NAME%"=="run" (
+    %PWSH% -NoProfile -ExecutionPolicy Bypass -File "%PROJECT_ROOT%\.crossflow\opus-execute.ps1"
+    pause
+    goto :end
+)
+:: Default: show task board
+%PWSH% -Command "Get-Content '%PROJECT_ROOT%\.crossflow\opus-tasks.md'"
+pause
+goto :end
+
 :mem
 title OpenCode [MEMORY] - %SESSION_NAME%
 echo   === SEMANTIC MEMORY UTILITY ===
@@ -1224,4 +1360,22 @@ pause
 goto :end
 
 :end
+:: ---- Post-launch version notification ----
+if "%DO_UPDATE_CHECK%"=="1" (
+    if exist "%TEMP%\oc-latest-ver.txt" (
+        set /p OC_LATEST=<"%TEMP%\oc-latest-ver.txt" 2>nul
+        if defined OC_LATEST (
+            if defined OC_CURRENT_VER (
+                if /i not "%OC_LATEST%"=="%OC_CURRENT_VER%" (
+                    echo.
+                    echo  ┌──────────────────────────────────────────────┐
+                    echo  │  UPDATE AVAILABLE: %OC_CURRENT_VER% -^> %OC_LATEST%    │
+                    echo  │  Run: OpenCode update                         │
+                    echo  └──────────────────────────────────────────────┘
+                    echo.
+                )
+            )
+        )
+    )
+)
 endlocal

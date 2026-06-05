@@ -234,7 +234,7 @@ System fully cleaned. Desktop pruned from ~60 to 10 essentials. Archives on D: d
 
 ## Pending Tasks
 ### HIGH
-- [ ] **Submit to CCA'2026** via Microsoft CMT before Aug 15, 2026 (package ready)
+- [x] **Submit to CCA'2026** — user confirmed v13.3 update done on CMT3
 - [ ] **Full ERP build + verify** on next session (takes 5-10 min, demo data generation)
 - [ ] **Unify opencode versions** — /opencode/windows-x64-baseline vs installed version
 
