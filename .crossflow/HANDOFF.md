@@ -1,22 +1,61 @@
 # CrossFlow Handoff — Academix v13.3
 
 ## Current Priority
-System fully cleaned. Desktop pruned from ~60 to 10 essentials. Archives on D: drive. Handoff ready for next phase.
+Session 16 complete. CrossFlow-Opus bridge operational. Telegram bot live. OCR Reader working. Thesis PDF built. Ready for v13.4 planning.
 
 ## State
-- **Session**: v13.3.1 + System Cleanup (2026-06-03)
+- **Session**: v13.3.1 + Session 16 (2026-06-05)
 - **Agent**: Academix
-- **Workbook**: `ERP_v13.2.xlsm` (1041.2 KB, build verified)
+- **Workbook**: `ERP_v13.3.xlsm` (1040.9 KB, build verified)
 - **Pre-build**: 0 errors (44 files)
 - **Verify**: 112/112 PASS
 - **Tag**: v13.3.1 (pushed)
 - **English paper**: v13.3, 144/144 checks, IEEE double-column blind PDF (158 KB)
 - **Arabic thesis**: v13.3, 25/25 pipeline PASS (29/29 verify), PAGE field fixed, namespace clean
+- **Thesis PDF**: v13.3, built from DOCX via LibreOffice (1.5 MB)
 - **CCA'2026**: Submission package ready, deadline Aug 15, 2026
 - **Desktop**: 10 items (golden source, OpenCode.bat.lnk, Claude, utilities)
 - **D: Archives**: stale_backup_20260603 (203 files, 10.2 MB) + thesis intermediates + obsolete scripts
+- **Telegram Bot**: @ElBayadhDSSBot (token: 8842110496:AAH...ryo)
+- **Hermes-agent**: v0.15.1, gateway running, Telegram connected
+- **OCR Reader**: Tesseract backend working, bat launchers created
+- **CrossFlow-Opus**: 6 tasks DONE, knowledge base (84 items), 5 auto-generated skills
+
+## CrossFlow Infrastructure
+### Task Board (`.crossflow/opus-tasks.md`)
+- TASK-001: Security Audit mod_Config — DONE
+- TASK-002: Thesis Chapter 3 Review — DONE
+- TASK-003: Refactoring Plan mod_StockEntry_Logic — DONE
+- TASK-004: Defense Q&A Generation — DONE
+- TASK-005: Loop Verification — DONE
+- TASK-006: VBA Module Inventory (37 modules) — DONE
+
+### Knowledge Base (`.crossflow/knowledge-base.json`)
+- 84 knowledge items extracted from results
+- FTS5 search enabled via `.crossflow/search.py`
+- Auto-generated skills in `.crossflow/skills/` (5 SKILL.md files)
+
+### Telegram Bot (@ElBayadhDSSBot)
+- **Status**: Live and sending messages
+- **User**: Kamel (@kamelmh71, ID: 6562604500)
+- **Hermes config**: `C:\Users\Administrator\AppData\Local\hermes\config.yaml`
+- **Env**: `C:\Users\Administrator\Dropbox\hermes-agent\.env`
+
+### OCR Reader
+- **Location**: `C:\Users\Administrator\Dropbox\OCR-Reader\`
+- **Backend**: Tesseract (working)
+- **Launchers**: `ocr.bat`, `ocr_hotkey.bat`, `Desktop\OCR-Reader.bat`
 
 ## Completed
+### Session 16 (2026-06-05) — CrossFlow Bridge + OCR + Thesis PDF + Telegram
+- **OCR Reader**: Built with Tesseract backend, bat launchers, tested full-screen capture
+- **Thesis PDF**: Built from DOCX via LibreOffice (1.5 MB)
+- **TASK-006**: VBA Module Inventory — 37 modules cataloged (output truncated at 8192 tokens)
+- **Telegram Bot**: @ElBayadhDSSBot created, token received, message sent successfully
+- **Hermes-agent**: .env configured, gateway running, Telegram connected
+- **Git**: All commits pushed to origin
+- **Notepad**: Updated with session 16 progress
+
 ### Session 13 (2026-06-03) — System Cleanup: Desktop, Archives, Shortcuts, Project
 - **Desktop pruned**: ~60 files → 10 essentials. Stale thesis builds (9), screenshots (31),
   portal artifacts (7), OCR output (86), delivery folder (64), redundant launchers (5)

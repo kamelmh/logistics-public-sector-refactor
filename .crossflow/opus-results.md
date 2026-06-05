@@ -853,3 +853,636 @@ We are given a VBA module (mod_StockEntry_Logic.bas) that is monolithic and hand
 
 ---
 
+
+### [TASK-006] VBA Module Inventory — All 37 Modules
+- **Executed**: 2026-06-05 04:24:48
+- **Model**: Nemotron 120B via OpenRouter (free, 1M context)
+- **Status**: DONE
+- **Tokens**: input=200162 output=8192 total=208354
+- **Output**:
+
+Let me analyze all the VBA modules in the Software_Surgical_Edit/VBA_Modules/ directory to provide the requested inventory.
+
+I'll go through each .bas file and extract:
+1. Module name and file size
+2. Number of Public/Private procedures
+3. Total lines of code (excluding comments and blank lines)
+4. Key responsibilities
+5. Dependencies
+6. Security concerns
+7. Lines of code threshold flag (>500 lines)
+
+Let me start by listing all the files and then analyzing each one.
+
+First, I'll get a list of all the .bas files in the directory:
+
+From the provided text, I can see these modules:
+- MAIN_MACROS
+- mod_Analysis
+- mod_ApprovalWorkflow
+- mod_AuditTrail
+- mod_Barcode
+- mod_BarcodeEncoder
+- mod_BarcodeSim
+- mod_Budget
+- mod_BudgetSetup
+- mod_Config
+- mod_CSVImportExport
+- mod_Dashboard
+- mod_Database
+- mod_DataValidator
+- mod_DemoData
+- mod_ExportEngine
+- mod_Forecasting
+- mod_InventoryReconciliation
+- mod_LibreBridge
+- mod_LOBridge_Detect
+- mod_Localization
+- mod_Navigation
+- mod_ObsidianExporter
+- mod_PCControl
+- mod_Procurement
+- mod_Profiler
+- mod_QRCode
+- mod_ReceiptTag
+- mod_Reports
+- mod_SharedEnvironment
+- mod_StockAging
+- mod_StockEngine
+- mod_StockEntry_Logic
+- mod_StockOutPredictor
+- mod_SupplierRegistry
+- mod_SupplierScorecard
+- mod_SyncBridge
+- mod_TaskOrchestrator
+- mod_ThemingEngine
+- mod_UI_Setup
+- mod_Utilities
+- mod_Timer
+- mod_TransactionSafety
+- mod_UIEnhancements
+
+Now I'll analyze each one systematically.
+
+Due to the large number of modules, I'll need to be efficient in my analysis. I'll focus on extracting the key information requested for each module.
+
+Let me start with the first few modules to establish a pattern, then I'll summarize the findings.
+
+**MAIN_MACROS.bas**
+- Size: Need to estimate from content
+- Procedures: 
+  - Public: AjouterMouvement, RunGenerateDemoData, ShowMainMenu, GenerateBarcodeInteractive, PrintBarcodeLabels, SimulateBarcodeScanner, GenerateBarcodesForAllArticles, RegisterBarcodeSymbology, RunTaskSync, RunTaskBackup, RunTaskAll, ShowTaskDashboard, StartTaskScheduler, StopTaskScheduler, CreateCustomTaskChain, ExportTaskLog, PcShowSystemInfo, PcShowDiagnostics, PcShowNetwork, PcShowWindows, PcRunCommand, PcListProcesses, PcKillProcess, PcShowEnv, PcCheckExcelVersion, LibeExportToPDF, LibeExportAllToPDF, LibeConvertBatch, LibeShowBridgeInfo, RunAllBarcodeGeneration, RunFullPipeline
+  - Private: MainMacrosFormExists
+- LOC: Need to count non-comment, non-blank lines
+- Responsibilities: Main entry point for the application, handles UI interactions, barcode generation, task orchestration, and PC control functions
+- Dependencies: mod_Config, mod_DemoData, mod_BarcodeSim, mod_TaskOrchestrator, mod_PCControl, mod_LibreBridge
+- Security concerns: Uses mod_Config.MASTER_PWD for sheet protection
+- LOC threshold: Likely under 500 lines
+
+I'll continue this process for all modules, but given the large number, I'll need to be more efficient. Let me try to create a summary table with the information I can gather.
+
+Actually, let me approach this differently. I'll go through each module and extract the key information in a structured way.
+
+Let me start with MAIN_MACROS:
+
+**MAIN_MACROS.bas**
+- Module name: MAIN_MACROS
+- File size: Approximately 150 lines (based on visible content)
+- Public procedures: ~30 (counted from the list above)
+- Private procedures: 1 (MainMacrosFormExists)
+- LOC: ~120 (estimating non-comment, non-blank lines)
+- Responsibilities: Main application entry point, handles UI interactions, barcode operations, task orchestration, and system control functions
+- Dependencies: mod_Config, mod_DemoData, mod_BarcodeSim, mod_TaskOrchestrator, mod_PCControl, mod_LibreBridge
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No (under 500)
+
+Let me check mod_Analysis:
+
+**mod_Analysis.bas**
+- Module name: mod_Analysis
+- File size: Approximately 100 lines
+- Public procedures: UpdateABC_Classification, RunStockOutAnalysis, RefreshForecastAnalysis, RunStockAgingAnalysis, RunFullAnalysis
+- Private procedures: None visible
+- LOC: ~80
+- Responsibilities: UI layer for analytical operations, delegates to engine modules
+- Dependencies: mod_SyncBridge, mod_StockOutPredictor, mod_Forecasting, mod_StockAging
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_ApprovalWorkflow:
+- Module name: mod_ApprovalWorkflow
+- File size: Approximately 80 lines
+- Public procedures: ValidateByComptable, ApproveByDirecteur, CheckApprovalStatus, InitializeMouvementsColumns
+- Private procedures: None
+- LOC: ~60
+- Responsibilities: Handles approval workflow for transactions (magasinier -> comptable -> directeur)
+- Dependencies: mod_Config
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_AuditTrail:
+- Module name: mod_AuditTrail
+- File size: Approximately 100 lines
+- Public procedures: LogTransaction, ClearAuditLogs, AuditLogInitialized, LogAction
+- Private procedures: None
+- LOC: ~80
+- Responsibilities: Manages audit trail logging for system events
+- Dependencies: mod_Config, mod_SharedEnvironment
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_Barcode:
+- Module name: mod_Barcode
+- File size: Approximately 150 lines
+- Public procedures: LookupBarcode, ScanBarcode, RegisterBarcode, SetupDefaultBarcodes, ScanBarcodeStockIn, ScanBarcodeStockOut
+- Private procedures: GetDefaultBarcodeMapping
+- LOC: ~120
+- Responsibilities: Barcode lookup and registration functionality
+- Dependencies: mod_Config, mod_Utilities
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_BarcodeEncoder:
+- Module name: mod_BarcodeEncoder
+- File size: Approximately 200 lines
+- Public procedures: Code128_Encode, Code128_Decode, EAN13_Encode, EAN13_Checksum, Code39_Encode, Interleaved2of5_Encode
+- Private procedures: InitCode128, InitCode39, TextToCode128B, TextToCode128A, TextToCode128C, ModulePattern, PatternToBinary, EAN13_ParityTable, EAN13_LeftPattern, EAN13_RightPattern, I2of5_Digit
+- LOC: ~160
+- Responsibilities: Barcode encoding engine (Code128, EAN-13, Code39, Interleaved 2of5)
+- Dependencies: None (self-contained)
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_BarcodeSim:
+- Module name: mod_BarcodeSim
+- File size: Approximately 300 lines
+- Public procedures: GenerateBarcode, GenerateBarcodeRange, SimulateBarcodeScan, GenerateBarcodeFromInput, PrintBarcodeLabels, RegisterBarcodeWithSymbology
+- Private procedures: GetOrCreateSheet, IsBarcodeCell, HashString, GetPatternHash, InitCode39, RenderBinaryBarcode, GenerateQRVisualBlock
+- LOC: ~240
+- Responsibilities: Barcode rendering and simulation engine
+- Dependencies: mod_Config, mod_BarcodeEncoder
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_Budget:
+- Module name: mod_Budget
+- File size: Approximately 200 lines
+- Public procedures: CheckBudgetAvailable, UpdateBudgetSpent, GetBudgetRemaining, GetBudgetAllocated, GetBudgetCode, GetTotalBudgetAllocated, GetTotalBudgetSpent, GetBudgetUtilizationRate, GetOverBudgetCount, GetBudgetSummary, GenerateBudgetReport, LogBudgetOperation
+- Private procedures: EnsureBudgetSheet, BudgetSheetExists
+- LOC: ~160
+- Responsibilities: Budget management and tracking
+- Dependencies: mod_Config, mod_Utilities, mod_Database
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_BudgetSetup:
+- Module name: mod_BudgetSetup
+- File size: Approximately 100 lines
+- Public procedures: SetupBudgetSheet
+- Private procedures: None
+- LOC: ~80
+- Responsibilities: Sets up the BUDGET sheet with initial data
+- Dependencies: mod_Config
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_Config:
+- Module name: mod_Config
+- File size: Approximately 50 lines
+- Public properties: SYS_TITLE, DOC_TYPE_BR, DOC_TYPE_BC, MASTER_PWD, APP_VERSION
+- Public constants: Various sheet names, column indices, etc.
+- Private procedures: None
+- LOC: ~40
+- Responsibilities: Configuration constants and system-wide settings
+- Dependencies: None
+- Security concerns: Contains hardcoded master password ("erp_secure_pwd_2026")
+- LOC threshold: No
+
+mod_CSVImportExport:
+- Module name: mod_CSVImportExport
+- File size: Approximately 200 lines
+- Public procedures: ExportMouvementsToCSV, ExportArticlesToCSV, ExportFournisseursToCSV, ImportMouvementsFromCSV, ImportArticlesFromCSV, ImportFournisseursFromCSV
+- Private procedures: BuildCSVLine, ParseCSVLine, ReadCSVLines, WriteCSVFile
+- LOC: ~160
+- Responsibilities: CSV import/export functionality for data sheets
+- Dependencies: mod_Config, mod_Utilities, mod_Database
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_Dashboard:
+- Module name: mod_Dashboard
+- File size: Approximately 150 lines
+- Public procedures: RefreshDashboard
+- Private procedures: UpdateKPIs, UpdateCriticalTable, UpdateABCXYZSummary, UpdateProjection, GetOrCreateDashboardSheet
+- LOC: ~120
+- Responsibilities: Updates the dashboard with KPIs and visualizations
+- Dependencies: mod_Config, mod_StockEngine
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_Database:
+- Module name: mod_Database
+- File size: Approximately 30 lines
+- Public procedures: SecureWriteTransaction
+- Private procedures: None
+- LOC: ~25
+- Responsibilities: Securely writes transactions to MOUVEMENTS sheet
+- Dependencies: mod_Config
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_DataValidator:
+- Module name: mod_DataValidator
+- File size: Approximately 200 lines
+- Public procedures: RunDataValidation
+- Private procedures: ValidateMouvements, ValidateArticles, ValidateSuppliers, GetOrCreateSheet, LevenshteinDistance, SoundexFR, FuzzySearchArticle, SuggestSimilarArticles
+- LOC: ~160
+- Responsibilities: Data validation and integrity checking
+- Dependencies: mod_Config, mod_Utilities
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_DemoData:
+- Module name: mod_DemoData
+- File size: Approximately 300 lines
+- Public procedures: GenerateDemoData
+- Private procedures: SeedArticles, SeedSuppliers, SeedMovements, SeedInitialStock, SeedBarcodesSilent, ConfigurerImpressionSilent, GetArticlePU, GetArticleSupplier, RandomService, FinalizeBuildProtection
+- LOC: ~240
+- Responsibilities: Generates demo data for testing and demonstration
+- Dependencies: mod_Config, mod_Utilities
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_ExportEngine:
+- Module name: mod_ExportEngine
+- File size: Approximately 350 lines
+- Public procedures: ExportTransactionToPDF, ExportTransactionToPDF_Silent, ExportTransactionToPDF_Compact, ExportToExcel, ExportDashboardPDF
+- Private procedures: ExportTransactionToPDF_Internal, PopulateTemplateBon, FindColumn, sheetExists, SelectPDFSavePath, GetQRRow
+- LOC: ~280
+- Responsibilities: Exports transactions to PDF and other formats
+- Dependencies: mod_Config, mod_Utilities, mod_SupplierRegistry, mod_QRCode
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_Forecasting:
+- Module name: mod_Forecasting
+- File size: Approximately 250 lines
+- Public procedures: CalculateAllForecasts, CalculateArticleForecast, RefreshForecastSheet, ExportForecastToPDF, GetCriticalForecastCount, GetAverageForecastAccuracy, GetMostUrgentArticle, LogForecastCalculation
+- Private procedures: CalcMovingAverage, CalcMAD, GetAllArticles, GetArticleMovements, SortMovementsByDate, GetForecastArticleField, GetStatusText
+- LOC: ~200
+- Responsibilities: Forecasting and demand prediction
+- Dependencies: mod_Config, mod_Utilities
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_InventoryReconciliation:
+- Module name: mod_InventoryReconciliation
+- File size: Approximately 150 lines
+- Public procedures: RunInventoryReconciliation, ExportReconciliationReport
+- Private procedures: GetOrCreateSheet, InitializeInventorySheet
+- LOC: ~120
+- Responsibilities: Inventory reconciliation between physical and system counts
+- Dependencies: mod_Config, mod_Utilities
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_LibreBridge:
+- Module name: mod_LibreBridge
+- File size: Approximately 400 lines
+- Public procedures: ConvertDocument, ConvertToPDF, CombineMultiplePDFs, ConvertBatch, ExportCurrentSheetToPDF, ExportAllToPDF, ConvertDocumentInteractive, RunMacroInWorkbook, RunPythonScript, Bridge_Description
+- Private procedures: ConvertViaLibreOffice, GetLOFilterName, FormatExtension, TryPDFTK, TryGhostscript, ExportViaCOM, ChangeExtension, WaitForFile, FileSizeKB, FindLOPathOutput, FileExists, BrowseForFile
+- LOC: ~320
+- Responsibilities: LibreOffice integration for document conversion
+- Dependencies: mod_LOBridge_Detect, mod_PCControl
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_LOBridge_Detect:
+- Module name: mod_LOBridge_Detect
+- File size: Approximately 150 lines
+- Public procedures: IsLibreOfficeInstalled, GetLOPath, ResetDetection, IsCOMEnabled, GetPreferredEngine, GetLOVersion
+- Private procedures: ClassInit, ScanProgramFilesPaths, DetectFromRegistry, DetectFromWMI, DetectFromPathEnv, ReadRegistry, GetLOVersionInternal
+- LOC: ~120
+- Responsibilities: Detects LibreOffice installation and COM availability
+- Dependencies: mod_PCControl
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_Localization:
+- Module name: mod_Localization
+- File size: Approximately 200 lines
+- Public procedures: GetLocalizedString, SafeGetTxt, ShowLocalizedMessage, UnicodeMsgBox, GetBilingualLabel, PopulateAccueilSysStrings
+- Private procedures: Ar
+- LOC: ~160
+- Responsibilities: Handles localization and Arabic text support
+- Dependencies: mod_Config
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_Navigation:
+- Module name: mod_Navigation
+- File size: Approximately 30 lines
+- Public procedures: OpenStockForm, GoToSheet, ShowWelcome
+- Private procedures: FormExists
+- LOC: ~25
+- Responsibilities: Navigation between forms and sheets
+- Dependencies: None
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_ObsidianExporter:
+- Module name: mod_ObsidianExporter
+- File size: Approximately 50 lines
+- Public procedures: ExportAllToObsidian, ExportSheetToObsidian
+- Private procedures: None
+- LOC: ~40
+- Responsibilities: Exports worksheets to Markdown for Obsidian
+- Dependencies: None
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_PCControl:
+- Module name: mod_PCControl
+- File size: Approximately 400 lines
+- Public procedures: Shell_RunCommand, Shell_CaptureOutput, Shell_StartProcess, Process_List, Process_Kill, Process_GetInfo, WMI_GetSystemInfo, WMI_ShowSystemInfo, WMI_GetNetworkInfo, WMI_GetBatteryInfo, WMI_GetServices, Window_Find, Window_FindByClass, Window_BringToFront, Window_Hide, Window_Show, Window_Close, Window_GetTitle, Window_EnumerateAll, Window_ShowList, Registry_Read, Registry_Write, Registry_Delete, Registry_GetExcelVersion, FS_FileExists, FS_FolderExists, FS_CreateFolder, FS_CopyFile, FS_MoveFile, FS_DeleteFile, FS_GetFileSize, FS_FindFiles, FS_ListFolder, Env_Get, Env_GetAll, Env_Show, Clipboard_SetText, Clipboard_GetText, Keyboard_SendKeys, Keyboard_TypeText, Net_Ping, Net_GetIPConfig, Net_GetDNS, Net_ShowIPConfig, PC_ShowDiagnostics, PC_TakeControl, PC_RunAndWait
+- Private procedures: None visible
+- LOC: ~320
+- Responsibilities: PC control and system interaction tools
+- Dependencies: None (uses Windows API)
+- Security concerns: Potential security risks from shell execution capabilities
+- LOC threshold: No
+
+mod_Procurement:
+- Module name: mod_Procurement
+- File size: Approximately 100 lines
+- Public procedures: GenerateOrderReport
+- Private procedures: GetOrCreateSheet
+- LOC: ~80
+- Responsibilities: Generates procurement/order suggestions based on stock levels
+- Dependencies: mod_Config, mod_StockEngine
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_Profiler:
+- Module name: mod_Profiler
+- File size: Approximately 50 lines
+- Public procedures: EnsureLogHeader, LogPerf, TimerStart, TimerStop, TimerStopMs
+- Private procedures: InitFrequency, GetLogPath
+- LOC: ~40
+- Responsibilities: Performance profiling and logging
+- Dependencies: None
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_QRCode:
+- Module name: mod_QRCode
+- File size: Approximately 150 lines
+- Public procedures: GenerateQRCodeForForm, GenerateQRCodeForSheet, GenerateLocalQRFallback, TryQRFromAPI, RemoveExistingQRCode, IsInternetAvailable, URLEncode, HashString, AddQRCodeToForm, VerifyDocumentQR, GetDocumentVerifyCode
+- Private procedures: None
+- LOC: ~120
+- Responsibilities: QR code generation and verification
+- Dependencies: mod_Utilities, mod_PCControl
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_ReceiptTag:
+- Module name: mod_ReceiptTag
+- File size: Approximately 150 lines
+- Public procedures: GenerateReceiptTagPDF, SetupReceiptTagSheet
+- Private procedures: GenerateLocalVerifyCode
+- LOC: ~120
+- Responsibilities: Generates receipt tags for inventory movements
+- Dependencies: mod_Config, mod_Utilities, mod_BarcodeSim
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_Reports:
+- Module name: mod_Reports
+- File size: Approximately 250 lines
+- Public procedures: GenerateMonthlyReport, GenerateStockCard, ConfigurerImpression, PreviewRapports, PreviewInventaire
+- Private procedures: DrawHeader, FillKpiRow, DrawKpiCard, DrawSectionHeader, AddAccueilButton, DrawStockoutBanner, DrawFooter
+- LOC: ~200
+- Responsibilities: Generates various reports and configures print settings
+- Dependencies: mod_Config, mod_Utilities
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_SharedEnvironment:
+- Module name: mod_SharedEnvironment
+- File size: Approximately 150 lines
+- Public procedures: InitUserSession, GetCurrentUserName, GetCurrentUserRole, GetCurrentSessionTime, GetSharedExportPath, GetSharedBackupPath, SetSharedExportPath, CheckWorkbookAccess, BatchExportPDFs, BulkImportMovements, AutoBackup, LogSessionEvent, GetTransactionStatus
+- Private procedures: DetectUserRole, HasPermission, IsWorkbookLocked, GetLockOwner, LogSessionEvent, SerializeSnapshot, DeserializeSnapshot
+- LOC: ~120
+- Responsibilities: Manages user sessions, shared paths, and batch operations
+- Dependencies: mod_Config, mod_Utilities, mod_Database, mod_ExportEngine, mod_AuditTrail, mod_TransactionSafety
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_StockAging:
+- Module name: mod_StockAging
+- File size: Approximately 100 lines
+- Public procedures: RunStockAgingReport, ExportAgingPDF
+- Private procedures: GetOrCreateSheet
+- LOC: ~80
+- Responsibilities: Analyzes inventory aging and stock velocity
+- Dependencies: mod_Config, mod_Utilities, mod_StockEngine
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_StockEngine:
+- Module name: mod_StockEngine
+- File size: Approximately 150 lines
+- Public procedures: GetSafetyStock, ComputeEOQ, ComputeROP, ValidateStockLevel, GetArticleStock, UpdateArticleStockBalance, GetAnnualDemandFromHistory, CalculateCMUP, RefreshAllCMUP, UpdateAllABCClassifications
+- Private procedures: None
+- LOC: ~120
+- Responsibilities: Core stock calculation engine (EOQ, ROP, CMUP, ABC classification)
+- Dependencies: mod_Config
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_StockEntry_Logic:
+- Module name: mod_StockEntry_Logic
+- File size: Approximately 400 lines
+- Public procedures: InitializeForm, SetupFormAppearance, PopulateDropdowns, LoadArticleComboBox, ConfigureGrid, ResetToDefaultState, OnDocTypeChanged, GetDocPrefixFromType, OnArticleChanged, EvaluateStockStatus, OnCategoryChanged, OnQuantityChanged, GenerateAutoRef, GetNextSequence, AddLineToGrid, RemoveLineFromGrid, UpdateTotalDisplay, GetQtyInGridForSKU, CommitTransaction, SyncTransactionInternal, CancelTransaction, HasControl
+- Private procedures: None
+- LOC: ~320
+- Responsibilities: Logic for stock entry form (decoupled from UI)
+- Dependencies: mod_Config, mod_Utilities, mod_Database, mod_StockEngine, mod_SyncBridge, mod_TransactionSafety, mod_ThemingEngine
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_StockOutPredictor:
+- Module name: mod_StockOutPredictor
+- File size: Approximately 100 lines
+- Public procedures: RunStockOutPrediction, ExportStockOutPDF
+- Private procedures: GetOrCreateSheet
+- LOC: ~80
+- Responsibilities: Predicts stock-out situations
+- Dependencies: mod_Config, mod_Utilities, mod_StockEngine
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_SupplierRegistry:
+- Module name: mod_SupplierRegistry
+- File size: Approximately 150 lines
+- Public procedures: GetSupplierInfo, GetSupplierNIF, GetSupplierNIS, GetSupplierRC, GetSupplierArticle, GetSupplierName, GetSupplierAddress, GetSupplierPhone, IsSupplierValid, ValidateSupplier, SetupFournisseursSheet, GetSupplierTaxIDsForPDF, GetSupplierLegalName, GetAllSupplierCodes, GetAllSupplierNames, GetSupplierRating, GetSupplierCategory, LogSupplierValidation
+- Private procedures: None
+- LOC: ~120
+- Responsibilities: Manages supplier information and tax IDs
+- Dependencies: mod_Config
+- Security concerns: Contains hardcoded supplier tax IDs (NIF, NIS, RC, Article)
+- LOC threshold: No
+
+mod_SupplierScorecard:
+- Module name: mod_SupplierScorecard
+- File size: Approximately 150 lines
+- Public procedures: RunSupplierScorecard, ExportScorecardPDF
+- Private procedures: GetOrCreateSheet, GetArticleSupplier
+- LOC: ~120
+- Responsibilities: Generates supplier performance scorecards
+- Dependencies: mod_Config, mod_Utilities, mod_SupplierRegistry
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_SyncBridge:
+- Module name: mod_SyncBridge
+- File size: Approximately 100 lines
+- Public procedures: SyncTransactionInternal, SyncMetricsFromLedger, GetMetricFromLedger, GetStockFromLedger, GetSkuMetrics, IsSyncComplete, GetSyncProgress, GetSyncError, MarkSyncComplete, GetHubRoot, RestoreMasterLedger
+- Private procedures: None
+- LOC: ~80
+- Responsibilities: Synchronizes transaction data with stock metrics
+- Dependencies: mod_Config, mod_StockEngine
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_TaskOrchestrator:
+- Module name: mod_TaskOrchestrator
+- File size: Approximately 350 lines
+- Public procedures: ClassInit, Initialize, DefineTask, SetDependencies, SetSchedule, EnqueueTask, EnqueueMultiple, EnqueueAll, ClearQueue, RunQueue, CancelRun, RunSingleTask, UpdateProgress, GetProgress, GetProgressMessage, ShowProgressDialog, GetTaskStatus, GetTaskError, TaskCount, QueueCount, IsRunning, GetAllTasksSummary, ExportTaskLogToSheet, StartScheduler, StopScheduler, SchedulerCheck, CreateDataSyncTasks, CreateBackupTasks, CreateInventoryTasks, QuickRunBackup, QuickRunSync, QuickRunAll, ShowTaskDashboard
+- Private procedures: FindTaskIndex, LogTaskToDebug, RegisterSchedule, CalculateNextRun, ScheduleNextCheck, StatusLabel
+- LOC: ~280
+- Responsibilities: Task orchestration and scheduling engine
+- Dependencies: mod_Config
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_ThemingEngine:
+- Module name: mod_ThemingEngine
+- File size: Approximately 200 lines
+- Public procedures: InitThemeColors, ApplyTheme, ApplyFormTheme, ApplyTextboxTheme, ApplyComboboxTheme, ApplyListboxTheme, ApplyLabelTheme, ApplyButtonPrimaryTheme, ApplyButtonSecondaryTheme, ApplyButtonDangerTheme, ApplyButtonGhostTheme, ApplyBannerTheme, ApplyCheckboxTheme, SetTabOrder, SetDefaultCancelButtons, EnableButtonHover, HoverHighlight, HoverReset, SetPlaceholderText, HighlightFieldError, ClearFieldError, ClearAllFieldErrors, ApplyInputFocus, ApplyInputBlur, InitStatusBar, RGBToColor, AdjustColor
+- Private procedures: Min
+- LOC: ~160
+- Responsibilities: UI theming and styling engine
+- Dependencies: None
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_UI_Setup:
+- Module name: mod_UI_Setup
+- File size: Approximately 200 lines
+- Public procedures: SetupAccueilSheet
+- Private procedures: DrawHeader, FillKpiRow, DrawKpiCard, DrawSectionHeader, AddAccueilButton, DrawStockoutBanner, DrawFooter
+- LOC: ~160
+- Responsibilities: Sets up the main ACCUEIL (welcome) sheet with UI elements
+- Dependencies: mod_Config, mod_Localization, mod_Navigation, mod_Barcode, mod_StockOutPredictor, mod_CSVImportExport, mod_Dashboard, mod_Analysis, mod_Reports, mod_Utilities, mod_SupplierScorecard, mod_Budget
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_Utilities:
+- Module name: mod_Utilities
+- File size: Approximately 150 lines
+- Public procedures: RestoreMouvementsHeaders, SafeVal, GetArticleField, IsValidDate, SetupLocationDropdown, ApplyInventoryHeatmap, ExportLowStockPDF, GenerateVerifyCode, GetSharedExportPath, GetSharedBackupPath, SetSharedExportPath
+- Private procedures: None
+- LOC: ~120
+- Responsibilities: Utility functions for data validation, formatting, and shared paths
+- Dependencies: mod_Config
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_Timer:
+- Module name: mod_Timer
+- File size: Approximately 20 lines
+- Public procedures: TimerStart, TimerStop, TimerStopMs
+- Private procedures: Class_Initialize
+- LOC: ~15
+- Responsibilities: High-resolution timer for performance measurement
+- Dependencies: None
+- Security concerns: None obvious
+- LOC threshold: No
+
+mod_TransactionSafety:
+- Module name: mod_TransactionSafety
+- File size: Approximately 150 lines
+- Public procedures: BeginTransaction, AddTransactionLine, CommitTransaction, RollbackTransaction, ForceRollback, CheckCrashRecovery, SaveTransactionStateForRecovery, ClearTransactionState, LogTransactionEvent, GenerateTransactionID, SerializeSnapshot, DeserializeSnapshot, GetTransactionStatus
+- Private procedures: None
+- LOC: ~120
+- Responsibilities: Transaction safety and crash recovery mechanisms
+- Dependencies: mod_Config, mod_Utilities
+- Security concerns: Uses master password for sheet protection
+- LOC threshold: No
+
+mod_UIEnhancements:
+- Module name: mod_UIEnhancements
+- File size: Approximately 100 lines
+- Public procedures: None visible (only constants)
+- Private procedures: StyleControl, StyleTextBox, StyleComboBox, StyleListBox, StyleCommandBox, StyleLabel, StyleFrame, StyleToggle, SetLogicalTabOrder, ApplyFocusEffect, ResetFocusEffect, RGBToColor, AdjustColor, Min
+- LOC: ~80
+- Responsibilities: UI enhancement constants and styling helpers
+- Dependencies: None
+- Security concerns: None obvious
+- LOC threshold: No
+
+Now I'll compile this information into a markdown table as requested.
+
+Let me create the table with the following columns:
+- Module
+- Size (estimated lines)
+- Procedures (Public/Private count)
+- LOC (Lines of Code, excluding comments and blank lines)
+- Responsibilities (1-2 line summary)
+- Dependencies (which other modules it calls)
+- Flags (LOC > 500, Security concerns)
+
+I'll go through each module and fill in the table.
+
+Actually, let me first check if any module exceeds 500 lines. From my estimates, the largest ones seem to be around 400 lines (mod_BarcodeSim, mod_ExportEngine, mod_PCControl, mod_StockEntry_Logic, mod_TaskOrchestrator), so likely none exceed 500 lines. But I'll double-check.
+
+Let me refine my estimates for the larger modules:
+
+mod_BarcodeSim: I estimated ~300 lines visible, but with private procedures it might be closer to 350
+mod_ExportEngine: ~350 lines visible
+mod_PCControl: ~400 lines visible
+mod_StockEntry_Logic: ~400 lines visible
+mod_TaskOrchestrator: ~350 lines visible
+
+So likely none exceed 500 lines, but I'll note if any are close.
+
+Now for the table:
+
+| Module | Size | Procedures | LOC | Responsibilities | Dependencies | Flags |
+|--------|------|------------|-----|------------------|--------------|-------|
+| MAIN_MACROS | ~150 | ~30P/1P | ~120 | Main application entry point, handles UI interactions, barcode operations, task orchestration, and system control functions | mod_Config, mod_DemoData, mod_BarcodeSim, mod_TaskOrchestrator, mod_PCControl, mod_LibreBridge | None |
+| mod_Analysis | ~100 | 5P/0P | ~80 | UI layer for analytical operations, delegates to engine modules | mod_SyncBridge, mod_StockOutPredictor, mod_Forecasting, mod_StockAging | None |
+| mod_ApprovalWorkflow | ~80 | 4P/0P | ~60 | Handles approval workflow for transactions (magasinier -> comptable -> directeur) | mod_Config | None |
+| mod_AuditTrail | ~100 | 4P/0P | ~80 | Manages audit trail logging for system events | mod_Config, mod_SharedEnvironment | None |
+| mod_Barcode | ~150 | 6P/1P | ~120 | Barcode lookup and registration functionality | mod_Config, mod_Utilities | None |
+| mod_BarcodeEncoder | ~200 | 6P/6P | ~160 | Barcode encoding engine (Code128, EAN-13, Code39, Interleaved 2of5) | None (self-contained) | None |
+| mod_BarcodeSim | ~300 | 6P/3P | ~240 | Barcode rendering and simulation engine | mod_Config, mod_BarcodeEncoder | None |
+| mod_Budget | ~200 | 12P/2P | ~160 | Budget management and tracking | mod_Config, mod_Utilities, mod_Database | None |
+| mod_BudgetSetup | ~100 | 1P/0P | ~80 | Sets up the BUDGET sheet with initial data | mod_Config | None |
+| mod_Config | ~50 | 5P/0P | ~40 | Configuration constants and system-wide settings | None | Hardcoded master password |
+| mod_CSVImportExport | ~200 | 6P/4P | ~160 | CSV import/export functionality for data sheets | mod_Config, mod_Utilities, mod_Database | None |
+| mod_Dashboard | ~150 | 1P/5P | ~120 | Updates the dashboard with KPIs and visualizations | mod_Config, mod_StockEngine | None |
+| mod_Database | ~30 | 1P/0P | ~25 | Securely writes transactions to MOUVEMENTS sheet | mod_Config | None |
+| mod_DataValidator | ~200 | 1P/8P | ~160 | Data validation and integrity checking | mod_Config, mod_Utilities | None |
+| mod_DemoData | ~300 | 1P/9P | ~240 | Generates demo data for testing and demonstration | mod_Config, mod_Utilities | None |
+| mod_ExportEngine | ~350 | 5P/6P | ~280 | Exports transactions to PDF and other formats | mod_Config, mod_Utilities, mod_SupplierRegistry, mod_QRCode | None |
+| mod_Forecasting | ~250 | 8P/6P | ~200 | Forecasting and demand prediction | mod_Config, mod_Utilities | None |
+| mod_InventoryReconciliation | ~150 | 2P/2P | ~120 | Inventory reconciliation between physical and system counts | mod_Config, mod_Utilities | None |
+| mod_LibreBridge | ~400 | 10P/10P | ~320 | LibreOffice integration for document conversion | mod_LOBridge_Detect, mod_PCControl | None |
+| mod_LOBridge_Detect | ~150 | 6P/6P | ~120 | Detects LibreOffice installation and COM availability | mod_PCControl | None |
+| mod_Localization | ~200 | 6P/1P | ~160 | Handles localization and Arabic text support | mod_Config | None |
+| mod_Navigation | ~30 | 3P/1P | ~25 | Navigation between forms and sheets | None | None |
+| mod_ObsidianExporter | ~50 | 2P/
+
+---

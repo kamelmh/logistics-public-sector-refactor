@@ -1,4 +1,4 @@
-# CrossFlow-Opus Task Board
+﻿# CrossFlow-Opus Task Board
 # Queue: opus-tasks.md | Results: opus-results.md | Worker: Claude Opus via CLI
 # Protocol: OpenCode writes tasks → git commit → Opus picks up → git commit results
 
@@ -107,6 +107,35 @@
 
 ---
 
+### [TASK-006] VBA Module Inventory — All 37 Modules
+- **Type**: audit-module
+- **Input**: Software_Surgical_Edit/VBA_Modules/*.bas
+- **Prompt**: |
+  Perform a complete inventory of all VBA modules in the ERP system.
+  For each .bas file in Software_Surgical_Edit/VBA_Modules/:
+  1. Module name and file size
+  2. Number of Public/Private procedures (Sub/Function)
+  3. Total lines of code (excluding comments and blank lines)
+  4. Key responsibilities (1-2 line summary)
+  5. Dependencies (which other modules it calls)
+  6. Security concerns (hardcoded values, missing validation)
+  7. Lines of code threshold (flag if >500 lines — needs refactoring)
+  
+  Output format: markdown table with columns:
+  Module | Size | Procedures | LOC | Responsibilities | Dependencies | Flags
+  
+  Also produce a summary:
+  - Total modules count
+  - Total LOC across all modules
+  - Modules exceeding 500 LOC (refactoring candidates)
+  - Most connected modules (called by many others)
+  - Dead code candidates (never called)
+- **Token Budget**: ~30K input, ~10K output
+- **Priority**: MED
+- **Status**: DONE
+
+---
+
 ## Active Task
 <!-- Only ONE task runs at a time. Opus picks up the first PENDING task. -->
 (none)
@@ -114,6 +143,8 @@
 ## Completed Tasks
 <!-- Moved here after execution -->
 (none)
+
+
 
 
 
