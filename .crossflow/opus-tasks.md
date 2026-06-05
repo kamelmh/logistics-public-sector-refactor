@@ -89,6 +89,22 @@
 - **Priority**: HIGH
 - **Status**: DONE
 
+### [TASK-005] Loop Verification — CrossFlow Pipeline Test
+- **Type**: verification
+- **Input**: .crossflow/opus-tasks.md, .crossflow/opus-results.md, .crossflow/knowledge-base.json
+- **Prompt**: |
+  Verify the CrossFlow-Opus closed learning loop is working:
+  1. Check opus-tasks.md has tasks with correct status (DONE/PENDING)
+  2. Check opus-results.md has results for all DONE tasks
+  3. Check knowledge-base.json has extracted knowledge items
+  4. Check .crossflow/skills/ has auto-generated SKILL.md files
+  5. Verify ground truth params are correct: D=789, Q*=37, ROP=206, SS=200, LT=2, S=801.45, PU=4500, I=20%
+  6. Verify MASTER_PWD is NOT exposed in any file
+  Output: pass/fail checklist with details.
+- **Token Budget**: ~10K input, ~4K output
+- **Priority**: HIGH
+- **Status**: DONE
+
 ---
 
 ## Active Task
@@ -98,6 +114,8 @@
 ## Completed Tasks
 <!-- Moved here after execution -->
 (none)
+
+
 
 
 
