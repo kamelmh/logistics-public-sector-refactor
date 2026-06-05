@@ -67,6 +67,28 @@
 - **Priority**: MED
 - **Status**: DONE
 
+### [TASK-004] Defense Q&A Generation
+- **Type**: defense-qa
+- **Input**: Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md, .opencode/erp-context-compact.md
+- **Prompt**: |
+  Based on the thesis and ERP system context, generate 20 likely jury questions
+  for a BTS defense in Algeria. Cover:
+  - Wilson EOQ formula derivation and application (5 questions)
+  - ABC/XYZ classification methodology (3 questions)
+  - CMUP moving average calculation (3 questions)
+  - VBA implementation architecture (4 questions)
+  - Practical results and limitations (3 questions)
+  - Future improvements (2 questions)
+  For each question, provide:
+  - The question in French (formal academic register)
+  - Expected answer key points (3-5 bullet points)
+  - Difficulty level (EASY/MEDIUM/HARD)
+  - Related ground-truth values to cite in answer
+  Format: numbered list with Q, Answer Key, Difficulty, Ground Truth refs.
+- **Token Budget**: ~20K input, ~10K output
+- **Priority**: HIGH
+- **Status**: DONE
+
 ---
 
 ## Active Task
@@ -76,6 +98,8 @@
 ## Completed Tasks
 <!-- Moved here after execution -->
 (none)
+
+
 
 
 
