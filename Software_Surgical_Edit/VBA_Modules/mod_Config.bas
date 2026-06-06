@@ -1,6 +1,6 @@
 Attribute VB_Name = "mod_Config"
 ' ============================================================================
-' Academix v13.3 - DSS Logistique El Bayadh
+' Academix v13.4 - DSS Logistique El Bayadh
 ' Copyright (c) 2025-2026 Mahi Kamel Abdelghani
 ' Direction de l'Education - Wilaya d'El Bayadh
 ' Protected under Algerian Copyright Law (Ordinance 03-05, July 19, 2003)
@@ -102,5 +102,5 @@ Public Property Get MASTER_PWD() As String
 End Property
 
 Public Property Get APP_VERSION() As String
-    APP_VERSION = "v13.3"
+    APP_VERSION = "v13.4"
 End Property

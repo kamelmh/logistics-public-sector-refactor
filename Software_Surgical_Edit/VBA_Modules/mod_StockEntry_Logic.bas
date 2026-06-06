@@ -129,6 +129,7 @@ Public Sub InitializeForm(ByRef state As FormState)
     Call SetupFormAppearance(state)
     Call PopulateDropdowns(state)
     Call ConfigureGrid(state)
+End Sub
 
 Public Sub SaveFullArticleList(ByRef state As FormState, ByVal cmb As Object)
     Dim i As Integer
@@ -192,6 +193,7 @@ Private Sub SetupFormAppearance(ByRef state As FormState)
     
     '- Button captions
     ' (We'll handle these in the form or via state if we want to be very strict)
+End Sub
 
 Private Sub ResetToDefaultState(ByRef state As FormState)
     state.TransDate = Format(Date, "DD/MM/YYYY")
@@ -322,24 +324,6 @@ Private Sub ConfigureGrid(ByRef state As FormState)
     state.formRef.lblGridHeader.ForeColor = RGB(71, 71, 90)
 End Sub
 
-Private Sub ResetToDefaultState(ByRef state As FormState)
-    state.TransDate = Format(Date, "DD/MM/YYYY")
-    state.docRef = ""
-    state.qty = ""
-    state.unitPrice = ""
-    state.GridData = ""
-    state.GridRowCount = 0
-    state.TotalGeneral = 0
-    state.m_CurrentArticle = ""
-    state.ArticleCode = ""
-    state.ArticleStock = 0
-    state.StockInfoText = "Code Article :  --"
-    state.StockInfoColor = RGB(100, 100, 100)
-    state.WilsonAlertVisible = False
-    state.QtyBackColor = RGB(255, 255, 255)
-End Sub
-
-
 
 '==============================================================================
 ' SECTION 2 - DOCUMENT TYPE BANNER (Pure logic, returns state updates)
@@ -409,7 +393,7 @@ Public Function GetDocPrefixFromType(ByVal docType As String) As String
         Case mod_Config.DOC_TYPE_DA:  GetDocPrefixFromType = "DA"
         Case Else:    GetDocPrefixFromType = "TXN"
     End Select
-
+End Function
 
 '==============================================================================
 ' SECTION 3 - ARTICLE SELECTION & STOCK INTELLIGENCE
@@ -622,8 +606,7 @@ Public Sub GenerateAutoRef(ByRef state As FormState)
 
     prefix = GetDocPrefixFromType(state.docType)
     seq = mod_StockEngine.GetNextSequence(prefix)
-
-
+End Sub
 
 '==============================================================================
 ' SECTION 6 - GRID OPERATIONS

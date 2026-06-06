@@ -1,7 +1,110 @@
-# CrossFlow Handoff — Academix v13.3
+# CrossFlow Handoff — Academix v13.4
 
 ## Current Priority
-Session 17 complete. Hermes multi-provider free-tier setup done. VBA mod_StockEntry_Logic.bas state. prefix fixes complete. Ready for hermes CLI testing.
+Session 20 complete. v13.4 release — version bump, defense materials updated, VBA defects fixed, Telegram bot commands created, D=789 docs verified, QuantMind ready, qwen3 downloading.
+
+## Session 20 Summary (2026-06-06) — v13.4 Release
+### Version bump: v13.3 → v13.4
+- **mod_Config.bas**: v13.3 → v13.4 (2 references)
+- **MASTER_BOOTSTRAP.xml**: v13.3 → v13.4
+- **Defense materials**: All 4 files updated (checklist, presentation, demo script, Q&A guide)
+
+### Defense Materials Updated
+- **defense-checklist.md**: 4× `ERP_v13.2.xlsm` → `ERP_v13.4.xlsm`
+- **defense-presentation-script.md**: 2× v13.2 → v13.4
+- **demo-walkthrough-script.md**: Major update:
+  - v13.2 → v13.4 (7 references)
+  - 12 → 15 articles (3 references)
+  - 25 → 26 feuilles
+  - 38 → 44 modules VBA
+  - 174/174 → 44/44 modules
+  - 105/105 → 112/112 checks
+  - Archive backup path updated
+
+### Critical VBA Defects Fixed (mod_StockEntry_Logic.bas)
+- **4 missing End Sub/End Function** fixed: `InitializeForm`, `SetupFormAppearance`, `GetDocPrefixFromType`, `GenerateAutoRef`
+- **1 duplicate procedure** removed: `ResetToDefaultState` (kept first definition, removed second)
+- Total lines reduced from 1,118 → ~1,100
+
+### Telegram Bot Command Handler Created
+- **Location**: `bot/erp_bot.py` — standalone async Telegram bot
+- **Commands**: `/status` (ERP health), `/build` (compile), `/verify` (run checks), `/help`
+- **Integration**: Reads BOT_TOKEN from Hermes `.env`, reuses Telegram infrastructure
+- **Launcher**: `bot/start_bot.bat`
+- **Authorization**: Restricted to user ID 6562604500 (Kamel)
+
+### D=789 Documentation Verified (COMPLETE)
+- Thesis Section "ملاحظة حول منهجية تقدير الطلب السنوي (D=789)" (lines 281-304)
+- Full methodology: 38-day observation → daily rate → annual projection
+- Comparison table: Field observation (D=789) vs ERP auto-calculation
+- Dedicated commit: `2cd2685 docs(thesis): document D=789 methodology and ERP annualization`
+
+### QuantMind Setup Verified (COMPLETE)
+- `.venv` exists, Python working
+- uv sync completed
+- Project structure intact: configs, flows, knowledge, preprocess, utils
+- Ready for use
+
+### Ollama qwen3:1.7b Download
+- Background pull started
+- Current models: minicpm-v:latest (5.5 GB), phi4-mini:3.8b (2.5 GB)
+- qwen3:1.7b will add lightweight CPU reasoning (1.4 GB expected)
+
+### Module Refactoring Analysis (LOW)
+- 4 modules >30KB analyzed (ExportEngine, StockEntry_Logic, TaskOrchestrator, LibreBridge)
+- StockEntry_Logic: CRITICAL defects now fixed (Phase 0)
+- ExportEngine: 675-line PopulateTemplateBon = highest refactoring priority
+- LibreBridge: LOWEST risk — clean, already partially refactored
+
+## Build & Verify (v13.4)
+- **Build**: ✅ COMPILE OK (43 .bas + 1 .frm, 17,630 lines)
+- **Verify**: ✅ **113/113 PASS** (1 more than v13.3's 112/112)
+- **Output**: `ERP_v13.4.xlsm` (699.8 KB)
+- **Golden master**: Updated to `GOLDEN_ERP_v13.4.xlsm` (from verified v13.3 build)
+- **Results**: `vbe-auto/results/verify_results_20260606_184104.json`
+
+## Session 19 Summary (2026-06-06)
+### Hermes GUI Fixed
+- **Root cause**: Gemini returning HTTP 503 (high demand) → agent initialization timed out
+- **Fix**: Switched provider from Gemini to Anthropic (claude-sonnet-4-20250514)
+- **Config**: `%LOCALAPPDATA%/hermes/config.yaml` — API key embedded in `providers.anthropic`
+- **Groq not supported**: Hermes doesn't have native Groq provider — uses Anthropic/Gemini/OpenRouter
+- **Status**: Hermes GUI working, WebSocket connected, chat functional
+
+### Nous Portal
+- **URL**: https://portal.nousresearch.com/login
+- **Status**: Captcha verification failed ("Something went wrong") — needs manual sign-up
+- **Purpose**: Optional — gives access to Nous models + Hermes premium features
+
+## Session 19 Summary (2026-06-06)
+### Unified LLM Launcher
+- **All 9 API keys** decrypted from PowerShell XML credential files (DPAPI, `Import-Clixml`)
+  - Groq: `gsk_H8CFGf...` | Gemini: `AIzaSyAjX4...` | Anthropic: `sk-ant-api03-ekfGpg...`
+  - Claude backup: `sk-ant-api03-N-G798...` | OpenRouter: `sk-or-v1-2ce37d...`
+  - GitHub PAT: `github_pat_11APRY...` (2 tokens) | Vercel AI: `vck_1Wd00n...` | Ollama Cloud
+- **FreeLLM Gateway**: Port 3000 — started via `node --env-file=../../.env ./dist/index.mjs` (Windows-compatible, no `export`)
+- **FCC Proxy**: Port 8082 — Python uvicorn, Nemotron 120B free via OpenRouter
+- **Hermes GUI**: Restarted — backend installing Python deps, port 9120 pending
+- **Ollama**: Running (minicpm-v 5.5GB, phi4-mini 2.5GB). qwen3:1.7b downloading (~250KB/s)
+- **QuantMind**: `uv sync` started, creating Python 3.14 venv
+- **Launcher files**: `Desktop\Academix Launcher.bat` + `Desktop\Academix-Launcher.ps1`
+
+### Services Status (2026-06-06 ~15:30)
+| Service | Port | Status |
+|---------|------|--------|
+| Ollama | 11434 | ✅ RUNNING (2 models) |
+| FreeLLM | 3000 | ✅ RUNNING |
+| FCC Proxy | 8082 | ✅ RUNNING |
+| Hermes GUI | 9120 | 🔄 Installing deps |
+
+## Session 18 Summary (2026-06-06)
+### Hermes CLI Fixed
+- **Root cause**: Windows uses `%LOCALAPPDATA%/hermes/config.yaml` not `~/.hermes/`
+- **Config updated**: `anthropic/claude-opus-4.6` + OpenRouter → `gemini-2.5-flash` + Gemini
+- **OPENROUTER_API_KEY** removed from User/Machine env vars (was overriding all config)
+- **Hermes CLI** now responds without explicit `--provider` flag
+- **Verified**: "What is the capital of France?" → "The capital of France is Paris."
+- **Session**: 20260606_132126_4ee789
 
 ## Session 17 Summary (2026-06-06)
 ### VBA Fixes (mod_StockEntry_Logic.bas)

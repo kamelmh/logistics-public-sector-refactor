@@ -1,6 +1,6 @@
-# Academix v13.2 — Demo Walkthrough Script
+# Academix v13.4 — Demo Walkthrough Script
 ## Soutenance / Defense — Direction de l'Éducation d'El Bayadh
-**Auteur :** Mahi Kamel Abdelghani | **Durée :** 9 min | **Workbook :** `ERP_v13.2.xlsm`
+**Auteur :** Mahi Kamel Abdelghani | **Durée :** 9 min | **Workbook :** `ERP_v13.4.xlsm`
 
 ---
 
@@ -8,17 +8,17 @@
 **⏱ 1:00** (0:00 → 1:00)
 
 ### Action
-1. Double-clic sur `ERP_v13.2.xlsm` — Activer les macros si demandé (Oui)
+1. Double-clic sur `ERP_v13.4.xlsm` — Activer les macros si demandé (Oui)
 2. La feuille **Accueil** s'affiche automatiquement (macro `ShowMainMenu` dans `MAIN_MACROS.bas:40`)
-3. Pointer la barre de titre : *"ERP Académie v13.2 — Direction de l'Éducation — El Bayadh"*
+3. Pointer la barre de titre : *"ERP Académie v13.4 — Direction de l'Éducation — El Bayadh"*
 4. Parcourir les 5 sections de boutons : **SAISIE**, **TABLEAU DE BORD**, **ANALYSE**, **RAPPORTS**, **UTILITAIRES**
 
 ### Discours (Arabe)
-> بسم الله الرحمن الرحيم. هذه هي الواجهة الرئيسية للنظام — "ERP Académie v13.2". صممت الواجهة بخمسة أقسام وظيفية تغطي دورة التخزين بكاملها: الإدخال، لوحة القيادة، التحليل، التقارير، والأدوات المساعدة. كل وظيفة متاحة بنقرة واحدة — لا حاجة إلى أوامر أو أكواد. النظام مبني بالكامل على Excel/VBA بتكلفة صفرية، ولا يتطلب أي برامج إضافية أو اتصال بالإنترنت.
+> بسم الله الرحمن الرحيم. هذه هي الواجهة الرئيسية للنظام — "ERP Académie v13.4". صممت الواجهة بخمسة أقسام وظيفية تغطي دورة التخزين بكاملها: الإدخال، لوحة القيادة، التحليل، التقارير، والأدوات المساعدة. كل وظيفة متاحة بنقرة واحدة — لا حاجة إلى أوامر أو أكواد. النظام مبني بالكامل على Excel/VBA بتكلفة صفرية، ولا يتطلب أي برامج إضافية أو اتصال بالإنترنت.
 
 ### Métriques clés
-- 25 feuilles de calcul interconnectées
-- 38 modules VBA
+- 26 feuilles de calcul interconnectées
+- 44 modules VBA
 - 0 DZD de coût de licence
 
 ### Transition
@@ -31,16 +31,16 @@
 
 ### Action
 1. Cliquer sur l'onglet **ARTICLES** (ou bouton de navigation)
-2. Montrer la liste des 12 articles (ART-001 à ART-012)
+2. Montrer la liste des 15 articles (ART-001 à ART-015)
 3. Pointer les colonnes : Code, Désignation, Stock Actuel, Seuil Min, Classe ABC, PU, Fournisseur
 4. Cliquer sur **ART-001 — Toner G030** (ligne 2)
 5. Montrer : Stock Actuel, Stock de Sécurité (200), Classe A
 
 ### Discours (Arabe)
-> صفحة المخزون تضم 12 صنفاً مسجلاً، كل صنف له رمز فريد (ART-001 إلى ART-012). الصنف المرجعي ART-001 هو حبر الطابعة Toner G030 — وهو صنف استراتيجي من الفئة A حسب تصنيف ABC. نلاحظ هنا أن المخزون الحالي مسجل، مع حد أدنى ومخزون أمان محددين. هذه البيانات هي الأساس الذي تبني عليه خوارزميات النظام حساباتها.
+> صفحة المخزون تضم 15 صنفاً مسجلاً، كل صنف له رمز فريد (ART-001 إلى ART-015). الصنف المرجعي ART-001 هو حبر الطابعة Toner G030 — وهو صنف استراتيجي من الفئة A حسب تصنيف ABC. نلاحظ هنا أن المخزون الحالي مسجل، مع حد أدنى ومخزون أمان محددين. هذه البيانات هي الأساس الذي تبني عليه خوارزميات النظام حساباتها.
 
 ### Métriques clés
-- 12 articles (ART-001 → ART-012)
+- 15 articles (ART-001 → ART-015)
 - ART-001 : Toner G030 — Classe A
 - SS = 200 unités
 
@@ -98,7 +98,7 @@
 ### Métriques clés
 - A : 20% des articles ≈ 80% de la valeur
 - Classification dynamique (recalculée à chaque mouvement)
-- 12 articles classés ABC-XYZ
+- 15 articles classés ABC-XYZ
 
 ### Backup plan
 > إذا لم يعمل زر ABC: افتح `Alt+F8` → `mod_SyncBridge.SyncMetricsFromLedger`
@@ -213,7 +213,7 @@
 2. Montrer la synthèse (à préparer dans une cellule ou un commentaire) :
    - Temps de traitement : 20-30 min → **< 5 secondes** (99.7%)
    - Élimination des ruptures de stock pour les articles A
-   - Validation : **174/174 modules**, **105/105 checks**
+   - Validation : **44/44 modules**, **112/112 checks**
 3. Conclure
 
 ### Discours (Arabe)
@@ -228,8 +228,8 @@
 ### Métriques clés
 - 99.7% réduction temps de traitement (20-30 min → < 5 sec)
 - 0 ruptures de stock pour articles stratégiques
-- 174/174 modules VBA valides
-- 105/105 checks passés
+- 44/44 modules VBA valides
+- 112/112 checks passés
 - Coût : 0 DZD
 
 ### Transition
@@ -255,4 +255,4 @@
 2. Si les macros sont bloquées : `Fichier > Options > Centre de gestion de la confidentialité > Paramètres > Activer toutes les macros`
 3. Si un bouton ne répond pas : `Alt+F8` → sélectionner la macro manuellement
 4. Si les données sont corrompues : `Alt+F8` → `mod_DemoData.GenerateDemoData` pour regénérer les données de démonstration
-5. **Dernier recours :** Ouvrir `GOLDEN_ERP_v13.2.xlsm` ou `ARCHIVE_LEGACY_Copy_of_ERP_v13.2.xlsm` (copies de sauvegarde)
+5. **Dernier recours :** Ouvrir `ERP_v13.4.xlsm` (copie de sauvegarde dans D:\_ARCHIVE_THESIS\)

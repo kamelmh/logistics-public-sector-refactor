@@ -1,8 +1,8 @@
-# ERP Académie v13.3 — Compact Context Snapshot
+# ERP Académie v13.4 — Compact Context Snapshot
 # Institution: Direction de l'Education, Wilaya de El Bayadh (Algeria)
 # User: Mahi Kamel Abdelghani | Stack: Pure VBA Excel | Offline-First | Zero Dependencies
 # Compliance: CNEPD BTS Public Sector Standards | Locale: fr-FR/ar-DZ
-# Generated: 2026-05-09 | ~5K tokens | Inject at session start
+# Generated: 2026-06-06 | ~5K tokens | Inject at session start
 
 ## GROUND TRUTH (Canonical — Do Not Modify)
 | Param | Value | Description |
@@ -16,13 +16,13 @@
 | PU | 4,500 DZD | Unit Price (ARTICLES sheet real price) |
 | I | 20% | Holding Rate |
 | MASTER_PWD | erp_secure_pwd_2026 | Sheet protection |
-| VERSION | v13.3 | Current |
+| VERSION | v13.4 | Current |
 | Article Case | ART-001 Toner G030 (HP LaserJet) | Thesis case study |
 
-## 25 Sheets
+## 26 Sheets
 ACCUEIL | ARTICLES | FOURNISSEURS | CONVENTIONS | MOUVEMENTS | TABLEAU_DE_BORD | ALERTE_DASHBOARD | INVENTAIRE | RAPPORTS | CALCULS_EOQ | HISTORIQUE | BON_RECEPTION | BON_SORTIE | BON_COMMANDE | DA_DEMANDE_ACHAT | GUIDE | VBA_MODULES | AUDIT_LOG | DASHBOARD | FORM_INPUT | BORDEREAU_COMMANDE | STAGING_BUFFER | SYS_STRINGS | RECEIPT_TAG | TEMPLATE_BON
 
-## 37 VBA Modules (30 .bas + 1 .frm + MAIN_MACROS.bas + ThisWorkbook.cls = ~11.5K lines, 0 compile errors)
+## 44 VBA Modules (43 .bas + 1 .frm + MAIN_MACROS.bas + ThisWorkbook.cls = ~11.5K lines, 0 compile errors)
 ### Critical
 | Module | Deps | Key API | Consumers |
 |--------|------|---------|-----------|
@@ -176,7 +176,7 @@ Workflows: feature (explore→plan→build) | fix (debug→build→test) | quali
 |------|----------|
 | Root | C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor |
 | VBA source | Software_Surgical_Edit\VBA_Modules\*.bas |
-| Active workbook | C:\Users\Administrator\Dropbox\ERP_v13.3.xlsm |
+| Active workbook | C:\Users\Administrator\Dropbox\ERP_v13.4.xlsm |
 | Compiled | Software_Surgical_Edit\ERP_Academie_v13_2.xlsm |
 | Config dir | .config\opencode\ |
 | Context XMLs | Software_Surgical_Edit\erp-*.xml (4 files) |
