@@ -117,6 +117,15 @@ Public Type FormState
     GridHeaderFontName  As String
     GridHeaderFontSize  As Integer
     GridHeaderForeColor As Long
+
+    '- Controls (passed as objects for SetFocus etc.)
+    '- Form reference for UI operations (only when absolutely needed)
+    ' Added: Session 22 - was referenced 60+ times in this module
+    ' (state.formRef.cmbTypeDoc, state.formRef.txtQuantite, etc.) but the
+    ' FormState UDT never declared the formRef field, causing "Method or
+    ' data member not found" at UserForm_Initialize. Reference impl lifted
+    ' from external/lsm-vba-core.
+    formRef        As Object
 End Type
 
 
@@ -324,23 +333,6 @@ Private Sub ConfigureGrid(ByRef state As FormState)
     state.formRef.lblGridHeader.ForeColor = RGB(71, 71, 90)
 End Sub
 
-Private Sub ResetToDefaultState(ByRef state As FormState)
-    state.TransDate = Format(Date, "DD/MM/YYYY")
-    state.docRef = ""
-    state.qty = ""
-    state.unitPrice = ""
-    state.GridData = ""
-    state.GridRowCount = 0
-    state.TotalGeneral = 0
-    state.m_CurrentArticle = ""
-    state.ArticleCode = ""
-    state.ArticleStock = 0
-    state.StockInfoText = "Code Article :  --"
-    state.StockInfoColor = RGB(100, 100, 100)
-    state.WilsonAlertVisible = False
-    state.QtyBackColor = RGB(255, 255, 255)
-End Sub
-
 
 
 '==============================================================================
@@ -411,6 +403,7 @@ Public Function GetDocPrefixFromType(ByVal docType As String) As String
         Case mod_Config.DOC_TYPE_DA:  GetDocPrefixFromType = "DA"
         Case Else:    GetDocPrefixFromType = "TXN"
     End Select
+End Function
 
 
 '==============================================================================
@@ -624,6 +617,7 @@ Public Sub GenerateAutoRef(ByRef state As FormState)
 
     prefix = GetDocPrefixFromType(state.docType)
     seq = mod_StockEngine.GetNextSequence(prefix)
+End Sub
 
 
 
@@ -757,6 +751,7 @@ Public Function AddLineToGrid(ByRef state As FormState) As Boolean
     
     state.formRef.cmbArticle.SetFocus
     AddLineToGrid = True
+End Function
 
 Public Sub RemoveLineFromGrid(ByRef state As FormState)
     Dim idx As Integer
@@ -828,6 +823,7 @@ Private Function GetQtyInGridForSKU(ByVal sku As String, ByRef state As FormStat
     Next i
 
     GetQtyInGridForSKU = total
+End Function
 
 
 '==============================================================================
@@ -1011,6 +1007,7 @@ SaveError:
     Application.Calculation = xlCalculationAutomatic
     Application.ScreenUpdating = True
     MsgBox "Une erreur s'est produite lors de l'enregistrement. Transaction annul" & Chr(233) & "e.", vbCritical
+End Function
 
 Private Function SyncTransactionInternal(ByVal artCode As String, _
                                           ByVal mvtType As String, _
@@ -1021,6 +1018,7 @@ Private Function SyncTransactionInternal(ByVal artCode As String, _
     SyncTransactionInternal = mod_SyncBridge.SyncTransactionInternal(artCode, mvtType, qty, unitPrice, refDoc)
     If Err.Number <> 0 Then SyncTransactionInternal = -1
     On Error GoTo 0
+End Function
 
 
 '==============================================================================
@@ -1049,6 +1047,7 @@ Public Function HasControl(ByVal formRef As Object, ByVal ctrlName As String) As
     Set ctrl = formRef.Controls(ctrlName)
     HasControl = (Err.Number = 0)
     On Error GoTo 0
+End Function
 
 '==============================================================================
 ' END -- mod_StockEntry_Logic.bas

@@ -138,8 +138,6 @@ Private Function PopulateTemplateBon(ByVal docRef As String, _
     Dim totalVal     As Double
     Dim lineCount    As Integer
     Dim wsArt        As Worksheet
-    Dim c            As Integer
-    Dim colFontSize  As Integer
     
     ' Column discovery (robust against column-order variations)
     Dim colDate    As Integer: colDate = FindColumn(wsMouv, "DATE")
@@ -171,10 +169,8 @@ Private Function PopulateTemplateBon(ByVal docRef As String, _
     
     On Error GoTo PopulateError
     
-    Application.ScreenUpdating = False
-    wsTpl.Unprotect Password:=mod_Config.MASTER_PWD
-    wsTpl.Cells.Clear
-    wsTpl.Cells.Interior.ColorIndex = xlNone
+    ' Step 1: Initialize template (page setup, clear, unprotect)
+    r = mod_TemplateBuilder.InitializeTemplate(wsTpl, compact)
     
     ' Scan MOUVEMENTS for matching rows
     lastRow = wsMouv.Cells(wsMouv.Rows.Count, 1).End(xlUp).Row
@@ -211,580 +207,46 @@ Private Function PopulateTemplateBon(ByVal docRef As String, _
                   "BON DE R" & Chr(201) & "CEPTION", _
                   "BON DE SORTIE")
     
-    ' PAGE SETUP
-    If compact Then
-        With wsTpl.PageSetup
-            .Orientation = xlPortrait
-            .PaperSize = xlPaperA5
-            .LeftMargin = Application.CentimetersToPoints(1)
-            .RightMargin = Application.CentimetersToPoints(0.8)
-            .TopMargin = Application.CentimetersToPoints(1)
-            .BottomMargin = Application.CentimetersToPoints(1)
-            .FitToPagesWide = 1
-            .FitToPagesTall = False
-            .RightFooter = "ERP Acad" & Chr(233) & "mie v13.2  |  " & _
-                              Format(Now, "DD/MM/YYYY HH:MM")
-        End With
-    Else
-        With wsTpl.PageSetup
-            .Orientation = xlPortrait
-            .PaperSize = xlPaperA4
-            .LeftMargin = Application.CentimetersToPoints(2)
-            .RightMargin = Application.CentimetersToPoints(1.5)
-            .TopMargin = Application.CentimetersToPoints(2)
-            .BottomMargin = Application.CentimetersToPoints(2)
-            .FitToPagesWide = 1
-            .FitToPagesTall = False
-            .RightFooter = "ERP Acad" & Chr(233) & "mie v13.2  |  " & _
-                              Format(Now, "DD/MM/YYYY HH:MM")
-        End With
-    End If
+    ' Step 2: Header
+    r = mod_TemplateBuilder.PopulateHeader(wsTpl, r, docRef, docDate, docType, _
+                                           mvtSign, thirdParty, compact)
     
-    r = 1
-    With wsTpl
-        If compact Then
-            ' ROW 1: Combined ministry + direction (compact single line)
-            .Range("A" & r & ":G" & r).Merge
-            .Cells(r, 1).Value = "MINIST" & Chr(200) & "RE DE L'" & Chr(201) & _
-                                 "DUCATION NATIONALE  |  Dir. El Bayadh"
-            With .Cells(r, 1)
-                .Font.Bold = True
-                .Font.Size = 8
-                .Font.Name = "Tahoma"
-                .HorizontalAlignment = xlCenter
-            End With
-            .Rows(r).RowHeight = 14: r = r + 1
-            
-            ' ROW 2: Compact separator
-            .Range("A" & r & ":G" & r).Borders(xlEdgeBottom).LineStyle = xlContinuous
-            .Range("A" & r & ":G" & r).Borders(xlEdgeBottom).Weight = xlThin
-            .Rows(r).RowHeight = 4: r = r + 1
-        Else
-            ' ROW 1: Ministry header
-            .Range("A" & r & ":G" & r).Merge
-            .Cells(r, 1).Value = "MINIST" & Chr(200) & "RE DE L'" & Chr(201) & _
-                                 "DUCATION NATIONALE"
-            With .Cells(r, 1)
-                .Font.Bold = True
-                .Font.Size = 11
-                .HorizontalAlignment = xlCenter
-            End With
-            .Rows(r).RowHeight = 22: r = r + 1
-            
-            ' ROW 2: Direction (bilingual FR/AR)
-            .Range("A" & r & ":G" & r).Merge
-            .Cells(r, 1).Value = "Direction de l'" & Chr(201) & "ducation  " & _
-                                 Chr(8212) & "  El Bayadh  |  " & _
-                                 Chr(1605) & Chr(1583) & Chr(1610) & Chr(1585) & _
-                                 Chr(1610) & Chr(1577) & " " & Chr(1575) & _
-                                 Chr(1604) & Chr(1578) & Chr(1585) & Chr(1576) & _
-                                 Chr(1610) & Chr(1577) & " " & Chr(1575) & _
-                                 Chr(1604) & Chr(1576) & Chr(1610) & Chr(1590)
-            With .Cells(r, 1)
-                .Font.Size = 9
-                .Font.Italic = True
-                .HorizontalAlignment = xlCenter
-                .Font.Name = "Tahoma"
-            End With
-            .Rows(r).RowHeight = 18: r = r + 1
-            
-            ' ROW 3: Double separator
-            .Range("A" & r & ":G" & r).Borders(xlEdgeBottom).LineStyle = xlDouble
-            .Range("A" & r & ":G" & r).Borders(xlEdgeBottom).Weight = xlThick
-            .Rows(r).RowHeight = 6: r = r + 1
-            
-            ' ROW 4: Spacer
-            .Rows(r).RowHeight = 10: r = r + 1
-        End If
-        
-        ' ROW 5: Document title banner
-        .Range("A" & r & ":G" & r).Merge
-        .Cells(r, 1).Value = docType
-        With .Cells(r, 1)
-            .Font.Bold = True
-            .Font.Size = IIf(compact, 14, 20)
-            .HorizontalAlignment = xlCenter
-            .VerticalAlignment = xlCenter
-            .Interior.Color = RGB(0, 70, 127)
-            .Font.Color = RGB(255, 255, 255)
-        End With
-        .Rows(r).RowHeight = IIf(compact, 24, 40): r = r + 1
-        
-        ' ROW 6: Spacer
-        .Rows(r).RowHeight = IIf(compact, 4, 10): r = r + 1
-        
-        ' ROW 7: Metadata - Ref, Date, Type
-        If compact Then
-            .Cells(r, 1).Value = "N" & Chr(176) & " Ref :"
-            .Cells(r, 2).Value = docRef
-            .Cells(r, 2).Font.Color = RGB(0, 70, 127)
-            .Cells(r, 4).Value = "Date :"
-            .Cells(r, 5).Value = docDate
-            .Cells(r, 6).Value = IIf(mvtSign = "IN", "ENTREE", "SORTIE")
-            .Cells(r, 6).Font.Color = IIf(mvtSign = "IN", RGB(4, 90, 55), RGB(160, 70, 0))
-            For c = 1 To 7: .Cells(r, c).Font.Size = 8: .Cells(r, c).Font.Bold = True: Next c
-            .Rows(r).RowHeight = 13: r = r + 1
-        Else
-            .Cells(r, 1).Value = "N" & Chr(176) & " R" & Chr(233) & "f" & Chr(233) & "rence :"
-            .Cells(r, 1).Font.Bold = True
-            .Cells(r, 2).Value = docRef
-            .Cells(r, 2).Font.Bold = True
-            .Cells(r, 2).Font.Color = RGB(0, 70, 127)
-            
-            .Cells(r, 4).Value = "Date :"
-            .Cells(r, 4).Font.Bold = True
-            .Cells(r, 5).Value = docDate
-            
-            .Cells(r, 6).Value = "Type :"
-            .Cells(r, 6).Font.Bold = True
-            .Cells(r, 7).Value = IIf(mvtSign = "IN", "ENTR" & Chr(201) & "E", "SORTIE")
-            .Cells(r, 7).Font.Bold = True
-            .Cells(r, 7).Font.Color = IIf(mvtSign = "IN", RGB(4, 90, 55), RGB(160, 70, 0))
-            .Rows(r).RowHeight = 18: r = r + 1
-        End If
-        
-        ' ROW 8: Service / Fournisseur
-        If Len(thirdParty) > 0 Then
-            .Cells(r, 1).Value = "Service / Fournisseur :"
-            .Cells(r, 1).Font.Bold = True
-            .Range("B" & r & ":G" & r).Merge
-            .Cells(r, 2).Value = thirdParty
-            .Rows(r).RowHeight = IIf(compact, 12, 16): r = r + 1
-        End If
-        
-        ' ROW 9: Spacer
-        .Rows(r).RowHeight = IIf(compact, 3, 8): r = r + 1
-        
-        ' ROW 10: Column Headers
-        Dim hdrs(5) As String
-        hdrs(0) = "Code Article"
-        hdrs(1) = "D" & Chr(233) & "signation"
-        hdrs(2) = "Unit" & Chr(233)
-        hdrs(3) = "Qt" & Chr(233)
-        hdrs(4) = "PU (DZD)"
-        hdrs(5) = "Valeur (DZD)"
-        
-        colFontSize = IIf(compact, 7, 9)
-        For c = 0 To 5
-            With .Cells(r, c + 1)
-                .Value = hdrs(c)
-                .Font.Bold = True
-                .Font.Size = colFontSize
-                .Font.Color = RGB(255, 255, 255)
-                .Interior.Color = RGB(0, 70, 127)
-                .HorizontalAlignment = xlCenter
-                .VerticalAlignment = xlCenter
-                .WrapText = True
-                .Borders.LineStyle = xlContinuous
-                .Borders.Weight = xlThin
-            End With
-        Next c
-        .Rows(r).RowHeight = IIf(compact, 18, 28): r = r + 1
-        
-        ' ROWS 11+: Data rows
-        totalVal = 0
-        For j = 2 To lastRow
-            If Trim(CStr(wsMouv.Cells(j, colRef).Value)) = docRef Then
-                Dim artCode  As String
-                Dim artDesig As String
-                Dim artUnit  As String
-                Dim qty      As Double
-                Dim pu       As Double
-                Dim valLigne As Double
-                
-                artCode = Trim(CStr(wsMouv.Cells(j, colCode).Value))
-                artDesig = Trim(CStr(wsMouv.Cells(j, colDesig).Value))
-                artUnit = "unit" & Chr(233)
-                qty = mod_Utilities.SafeVal(wsMouv.Cells(j, colQte).Value)
-                pu = mod_Utilities.SafeVal(wsMouv.Cells(j, colPU).Value)
-                valLigne = qty * pu
-                
-                ' Lookup Arabic designation from ARTICLES
-                If Not wsArt Is Nothing Then
-                    Dim artMatchRow As Variant
-                    artMatchRow = Application.Match(artCode, wsArt.Columns(COL_ART_CODE), 0)
-                    If Not IsError(artMatchRow) Then
-                        Dim arLabel As String
-                        arLabel = Trim(CStr(wsArt.Cells(artMatchRow, COL_ART_DESIGNATION).Value))
-                        Dim unitLabel As String
-                        unitLabel = Trim(CStr(wsArt.Cells(artMatchRow, COL_ART_SEUIL_MIN).Value))
-                        If Len(arLabel) > 0 Then artDesig = arLabel
-                        If Len(unitLabel) > 0 Then artUnit = unitLabel
-                    End If
-                End If
-                
-                ' Alternating row shading
-                Dim rowBg As Long
-                rowBg = IIf((r Mod 2) = 0, RGB(235, 242, 250), RGB(255, 255, 255))
-                
-                Dim dataFontSize As Integer
-                dataFontSize = IIf(compact, 7, 9)
-                
-                ' Col A: Code
-                With .Cells(r, 1)
-                    .Value = artCode
-                    .Interior.Color = rowBg
-                    .HorizontalAlignment = xlCenter
-                    .Font.Name = "Courier New": .Font.Size = dataFontSize
-                    .Borders.LineStyle = xlContinuous
-                    .Borders.Weight = xlThin
-                End With
-                
-                ' Col B: Designation (Arabic - right-align)
-                With .Cells(r, 2)
-                    .Value = artDesig
-                    .Interior.Color = rowBg
-                    .Font.Name = "Tahoma": .Font.Size = dataFontSize
-                    .HorizontalAlignment = xlRight
-                    .Borders.LineStyle = xlContinuous
-                    .Borders.Weight = xlThin
-                End With
-                
-                ' Col C: Unit
-                With .Cells(r, 3)
-                    .Value = artUnit
-                    .Interior.Color = rowBg
-                    .Font.Name = "Tahoma": .Font.Size = dataFontSize
-                    .HorizontalAlignment = xlCenter
-                    .Borders.LineStyle = xlContinuous
-                    .Borders.Weight = xlThin
-                End With
-                
-                ' Col D: Quantity
-                With .Cells(r, 4)
-                    .Value = qty
-                    .NumberFormat = "#,##0"
-                    .Interior.Color = rowBg
-                    .HorizontalAlignment = xlCenter
-                    .Font.Bold = True: .Font.Size = dataFontSize
-                    .Borders.LineStyle = xlContinuous
-                    .Borders.Weight = xlThin
-                End With
-                
-                ' Col E: PU
-                With .Cells(r, 5)
-                    .Value = pu
-                    .NumberFormat = "#,##0.00"
-                    .Interior.Color = rowBg
-                    .HorizontalAlignment = xlRight
-                    .Font.Size = dataFontSize
-                    .Borders.LineStyle = xlContinuous
-                    .Borders.Weight = xlThin
-                End With
-                
-                ' Col F: Line Value
-                With .Cells(r, 6)
-                    .Value = valLigne
-                    .NumberFormat = "#,##0.00"
-                    .Interior.Color = rowBg
-                    .HorizontalAlignment = xlRight
-                    .Font.Bold = True: .Font.Size = dataFontSize
-                    .Borders.LineStyle = xlContinuous
-                    .Borders.Weight = xlThin
-                End With
-                
-                totalVal = totalVal + valLigne
-                .Rows(r).RowHeight = IIf(compact, 14, 20)
-                r = r + 1
-            End If
-        Next j
-        
-        ' TOTAL ROW
-        .Range("A" & r & ":E" & r).Merge
-        With .Cells(r, 1)
-            .Value = "TOTAL G" & Chr(201) & "N" & Chr(201) & "RAL"
-            .Font.Bold = True: .Font.Size = IIf(compact, 8, 10)
-            .HorizontalAlignment = xlRight
-            .Interior.Color = RGB(215, 228, 244)
-            .Borders.LineStyle = xlContinuous
-            .Borders.Weight = xlMedium
-        End With
-        With .Cells(r, 6)
-            .Value = totalVal
-            .NumberFormat = "#,##0.00 DZD"
-            .Font.Bold = True: .Font.Size = IIf(compact, 9, 11)
-            .Font.Color = RGB(0, 70, 127)
-            .Interior.Color = RGB(215, 228, 244)
-            .HorizontalAlignment = xlRight
-            .Borders.LineStyle = xlContinuous
-            .Borders.Weight = xlMedium
-        End With
-        .Rows(r).RowHeight = IIf(compact, 18, 24): r = r + 1
-        
-        ' TVA EXEMPTION (Public Sector)
-        If Not compact Then
-            .Range("A" & r & ":G" & r).Merge
-            .Cells(r, 1).Value = "TVA non applicable -- Secteur Public (Instruction 09-2018 / Article 5)"
-            With .Cells(r, 1)
-                .Font.Size = 8: .Font.Italic = True
-                .Font.Color = RGB(100, 100, 100)
-                .HorizontalAlignment = xlRight
-            End With
-            .Rows(r).RowHeight = 14: r = r + 1
-        End If
-        
-        ' MULTI-COPY INDICATOR
-        If compact Then
-            ' Dual ORIGINAL / COPIE marker side by side
-            .Range("A" & r & ":C" & r).Merge
-            .Cells(r, 1).Value = "ORIGINAL -- Magasin"
-            With .Cells(r, 1)
-                .Font.Bold = True: .Font.Size = 7
-                .Font.Color = RGB(0, 70, 127)
-                .HorizontalAlignment = xlCenter
-                .Interior.Color = RGB(230, 240, 250)
-                .Borders.LineStyle = xlContinuous
-                .Borders.Weight = xlThin
-            End With
-            .Range("D" & r & ":G" & r).Merge
-            .Cells(r, 4).Value = "COPIE -- Service"
-            With .Cells(r, 4)
-                .Font.Bold = True: .Font.Size = 7
-                .Font.Color = RGB(160, 70, 0)
-                .HorizontalAlignment = xlCenter
-                .Interior.Color = RGB(250, 240, 230)
-                .Borders.LineStyle = xlContinuous
-                .Borders.Weight = xlThin
-            End With
-            .Rows(r).RowHeight = 14: r = r + 1
-        Else
-            .Range("A" & r & ":G" & r).Merge
-            .Cells(r, 1).Value = "ORIGINAL -- Exemplaire du Magasin"
-            With .Cells(r, 1)
-                .Font.Bold = True: .Font.Size = 9
-                .Font.Color = RGB(0, 70, 127)
-                .HorizontalAlignment = xlCenter
-                .Interior.Color = RGB(230, 240, 250)
-            End With
-            .Rows(r).RowHeight = 16: r = r + 1
-        End If
-        
-        ' SPACER
-        .Rows(r).RowHeight = IIf(compact, 4, 10): r = r + 1
-        
-        ' SIGNATURE ZONE (4 blocks - Algerian Public Sector Standard)
-        Dim sigFontSize As Integer
-        sigFontSize = IIf(compact, 7, 8)
-        
-        If compact Then
-            .Range("A" & r & ":B" & r).Merge
-            .Cells(r, 1).Value = "Fournisseur"
-            .Cells(r, 1).Font.Bold = True: .Cells(r, 1).Font.Size = sigFontSize
-            .Cells(r, 1).HorizontalAlignment = xlCenter
-            
-            .Range("C" & r & ":D" & r).Merge
-            .Cells(r, 3).Value = "Comptable"
-            .Cells(r, 3).Font.Bold = True: .Cells(r, 3).Font.Size = sigFontSize
-            .Cells(r, 3).HorizontalAlignment = xlCenter
-            
-            .Range("E" & r & ":F" & r).Merge
-            .Cells(r, 5).Value = "Responsable"
-            .Cells(r, 5).Font.Bold = True: .Cells(r, 5).Font.Size = sigFontSize
-            .Cells(r, 5).HorizontalAlignment = xlCenter
-            
-            .Cells(r, 7).Value = "Directeur"
-            .Cells(r, 7).Font.Bold = True: .Cells(r, 7).Font.Size = sigFontSize
-            .Cells(r, 7).HorizontalAlignment = xlCenter
-            .Rows(r).RowHeight = 12: r = r + 1
-            
-            ' Signature boxes (compact - single row)
-            .Rows(r).RowHeight = 24
-            .Range("A" & r & ":B" & r).Merge
-            .Range("A" & r).Borders.LineStyle = xlContinuous
-            .Range("A" & r).Borders.Weight = xlThin
-            .Range("A" & r).Interior.Color = RGB(250, 250, 250)
-            
-            .Range("C" & r & ":D" & r).Merge
-            .Range("C" & r).Borders.LineStyle = xlContinuous
-            .Range("C" & r).Borders.Weight = xlThin
-            .Range("C" & r).Interior.Color = RGB(250, 250, 250)
-            
-            .Range("E" & r & ":F" & r).Merge
-            .Range("E" & r).Borders.LineStyle = xlContinuous
-            .Range("E" & r).Borders.Weight = xlThin
-            .Range("E" & r).Interior.Color = RGB(250, 250, 250)
-            
-            .Cells(r, 7).Borders.LineStyle = xlContinuous
-            .Cells(r, 7).Borders.Weight = xlThin
-            .Cells(r, 7).Interior.Color = RGB(250, 250, 250)
-            r = r + 1
-            
-            ' Budget line (compact single line, no cachet labels or tax IDs)
-            .Range("A" & r & ":G" & r).Merge
-            .Cells(r, 1).Value = "N" & Chr(176) & " Engagement : _______  N" & Chr(176) & " Liquidation : _______  NIF: " & thirdParty
-            With .Cells(r, 1)
-                .Font.Size = 6: .Font.Italic = True
-                .Font.Color = RGB(80, 80, 80)
-                .HorizontalAlignment = xlCenter
-            End With
-            .Rows(r).RowHeight = 10: r = r + 1
-        Else
-            .Range("A" & r & ":B" & r).Merge
-            .Cells(r, 1).Value = "Le Fournisseur"
-            .Cells(r, 1).Font.Bold = True: .Cells(r, 1).Font.Size = sigFontSize
-            .Cells(r, 1).HorizontalAlignment = xlCenter
-            
-            .Range("C" & r & ":D" & r).Merge
-            .Cells(r, 3).Value = "Le Comptable"
-            .Cells(r, 3).Font.Bold = True: .Cells(r, 3).Font.Size = sigFontSize
-            .Cells(r, 3).HorizontalAlignment = xlCenter
-            
-            .Range("E" & r & ":F" & r).Merge
-            .Cells(r, 5).Value = "Le Responsable"
-            .Cells(r, 5).Font.Bold = True: .Cells(r, 5).Font.Size = sigFontSize
-            .Cells(r, 5).HorizontalAlignment = xlCenter
-            
-            .Cells(r, 7).Value = "Le Directeur"
-            .Cells(r, 7).Font.Bold = True: .Cells(r, 7).Font.Size = sigFontSize
-            .Cells(r, 7).HorizontalAlignment = xlCenter
-            .Rows(r).RowHeight = 14: r = r + 1
-            
-            ' Signature boxes
-            .Rows(r).RowHeight = 40
-            .Range("A" & r & ":B" & r).Merge
-            .Range("A" & r).Borders.LineStyle = xlContinuous
-            .Range("A" & r).Borders.Weight = xlThin
-            .Range("A" & r).Interior.Color = RGB(250, 250, 250)
-            
-            .Range("C" & r & ":D" & r).Merge
-            .Range("C" & r).Borders.LineStyle = xlContinuous
-            .Range("C" & r).Borders.Weight = xlThin
-            .Range("C" & r).Interior.Color = RGB(250, 250, 250)
-            
-            .Range("E" & r & ":F" & r).Merge
-            .Range("E" & r).Borders.LineStyle = xlContinuous
-            .Range("E" & r).Borders.Weight = xlThin
-            .Range("E" & r).Interior.Color = RGB(250, 250, 250)
-            
-            .Cells(r, 7).Borders.LineStyle = xlContinuous
-            .Cells(r, 7).Borders.Weight = xlThin
-            .Cells(r, 7).Interior.Color = RGB(250, 250, 250)
-            r = r + 1
-            
-            ' Cachet labels
-            .Range("A" & r & ":B" & r).Merge
-            .Cells(r, 1).Value = "Signature & Cachet"
-            .Cells(r, 1).Font.Size = 7: .Cells(r, 1).Font.Italic = True
-            .Cells(r, 1).Font.Color = RGB(128, 128, 128)
-            .Cells(r, 1).HorizontalAlignment = xlCenter
-            
-            .Range("C" & r & ":D" & r).Merge
-            .Cells(r, 3).Value = "Visa du Comptable"
-            .Cells(r, 3).Font.Size = 7: .Cells(r, 3).Font.Italic = True
-            .Cells(r, 3).Font.Color = RGB(128, 128, 128)
-            .Cells(r, 3).HorizontalAlignment = xlCenter
-            
-            .Range("E" & r & ":F" & r).Merge
-            .Cells(r, 5).Value = "Visa du Responsable"
-            .Cells(r, 5).Font.Size = 7: .Cells(r, 5).Font.Italic = True
-            .Cells(r, 5).Font.Color = RGB(128, 128, 128)
-            .Cells(r, 5).HorizontalAlignment = xlCenter
-            
-            .Cells(r, 7).Value = "Visa du Directeur"
-            .Cells(r, 7).Font.Size = 7: .Cells(r, 7).Font.Italic = True
-            .Cells(r, 7).Font.Color = RGB(128, 128, 128)
-            .Cells(r, 7).HorizontalAlignment = xlCenter
-            .Rows(r).RowHeight = 12: r = r + 1
-            
-            ' BUDGET / ENGAGEMENT LINE
-            .Range("A" & r & ":G" & r).Merge
-            .Cells(r, 1).Value = "N" & Chr(176) & " Engagement : _______________  |  N" & Chr(176) & " Liquidation : _______________  |  Code Budg" & Chr(233) & "taire : _______________"
-            With .Cells(r, 1)
-                .Font.Size = 8: .Font.Italic = True
-                .Font.Color = RGB(80, 80, 80)
-                .HorizontalAlignment = xlCenter
-            End With
-            .Rows(r).RowHeight = 14: r = r + 1
-            
-            ' TAX IDENTIFIERS (NIF/NIS/RC/Art - auto-filled from supplier registry)
-            Dim taxIDs As String
-            taxIDs = mod_SupplierRegistry.GetSupplierTaxIDsForPDF(thirdParty)
-            .Range("A" & r & ":G" & r).Merge
-            .Cells(r, 1).Value = taxIDs
-            With .Cells(r, 1)
-                .Font.Size = 8: .Font.Italic = True
-                .Font.Color = RGB(80, 80, 80)
-                .HorizontalAlignment = xlCenter
-            End With
-            .Rows(r).RowHeight = 14: r = r + 1
-        End If
-        
-        ' SPACER
-        .Rows(r).RowHeight = IIf(compact, 3, 8): r = r + 1
-        
-        ' VERIFICATION CODE
-        Dim verifyCode As String
-        verifyCode = mod_Utilities.GenerateVerifyCode(docRef & docType & docDate & Format(totalVal, "0.00") & mod_Config.APP_VERSION)
-        .Range("A" & r & ":G" & r).Merge
-        .Cells(r, 1).Value = "Code v" & Chr(233) & "rification : " & verifyCode
-        With .Cells(r, 1)
-            .Font.Name = "Courier New"
-            .Font.Size = IIf(compact, 7, 8): .Font.Bold = True
-            .Font.Color = RGB(0, 70, 127)
-            .HorizontalAlignment = xlCenter
-        End With
-        .Rows(r).RowHeight = IIf(compact, 10, 14): r = r + 1
-        
-        ' QR CODE PLACEHOLDER (QR generated BEFORE PDF export in ExportTransactionToPDF)
-        .Range("F" & r & ":G" & r).Merge
-        .Cells(r, 6).Value = "[QR]"
-        .Cells(r, 6).Font.Size = IIf(compact, 7, 8)
-        .Cells(r, 6).Font.Color = RGB(180, 180, 180)
-        .Cells(r, 6).HorizontalAlignment = xlCenter
-        .Cells(r, 6).VerticalAlignment = xlCenter
-        .Cells(r, 6).Interior.Color = RGB(245, 245, 245)
-        .Cells(r, 6).BorderAround Color:=RGB(200, 200, 200), Weight:=xlThin
-        .Rows(r).RowHeight = IIf(compact, 18, 30): r = r + 1
-        
-        ' FOOTER
-        If compact Then
-            .Rows(r).RowHeight = 3: r = r + 1
-            .Range("A" & r & ":G" & r).Merge
-            .Cells(r, 1).Value = "ERP Acad" & Chr(233) & "mie v13.2  |  " & _
-                                 Format(Now, "DD/MM/YYYY HH:MM") & "  |  " & verifyCode
-            With .Cells(r, 1)
-                .Font.Size = 6: .Font.Italic = True
-                .Font.Color = RGB(128, 128, 128)
-                .HorizontalAlignment = xlCenter
-            End With
-            .Rows(r).RowHeight = 10
-        Else
-            .Rows(r).RowHeight = 6: r = r + 1
-            .Range("A" & r & ":G" & r).Merge
-            .Cells(r, 1).Value = "Document g" & Chr(233) & "n" & Chr(233) & "r" & Chr(233) & _
-                                 " par ERP Acad" & Chr(233) & "mie v13.2  |  " & _
-                                 Format(Now, "DD/MM/YYYY HH:MM") & _
-                                 "  |  Syst" & Chr(232) & "me de Gestion Minist" & Chr(232) & "re " & Chr(201) & "ducation  |  " & _
-                                 verifyCode
-            With .Cells(r, 1)
-                .Font.Size = 7: .Font.Italic = True
-                .Font.Color = RGB(128, 128, 128)
-                .HorizontalAlignment = xlCenter
-            End With
-            .Rows(r).RowHeight = 12
-        End If
-        
-        ' COLUMN WIDTHS + PRINT AREA
-        If compact Then
-            .Columns("A").ColumnWidth = 11
-            .Columns("B").ColumnWidth = 22
-            .Columns("C").ColumnWidth = 8
-            .Columns("D").ColumnWidth = 6
-            .Columns("E").ColumnWidth = 10
-            .Columns("F").ColumnWidth = 12
-            .Columns("G").ColumnWidth = 10
-        Else
-            .Columns("A").ColumnWidth = 13
-            .Columns("B").ColumnWidth = 30
-            .Columns("C").ColumnWidth = 10
-            .Columns("D").ColumnWidth = 7
-            .Columns("E").ColumnWidth = 13
-            .Columns("F").ColumnWidth = 16
-            .Columns("G").ColumnWidth = 12
-        End If
-        .PageSetup.PrintArea = "$A$1:$G$" & r
-        
-    End With
+    ' Step 3: Column headers
+    r = mod_TemplateBuilder.PopulateColumnHeaders(wsTpl, r, compact)
+    
+    ' Step 4: Data rows
+    totalVal = 0
+    r = mod_TemplateBuilder.PopulateDataRows(wsTpl, wsMouv, wsArt, r, docRef, _
+                                              colCode, colDesig, colQte, colPU, colRef, _
+                                              compact, totalVal)
+    
+    ' Step 5: Totals and footer
+    r = mod_TemplateBuilder.PopulateTotalsAndFooter(wsTpl, r, totalVal, compact, _
+                                                    thirdParty, docRef, docType, docDate)
+    
+    ' Step 6: Signatures and verify
+    r = mod_TemplateBuilder.PopulateSignaturesAndVerify(wsTpl, r, thirdParty, compact, _
+                                                        docRef, docType, docDate, totalVal)
+    
+    ' Step 7: Column widths + print area
+    If compact Then
+        wsTpl.Columns("A").ColumnWidth = 11
+        wsTpl.Columns("B").ColumnWidth = 22
+        wsTpl.Columns("C").ColumnWidth = 8
+        wsTpl.Columns("D").ColumnWidth = 6
+        wsTpl.Columns("E").ColumnWidth = 10
+        wsTpl.Columns("F").ColumnWidth = 12
+        wsTpl.Columns("G").ColumnWidth = 10
+    Else
+        wsTpl.Columns("A").ColumnWidth = 13
+        wsTpl.Columns("B").ColumnWidth = 30
+        wsTpl.Columns("C").ColumnWidth = 10
+        wsTpl.Columns("D").ColumnWidth = 7
+        wsTpl.Columns("E").ColumnWidth = 13
+        wsTpl.Columns("F").ColumnWidth = 16
+        wsTpl.Columns("G").ColumnWidth = 12
+    End If
+    wsTpl.PageSetup.PrintArea = "$A$1:$G$" & r
     
     wsTpl.Protect Password:=mod_Config.MASTER_PWD, UserInterfaceOnly:=True
     Application.ScreenUpdating = True
@@ -958,6 +420,16 @@ Public Sub ExportDashboardPDF()
     Exit Sub
 ExportError3:
     MsgBox "Export Error: " & Err.Description, vbCritical, "ACADEMIX v13.2"
+End Sub
+
+' ================================================================================
+' TASK CALLBACK STUB - Added Session 22
+' Referenced by MAIN_MACROS and mod_TaskOrchestrator ("RUN-BACKUP" / "BACKUP-DATA")
+' as runtime Application.Run callback. Delegates to ExportDashboardPDF (closest
+' "export everything" equivalent).
+' ================================================================================
+Public Sub ExportAll()
+    Call ExportDashboardPDF
 End Sub
 
 '==============================================================================

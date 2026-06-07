@@ -935,6 +935,15 @@ Private Sub txtRefDoc_Change()
     
     Call ApplyStateToUI(m_State)
 End Sub
+
+' ================================================================================
+' MouseMove hover effect for btnAjouterLigne
+' Added: Session 22 - Sub declaration was missing, leaving body code orphan
+' between L937 (close of txtRefDoc_Change) and L939 (orphan End Sub).
+' Caused: "Only comments may appear after End Sub" at compile.
+' Pattern matches adjacent btnXxx_MouseMove handlers below.
+' ================================================================================
+Private Sub btnAjouterLigne_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
     HoverButton Me.Controls("btnAjouterLigne"), RGB(200, 230, 200), RGB(20, 90, 40)
 End Sub
 
@@ -1055,7 +1064,6 @@ Public Sub ApplyStateToUI(ByRef state As FormState)
     End If
     
     On Error GoTo 0
-End Sub
 End Sub
 
 
