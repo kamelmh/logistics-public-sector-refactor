@@ -231,14 +231,10 @@ def fix_document_xml(content):
         else:
             pgn = f'<w:pgNumType w:fmt="{fmt}"/>'
         
-        # Insert footer reference and pgNumType after opening tag
-        insert_after = '>'
-        pos = body.find(insert_after)
-        if pos == -1:
-            return m.group(0)
-        
+        # Insert footer reference and pgNumType as FIRST children of sectPr
+        # (must be direct children, NOT inside footnotePr or other sub-elements)
         footer_ref = f'<w:footerReference w:type="default" r:id="{footer2_rid}"/>'
-        body = body[:pos+1] + footer_ref + pgn + body[pos+1:]
+        body = footer_ref + pgn + body
         
         fixes += 1
         return attrs + body + close

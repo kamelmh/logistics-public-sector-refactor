@@ -1,63 +1,72 @@
 # CrossFlow Handoff — Academix v13.4
 
-## Current Priority
-Session 24 complete (2026-06-08). Thesis page numbering fixed — SDT-wrapped PAGE field, decimal starting at 4 on TOC page. Build: 29/29 PASS. User verified in Word. Ready for next task.
+## Current Priority (Session 26)
+**Thesis is DONE.** PDF built (1,380 KB), verified 29/29, audit PASSED. Ready for defense submission.
 
-## Session 24 Summary (2026-06-08) — Thesis Page Numbering Fix
+## What's Complete
+- ✅ ERP v13.4: 114/114 PASS, GOLDEN promoted
+- ✅ Thesis DOCX: 29/29 verify PASS, audit PASSED
+- ✅ Thesis PDF: 1,380 KB (Word COM automation)
+- ✅ Page numbering: decimal, start=4 on TOC, continuous
+- ✅ Footer2.xml: SDT-wrapped PAGE field (correct structure)
+- ✅ Git commits: 31c6a2a, b5db695
 
-### Build & Verify
-- **Build**: ✅ 114/114 PASS (72 components, 17,736 lines)
-- **Output**: ERP_v13.4.xlsm (718.2 KB) → promoted to GOLDEN_ERP_v13.4.xlsm
-- **Git**: 5d5f141 (103 files, 25700+, 667-)
+## What's Pending
+1. **English paper** — MD source exists, needs pandoc build to PDF
+2. **ERP VBE compile test** — user opens GOLDEN in VBE (only reliable check)
+3. **Submission** — thesis PDF ready, English paper needs CCA'2026 submission by Aug 15
 
-### Root Cause
-Build.ps1's `Debug > Compile VBAProject` returns OK even with missing references. User opening GOLDEN interactively in VBE is the only reliable compile check. This was a MASSIVE pre-existing issue — 16+ compile errors accumulated across the codebase.
+## For Hermes CLI — What to Do
 
-### Fixes Applied (16+ across 11 files)
-| # | File | Fix |
-|---|------|-----|
-| 1 | mod_StockEntry_Logic | Duplicate ResetToDefaultState removed |
-| 2 | mod_StockEngine | +ComputeROP (AvgDailyDemand, sku, Optional LeadTimeDays) |
-| 3 | mod_StockEngine | +UpdateAllABCClassifications (68-line body) |
-| 4 | mod_StockEngine | +GetNextSequence (scans MOUVEMENTS) |
-| 5 | mod_BarcodeSim | +3 module-level vars (m_C39InitDone, m_C39Chars, m_C39Patterns) |
-| 6 | mod_BarcodeEncoder | EAN13 helpers → Public + qualified calls |
-| 7 | mod_StockEntry_Logic | +formRef As Object in FormState UDT |
-| 8 | 6 modules | +7 task callback stubs (CleanOldLogs, ValidateAll, ExportAll, RunForecast, RunReconciliation, GenerateDashboardReport, GenerateInventoryReport) |
-| 9 | frmStockEntry | Duplicate End Sub removed |
-| 10 | frmStockEntry | +btnAjouterLigne_MouseMove Sub declaration |
-| 11 | mod_StockEntry_Logic | +5 missing End Function |
-| 12 | mod_StockEntry_Logic | +1 missing End Sub (GenerateAutoRef) |
-| 13 | mod_ReceiptTag | +Public keyword on GenerateLocalVerifyCode |
-| 14 | mod_TemplateBuilder | Chr(157 la) → Chr(1575) (corrupt literal) |
-| 15 | DELIVERY | +mod_TemplateBuilder.bas (was missing entirely) |
-| 16 | mod_Forecasting | RunForecast stub fixed (added required ForecastResult arg) |
+### Task 1: Verify thesis is still good
+```powershell
+python "Thesis_Surgical_Edit/style/verify_docx_checks.py" "Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx"
+```
+Expected: 29/29 PASS
 
-### New Tools
-- **sweep-audit.ps1**: 5 proactive checks (Sub/Function balance, Chr() corruption, undeclared vars, unresolved qualified, unresolved unqualified)
+### Task 2: Build English paper
+```powershell
+& "Thesis_Surgical_Edit/build-english-paper-pdf.ps1"
+```
+Expected: PDF at Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.pdf
 
-### Known Gaps
-- build.ps1 compile step is unreliable — user interactive VBE is the only reliable check
-- Demo data generation hangs (step 6/10) — non-fatal, sheets pre-populated
-- sweep-audit.ps1 has a pre-existing PowerShell dictionary bug at line 103 (TaskID duplicate key in two UDTs) — cosmetic, doesn't affect results
-- .github/workflows/ci.yml: v13.3→v13.4
-- vbe-auto/pipeline-full.ps1: 5× v13.3→v13.4
+### Task 3: Check git status
+```powershell
+git status
+git log --oneline -5
+```
 
-### OCR-Reader v3
-- Pure PowerShell + Tesseract, no Python dependencies
-- 5-second countdown for Alt+Tab to target window
-- Saves to output\latest.txt, copies to clipboard
-- Tested: 1366×768 capture, text extracted
+### Task 4: Update this file when done
+Write your session summary to this file (replace Session 25 content below).
 
-### Git Commit
-- Commit: 48515dd (6 files, 397 insertions, 455 deletions)
-- Files: mod_StockEntry_Logic.bas, erp_bot.py, ci.yml, pipeline-full.ps1, prepare-submission.ps1, HANDOFF.md
+## Key Files
+| File | Path |
+|------|------|
+| Thesis DOCX | Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx |
+| Thesis PDF | Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.pdf |
+| Desktop golden | C:\Users\Administrator\Desktop\Memoire_DSS_Logistique_ElBayadh_v2.docx |
+| Build script | Thesis_Surgical_Edit/build-thesis.ps1 |
+| Quick reference | Thesis_Surgical_Edit/THESIS_BUILD_QUICKREF.md |
+| Master prompt | Thesis_Surgical_Edit/MASTER_PROMPT_THESIS.md |
+| English source | Thesis_Surgical_Edit/English_Research_Paper.md |
+| ERP workbook | GOLDEN_ERP_v13.4.xlsm |
 
-## State
-- **ERP**: ERP_v13.4.xlsm (654.4 KB, 113/113 PASS)
-- **Git**: 48515dd (master, up to date with origin)
-- **Bot**: 7 commands, running (PID 3444)
-- **OCR**: v3 ready (Desktop\OCR-Reader.bat)
+## Ground Truth (DO NOT MODIFY)
+| Param | Value |
+|-------|-------|
+| D | 1,546 |
+| Q* | 176 |
+| ROP | 212.4 |
+| SS | 200 |
+| LT | 2 days |
+| S | 801.45 DZD |
+| I | 20% |
+| MASTER_PWD | erp_secure_pwd_2026 |
 
-## Pending Tasks (user to decide)
-No pending tasks — user has full control. ERP is built, verified, committed. Ready for whatever comes next.
+## Session 25 Summary (2026-06-08) — Thesis PDF Build
+- Built thesis PDF via Word COM automation (1,380 KB)
+- Re-applied page numbering fix after build (sect1 was lowerRoman, now decimal start=4)
+- Created MASTER_PROMPT_THESIS.md for Claude Code CLI
+- Created THESIS_BUILD_QUICKREF.md (quick reference)
+- Cleaned 5 temp files
+- Git commits: 31c6a2a, b5db695
