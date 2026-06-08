@@ -167,9 +167,10 @@ Private Function PopulateTemplateBon(ByVal docRef As String, _
     If colThird = 0 Then colThird = mod_Config.COL_MOUV_THIRD_PARTY
     If colNotes = 0 Then colNotes = mod_Config.COL_MOUV_NOTES
     
-    r = mod_TemplateBuilder.InitializeTemplate(wsTpl, compact)
-    
     On Error GoTo PopulateError
+    
+    ' Step 1: Initialize template (page setup, clear, unprotect)
+    r = mod_TemplateBuilder.InitializeTemplate(wsTpl, compact)
     
     ' Scan MOUVEMENTS for matching rows
     lastRow = wsMouv.Cells(wsMouv.Rows.Count, 1).End(xlUp).Row
@@ -206,8 +207,9 @@ Private Function PopulateTemplateBon(ByVal docRef As String, _
                   "BON DE R" & Chr(201) & "CEPTION", _
                   "BON DE SORTIE")
     
-
-    r = mod_TemplateBuilder.PopulateHeader(wsTpl, r, docRef, docDate, docType, mvtSign, thirdParty, compact)
+    ' Step 2: Header
+    r = mod_TemplateBuilder.PopulateHeader(wsTpl, r, docRef, docDate, docType, _
+                                           mvtSign, thirdParty, compact)
     
     ' Step 3: Column headers
     r = mod_TemplateBuilder.PopulateColumnHeaders(wsTpl, r, compact)

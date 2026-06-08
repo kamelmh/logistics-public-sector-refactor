@@ -334,6 +334,7 @@ Private Sub ConfigureGrid(ByRef state As FormState)
 End Sub
 
 
+
 '==============================================================================
 ' SECTION 2 - DOCUMENT TYPE BANNER (Pure logic, returns state updates)
 '==============================================================================
@@ -617,6 +618,8 @@ Public Sub GenerateAutoRef(ByRef state As FormState)
     prefix = GetDocPrefixFromType(state.docType)
     seq = mod_StockEngine.GetNextSequence(prefix)
 End Sub
+
+
 
 '==============================================================================
 ' SECTION 6 - GRID OPERATIONS
