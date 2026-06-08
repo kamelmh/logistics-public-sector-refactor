@@ -474,6 +474,7 @@ def main():
         'empty_paras_removed': 0,
         'footnote_ns_fixes': 0,
         'page_field_fixes': 0,
+        'footer_page_fields_added': 0,
     }
     
     print("=" * 60)
@@ -484,28 +485,28 @@ def main():
     print()
     
     # 1. Fix page numbering
-    print("[1/9] Page numbering...")
+    print("[1/10] Page numbering...")
     doc = Document(path)
     changes = fix_page_numbering(doc, changes)
     print("  Cover: %s | Front: %s | Body: %s" % (
         changes['page_num_cover'], changes['page_num_front'], changes['page_num_body']))
     
     # 2. Fix table column widths
-    print("[2/9] Table column widths (minimizing gaps)...")
+    print("[2/10] Table column widths (minimizing gaps)...")
     changes = fix_table_column_widths(doc, changes)
     print("  %d tables sized" % len(changes['table_widths_set']))
     
     # 3. Add table borders
-    print("[3/9] Adding table borders (gridlines)...")
+    print("[3/10] Adding table borders (gridlines)...")
     changes = add_table_borders(doc, changes)
     print("  %d tables got borders" % len(changes['table_borders_added']))
     
     # 4. Fix table cell padding
-    print("[4/9] Setting compact cell margins...")
+    print("[4/10] Setting compact cell margins...")
     changes = fix_table_cell_padding(doc, changes)
     
     # 5. Fix body formatting
-    print("[5/9] Body formatting (font=%s %dpt, RTL, 1.5 spacing)..." % (
+    print("[5/10] Body formatting (font=%s %dpt, RTL, 1.5 spacing)..." % (
         GOLDEN['bodyFont'], GOLDEN['bodySize']))
     changes = fix_body_formatting(doc, changes)
     changes = fix_headings(doc, changes)
@@ -514,7 +515,7 @@ def main():
         changes['spacing_fixes'], changes['heading_fixes']))
     
     # 6. Clean empty paragraphs (consecutive)
-    print("[6/9] Cleaning consecutive empty paragraphs...")
+    print("[6/10] Cleaning consecutive empty paragraphs...")
     changes = clean_empty_paragraphs(doc, changes)
     print("  Removed: %d" % changes['empty_paras_removed'])
     
@@ -524,34 +525,28 @@ def main():
         print("  [Saved doc-level changes]")
     
     # 7. Fix footnotes RTL + namespace declarations (needs zip-level manipulation)
-    print("[7/9] Footnote RTL + namespace fixes...")
+    print("[7/10] Footnote RTL + namespace fixes...")
     if save:
         changes = fix_footnotes_rtl(path, changes)
     print("  RTL fixes: %d | NS fixes: %d" % (changes['footnote_rtl_fixes'], changes.get('footnote_ns_fixes', 0)))
     
     # 8. Final Word compatibility pass — fix ns0/ns1 → w/mc namespace prefixes
     if save:
-        print("[8/9] Word compatibility (ns→w/mc, namespace declarations)...")
+        print("[8/10] Word compatibility (ns→w/mc, namespace declarations)...")
         _fix_word_compat_regex(path)
     
-    # 9. Fix broken PAGE field codes (remove cached result so Word recalculates)
-    if save:
-        print("[9/9] PAGE field fix (remove cached result for recalculation)...")
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        fix_page_field_script = os.path.join(script_dir, 'fix_page_field.py')
-        fp_result = subprocess.run(
-            [sys.executable or 'python', fix_page_field_script, path, '--save'],
-            capture_output=True, text=True)
-        if fp_result.stdout:
-            for line in fp_result.stdout.strip().split('\n'):
-                print("  %s" % line.strip('\r'))
-                # Count lines like "  Fixed word/footer2.xml: 1 changes" (has leading spaces from subprocess)
-                if line.strip().startswith('Fixed') and 'changes' in line:
-                    changes['page_field_fixes'] += 1
-        if fp_result.returncode != 0 and fp_result.stderr:
-            print("  [ERROR] %s" % fp_result.stderr.strip())
-        if fp_result.returncode != 0:
-            print("  [WARNING] fix_page_field.py returned non-zero exit code")
+    # 9. PAGE field fix — SKIPPED
+    # The desktop golden footer2.xml already has a correct raw PAGE field
+    # with cached text. Removing the cached text (fix_page_field.py) creates
+    # an empty field that PDF converters may render as literal "PAGE1".
+    # The cached text is harmless — Word recalculates on open.
+    print("[9/10] PAGE field fix — SKIPPED (desktop golden footer already correct)")
+    
+    # 10. Section footer fix — SKIPPED
+    # The desktop golden has correct footer refs on section 0 (even/default/first)
+    # with sections 1-3 inheriting. Overwriting these loses the even/first
+    # footer structure and can cause "PAGE1" display issues.
+    print("[10/10] Section footer fix — SKIPPED (desktop golden footer refs already correct)")
     
     print()
     print("=" * 60)

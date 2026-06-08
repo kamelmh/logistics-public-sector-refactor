@@ -9,20 +9,14 @@ import sys
 TARGETS = ['word/footer1.xml', 'word/footer2.xml', 'word/footer3.xml', 'word/header1.xml', 'word/header2.xml', 'word/header3.xml']
 
 def fix_page_field(content):
-    # Pattern for the broken field: begin -> instrText:PAGE -> separate -> text:ANYTHING -> end
-    # We want to replace it with: begin -> instrText:PAGE -> separate -> end
-    pattern = r'<w:fldChar w:fldCharType="begin"/>.*?<w:instrText>PAGE</w:instrText>.*?<w:fldChar w:fldCharType="separate"/>. <w:r><w:t>[^<]*</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>'
-    # The above regex is a bit loose. Let's be more precise.
+    """Fix broken raw PAGE fields. Skip SDT-wrapped fields (they work correctly)."""
     
-    # Let's try to find the sequence of runs
-    # 1. begin
-    # 2. instrText: PAGE
-    # 3. separate
-    # 4. text: ...
-    # 5. end
+    # If the content has an SDT-wrapped PAGE field, skip it entirely.
+    # SDT fields work correctly and must not be modified.
+    if '<w:sdt>' in content and '<w:instrText>PAGE' in content:
+        return content, 0
     
-    # This is a bit complex for a single regex. Let's use a more robust approach.
-    
+    # Only fix raw (non-SDT) PAGE fields
     # Find the start of the field
     start_idx = content.find('<w:fldChar w:fldCharType="begin"/>')
     if start_idx == -1:
