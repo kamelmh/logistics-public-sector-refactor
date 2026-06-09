@@ -1067,4 +1067,3 @@ Public Sub ApplyStateToUI(ByRef state As FormState)
 End Sub
 
 
-
