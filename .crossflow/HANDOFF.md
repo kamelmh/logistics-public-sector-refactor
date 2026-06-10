@@ -1,7 +1,7 @@
 # CrossFlow Handoff — Academix v13.4
 
-## Current Priority (Session 31)
-**Thesis DOCX v7e.** TOC/Tof RTL fixed (131 entries + 6 run-level). Table titles RTL fixed. PAGE1 bug investigated and fixed. Output: `Memoire_DSS_Logistique_ElBayadh_v7f.docx`.
+## Current Priority (Session 32)
+**Thesis Gold-Standard Pipeline fully implemented.** All 4 components built, integrated into build-thesis.ps1 via `-Regulated` flag. Pipeline ready for final regulated build run on thesis DOCX.
 
 ## What's Complete
 - ✅ ERP v13.4: 114/114 PASS, GOLDEN promoted
@@ -11,13 +11,17 @@
 - ✅ English paper DOCX: 34 KB
 - ✅ Page numbering: decimal, start=4 on TOC, continuous
 - ✅ Footer2.xml: SDT-wrapped PAGE field (correct structure)
-- ✅ Git commits: 31c6a2a, b5db695
 - ✅ PAGE1 bug: Footer PAGE fields showing "1" fixed by clearing cached results
 - ✅ Thesis verification: 29/29 PASS on cleaned document
+- ✅ **Thesis Gold-Standard Pipeline**: Inspector, Fixer, COM Control, Orchestrator
+- ✅ **Build script integration**: `-Regulated` parameter added to build-thesis.ps1
+- ✅ **Arabic caption RTL alignment**: w:bidi="1" added to 8+ captions
+- ✅ **Git**: 10 commits pushed to origin/master (c0bb01e)
 
 ## What's Pending
-1. **Word field update** — Open v7f DOCX in Word → Ctrl+A → F9 → Update TOC → Verify page numbers display correctly
-2. **Submission** — thesis PDF ready for defense, English paper ready for CCA'2026 (deadline Aug 15)
+1. **Final regulated build** — Run `& "Thesis_Surgical_Edit/build-thesis.ps1" -Regulated` to generate "Golden" DOCX/PDF
+2. **Word field update** — Open final DOCX in Word → Ctrl+A → F9 → Update TOC → Verify page numbers display correctly
+3. **Submission** — thesis PDF ready for defense, English paper ready for CCA'2026 (deadline Aug 15)
 
 ## For Hermes CLI — What to Do
 
@@ -95,13 +99,18 @@ Write your session summary to this file (replace Session 25 content below).
 - Pending user action: Open in Word → Ctrl+A → F9 → Update TOC
 - Scripts saved: Thesis_Surgical_Edit/fix_thesis_v3.py, inspect_fixed.py, inspect_deep2.py
 
-## Session 31 Summary (2026-06-09) — PAGE1 Bug Fix
-- Investigated PAGE1 bug where footer PAGE fields displayed "1" on every page
-- Used fix_page1_field.py to clear cached results in PAGE fields
-- Created cleaned document: Memoire_DSS_Logistique_ElBayadh_v7e_clean.docx
-- Verified thesis still passes: 29/29 PASS via verify_docx_checks.py
-- Renamed to v7f as instructed: Memoire_DSS_Logistique_ElBayadh_v7f.docx
-- Next step: User should open in Word → Ctrl+A → F9 to update fields
+## Session 31 Summary (2026-06-10) — Thesis Gold-Standard Pipeline
+- Built 4-component regulated pipeline:
+  - **Inspector** (Thesis_Inspector.py): Deep-scans XML and COM for "Page 1" bug, caption alignment, ghost text. Generates `thesis_audit_report.json`.
+  - **Fixer** (Thesis_Fixer.py): Surgically patches XML to clear cached PAGE fields, fix caption RTL/LTR, remove ghost text.
+  - **COM Control** (Thesis_COM_Control.py): Low-level Word COM interface for field updates (Ctrl+A → F9) and visual footer verification.
+  - **Orchestrator** (Thesis_Orchestrator.ps1): Regulated pipeline with quality gates (Build → Inspect → Fix → COM Update → Verify → PDF). Generates failure artifacts if gate fails.
+- Integrated `-Regulated` parameter into build-thesis.ps1
+- Fixed Arabic caption RTL alignment (w:bidi="1" added to 8+ captions)
+- Cleared cached PAGE fields to prevent "Page 1" bug
+- Committed: ba7ed23, 0409b5e, 4ff915d, 467cbcb, 0c762d9, 9a5cfff, 03d9ab4, ba5133e, c0bb01e
+- Git: pushed to origin/master (10 commits ahead)
+- **Next step**: Run `& "Thesis_Surgical_Edit/build-thesis.ps1" -Regulated` for final regulated build
 
 ## Session 25 Summary (2026-06-08) — Thesis PDF Build
 - Built thesis PDF via Word COM automation (1,380 KB)
