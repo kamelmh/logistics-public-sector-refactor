@@ -76,6 +76,7 @@ def scan_for_ghost_text(docx_path):
 def scan_captions_alignment(docx_path):
     """
     Scans document.xml for captions and checks bidi/rtl alignment.
+    Excludes TOC entries (inside w:sdt with TOC alias/tag).
     """
     findings = []
     # Keywords for captions in English, French, and Arabic
@@ -88,7 +89,39 @@ def scan_captions_alignment(docx_path):
                 root = tree.getroot()
                 ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
                 
+                def is_in_toc(p_elem):
+                    """Check if paragraph is inside a TOC SDT."""
+                    # Walk up parent chain to find sdt
+                    parent_map = {c: p for p in root.iter() for c in p}
+                    current = p_elem
+                    while current in parent_map:
+                        parent = parent_map[current]
+                        if parent.tag == '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}sdt':
+                            # Check if this SDT has TOC alias or tag
+                            sdt_pr = parent.find('w:sdtPr', ns)
+                            if sdt_pr is not None:
+                                alias = sdt_pr.find('w:alias', ns)
+                                tag = sdt_pr.find('w:tag', ns)
+                                if alias is not None:
+                                    alias_val = alias.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}val', '')
+                                    if 'TOC' in alias_val.upper():
+                                        return True
+                                if tag is not None:
+                                    tag_val = tag.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}val', '')
+                                    if 'TOC' in tag_val.upper():
+                                        return True
+                                # Also check for toc pragma
+                                toc = sdt_pr.find('w:toc', ns)
+                                if toc is not None:
+                                    return True
+                        current = parent
+                    return False
+                
                 for p in root.findall('.//w:p', ns):
+                    # Skip TOC entries
+                    if is_in_toc(p):
+                        continue
+                        
                     p_text = "".join([t.text for t in p.iter() if t.text])
                     if any(kw in p_text for kw in caption_keywords):
                         # Find properties

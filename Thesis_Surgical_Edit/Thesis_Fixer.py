@@ -64,6 +64,7 @@ def remove_ghost_text(docx_dir, report_json):
 def fix_caption_alignment(docx_dir, report_json):
     """
     Fixes caption alignment by scanning for keywords and applying bidi/rtl.
+    Excludes TOC entries (inside w:sdt with TOC alias/tag).
     """
     ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
     doc_path = os.path.join(docx_dir, 'word', 'document.xml')
@@ -71,10 +72,42 @@ def fix_caption_alignment(docx_dir, report_json):
     tree = etree.parse(doc_path)
     root = tree.getroot()
     
+    def is_in_toc(p_elem):
+        """Check if paragraph is inside a TOC SDT."""
+        # Walk up parent chain to find sdt
+        parent_map = {c: p for p in root.iter() for c in p}
+        current = p_elem
+        while current in parent_map:
+            parent = parent_map[current]
+            if parent.tag == '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}sdt':
+                # Check if this SDT has TOC alias or tag
+                sdt_pr = parent.find('w:sdtPr', ns)
+                if sdt_pr is not None:
+                    alias = sdt_pr.find('w:alias', ns)
+                    tag = sdt_pr.find('w:tag', ns)
+                    if alias is not None:
+                        alias_val = alias.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}val', '')
+                        if 'TOC' in alias_val.upper():
+                            return True
+                    if tag is not None:
+                        tag_val = tag.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}val', '')
+                        if 'TOC' in tag_val.upper():
+                            return True
+                    # Also check for toc pragma
+                    toc = sdt_pr.find('w:toc', ns)
+                    if toc is not None:
+                        return True
+            current = parent
+        return False
+    
     modified = False
     paragraphs = root.xpath('.//w:p', namespaces=ns)
     
     for p in paragraphs:
+        # Skip TOC entries
+        if is_in_toc(p):
+            continue
+            
         p_text = etree.tostring(p, method='text', encoding='unicode')
         
         # Check for Arabic keywords
