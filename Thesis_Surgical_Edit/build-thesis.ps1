@@ -15,7 +15,7 @@ if ($Regulated) {
 
 $projectRoot = Split-Path $PSScriptRoot -Parent
 $sourcePath = Join-Path $projectRoot "Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md"
-$desktopDocx = "C:\Users\Administrator\Desktop\Memoire_DSS_Logistique_ElBayadh_v2.docx"
+$desktopDocx = "C:\Users\Administrator\Desktop\Memoire_DSS_Logistique_ElBayadh_v7c_FIXED.docx"
 $styleDir = Join-Path $PSScriptRoot "style"
 $refDocx = Join-Path $styleDir "reference.docx"
 $outDir = Join-Path $PSScriptRoot "output"
@@ -74,7 +74,7 @@ function Apply-Fixes-And-Audit {
 if ($Command -eq "" -or $Command -eq "build") {
     if (-not $FromMD -and (Test-Path $desktopDocx)) {
         # === MODE A: Desktop DOCX as golden source ===
-        Write-Host "  [BUILD] Copying golden desktop DOCX (v2)..." -ForegroundColor Green
+        Write-Host "  [BUILD] Copying golden desktop DOCX (v7c_FIXED)..." -ForegroundColor Green
         Copy-Item $desktopDocx $docxPath -Force
         Write-Host "  [BUILD] Source: $desktopDocx" -ForegroundColor Cyan
         Write-Host "  [BUILD] Output: $docxPath" -ForegroundColor Cyan
@@ -138,7 +138,7 @@ if ($Command -eq "sync-md") {
     exit 0
 }
 
-# thesis-doctor.ps1 was archived to D:\Archives\Research_and_Development\
+# Golden source: Memoire_DSS_Logistique_ElBayadh_v7c_FIXED.docx (Desktop)
 # All standard commands (build, pandoc-only, copy-desktop, sync-md) handled above.
 Write-Host "  Unknown command: '$Command'. Available: build, pandoc-only, copy-desktop, sync-md" -ForegroundColor Yellow
 exit 1

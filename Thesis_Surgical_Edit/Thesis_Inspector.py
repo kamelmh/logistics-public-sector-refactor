@@ -149,6 +149,15 @@ def scan_captions_alignment(docx_path):
                         
                         if has_arabic_text and not all_arabic_runs_fixed:
                             if any(pat in p_text for pat in ['شكل ', 'جدول رقم']):
+                                # Debug: find the first problematic run to see its attributes
+                                for run in runs:
+                                    run_text = "".join([t.text for t in run.iter() if t.text])
+                                    if any('\u0600' <= c <= '\u06FF' for c in run_text):
+                                        rp = run.find('w:rPr', ns)
+                                        rb = rp.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi') if rp is not None else 'None'
+                                        rr = rp.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl') if rp is not None else 'None'
+                                        print(f"DEBUG: Problematic run in {p_text[:30]}... RunBidi={rb}, RunRtl={rr}, PBidi={p_bidi}, PRtl={p_rtl}")
+                                        break
                                 findings.append({
                                     'type': 'alignment_error',
                                     'text': p_text[:50],
