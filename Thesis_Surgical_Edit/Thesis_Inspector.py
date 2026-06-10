@@ -34,8 +34,6 @@ def scan_xml_for_page1_bug(docx_path):
                     # Check for instrText containing PAGE with surrounding text
                     for instr_text in root.findall('.//w:instrText', ns):
                         if 'PAGE' in instr_text.text and instr_text.text:
-                            # This is more common for complex fields, but we look for surrounding text
-                            # In a real scenario, we'd check the parent/siblings for text
                             pass 
     except Exception as e:
         findings.append({'error': str(e)})
@@ -54,7 +52,7 @@ def scan_for_ghost_text(docx_path):
                 root = tree.getroot()
                 ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
                 
-                # Scan for text boxes (often used for 'ghost' labels or stray notes)
+                # Scan for text boxes
                 text_boxes = root.findall('.//w:txbxContent', ns)
                 for i, box in enumerate(text_boxes):
                     text = "".join([t.text for t in box.iter() if t.text])
@@ -64,10 +62,6 @@ def scan_for_ghost_text(docx_path):
                             'index': i,
                             'content': text.strip()
                         })
-                
-                # Scan for paragraphs with very high spacing or odd properties 
-                # (Simplification: look for empty paragraphs with specific formatting if known)
-                # For now, we focus on text boxes as they are common 'ghosts'.
     except Exception as e:
         findings.append({'error': str(e)})
         
@@ -79,8 +73,8 @@ def scan_captions_alignment(docx_path):
     Excludes TOC entries and raw field codes.
     """
     findings = []
-    # Keywords for captions in English, French, and Arabic
-    caption_keywords = ['Figure', 'Table', 'Tableau', 'شكل', 'جدول']
+    # More specific patterns to avoid flagging normal body text
+    caption_patterns = ['Figure ', 'Table ', 'Tableau ', 'شكل ', 'جدول رقم']
     
     try:
         with zipfile.ZipFile(docx_path, 'r') as z:
@@ -119,7 +113,8 @@ def scan_captions_alignment(docx_path):
                     if is_in_toc(p, p_text) or 'SEQ ' in p_text or 'PAGEREF' in p_text:
                         continue
                         
-                    if any(kw in p_text for kw in caption_keywords):
+                    # Only check paragraphs that actually look like captions
+                    if any(p_text.startswith(pat) or f" {pat}" in p_text for pat in caption_patterns):
                         # Find properties
                         p_props = p.find('w:pPr', ns)
                         if p_props is not None:
@@ -131,7 +126,7 @@ def scan_captions_alignment(docx_path):
                                     rtl = run_props.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl')
                                     
                                     # Check Arabic
-                                    if any(kw in p_text for kw in ['شكل', 'جدول']):
+                                    if any(pat in p_text for pat in ['شكل ', 'جدول رقم']):
                                         if bidi != '1' or rtl != '1':
                                             findings.append({
                                                 'type': 'alignment_error',
@@ -141,7 +136,7 @@ def scan_captions_alignment(docx_path):
                                                 'rtl': rtl
                                             })
                                     # Check French/English
-                                    elif any(kw in p_text for kw in ['Figure', 'Table', 'Tableau']):
+                                    elif any(pat in p_text for pat in ['Figure ', 'Table ', 'Tableau ']):
                                         if bidi == '1':
                                             findings.append({
                                                 'type': 'alignment_error',
@@ -161,17 +156,9 @@ def perform_visual_audit(docx_path):
     """
     findings = []
     try:
-        # Sample pages
         pages_to_check = [2, 10, 20]
-        # Get last page
-        # We can't easily get last page without opening it, 
-        # but we can try a high number or just use a few.
-        # For the purpose of this tool, we'll stick to a few and a final check.
-        
         for pg in pages_to_check:
             text = verify_footer_text(docx_path, pg)
-            # Check if text is just "1" or similar when it should be the page number
-            # If page 2 has "1", it's a bug.
             if text == "1" and pg != 1:
                 findings.append({
                     'page': pg,
@@ -200,10 +187,8 @@ def generate_audit_report(docx_path, report_path):
         'status': 'PASS'
     }
     
-    # Determine overall status
     for scan_name, results in report['scans'].items():
         if results:
-            # If any results were found, it's a FAIL (since these are anomalies)
             report['status'] = 'FAIL'
             break
             
