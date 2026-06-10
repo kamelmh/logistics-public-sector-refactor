@@ -129,18 +129,25 @@ def scan_captions_alignment(docx_path):
 
                         # 2. Check individual runs
                         runs = p.findall('.//w:r', ns)
-                        has_rtl_run = False
-                        for run in runs:
-                            run_props = run.find('w:rPr', ns)
-                            if run_props is not None:
-                                bidi = run_props.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi')
-                                rtl = run_props.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl')
-                                if bidi == '1' and rtl == '1':
-                                    has_rtl_run = True
-                                    break
+                        has_arabic_text = False
+                        all_arabic_runs_fixed = True
                         
-                        # If no run is RTL and paragraph is not RTL, flag it
-                        if not has_rtl_run:
+                        for run in runs:
+                            run_text = "".join([t.text for t in run.iter() if t.text])
+                            # Simple check for Arabic characters
+                            if any('\u0600' <= c <= '\u06FF' for c in run_text):
+                                has_arabic_text = True
+                                run_props = run.find('w:rPr', ns)
+                                if run_props is None:
+                                    all_arabic_runs_fixed = False
+                                else:
+                                    bidi = run_props.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi')
+                                    rtl = run_props.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl')
+                                    if bidi != '1' or rtl != '1':
+                                        all_arabic_runs_fixed = False
+                                        break
+                        
+                        if has_arabic_text and not all_arabic_runs_fixed:
                             if any(pat in p_text for pat in ['شكل ', 'جدول رقم']):
                                 findings.append({
                                     'type': 'alignment_error',
