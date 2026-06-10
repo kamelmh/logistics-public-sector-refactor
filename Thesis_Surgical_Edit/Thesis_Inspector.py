@@ -76,7 +76,7 @@ def scan_for_ghost_text(docx_path):
 def scan_captions_alignment(docx_path):
     """
     Scans document.xml for captions and checks bidi/rtl alignment.
-    Excludes TOC entries.
+    Excludes TOC entries and raw field codes.
     """
     findings = []
     # Keywords for captions in English, French, and Arabic
@@ -91,11 +91,9 @@ def scan_captions_alignment(docx_path):
                 
                 def is_in_toc(p_elem, p_text):
                     """Check if paragraph is a TOC entry."""
-                    # 1. Text-based check (very reliable for TOCs)
                     if 'TOC' in p_text.upper() or 'PAGEREF' in p_text.upper():
                         return True
                         
-                    # 2. Structural check (walk up parent chain to find sdt)
                     parent_map = {c: p for p in root.iter() for c in p}
                     current = p_elem
                     while current in parent_map:
@@ -117,15 +115,14 @@ def scan_captions_alignment(docx_path):
                 for p in root.findall('.//w:p', ns):
                     p_text = "".join([t.text for t in p.iter() if t.text])
                     
-                    # Skip TOC entries
-                    if is_in_toc(p, p_text):
+                    # Skip TOC entries and raw field codes (SEQ, PAGEREF)
+                    if is_in_toc(p, p_text) or 'SEQ ' in p_text or 'PAGEREF' in p_text:
                         continue
                         
                     if any(kw in p_text for kw in caption_keywords):
                         # Find properties
                         p_props = p.find('w:pPr', ns)
                         if p_props is not None:
-                            # Look for bidi/rtl in pPr or rPr
                             runs = p.findall('.//w:r', ns)
                             for run in runs:
                                 run_props = run.find('w:rPr', ns)
