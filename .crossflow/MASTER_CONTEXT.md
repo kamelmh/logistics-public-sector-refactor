@@ -1,74 +1,103 @@
-# CrossFlow Master Context — Academix v13.2
+# CrossFlow Master Context — Academix v13.4
 > Unified context payload shared across OpenCode, Claude Code, OMC, ECC, FCC.
 > Auto-loaded by all agents via CROSSFLOW block in their CLAUDE.md files.
-> Last updated: 2026-06-02
+> Last updated: 2026-06-09
 
 ## PROJECT IDENTITY
-- **Project**: Logistics Public Sector Refactor — Academix v13.2
-- **Author**: ماحي كمال عبد الغني
-- **Supervisor**: د. دهيني ميمونة
+- **Project**: Logistics Public Sector Refactor — Academix v13.4
+- **Author**: ماحي كمال عبد الغني (Mahi Kamel Abdelghani)
+- **Supervisor**: د. دهيني ميمونة (مصلحة الميزانيات والاقتصاد)
 - **Institution**: المعهد الوطني المتخصص في التكوين المهني — بن سعيدي عبد العاطي، البيض
 - **Host**: مديرية التربية لولاية البيض
-- **Scope**: VBA/Excel DSS for inventory management (offline-first, pure VBA)
+- **Compliance**: CNEPD BTS Public Sector Standards
+- **Scope**: VBA/Excel DSS for inventory management (offline-first, pure VBA, zero dependencies)
+- **Locale**: French (headers/tabs), Arabic MSA (thesis)
 
 ## TOOL CROSS-REFERENCE
 | Tool | Session | Config Path | Role | Entry Point |
 |------|---------|------------|------|-------------|
 | OpenCode big-pickle | `main-hub` | `~/.config/opencode/AGENTS.md` | VBA dev, build, verify, orchestration hub | `~/.config/opencode/instructions.md` |
 | OpenCode Gemini | `gemini-thesis` | `~/.config/opencode/AGENTS.md` | Thesis-wide analysis (1M ctx) | `~/.config/opencode/instructions.md` |
+| OpenCode Gemma 4 | `gemma-4` | `~/.config/opencode/AGENTS.md` | 256K ctx, multimodal, vision | `~/.config/opencode/instructions.md` |
 | Claude Desktop | `claude-project` | `C:\Users\Administrator\AppData\Roaming\Claude\claude_desktop_config.json` | Give-and-take on thesis + project | Desktop app |
 | Claude Code | `claude-code` | `~/.claude/CLAUDE.md` | Thesis polish, deep analysis | `~/.agentic-hub/CLAUDE.md` |
 | OMC | — | `~/.claude/CLAUDE.md` | Agent orchestration | Embedded in Claude Code |
 | ECC | — | `~/.agentic-hub/plugins/everything-claude-code/` | 28 agents, 116 skills | Plugin index |
-| FCC | — | `project/.opencode/plugins/fcc-proxy/` | AI backend proxy | `scripts/profile-common.ps1` |
+| FreeLLM Gateway | — | `~/.opencode/plugins/freellm/` | Local aggregator (6 providers, 27 models) | `scripts/freellm-launcher.ps1` |
+| Completions.me | — | OpenCode config | Free Claude Opus 4.6, GPT-5.2 (26 models) | Direct provider |
 
 ## PROJECT PATHS
 | Resource | Path |
 |----------|------|
 | Project root | `C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\` |
-| Thesis source | `...\Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md` |
-| Ground Truth | `...\Thesis_Surgical_Edit\THESIS_GROUND_TRUTH.md` |
-| Terminology | `...\Thesis_Surgical_Edit\THESIS_TERMINOLOGY_MAPPING.md` |
-| Thesis PDF | `...\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.pdf` |
-| Thesis DOCX | `...\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx` |
-| الفصل الرابع | `...\Thesis_Surgical_Edit\الفصل_الرابع_التجريب_والتحقق_من_النتائج.md` |
-| Cover page | `...\Thesis_Surgical_Edit\output\cover-page.docx` |
-| Claude context | `...\Thesis_Surgical_Edit\claude-context\` |
-| ERP workbook | `...\ERP_v13.2.xlsm` |
-| VBA source | `...\vbe-auto\src\` (37 .bas + 1 .frm) |
-| VBA modules | `...\Software_Surgical_Edit\VBA_Modules\` (37 .bas + 1 .frm) |
-| Build config | `...\vbe-auto\config.json` |
-| Build script | `...\vbe-auto\build.ps1` |
-| Verify script | `...\vbe-auto\verify.ps1` |
-| CrossFlow | `...\.crossflow\` |
-| Handoff | `...\.crossflow\HANDOFF.md` |
-| Session log | `...\.crossflow\SESSION_LOG.md` |
-| Overflow | `...\.crossflow\OVERFLOW\` |
+| ERP workbook (active) | `C:\Users\Administrator\Dropbox\ERP_v13.4.xlsm` |
+| GOLDEN master | `GOLDEN_ERP_v13.4.xlsm` (promoted from ERP_v13.4.xlsm) |
+| Thesis source | `Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md` |
+| Thesis PDF | `Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.pdf` (1,380 KB) |
+| Thesis DOCX | `Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx` |
+| Thesis verify | `Thesis_Surgical_Edit\style\verify_docx_checks.py` |
+| English paper source | `Thesis_Surgical_Edit\English_Research_Paper.md` |
+| English paper PDF | `Thesis_Surgical_Edit\output\English_Research_Paper_IEEE.pdf` (69 KB, 9 pages) |
+| English paper DOCX | `Thesis_Surgical_Edit\output\English_Research_Paper_IEEE.docx` (34 KB) |
+| Master prompt | `Thesis_Surgical_Edit\MASTER_PROMPT_THESIS.md` |
+| Submission package | `Thesis_Surgical_Edit\submission\` |
+| VBA source | `Software_Surgical_Edit\VBA_Modules\*.bas` (44 modules) |
+| Build config | `vbe-auto\config.json` |
+| Build script | `vbe-auto\build.ps1` |
+| Verify script | `vbe-auto\verify.ps1` (137 checks) |
+| Sweep audit | `vbe-auto\sweep-audit.ps1` |
+| DSS audit | `milestone_13_2\tests\dss-audit.ps1` |
+| Thesis build | `Thesis_Surgical_Edit\build-thesis.ps1` |
+| English paper build | `Thesis_Surgical_Edit\build-english-paper-pdf.ps1` |
+| CrossFlow | `.crossflow\` |
+| Handoff | `.crossflow\HANDOFF.md` |
+| Status | `.crossflow\STATUS.md` |
+| Session log | `.crossflow\SESSION_LOG.md` |
+| Bootstrap | `.opencode\bootstrap\MASTER_BOOTSTRAP.xml` |
+| Compact context | `.opencode\erp-context-compact.md` |
+| Git remote | `https://github.com/kamelmh/logistics-public-sector-refactor` |
+| Launcher | `Desktop\OpenCode.bat` (v3.6, 26 modes) |
 
 ## GROUND TRUTH (LOCKED — DO NOT MODIFY)
 | Constant | Value | Meaning |
 |----------|-------|---------|
-| D (ART-001) | 1,546 unit/year | Annual demand for Toner G030 |
-| Q* (EOQ) | 176 units | Optimal order quantity |
-| ROP | 212.4 units | Reorder point |
+| D (ART-001) | 789 unit/year | Annual demand from ACTUAL MOUVEMENTS (120 OUT x 250/38 days) |
+| Q* (EOQ) | 37 units | Wilson EOQ (real PU=4500, S=801.45) |
+| ROP | 206 units | (D/250) x LT + SS |
 | SS | 200 units | Safety stock |
 | LT | 2 days | Lead time |
-| S | 801.45 DZD | Order cost (field-refined from initial 500; VBA updated 2026-05-12) |
+| S | 801.45 DZD | Order cost (field-refined) |
+| PU (ART-001) | 4,500 DZD/unit | Unit price (ARTICLES sheet real price) |
 | I | 20% | Holding rate |
-| PU (ART-001) | 400 DZD/unit | Unit price |
-| Modules | 37 .bas + 1 .frm | Active |
-| Dead removed | 7 | Module1, Module2, etc. |
-| Worksheets | 25 | Active sheets |
-| Code lines | ~8,100 | Verified |
-| Performance | 99.7% | NOT 97% |
-| Test suite | 20 | All passing |
+| MASTER_PWD | erp_secure_pwd_2026 | Sheet protection password |
+| VERSION | v13.4 | Current release |
+| Case study | ART-001 Toner G030 (HP LaserJet) | Primary case study in Ch4 |
 
-## 🚫 FORBIDDEN TERMS (CNEPD COMPLIANCE)
-> The following terms are FORBIDDEN in the thesis and must be replaced to respect the offline-first, pure VBA environment:
-- ❌ **"Database"** → Replace with: **"السجل الرقمي" (Digital Ledger)**
-- ❌ **"Python/Backend"** → Replace with: **"وحدات المعالجة VBA" (VBA Processing Units)**
-- ❌ **"Hybrid System"** → Replace with: **"نظام إلكتروني متكامل" (Integrated Electronic System)**
-- ❌ **"XLOOKUP"** → Forbidden (Excel 2010 compatibility required).
+### Module & Sheet Counts (v13.4)
+| Metric | Value |
+|--------|-------|
+| VBA modules | 44 (43 .bas + 1 .frm + MAIN_MACROS.bas + ThisWorkbook.cls) |
+| Code lines | ~11,500 |
+| Worksheets | 26 |
+| Dead code removed | 7 (Module1, Module2, mod_Config_Test, mod_StockEntry_Logic_Enhanced, mod_TestHarness, frmSystemLog, frmStockEntry_Enhanced) |
+
+## VERIFICATION STATE (as of 2026-06-09)
+| Check | Result | Timestamp |
+|-------|--------|-----------|
+| ERP verify | **114/114 PASS** | 2026-06-08 01:45:23 |
+| ERP GOLDEN | Promoted | 718.2 KB |
+| Thesis verify | **29/29 PASS** | 2026-06-08 |
+| Thesis PDF | 1,380 KB (91 pages) | 2026-06-08 |
+| English paper PDF | 69 KB (9 pages) | 2026-06-09 |
+| CI/CD | 2/2 latest push runs passed | 2026-06-08 |
+| Git | In sync with origin/master (0 ahead, 0 behind) | 2026-06-09 |
+
+## FORBIDDEN TERMS (CNEPD COMPLIANCE)
+> The following terms are FORBIDDEN in the thesis and must be replaced:
+- "Database" → **"السجل الرقمي" (Digital Ledger)**
+- "Python/Backend" → **"وحدات المعالجة VBA" (VBA Processing Units)**
+- "Hybrid System" → **"نظام إلكتروني متكامل" (Integrated Electronic System)**
+- "XLOOKUP" → Forbidden (Excel 2010 compatibility required)
 
 ### ART Code Short Reference
 | Code | French | Arabic | Class |
@@ -76,19 +105,25 @@
 | ART-001 | Toner G030 | حبر الطابعة Toner G030 | A |
 | ART-002 | Rame papier A4 | رزم الورق A4 | A |
 | ART-003 | Rame papier A3 | رزم الورق A3 | B |
-| ART-004 | Boîte archives | صندوق أرشيف كرتوني | B |
+| ART-004 | Boite archives | صندوق أرشيف كرتوني | B |
 | ART-005 | Agrafeuse de bureau | أغرف الأغراض (دباسة) | C |
-| ART-006–012 | (various C items) | (per full table) | C |
+| ART-006-012 | (various C items) | (per full table) | C |
 
 ## THESIS STRUCTURE
-| Chapter | Title | مباحث | مطالب | Status |
-|---------|-------|-------|-------|--------|
-| الفصل الأول | الإطار النظري للتسيير اللوجيستي | 5 | 14 | ✅ Polished |
-| الفصل الثاني | الإطار العملي والتشخيص الميداني | 3 | 9 | ✅ Polished (B+C) |
-| الفصل الثالث | تصميم وإنجاز نظام دعم القرار | 4 | 15 | ✅ Complete |
-| الفصل الرابع | التجريب والتحقق من النتائج | 2 | 7 | ✅ Complete |
+| Chapter | Title | Status |
+|---------|-------|--------|
+| الفصل الأول | الإطار النظري للتسيير اللوجيستي (Theoretical Framework) | Complete |
+| الفصل الثاني | الإطار العملي والتشخيص الميداني (Field Diagnosis) | Complete |
+| الفصل الثالث | تصميم وإنجاز نظام دعم القرار (DSS Design) | Complete |
+| الفصل الرابع | التجريب والتحقق من النتائج (Testing & Validation) | Complete |
+| Front matter | Intro, abstract AR+FR, glossary, dedication, TOC | Complete |
 
-## MULTI-WINDOW ORCHESTRATION (براءة اختراع)
+### English Paper (CCA'2026)
+- Source: `Thesis_Surgical_Edit\English_Research_Paper.md`
+- Output: `English_Research_Paper_IEEE.pdf` (69 KB, 9 pages)
+- Deadline: 2026-08-15
+
+## MULTI-WINDOW ORCHESTRATION
 > Core invention: coordinating multiple AI windows/sessions, each with a specialized model,
 > around a shared CrossFlow context. This allows parallel work at zero token cost
 > across sessions — each window owns its domain but syncs via CrossFlow.
@@ -96,24 +131,24 @@
 ### Active Windows
 | Window | Identity | Launch Command | Model | Domain | Status |
 |--------|----------|---------------|-------|--------|--------|
-| **A** 🕵️ | Scout | `opencode` | Gemini 2.5 Flash | Audit, verify, orchestrate, threshold fixes | ✅ Complete |
-| **B** 👨‍🔧 | Surgeon | `opencode gemini` | Gemini 2.5 Flash | Build pipeline, thesis edits, dedup fix | ✅ Complete |
-| **C** 🏛️ | Architect | `opencode gemma` | Gemma 4 26B (256K ctx) | Deep reasoning, quality review, thesis polish | ✅ Complete |
-| **D** 🎓 | Master Reviewer | Claude Desktop | Claude 4 Sonnet | **Final expert review, master prompt recipient** | 🟢 Active |
+| **A** | Scout | `opencode` | Gemini 2.5 Flash | Audit, verify, orchestrate, threshold fixes | Complete |
+| **B** | Surgeon | `opencode gemini` | Gemini 2.5 Flash | Build pipeline, thesis edits, dedup fix | Complete |
+| **C** | Architect | `opencode gemma` | Gemma 4 26B (256K ctx) | Deep reasoning, quality review, thesis polish | Complete |
+| **D** | Master Reviewer | Claude Desktop | Claude 4 Sonnet | Final expert review, master prompt recipient | Active |
 
 ### Window Handoff Protocol
-1. **A (Scout) → C (Architect)**: Reports findings, discrepancies, audit results
-2. **C (Architect) → B (Surgeon)**: Dispatches tasks based on A's report
-3. **B (Surgeon) → A (Scout)**: Signals completion, A runs verification
-4. **Any → D (Master)**: Deliverables for Claude Desktop final review
-5. **All → HANDOFF.md**: Update after each milestone
+1. **A (Scout) -> C (Architect)**: Reports findings, discrepancies, audit results
+2. **C (Architect) -> B (Surgeon)**: Dispatches tasks based on A's report
+3. **B (Surgeon) -> A (Scout)**: Signals completion, A runs verification
+4. **Any -> D (Master)**: Deliverables for Claude Desktop final review
+5. **All -> HANDOFF.md**: Update after each milestone
 
 ## SYNC PROTOCOL
-1. OpenCode big-pickle (main-hub) writes `.bas` → `build.ps1` → `verify.ps1` (ERP pipeline)
-2. OpenCode Gemini (gemini-thesis) writes `.md` → thesis polish → DOCX generation
-3. Claude Desktop (claude-project) discusses + reviews → writes HANDOFF entries
-4. Any tool can write `HANDOFF.md` → all tools read it on start
-5. Any tool can append to `SESSION_LOG.md` → archived to `OVERFLOW/` at 50KB
+1. OpenCode big-pickle (main-hub) writes `.bas` -> `build.ps1` -> `verify.ps1` (ERP pipeline)
+2. OpenCode Gemini (gemini-thesis) writes `.md` -> thesis polish -> DOCX generation
+3. Claude Desktop (claude-project) discusses + reviews -> writes HANDOFF entries
+4. Any tool can write `HANDOFF.md` -> all tools read it on start
+5. Any tool can append to `SESSION_LOG.md` -> archived to `OVERFLOW/` at 50KB
 6. MASTER_CONTEXT.md is read-only for tools (edit only via explicit command)
 
 ### CrossFlow Auto-Skill
@@ -123,19 +158,26 @@ Load the `crossflow-orchestrator` skill in any OpenCode session to activate:
 - Handoff generation (formats handoff messages for other windows)
 - Context freshness check (compares local state vs MASTER_CONTEXT.md timestamp)
 
-## LATEST SESSION STATE (2026-05-17)
+## CODING CONVENTIONS
+- Pure VBA only — NO Python, NO Flask, NO databases, NO XLOOKUP (Excel 2010 compat)
+- PascalCase modules, French comments & column headers, tab names in French
+- Special chars: Chr(233) for e, Chr(201) for E
+- RTL: Arabic right-aligned, French left-aligned
+- FormState struct pattern: form owns UI, logic owns business rules
+- Fix .bas source files, NEVER modify .xlsm directly
+- Never modify mod_Config constants or CANON_* values
+- Always rebuild from .bas sources (stale p-code cache is the #1 silent killer)
+
+## LATEST SESSION STATE (2026-06-09)
 | Metric | Status | Details |
 |--------|--------|---------|
-| Thesis Build | ✅ **36/36 PASS** | **ALL CHECKS PASSED** — 0 failures, 0 warnings |
-| Thesis Source | ✅ 907 lines | 4 chapters, 56 refs, 21 tables, 5 footnotes |
-| Thesis DOCX | ✅ 107 KB | TOC/LOT/SEQ fields updated via Word COM |
-| Thesis PDF | ✅ 949 KB | Post-field-update, fully rendered |
-| الفصل الرابع | ✅ Complete | 75 lines, 2 مباحث, separate file |
-| ERP Build | ✅ GOLDEN — 174/174 PASS | 38 modules, 833 KB |
-| ERP Tests | ✅ 20/20 PASS | Macro test suite |
-| ERP Audit | ✅ 16 PASS | DSS 5-phase audit |
-| Ground Truth | ✅ Locked | D=1546, Q*=176, ROP=212.4, SS=200 |
-| Git | ✅ Committed | `f0bba14` on `master` |
-| CrossFlow Cycle | ✅ **COMPLETE** | All 4 windows synchronized |
-| Next | Deliver for Window D (Claude Desktop) | Final expert review + master prompt
+| ERP Build | GOLDEN — 114/114 PASS | 718.2 KB, 44 modules, 26 sheets |
+| Thesis Verify | 29/29 PASS | 1,380 KB PDF, 91 pages |
+| English Paper | Complete | 69 KB PDF (9 pages), 34 KB DOCX |
+| Git | In sync | 96640de on master, 0 ahead/0 behind |
+| CI/CD | Green | 2/2 latest push runs passed |
+| Ground Truth | Locked | D=789, Q*=37, ROP=206, SS=200, PU=4500 |
+| Next | Submission | Thesis PDF for defense, English paper for CCA'2026 |
 
+---
+*Updated by Academix agent at 2026-06-09. Sources: MASTER_BOOTSTRAP.xml, erp-context-compact.md, STATUS.md, HANDOFF.md, notepad.md.*

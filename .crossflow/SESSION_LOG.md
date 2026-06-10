@@ -26,3 +26,5 @@
 | 19 | 2026-05-15 | OpenCode (big-pickle) | Window C taking lead: Finalizing Chapter 2 (المبحث الثالث) due to Claude rate-limit. | ✅ |
 | 20 | 2026-05-25 | OpenCode (GPT-OSS 120B) | Model integration implementation: health-check script, launcher aliases, CI workflow. | ✅ |
 | 21 | 2026-06-02 | OpenCode (Gemini 2.5 Flash) | Session 9: Full DSS intelligence roadmap — 4 pillars implemented (Print, UX, Stockout, Fuzzy Search). 5 commits pushed (`ea9e33b`..`a30e1a2`). Pre-build 0 errors. Ready for v13.3 tag. | ✅ |
+| 22 | 2026-06-09 | Academix (mimo-v2.5-free) | Session 29: Updated stale MASTER_CONTEXT.md from v13.2 to v13.4. New ground truth (D=789, Q*=37, PU=4500), 44 modules, 26 sheets, 114/114 verify, thesis 29/29, English paper PDF built. All paths, tools, conventions refreshed. | ✅ |
+| 23 | 2026-06-09 | Academix (mimo-v2.5-free) | Session 30: Thesis DOCX page numbering + RTL fix. Created fix_thesis_v3.py. Applied to user's fixed DOCX → v3_fixed.docx (170KB). Page numbering: cover=none, TOC=decimal start=1, body/annexes=continue. New PAGE footer. 2 RTL headings fixed. | ✅ |
