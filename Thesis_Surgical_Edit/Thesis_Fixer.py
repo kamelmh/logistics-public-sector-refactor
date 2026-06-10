@@ -61,7 +61,6 @@ def remove_ghost_text(docx_dir, report_json):
 def fix_caption_alignment(docx_dir, report_json):
     """
     Surgical RTL Fix: Forces bidi=1 and rtl=1 on EVERY run containing Arabic text.
-    This ensures all captions and body text are correctly aligned.
     """
     ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
     doc_path = os.path.join(docx_dir, 'word', 'document.xml')
@@ -79,14 +78,21 @@ def fix_caption_alignment(docx_dir, report_json):
         
         # If run contains Arabic characters, force RTL
         if any('\u0600' <= c <= '\u06FF' for c in run_text):
-            rPr = run.find('w:rPr', ns)
-            if rPr is None:
+            # Use xpath to find rPr to ensure namespace is handled correctly
+            rPr_list = run.xpath('./w:rPr', namespaces=ns)
+            if not rPr_list:
+                # Create rPr with the correct namespace
                 rPr = etree.SubElement(run, '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rPr')
+            else:
+                rPr = rPr_list[0]
             
-            if rPr.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi') != '1' or \
-               rPr.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl') != '1':
-                rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi', '1')
-                rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl', '1')
+            # Use the full namespace for attributes
+            bidi_attr = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi'
+            rtl_attr = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl'
+            
+            if rPr.get(bidi_attr) != '1' or rPr.get(rtl_attr) != '1':
+                rPr.set(bidi_attr, '1')
+                rPr.set(rtl_attr, '1')
                 modified = True
                 
     if modified:

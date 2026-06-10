@@ -38,8 +38,18 @@ try {
     }
     Log-Message "Initial audit status: $($Audit.status)"
 
-    # 3. Apply Fixes
-    Log-Message "Step 3: Applying fixes from audit report..."
+    # 3. Force Field Updates (F9)
+    Log-Message "Step 3: Forcing field updates via COM..."
+    Push-Location $ScriptDir
+    try {
+        python Thesis_COM_Control.py update $DocPath
+    } finally {
+        Pop-Location
+    }
+    Log-Message "Field updates forced." "SUCCESS"
+
+    # 4. Apply Fixes
+    Log-Message "Step 4: Applying fixes from audit report..."
     Push-Location $ScriptDir
     try {
         python Thesis_Fixer.py $DocPath $ReportPath
@@ -54,16 +64,6 @@ try {
         Pop-Location
     }
     Log-Message "Fixes applied." "SUCCESS"
-
-    # 4. Force Field Updates (F9)
-    Log-Message "Step 4: Forcing field updates via COM..."
-    Push-Location $ScriptDir
-    try {
-        python Thesis_COM_Control.py update $DocPath
-    } finally {
-        Pop-Location
-    }
-    Log-Message "Field updates forced." "SUCCESS"
 
     # 5. Final Verification
     Log-Message "Step 5: Final verification audit..."
