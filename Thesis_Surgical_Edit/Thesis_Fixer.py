@@ -19,7 +19,6 @@ def clear_page_field_cache(docx_dir):
             root = tree.getroot()
             
             # Find fldSimple with PAGE instruction
-            # Use XPath to find fldSimple elements
             flds = root.xpath('.//w:fldSimple', namespaces=ns)
             modified = False
             for fld in flds:
@@ -49,7 +48,6 @@ def remove_ghost_text(docx_dir, report_json):
     modified = False
     for ghost in ghosts:
         if ghost.get('type') == 'text_box':
-            # Find all txbxContent elements
             text_boxes = root.xpath('.//w:txbxContent', namespaces=ns)
             idx = ghost.get('index')
             if idx is not None and 0 <= idx < len(text_boxes):
@@ -64,7 +62,7 @@ def remove_ghost_text(docx_dir, report_json):
 def fix_caption_alignment(docx_dir, report_json):
     """
     Fixes caption alignment by scanning for keywords and applying bidi/rtl.
-    Excludes TOC entries (inside w:sdt with TOC alias/tag).
+    Excludes TOC entries.
     """
     ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
     doc_path = os.path.join(docx_dir, 'word', 'document.xml')
@@ -74,45 +72,35 @@ def fix_caption_alignment(docx_dir, report_json):
     
     def is_in_toc(p_elem):
         """Check if paragraph is inside a TOC SDT."""
-        # Walk up parent chain to find sdt
         parent_map = {c: p for p in root.iter() for c in p}
         current = p_elem
         while current in parent_map:
             parent = parent_map[current]
             if parent.tag == '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}sdt':
-                # Check if this SDT has TOC alias or tag
                 sdt_pr = parent.find('w:sdtPr', ns)
                 if sdt_pr is not None:
                     alias = sdt_pr.find('w:alias', ns)
                     tag = sdt_pr.find('w:tag', ns)
-                    if alias is not None:
-                        alias_val = alias.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}val', '')
-                        if 'TOC' in alias_val.upper():
-                            return True
-                    if tag is not None:
-                        tag_val = tag.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}val', '')
-                        if 'TOC' in tag_val.upper():
-                            return True
-                    # Also check for toc pragma
-                    toc = sdt_pr.find('w:toc', ns)
-                    if toc is not None:
+                    if alias is not None and 'TOC' in alias.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}val', '').upper():
+                        return True
+                    if tag is not None and 'TOC' in tag.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}val', '').upper():
+                        return True
+                    if sdt_pr.find('w:toc', ns) is not None:
                         return True
             current = parent
         return False
-    
+
     modified = False
     paragraphs = root.xpath('.//w:p', namespaces=ns)
     
     for p in paragraphs:
-        # Skip TOC entries
         if is_in_toc(p):
             continue
             
         p_text = etree.tostring(p, method='text', encoding='unicode')
         
         # Check for Arabic keywords
-        if any(kw in p_text for kw in ['شكل', 'جدول']):
-            # Find all runs and ensure they have bidi=1, rtl=1
+        if any(kw in p_text for kw in ['شكل ', 'جدول رقم']):
             runs = p.xpath('.//w:r', namespaces=ns)
             if not runs:
                 continue
@@ -122,14 +110,13 @@ def fix_caption_alignment(docx_dir, report_json):
                 if rPr is None:
                     rPr = etree.SubElement(run, '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rPr')
                 
-                if rPr.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi') != '1' or \
-                   rPr.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl') != '1':
-                    rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi', '1')
-                    rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl', '1')
-                    modified = True
+                # Force RTL for all runs in an Arabic caption
+                rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi', '1')
+                rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl', '1')
+                modified = True
         
         # Check for French/English keywords
-        elif any(kw in p_text for kw in ['Figure', 'Table', 'Tableau']):
+        elif any(kw in p_text for kw in ['Figure ', 'Table ', 'Tableau ']):
             runs = p.xpath('.//w:r', namespaces=ns)
             if not runs:
                 continue
@@ -152,7 +139,6 @@ def apply_fixes_from_report(docx_path, report_json, output_path):
     """
     print(f"Applying fixes to {docx_path}...")
     
-    # Create a temporary directory to unpack the DOCX
     temp_dir = tempfile.mkdtemp()
     try:
         with zipfile.ZipFile(docx_path, 'r') as z:
