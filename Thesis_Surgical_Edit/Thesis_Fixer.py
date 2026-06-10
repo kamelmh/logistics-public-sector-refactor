@@ -27,7 +27,7 @@ def clear_page_field_cache(docx_dir):
                     modified = True
             
             if modified:
-                tree.write(filepath, encoding='UTF-8', xml_declaration=True, standalone=True)
+                tree.write(filepath, encoding='UTF-8', xml_declaration=True)
                 print(f"Cleared page field cache in {filename}")
 
 def remove_ghost_text(docx_dir, report_json):
@@ -131,7 +131,7 @@ def fix_caption_alignment(docx_dir, report_json):
                     modified = True
                     
     if modified:
-        tree.write(doc_path, encoding='UTF-8', xml_declaration=True, standalone=True)
+        tree.write(doc_path, encoding='UTF-8', xml_declaration=True)
         print("Fixed caption alignments (comprehensive scan)")
 
 def apply_fixes_from_report(docx_path, report_json, output_path):
