@@ -60,8 +60,8 @@ def remove_ghost_text(docx_dir, report_json):
 
 def fix_caption_alignment(docx_dir, report_json):
     """
-    Fixes caption alignment by scanning for keywords and applying bidi/rtl.
-    Excludes TOC entries.
+    Surgical RTL Fix: Forces bidi=1 and rtl=1 on EVERY run containing Arabic text.
+    This ensures all captions and body text are correctly aligned.
     """
     ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
     doc_path = os.path.join(docx_dir, 'word', 'document.xml')
@@ -69,60 +69,29 @@ def fix_caption_alignment(docx_dir, report_json):
     tree = etree.parse(doc_path)
     root = tree.getroot()
     
-    def is_in_toc(p_elem):
-        """Check if paragraph is inside a TOC SDT."""
-        parent_map = {c: p for p in root.iter() for c in p}
-        current = p_elem
-        while current in parent_map:
-            parent = parent_map[current]
-            if parent.tag == '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}sdt':
-                sdt_pr = parent.find('w:sdtPr', ns)
-                if sdt_pr is not None:
-                    alias = sdt_pr.find('w:alias', ns)
-                    tag = sdt_pr.find('w:tag', ns)
-                    if alias is not None and 'TOC' in alias.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}val', '').upper():
-                        return True
-                    if tag is not None and 'TOC' in tag.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}val', '').upper():
-                        return True
-                    if sdt_pr.find('w:toc', ns) is not None:
-                        return True
-            current = parent
-        return False
-
     modified = False
-    paragraphs = root.xpath('.//w:p', namespaces=ns)
+    # Scan all runs in the entire document
+    runs = root.xpath('.//w:r', namespaces=ns)
     
-    for p in paragraphs:
-        if is_in_toc(p):
-            continue
+    for run in runs:
+        # Get text of the run
+        run_text = "".join([t.text for t in run.iter() if t.text])
+        
+        # If run contains Arabic characters, force RTL
+        if any('\u0600' <= c <= '\u06FF' for c in run_text):
+            rPr = run.find('w:rPr', ns)
+            if rPr is None:
+                rPr = etree.SubElement(run, '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rPr')
             
-        p_text = etree.tostring(p, method='text', encoding='unicode')
-        
-        # Use the same logic as the Inspector: check for specific patterns
-        caption_patterns = ['Figure ', 'Table ', 'Tableau ', 'شكل ', 'جدول رقم']
-        if any(p_text.startswith(pat) or f" {pat}" in p_text for pat in caption_patterns):
-            runs = p.xpath('.//w:r', namespaces=ns)
-            if not runs:
-                continue
+            if rPr.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi') != '1' or \
+               rPr.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl') != '1':
+                rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi', '1')
+                rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl', '1')
+                modified = True
                 
-            for run in runs:
-                rPr = run.find('w:rPr', ns)
-                if rPr is None:
-                    rPr = etree.SubElement(run, '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rPr')
-                
-                # Force RTL for all runs in an Arabic caption
-                if any(pat in p_text for pat in ['شكل ', 'جدول رقم']):
-                    rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi', '1')
-                    rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl', '1')
-                    modified = True
-                elif any(pat in p_text for pat in ['Figure ', 'Table ', 'Tableau ']):
-                    if rPr.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi') == '1':
-                        rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi', '0')
-                        modified = True
-        
     if modified:
         tree.write(doc_path, encoding='UTF-8', xml_declaration=True, standalone=True)
-        print("Fixed caption alignments (comprehensive scan)")
+        print("Applied global Arabic RTL fix to all runs.")
 
 def apply_fixes_from_report(docx_path, report_json, output_path):
     """
