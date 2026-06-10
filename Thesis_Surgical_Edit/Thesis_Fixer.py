@@ -97,26 +97,29 @@ def fix_caption_alignment(docx_dir, report_json):
         if is_in_toc(p):
             continue
             
-        p_text = etree.tostring(p, method='text', encoding='unicode')
+        # Get all text in the paragraph
+        p_text = "".join([t.text for t in p.iter() if t.text])
         
-        # Check for Arabic keywords
-        if any(kw in p_text for kw in ['شكل ', 'جدول رقم']):
-            runs = p.xpath('.//w:r', namespaces=ns)
-            if not runs:
-                continue
-                
-            for run in runs:
-                rPr = run.find('w:rPr', ns)
-                if rPr is None:
-                    rPr = etree.SubElement(run, '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rPr')
-                
-                # Force RTL for all runs in an Arabic caption
-                rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi', '1')
-                rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl', '1')
-                modified = True
+        # Check for Arabic keywords (more flexible match)
+        if 'جدول' in p_text or 'شكل' in p_text:
+            # Only fix if it looks like a caption (starts with keyword or contains "رقم")
+            if p_text.startswith(('جدول', 'شكل')) or 'رقم' in p_text:
+                runs = p.xpath('.//w:r', namespaces=ns)
+                if not runs:
+                    continue
+                    
+                for run in runs:
+                    rPr = run.find('w:rPr', ns)
+                    if rPr is None:
+                        rPr = etree.SubElement(run, '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rPr')
+                    
+                    rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi', '1')
+                    rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl', '1')
+                    modified = True
+                print(f"Fixed caption: {p_text[:50]}...")
         
         # Check for French/English keywords
-        elif any(kw in p_text for kw in ['Figure ', 'Table ', 'Tableau ']):
+        elif any(kw in p_text for kw in ['Figure', 'Table', 'Tableau']):
             runs = p.xpath('.//w:r', namespaces=ns)
             if not runs:
                 continue
