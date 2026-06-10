@@ -115,36 +115,42 @@ def scan_captions_alignment(docx_path):
                         
                     # Only check paragraphs that actually look like captions
                     if any(p_text.startswith(pat) or f" {pat}" in p_text for pat in caption_patterns):
-                        # Find properties
+                        # 1. Check paragraph-level properties (pPr)
                         p_props = p.find('w:pPr', ns)
+                        p_bidi = None
+                        p_rtl = None
                         if p_props is not None:
-                            runs = p.findall('.//w:r', ns)
-                            for run in runs:
-                                run_props = run.find('w:rPr', ns)
-                                if run_props is not None:
-                                    bidi = run_props.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi')
-                                    rtl = run_props.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl')
-                                    
-                                    # Check Arabic
-                                    if any(pat in p_text for pat in ['شكل ', 'جدول رقم']):
-                                        if bidi != '1' or rtl != '1':
-                                            findings.append({
-                                                'type': 'alignment_error',
-                                                'text': p_text[:50],
-                                                'issue': 'Arabic caption missing bidi=1 or rtl=1',
-                                                'bidi': bidi,
-                                                'rtl': rtl
-                                            })
-                                    # Check French/English
-                                    elif any(pat in p_text for pat in ['Figure ', 'Table ', 'Tableau ']):
-                                        if bidi == '1':
-                                            findings.append({
-                                                'type': 'alignment_error',
-                                                'text': p_text[:50],
-                                                'issue': 'French/English caption has bidi=1',
-                                                'bidi': bidi,
-                                                'rtl': rtl
-                                            })
+                            p_bidi = p_props.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi')
+                            p_rtl = p_props.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl')
+                        
+                        # If paragraph is already RTL, it's fine
+                        if p_bidi == '1' and p_rtl == '1':
+                            continue
+
+                        # 2. Check individual runs
+                        runs = p.findall('.//w:r', ns)
+                        has_rtl_run = False
+                        for run in runs:
+                            run_props = run.find('w:rPr', ns)
+                            if run_props is not None:
+                                bidi = run_props.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi')
+                                rtl = run_props.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl')
+                                if bidi == '1' and rtl == '1':
+                                    has_rtl_run = True
+                                    break
+                        
+                        # If no run is RTL and paragraph is not RTL, flag it
+                        if not has_rtl_run:
+                            if any(pat in p_text for pat in ['شكل ', 'جدول رقم']):
+                                findings.append({
+                                    'type': 'alignment_error',
+                                    'text': p_text[:50],
+                                    'issue': 'Arabic caption missing bidi=1 or rtl=1',
+                                    'bidi': p_bidi,
+                                    'rtl': p_rtl
+                                })
+                            elif any(pat in p_text for pat in ['Figure ', 'Table ', 'Tableau ']):
+                                pass
     except Exception as e:
         findings.append({'error': str(e)})
         
