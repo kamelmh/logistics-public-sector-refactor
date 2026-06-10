@@ -3,7 +3,7 @@ import zipfile
 import json
 import shutil
 import tempfile
-from lxml import etree
+import xml.etree.ElementTree as ET
 
 def clear_page_field_cache(docx_dir):
     """
@@ -15,11 +15,10 @@ def clear_page_field_cache(docx_dir):
     for filename in os.listdir(footer_dir):
         if filename.startswith('footer') and filename.endswith('.xml'):
             filepath = os.path.join(footer_dir, filename)
-            tree = etree.parse(filepath)
+            tree = ET.parse(filepath)
             root = tree.getroot()
             
-            # Find fldSimple with PAGE instruction
-            flds = root.xpath('.//w:fldSimple', namespaces=ns)
+            flds = root.findall('.//w:fldSimple', ns)
             modified = False
             for fld in flds:
                 instr = fld.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}instr', '')
@@ -42,19 +41,22 @@ def remove_ghost_text(docx_dir, report_json):
     if not ghosts:
         return
 
-    tree = etree.parse(doc_path)
+    tree = ET.parse(doc_path)
     root = tree.getroot()
     
     modified = False
     for ghost in ghosts:
         if ghost.get('type') == 'text_box':
-            text_boxes = root.xpath('.//w:txbxContent', namespaces=ns)
+            text_boxes = root.findall('.//w:txbxContent', ns)
             idx = ghost.get('index')
             if idx is not None and 0 <= idx < len(text_boxes):
                 box = text_boxes[idx]
-                box.getparent().remove(box)
-                modified = True
-                print(f"Removed ghost text box at index {idx}")
+                for parent in root.iter():
+                    if box in parent:
+                        parent.remove(box)
+                        modified = True
+                        print(f"Removed ghost text box at index {idx}")
+                        break
     
     if modified:
         tree.write(doc_path, encoding='UTF-8', xml_declaration=True, standalone=True)
@@ -67,7 +69,7 @@ def fix_caption_alignment(docx_dir, report_json):
     ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
     doc_path = os.path.join(docx_dir, 'word', 'document.xml')
     
-    tree = etree.parse(doc_path)
+    tree = ET.parse(doc_path)
     root = tree.getroot()
     
     def is_in_toc(p_elem):
@@ -91,42 +93,38 @@ def fix_caption_alignment(docx_dir, report_json):
         return False
 
     modified = False
-    paragraphs = root.xpath('.//w:p', namespaces=ns)
+    paragraphs = root.findall('.//w:p', ns)
     
     for p in paragraphs:
         if is_in_toc(p):
             continue
             
-        # Get all text in the paragraph
         p_text = "".join([t.text for t in p.iter() if t.text])
         
-        # Check for Arabic keywords (more flexible match)
         if 'جدول' in p_text or 'شكل' in p_text:
-            # Only fix if it looks like a caption (starts with keyword or contains "رقم")
             if p_text.startswith(('جدول', 'شكل')) or 'رقم' in p_text:
-                runs = p.xpath('.//w:r', namespaces=ns)
+                runs = p.findall('.//w:r', ns)
                 if not runs:
                     continue
                     
                 for run in runs:
                     rPr = run.find('w:rPr', ns)
                     if rPr is None:
-                        rPr = etree.SubElement(run, '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rPr')
+                        rPr = ET.SubElement(run, '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rPr')
                     
                     rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi', '1')
                     rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rtl', '1')
                     modified = True
                 print(f"Fixed caption: {p_text[:50]}...")
         
-        # Check for French/English keywords
-        elif any(kw in p_text for kw in ['Figure', 'Table', 'Tableau']):
-            runs = p.xpath('.//w:r', namespaces=ns)
+        elif any(kw in p_text for kw in ['Figure ', 'Table ', 'Tableau ']):
+            runs = p.findall('.//w:r', ns)
             if not runs:
                 continue
             for run in runs:
                 rPr = run.find('w:rPr', ns)
                 if rPr is None:
-                    rPr = etree.SubElement(run, '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rPr')
+                    rPr = ET.SubElement(run, '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}rPr')
                 
                 if rPr.get('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi') == '1':
                     rPr.set('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}bidi', '0')
@@ -147,12 +145,10 @@ def apply_fixes_from_report(docx_path, report_json, output_path):
         with zipfile.ZipFile(docx_path, 'r') as z:
             z.extractall(temp_dir)
             
-        # Apply fixes
         clear_page_field_cache(temp_dir)
         remove_ghost_text(temp_dir, report_json)
         fix_caption_alignment(temp_dir, report_json)
         
-        # Pack it back up
         with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as z:
             for root, dirs, files in os.walk(temp_dir):
                 for file in files:
