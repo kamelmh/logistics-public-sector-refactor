@@ -347,7 +347,20 @@ def extract_all(doc, fns):
                     lines.append('## Résumé')
                     lines.append('')
                     continue
-                if text in ('إهداء', 'شكر وتقدير', 'فهرس المحتويات', 'قائمة الجداول'):
+                # Include dedication and thanks sections
+                if text == 'إهداء':
+                    lines.append('')
+                    lines.append('## إهداء')
+                    lines.append('')
+                    started_content = True
+                    continue
+                if text == 'شكر وتقدير':
+                    lines.append('')
+                    lines.append('## شكر وتقدير')
+                    lines.append('')
+                    started_content = True
+                    continue
+                if text in ('فهرس المحتويات', 'قائمة الجداول'):
                     continue
                 # If we hit a heading that's not cover-related, start content
                 if heading_level > 0:
@@ -367,6 +380,14 @@ def extract_all(doc, fns):
             if in_table_list and heading_level > 0 and 'فهرس' not in text and 'قائمة' not in text:
                 in_table_list = False
             if in_toc or in_table_list:
+                continue
+            
+            # ─── HANDLE SPECIAL NON-HEADING TITLES ───
+            # إهداء and شكر وتقدير are Normal style (not headings) in the old backup
+            if text == 'شكر وتقدير':
+                lines.append('')
+                lines.append('## شكر وتقدير')
+                lines.append('')
                 continue
             
             # ─── HANDLE EMPTY LINES ───
