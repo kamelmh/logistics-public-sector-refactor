@@ -69,8 +69,16 @@ def fix_page_numbering(doc, changes):
             sect_pr.remove(existing)
         
         fmt = formats[i] if i < len(formats) else 'decimal'
-        pg = parse_xml('<w:pgNumType %s w:fmt="%s"/>' % (nsdecls('w'), fmt))
-        changes['page_num_sec%d' % i] = 'fmt=%s' % fmt
+        start_attr = ''
+        if i == 1: # Front matter (TOC/abstract)
+            start_attr = ' w:start="1"'
+        elif i == 2: # Body
+            start_attr = ' w:start="1"'
+        elif i == 3: # Annexes
+            start_attr = ' w:start="1"'
+        
+        pg = parse_xml('<w:pgNumType %s w:fmt="%s"%s/>' % (nsdecls('w'), fmt, start_attr))
+        changes['page_num_sec%d' % i] = 'fmt=%s%s' % (fmt, ' start=1' if start_attr else '')
         
         # Insert at the beginning of sectPr
         first = sect_pr.find(qn('w:type'))

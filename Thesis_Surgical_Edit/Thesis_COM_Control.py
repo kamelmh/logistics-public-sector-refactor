@@ -12,13 +12,16 @@ def force_field_update(doc_path):
     word.Visible = False
     try:
         doc = word.Documents.Open(doc_path)
+        print(f"DEBUG: Type of doc: {type(doc)}")
+
         
         # 1. Update body fields
-        word.Selection.WholeStory()
-        word.Selection.Fields.Update()
-        
+        # Ensure we are working with the active document, not the Word application object
+        active_doc = word.ActiveDocument
+        active_doc.Content.Fields.Update()
+
         # 2. Update all headers and footers in all sections
-        for section in doc.Sections:
+        for section in active_doc.Sections:
             for header in section.Headers:
                 header.Range.Fields.Update()
             for footer in section.Footers:
@@ -27,6 +30,7 @@ def force_field_update(doc_path):
         doc.Save()
         doc.Close()
     finally:
+        word.DisplayAlerts = False # Suppress any prompts
         word.Quit()
 
 def verify_footer_text(doc_path, page_num):
