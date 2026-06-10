@@ -2,8 +2,16 @@ param(
     [Parameter(Position=0)]
     [string]$Command = "",
     [Parameter()]
-    [switch]$FromMD = $false
+    [switch]$FromMD = $false,
+    [Parameter()]
+    [switch]$Regulated = $false
 )
+
+if ($Regulated) {
+    Write-Host "  [BUILD] Regulated mode enabled. Delegating to Orchestrator..." -ForegroundColor Cyan
+    & "Thesis_Surgical_Edit/Thesis_Orchestrator.ps1"
+    return
+}
 
 $projectRoot = Split-Path $PSScriptRoot -Parent
 $sourcePath = Join-Path $projectRoot "Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md"
