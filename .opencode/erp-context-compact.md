@@ -2,7 +2,8 @@
 # Institution: Direction de l'Education, Wilaya de El Bayadh (Algeria)
 # User: Mahi Kamel Abdelghani | Stack: Pure VBA Excel | Offline-First | Zero Dependencies
 # Compliance: CNEPD BTS Public Sector Standards | Locale: fr-FR/ar-DZ
-# Generated: 2026-06-06 | ~5K tokens | Inject at session start
+# Generated: 2026-06-11 | ~6K tokens | Inject at session start
+# Session: 33 — Thesis corrupted, full rebuild needed
 
 ## GROUND TRUTH (Canonical — Do Not Modify)
 | Param | Value | Description |
@@ -112,6 +113,26 @@ F-001 ENAP Alger | F-002 Bureautique Oran | F-003 Bureau Plus
 
 Workflows: feature (explore→plan→build) | fix (debug→build→test) | quality (audit→explore→build)
 
+## Model Performance (Tested 2026-06-11)
+| Model | Score | Speed | Notes |
+|-------|-------|-------|-------|
+| Qwen3 32B (Groq) | 96% | ~0.3s | PRIMARY — use `/no_think` prefix |
+| Llama 3.3 70B (Groq) | 90% | ~0.2s | BACKUP — fast, reliable |
+| Gemini 2.5 Flash (Google) | 85% | ~2s | Works but rate-limited |
+| GPT-OSS 120B (Cerebras) | 50% | ~1s | UNRELIABLE — 40% empty responses |
+| Gemini 2.5 Pro (Google) | — | — | QUOTA EXHAUSTED |
+| OpenRouter free models | — | — | RATE-LIMITED (50 req/day) |
+
+## Command Center (Desktop Launchers)
+| Launcher | Path | Purpose |
+|----------|------|---------|
+| Academix Command Center | `Desktop\Academix Command Center.bat` | Full dashboard (chat, ERP, code, thesis, research) |
+| Quick ERP Calculator | `Desktop\Quick ERP.bat` | One-click EOQ/ROP/alerts |
+| Quick Code Review | `Desktop\Quick Code Review.bat` | VBA bug finder |
+| Model Test | `Desktop\ModelTest.bat` | 5-level benchmark |
+| model-router.ps1 | `Desktop\model-router.ps1` | Smart model routing with health checks |
+| context-loader.ps1 | `Desktop\context-loader.ps1` | Auto-loads project context |
+
 ## Skills Projection (Key Targets)
 | Skill | High-Value Targets |
 |-------|-------------------|
@@ -151,7 +172,7 @@ Workflows: feature (explore→plan→build) | fix (debug→build→test) | quali
 - Ch1 (Theoretical framework): DONE | Ch2 (Institution presentation): DONE
 - Ch3 (Field diagnosis + ABC/Wilson/CMUP): DONE | Ch4 (Mini ERP + results): DONE
 - Front matter: DONE (intro, abstract AR+FR, glossary, dedication)
-- Supervisor: دهيني ميمونة (مصلحة الميزانيات والاقتصاد)
+- Supervisor: دهيني ميمونة (مصلحة الميزانيات وال경제)
 - Thesis source: `Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md`
 - Build: `& "Thesis_Surgical_Edit\build-thesis.ps1"` → output DOCX + PDF in `Thesis_Surgical_Edit\output\`
 - Pipeline: pandoc MD→DOCX → Python table/cover formatting → Word COM → PDF
@@ -159,6 +180,12 @@ Workflows: feature (explore→plan→build) | fix (debug→build→test) | quali
 - Chapter outline: `Thesis_Surgical_Edit\THESIS_CHAPTER_OUTLINE.md`
 - Full terminology map: `Thesis_Surgical_Edit\THESIS_TERMINOLOGY_MAPPING.md`
 - Session handoff: `Thesis_Surgical_Edit\SESSION_HANDOFF.md`
+- **STATUS (2026-06-11): DOCX CORRUPTED** — Tables broken, content stuffed, not regulated
+- **CAUSE:** Direct XML manipulation via lxml broke table structure
+- **SOLUTION:** Full rebuild from markdown via `& "Thesis_Surgical_Edit/build-thesis.ps1" -Regulated`
+- **VERIFY:** `python "Thesis_Surgical_Edit/style/verify_docx_checks.py" <docx_path>`
+- Backup v7c: `Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh_v7c_BACKUP.docx` (161 KB)
+- Current broken: 74 KB vs backup 161 KB (content may be missing)
 
 ## Workflow Rules (Every Agent Must Follow)
 - Edit .bas source files ONLY — never modify .xlsm directly
