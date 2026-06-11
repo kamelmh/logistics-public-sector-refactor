@@ -30,7 +30,53 @@ def _fix_xml_namespace(xml_bytes):
 def check(name, ok, msg=""):
     return {"name": name, "passed": bool(ok), "message": str(msg)}
 
-def run_checks(docx_path, strict_headings=False, size_threshold=50000):
+def get_table_style_set(doc):
+    """Extract set of style names used by tables in the document."""
+    return {t.style.name for t in doc.tables if t.style}
+
+def check_caption_rtl(doc):
+    """Verify that captions (containing 'جدول' or 'شكل') have w:bidi='1'."""
+    bad_captions = 0
+    total_captions = 0
+    for p in doc.paragraphs:
+        text = p.text or ""
+        if "جدول" in text or "شكل" in text:
+            total_captions += 1
+            pPr = p._element.find(f'{{{W_NS["w"]}}}pPr')
+            if pPr is not None:
+                bidi = pPr.find(f'{{{W_NS["w"]}}}bidi')
+                if bidi is None or bidi.get(f'{{{W_NS["w"]}}}val') != '1':
+                    bad_captions += 1
+            else:
+                bad_captions += 1
+    return total_captions, bad_captions
+
+def check_page_numbering(doc):
+    """Verify first section starts at page 4 with decimal numbering.
+    
+    OOXML spec: <w:pgNumType w:fmt="decimal" w:start="4"/>
+    - fmt attribute = numbering format (decimal, lowerRoman, etc.)
+    - start attribute = starting page number
+    """
+    try:
+        sectPr = doc.sections[0]._sectPr
+        pgNumType = sectPr.find(f'{{{W_NS["w"]}}}pgNumType')
+        
+        if pgNumType is None:
+            return False, "type=None, start=None (no pgNumType element)"
+        
+        # OOXML uses 'fmt' attribute for format, 'start' attribute for page number
+        fmt = pgNumType.get(f'{{{W_NS["w"]}}}fmt')
+        start = pgNumType.get(f'{{{W_NS["w"]}}}start')
+        
+        type_ok = fmt == 'decimal'
+        start_ok = start == '4'
+        
+        return type_ok and start_ok, f"fmt={fmt}, start={start}"
+    except Exception as e:
+        return False, f"Error: {e}"
+
+def run_checks(docx_path, strict_headings=False, size_threshold=50000, backup_path=None):
     doc = Document(docx_path)
     paras = doc.paragraphs; sections = doc.sections
     p_count = len(paras); s_count = len(sections)
@@ -169,8 +215,31 @@ def run_checks(docx_path, strict_headings=False, size_threshold=50000):
 
     toc_h = any('المحتويات' in (p.text or '') and 'فهرس' in (p.text or '') for p in paras[:50])
     results.append(check("TOC heading present", toc_h, ""))
+    
+    # --- New Amelioration Checks ---
+    # 1. Page Numbering Validation
+    pn_ok, pn_msg = check_page_numbering(doc)
+    results.append(check("Page numbering (decimal, start=4)", pn_ok, pn_msg))
+    
+    # 2. Caption RTL Verification
+    cap_total, cap_bad = check_caption_rtl(doc)
+    results.append(check("Caption RTL alignment (w:bidi=1)", cap_bad == 0, f"{cap_bad}/{cap_total} bad"))
+    
+    # 3. Table Style Comparison
+    if backup_path and os.path.exists(backup_path):
+        try:
+            backup_doc = Document(backup_path)
+            curr_styles = get_table_style_set(doc)
+            back_styles = get_table_style_set(backup_doc)
+            style_diff = curr_styles.symmetric_difference(back_styles)
+            results.append(check("Table styles match backup v7c", len(style_diff) == 0, f"Diff: {style_diff}"))
+        except Exception as e:
+            results.append(check("Table style comparison", False, f"Error: {e}"))
+    else:
+        results.append(check("Table style comparison", False, "Backup path not provided or not found"))
 
     results.append(check("Opens without corruption", True, "python-docx ok"))
+
     results.append(check("Body has content", sum(1 for p in bp[:30] if p.text and p.text.strip()) >= 15, ""))
 
     passed = sum(1 for r in results if r["passed"])
@@ -183,15 +252,21 @@ if __name__ == "__main__":
     parser.add_argument("--json", action="store_true", help="JSON output")
     parser.add_argument("--strict-headings", action="store_true", help="Strict heading hierarchy (no skips)")
     parser.add_argument("--size-threshold", type=int, default=50000, help="DOCX size threshold in bytes")
+    parser.add_argument("--backup", help="Path to backup DOCX for style comparison")
     args = parser.parse_args()
-    r = run_checks(args.docx, strict_headings=args.strict_headings, size_threshold=args.size_threshold)
+    r = run_checks(args.docx, strict_headings=args.strict_headings, size_threshold=args.size_threshold, backup_path=args.backup)
     if args.json:
         print(json.dumps(r, indent=2, ensure_ascii=False))
     else:
+        print(f"\n--- Verification Results for {os.path.basename(args.docx)} ---")
         for c in r["checks"]:
-            s = "PASS" if c["passed"] else "FAIL"
+            s = "✅ PASS" if c["passed"] else "❌ FAIL"
             m = f" — {c['message']}" if c["message"] else ""
-            print(f"  [{s}] {c['name']}{m}")
+            print(f"  {s} {c['name']}{m}")
         s = r["summary"]
-        print(f"\n  Passed: {s['passed']}/{s['total']}  Failed: {s['failed']}/{s['total']}")
+        print(f"\n  Summary: {s['passed']}/{s['total']} Passed | {s['failed']} Failed")
+        if s['failed'] == 0:
+            print("  ✨ All checks passed successfully! ✨")
+        else:
+            print("  ⚠️  Some checks failed. Please review the errors above.")
     sys.exit(0 if r["summary"]["failed"] == 0 else 1)
