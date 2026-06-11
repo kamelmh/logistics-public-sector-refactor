@@ -206,41 +206,35 @@ def add_table_borders(doc, changes):
 
 
 def fix_body_formatting(doc, changes):
-    """Fix body text: Traditional Arabic 14pt, RTL, 1.5 spacing."""
-    SKIP_STYLES = {'Heading 1', 'Heading 2', 'Heading 3', 'Heading 4', 'Heading 5',
-                   'Titre 1', 'Titre 2', 'Titre 3',
-                   'toc 1', 'toc 2', 'toc 3', 'TOC',
-                   'Header', 'Footer', 'Footnote Text', 'Footnote Reference',
-                   'Endnote Text', 'Endnote Reference'}
+    """Surgical body formatting to avoid 'stuffed' rendering.
+    Applies formatting to Styles rather than individual runs where possible.
+    """
+    # 1. Define the target body styles
+    BODY_STYLES = ['Normal', 'Compact', 'Body Text', 'List Paragraph', 'No Spacing']
     
-    for i, p in enumerate(doc.paragraphs):
-        sname = p.style.name if p.style else ''
-        if sname in SKIP_STYLES:
+    # 2. Apply formatting to the Styles themselves (Global change)
+    for style_name in BODY_STYLES:
+        try:
+            style = doc.styles[style_name]
+            style.font.name = GOLDEN['bodyFont']
+            style.font.size = Pt(GOLDEN['bodySize'])
+            style.paragraph_format.line_spacing = GOLDEN['lineSpacing']
+            style.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        except KeyError:
             continue
+
+    # 3. Only fix paragraphs that are NOT using a body style or are explicitly wrong
+    # This prevents the 'stuffed' effect caused by overriding style-level settings
+    for p in doc.paragraphs:
+        sname = p.style.name if p.style else ''
         if any(k in sname for k in ('Header', 'Footer', 'Footnote', 'Endnote', 'toc')):
             continue
-        if not p.text.strip():
-            continue
-        
-        # Font name and size on runs
-        for r in p.runs:
-            if r.font.name != GOLDEN['bodyFont']:
-                r.font.name = GOLDEN['bodyFont']
-                changes['font_fixes'] += 1
-            if r.font.size is None or abs(r.font.size.pt - GOLDEN['bodySize']) >= 0.5:
-                r.font.size = Pt(GOLDEN['bodySize'])
-                changes['size_fixes'] += 1
-        
-        # RTL alignment
+            
+        # Ensure RTL is set at the paragraph level
         if p.alignment != WD_ALIGN_PARAGRAPH.RIGHT:
             p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
             changes['rtl_fixes'] += 1
-        
-        # Line spacing
-        if p.paragraph_format.line_spacing != GOLDEN['lineSpacing']:
-            p.paragraph_format.line_spacing = GOLDEN['lineSpacing']
-            changes['spacing_fixes'] += 1
-    
+            
     return changes
 
 
