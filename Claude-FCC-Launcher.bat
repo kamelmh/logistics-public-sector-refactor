@@ -7,7 +7,7 @@ set "FCC_PORT=8082"
 
 echo ========================================
 echo   Claude Code via Free Proxy
-echo   Primary:  Nemotron 3 Super 120B (1M ctx, free)
+echo   Primary:  Fable 5 (Claude 3.5 Sonnet)
 echo   Fallback: Ollama Cloud (API key set)
 echo ========================================
 echo.

@@ -1,7 +1,12 @@
 # CrossFlow Handoff — Academix v13.4
 
-## Current Priority (Session 33)
-**Emergency Recovery Complete.** Thesis DOCX was corrupted by surgical XML edits; performed full rebuild from Markdown source via Gold-Standard Pipeline. Document is now stable, regulated, and table styles match backup v7c.
+## Current Priority (Session 33 — CRITICAL)
+**Thesis Build Tools are fundamentally broken.** Despite surgical attempts to fix formatting, the resulting DOCX is rendered as 300+ pages in Word ("stuffed" effect). This is a deep OOXML/Rendering conflict between Traditional Arabic font, RTL, and 1.5 spacing.
+
+**Decision**: Stop iterative guessing. Move to a high-reasoning model (Fable 5 / Claude) with a directed prompt to rewrite the formatting logic in `fix_thesis_all.py` and `build-thesis.ps1` to ensure Word-native compatibility.
+
+## Active Model
+**Gemma 4 31B** (Google) — Handing off to high-reasoning model.
 
 ## Active Model
 **Gemma 4 31B** (Google, 256K context) — Recovery Lead.
