@@ -1,7 +1,11 @@
 # CrossFlow Handoff — Academix v13.4
 
-## Current Priority (Session 33 — URGENT)
-**Thesis DOCX is corrupted.** User reports tables don't display correctly, document is not regulated, content appears stuffed/broken. Requires full rebuild from markdown source using Gold-Standard Pipeline.
+## Current Priority (Session 33)
+**Emergency Recovery Complete.** Thesis DOCX was corrupted by surgical XML edits; performed full rebuild from Markdown source via Gold-Standard Pipeline. Document is now stable, regulated, and table styles match backup v7c.
+
+## Active Model
+**Gemma 4 31B** (Google, 256K context) — Recovery Lead.
+**mimo-v2.5-free** (Gemini 2.5 Flash) — Awaiting final submission prep.
 
 ## Active Model
 **Gemma 4 31B** (Google, 256K context) — Completed Tooling Amelioration.
