@@ -39,6 +39,9 @@ def check_caption_rtl(doc):
     bad_captions = 0
     total_captions = 0
     for p in doc.paragraphs:
+        sname = (p.style.name or '') if p.style else ''
+        if 'toc' in sname.lower():
+            continue
         text = p.text or ""
         if "جدول" in text or "شكل" in text:
             total_captions += 1
@@ -53,34 +56,25 @@ def check_caption_rtl(doc):
     return total_captions, bad_captions
 
 def check_page_numbering(doc):
-    """Verify body section has decimal page numbering.
+    """Verify page numbering is decimal and continuous.
     
-    Our pipeline sets:
-    - Section 0 (cover): fmt=none
-    - Section 1 (front/TOC): fmt=lowerRoman, start=1
-    - Section 2+ (body): fmt=decimal, start=1
-    
-    We check section 2 (first body section) for decimal format.
+    Single-section layout:
+    - One section with titlePg (different first page)
+    - pgNumType: fmt=decimal, start=1 (cover counts as page 1, no display)
+    - Footer: first-page blank, default has PAGE field
     """
     try:
-        # Check section 2 (index 2) for body decimal numbering
-        if len(doc.sections) < 3:
-            # Fallback: check section 0
-            sectPr = doc.sections[0]._sectPr
-        else:
-            sectPr = doc.sections[2]._sectPr
-            
+        sectPr = doc.sections[0]._sectPr
         pgNumType = sectPr.find(f'{{{W_NS["w"]}}}pgNumType')
         
         if pgNumType is None:
-            # No pgNumType = inherits default (decimal) — acceptable
             return True, "inherited default (ok)"
         
         fmt = pgNumType.get(f'{{{W_NS["w"]}}}fmt')
         start = pgNumType.get(f'{{{W_NS["w"]}}}start')
         
-        # Accept decimal with any start value
-        type_ok = fmt == 'decimal' or fmt is None
+        # Accept decimal with start=1 (continuous from cover)
+        type_ok = fmt == 'decimal' and start == '1'
         
         return type_ok, f"fmt={fmt}, start={start}"
     except Exception as e:
@@ -96,7 +90,7 @@ def run_checks(docx_path, strict_headings=False, size_threshold=50000, backup_pa
     results = [
         check("DOCX file exists", os.path.exists(docx_path)),
         check("Has paragraphs", p_count > 0, f"count={p_count}"),
-        check("Has sections (>=3)", s_count >= 3, f"count={s_count}"),
+        check("Has sections (>=1)", s_count >= 1, f"count={s_count}"),
         check("Paragraph count >= 250", p_count >= 250, f"count={p_count}"),
         check("File size threshold", fsize > size_threshold, f"size={fsize//1024}KB"),
     ]
@@ -175,7 +169,14 @@ def run_checks(docx_path, strict_headings=False, size_threshold=50000, backup_pa
         if lv > 0: prev = lv
     results.append(check("Heading hierarchy OK", (skip == 0 if strict_headings else skip <= 1), f"{skip} skips"))
 
-    bp = [p for p in paras if p.style and p.style.name in body_styles]
+    # Find the first Heading 1 paragraph to skip front matter (cover, dedication, thanks)
+    first_h1_idx = 0
+    for idx, p in enumerate(paras):
+        if p.style and p.style.name and 'Heading 1' in p.style.name:
+            first_h1_idx = idx
+            break
+
+    bp = [p for p in paras[first_h1_idx:] if p.style and p.style.name in body_styles]
     sample_len = min(len(bp), 80)
     threshold = max(1, int(sample_len * 0.05))
     

@@ -1,32 +1,26 @@
-"""fix_docx_sections.py — Add section breaks at logical thesis boundaries, set A4 page size
+"""fix_docx_sections.py — Single-section thesis layout with A4 page size
 Usage: python fix_docx_sections.py <path/to.docx> [--save]
+
+Strategy: ONE section for entire document. Cover uses "different first page" footer (no page number).
+Page numbering starts at 1 on cover (counts in sequence) but only displays from page 2 onward.
+TOC field auto-generates with correct page numbers.
 """
 
-import sys, os, json, copy
+import sys, os
 from docx import Document
 from docx.oxml.ns import qn, nsdecls
 from docx.oxml import parse_xml
 from docx.shared import Cm
 
-# Force UTF-8 for stdout (avoids 'charmap' codec error on Windows with Arabic text)
+# Force UTF-8 for stdout
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 elif hasattr(sys.stdout, 'buffer'):
-    # Python <3.7 fallback
     import io
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-# A4 dimensions in cm
 A4_WIDTH_CM = 21.0
 A4_HEIGHT_CM = 29.7
-
-# Boundary markers: look for paragraphs containing these strings AND matching heading style
-# Each tuple: (marker text, section_name, must_be_first_h1)
-BOUNDARIES = [
-    ("المقدمة العامة", "Body", True),         # first chapter-level H1
-    ("قائمة المصادر والمراجع", "BackMatter", False),
-    ("الملاحق", "Annexes", False),
-]
 
 
 def set_a4_page_size(sect_pr):
@@ -36,77 +30,66 @@ def set_a4_page_size(sect_pr):
         pgSz = parse_xml(f'<w:pgSz {nsdecls("w")} w:w="11906" w:h="16838"/>')
         sect_pr.insert(0, pgSz)
     else:
-        pgSz.set(qn('w:w'), '11906')   # A4 width in twips (21cm)
-        pgSz.set(qn('w:h'), '16838')   # A4 height in twips (29.7cm)
-    # Remove any letter-size override
+        pgSz.set(qn('w:w'), '11906')
+        pgSz.set(qn('w:h'), '16838')
     pgSz.attrib.pop(qn('w:orient'), None)
 
 
-def add_section_breaks(path, save=False):
+def ensure_single_section(path, save=False):
+    """Remove all section breaks, keep only the final body-level sectPr."""
     doc = Document(path)
-    paras = doc.paragraphs
-
-    # Get the body-level sectPr (last section properties in w:body)
     body = doc.element.body
-    body_sect_pr = body.find(qn('w:sectPr'))
-    if body_sect_pr is None:
-        print("[ERROR] No sectPr found in document body")
-        return
 
-    # Force A4 page size on the body section
-    set_a4_page_size(body_sect_pr)
-    print(f"  [A4] Body section page size set to {A4_WIDTH_CM}x{A4_HEIGHT_CM}cm")
+    # Find all sectPr in paragraphs (section breaks)
+    para_sect_prs = []
+    for p in doc.paragraphs:
+        pPr = p._p.find(qn('w:pPr'))
+        if pPr is not None:
+            sect_pr = pPr.find(qn('w:sectPr'))
+            if sect_pr is not None:
+                para_sect_prs.append((p, pPr, sect_pr))
 
-    HEADING_STYLES = {"Heading 1", "Heading 2", "Heading 3", "Titre 1", "Titre 2", "Titre 3"}
-    # Find boundary paragraphs — match actual headings, not TOC entries
-    insert_before_indices = []
-    for marker, name, _ in BOUNDARIES:
-        for i, p in enumerate(paras):
-            txt = p.text.strip()
-            if marker in txt and p.style.name in HEADING_STYLES:
-                insert_before_indices.append((i, p, name))
-                break
-
-    insert_before_indices.sort(key=lambda x: x[0])
-    print(f"Found {len(insert_before_indices)} section boundaries:")
-    for idx, p, name in insert_before_indices:
-        print(f"  Section break before para [{idx}]: {p.text.strip()[:50]}")
+    print(f"Found {len(para_sect_prs)} section breaks in paragraphs")
 
     if not save:
-        print("\n[DRY RUN] Use --save to apply")
-        return len(insert_before_indices)
+        print("[DRY RUN] Use --save to apply")
+        return len(para_sect_prs)
 
-    # Apply breaks in REVERSE order so indices stay valid
-    applied = 0
-    for idx, p, name in reversed(insert_before_indices):
-        if idx == 0:
-            continue
-        prev_para = paras[idx - 1]
-        p_elem = prev_para._p
-        pPr = p_elem.find(qn('w:pPr'))
+    # Remove all paragraph-level sectPr (section breaks)
+    for p, pPr, sect_pr in para_sect_prs:
+        pPr.remove(sect_pr)
+        print(f"  Removed section break at para: {p.text.strip()[:60]}")
 
-        # Skip if a sectPr already exists in this paragraph's pPr
-        if pPr is not None and pPr.find(qn('w:sectPr')) is not None:
-            print(f"  Skipped (exists): break before [{idx}] \"{p.text.strip()[:50]}\"")
-            continue
+    # Get the body-level sectPr (the one that remains)
+    body_sect_pr = body.find(qn('w:sectPr'))
+    if body_sect_pr is None:
+        print("[ERROR] No body-level sectPr found")
+        return 0
 
-        new_sect_pr = copy.deepcopy(body_sect_pr)
-        # Force A4 on new sections too
-        set_a4_page_size(new_sect_pr)
-        if pPr is None:
-            pPr = parse_xml(f'<w:pPr {nsdecls("w")}/>')
-            p_elem.insert(0, pPr)
-        pPr.append(new_sect_pr)
-        applied += 1
-        print(f"  Applied: break before [{idx}] \"{p.text.strip()[:50]}\"")
+    # Force A4 on the single section
+    set_a4_page_size(body_sect_pr)
+    print(f"  [A4] Single section page size set to {A4_WIDTH_CM}x{A4_HEIGHT_CM}cm")
 
-    print(f"\nApplied {applied} section breaks (total sections: {applied + 1})")
+    # Ensure titlePg (different first page) is set on body sectPr
+    title_pg = body_sect_pr.find(qn('w:titlePg'))
+    if title_pg is None:
+        title_pg = parse_xml(f'<w:titlePg {nsdecls("w")}/>')
+        body_sect_pr.insert(0, title_pg)
+        print("  [titlePg] Enabled 'different first page' for cover")
+
+    # Set page numbering: decimal, start=1 (continuous from cover)
+    old_pg = body_sect_pr.find(qn('w:pgNumType'))
+    if old_pg is not None:
+        body_sect_pr.remove(old_pg)
+    pg_num = parse_xml(f'<w:pgNumType {nsdecls("w")} w:fmt="decimal" w:start="1"/>')
+    body_sect_pr.insert(0, pg_num)
+    print("  [pgNumType] Decimal, start=1 (continuous from cover)")
 
     if save:
         doc.save(path)
         print(f"Saved: {path}")
 
-    return applied
+    return 1
 
 
 def main():
@@ -122,7 +105,7 @@ def main():
         sys.exit(1)
 
     try:
-        add_section_breaks(path, save)
+        ensure_single_section(path, save)
     except Exception as e:
         print(f"[ERROR] {e}", file=sys.stderr)
         import traceback

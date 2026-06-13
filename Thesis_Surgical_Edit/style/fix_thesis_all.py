@@ -1,4 +1,4 @@
-"""fix_thesis_all.py — Comprehensive thesis DOCX fixer v3 (Full RTL + Footer)
+"""fix_thesis_all.py — Comprehensive thesis DOCX fixer v4 (Single-Section + Full RTL)
 Part of Academix v13.2 build pipeline
 Usage: python fix_thesis_all.py <path/to.docx> --save
 
@@ -12,21 +12,24 @@ ANTI-STUFFED + FULL RTL STRATEGY:
   6. Clear run-level font/size overrides that shadow the style cascade
   ─────────────────────────────────────────────────────────────────────────────
 
-Fixes applied:
- 1.  Page numbering: cover→none, TOC→lowerRoman, body→decimal
- 2.  Table column widths: proportional, content-aware
- 3.  Table borders: thin gridlines on all tables
- 4.  Table cell padding: compact margins
- 5.  Style-level font (Traditional Arabic 14pt, 1.5 spacing, RTL)
-     Styles covered: Normal, Body Text, Compact, List Paragraph, No Spacing,
-                     Caption, Footnote Text, Annotation Text, Table Contents,
-                     Heading 1/2/3 + French equivalents (Titre 1/2/3)
- 6.  Paragraph pPr: <w:bidi w:val="1"/> + <w:jc val="right"/> on ALL body paras
- 7.  Run rPr: <w:bidi/> + <w:rtl/> on runs containing Arabic characters
- 8.  Empty paragraph cleanup (consecutive)
- 9.  Footnote RTL: pPr + rPr + namespace declarations (zip-level)
-10.  Footer injection: proper PAGE field, RTL, Traditional Arabic font
-11.  Word compat: ns0/ns1 → w/mc namespace fix
+Fixes applied (fix_docx_sections.py handles page numbering + single section):
+ 1.  Table column widths: proportional, content-aware
+ 2.  Table borders: thin gridlines on all tables
+ 3.  Table cell padding: compact margins
+ 4.  Style-level font (Traditional Arabic 14pt, 1.5 spacing, RTL)
+      Styles covered: Normal, Body Text, Compact, List Paragraph, No Spacing,
+                      Caption, Footnote Text, Annotation Text, Table Contents,
+                      Heading 1/2/3 + French equivalents (Titre 1/2/3)
+ 5.  Paragraph pPr: <w:bidi w:val="1"/> + <w:jc val="right"/> on ALL body paras
+ 6.  Run rPr: <w:bidi/> + <w:rtl/> on runs containing Arabic characters
+ 7.  Empty paragraph cleanup (consecutive)
+ 8.  Footnote RTL: pPr + rPr + namespace declarations (zip-level)
+ 9.  Footer injection: proper PAGE field, RTL, Traditional Arabic font
+     - Single section with titlePg (different first page)
+     - footer1.xml = blank (cover/first page)
+     - footer2.xml = PAGE field (all other pages)
+     - Page numbering: decimal, start=1 (cover counts as page 1, no display)
+ 10. Word compat: ns0/ns1 → w/mc namespace fix
 """
 
 import sys, os, zipfile, re, time as _time
@@ -186,17 +189,18 @@ def _apply_style_formatting(style, font_name, font_size_pt, line_spacing=True, r
 # ── Fix 1: Page numbering ──────────────────────────────────────────────────────
 
 def fix_page_numbering(doc, changes):
-    """cover=none, front=lowerRoman start=1, body=decimal start=1."""
-    formats = ['none', 'lowerRoman', 'decimal', 'decimal']
+    """cover=none, TOC=decimal start=1, body/annexes=decimal CONTINUE (no start attr)."""
+    formats = ['none', 'decimal', 'decimal', 'decimal']
     for i, sec in enumerate(doc.sections):
         sect_pr = sec._sectPr
         old = sect_pr.find(qn('w:pgNumType'))
         if old is not None:
             sect_pr.remove(old)
         fmt = formats[i] if i < len(formats) else 'decimal'
-        start = ' w:start="1"' if i >= 1 else ''
+        # Only TOC (section 1) starts at 1; body (2) and annexes (3) CONTINUE
+        start = ' w:start="1"' if i == 1 else ''
         pg = parse_xml('<w:pgNumType %s w:fmt="%s"%s/>' % (nsdecls('w'), fmt, start))
-        changes['page_num_sec%d' % i] = 'fmt=%s%s' % (fmt, ' start=1' if start else '')
+        changes['page_num_sec%d' % i] = 'fmt=%s%s' % (fmt, ' start=1' if start else ' continue')
         first = sect_pr.find(qn('w:type'))
         if first is not None:
             sect_pr.insert(list(sect_pr).index(first) + 1, pg)
@@ -347,7 +351,7 @@ def fix_paragraph_rtl(doc, changes):
     # Body paragraphs
     for p in doc.paragraphs:
         sname = (p.style.name or '') if p.style else ''
-        if any(k in sname for k in skip_styles):
+        if any(k in sname for k in skip_styles) and 'Caption' not in sname:
             continue
         _fix_para_elem_rtl(p._element)
         count += 1
@@ -358,7 +362,7 @@ def fix_paragraph_rtl(doc, changes):
             for cell in row.cells:
                 for p in cell.paragraphs:
                     sname = (p.style.name or '') if p.style else ''
-                    if any(k in sname for k in skip_styles):
+                    if any(k in sname for k in skip_styles) and 'Caption' not in sname:
                         continue
                     _fix_para_elem_rtl(p._element)
                     count += 1
@@ -381,10 +385,23 @@ def _fix_runs_in_para(p, is_body, rtl_counter, clear_counter):
         elif is_body:
             rPr = r._r.find(qn('w:rPr'))
             if rPr is not None:
-                children = list(rPr)
-                if children and all(c.tag in PURE_FORMAT_TAGS for c in children):
-                    r._r.remove(rPr)
-                    clear_counter[0] += 1
+                # Always explicitly clear font size overrides if this is a body or footnote style
+                if is_body or sname in FOOTNOTE_STYLES:
+                    sz = rPr.find(qn('w:sz'))
+                    if sz is not None:
+                        rPr.remove(sz)
+                    szCs = rPr.find(qn('w:szCs'))
+                    if szCs is not None:
+                        rPr.remove(szCs)
+                    # If rPr is empty after clearing, remove it
+                    if not list(rPr): 
+                        r._r.remove(rPr)
+                        clear_counter[0] += 1
+                elif children and all(c.tag in PURE_FORMAT_TAGS for c in children):
+                    # Original logic for other pure format tags
+                    if not list(rPr): # If rPr is empty after clearing, remove it
+                        r._r.remove(rPr)
+                        clear_counter[0] += 1
 
 
 def fix_run_rtl(doc, changes):
@@ -606,6 +623,15 @@ _FOOTER_XML = '''\
         <w:sz w:val="24"/>
         <w:szCs w:val="24"/>
       </w:rPr>
+      <w:fldChar w:fldCharType="separate"/>
+    </w:r>
+    <w:r>
+      <w:rPr>
+        <w:rFonts w:ascii="Traditional Arabic" w:hAnsi="Traditional Arabic"
+                  w:cs="Traditional Arabic"/>
+        <w:sz w:val="24"/>
+        <w:szCs w:val="24"/>
+      </w:rPr>
       <w:fldChar w:fldCharType="end"/>
     </w:r>
   </w:p>
@@ -620,120 +646,81 @@ _FOOTER_BLANK_XML = '''\
 '''
 
 def inject_footer(docx_path, changes):
-    """Inject proper page-number footer into every section of the DOCX.
+    """Inject footer for SINGLE-SECTION document with 'different first page'.
 
     Strategy:
-    - Section 0 (cover): blank footer — no page number
-    - Section 1+ (TOC, body, annexes): centered PAGE field
+    - ONE section with titlePg (different first page) enabled
+    - footer1.xml = blank (used for first page / cover via w:type="first")
+    - footer2.xml = PAGE field (used for default pages via w:type="default")
+    - Page numbering: decimal, start=1 (cover counts as page 1 but no display)
     - Uses <w:fldChar> based field — never a cached fldSimple value
       so Word NEVER renders "PAGE1" or a stale number
-    - Adds footer relationships to document.xml.rels
-    - Wires sectPr <w:footerReference> in each section
     """
-    FOOTER_ARC  = 'word/footer1.xml'   # page-number footer
-    FOOTER_BLANK_ARC = 'word/footer2.xml'  # blank footer for cover
-
     with zipfile.ZipFile(docx_path, 'r') as z:
         names = z.namelist()
         rels_raw = z.read('word/_rels/document.xml.rels').decode('utf-8')
         doc_raw  = z.read('word/document.xml').decode('utf-8')
         ct_raw   = z.read('[Content_Types].xml').decode('utf-8')
 
-    # ── Add content type entries ──
+    # ── Add content type entries for footer1.xml and footer2.xml ──
     ft_ct = 'application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml'
     new_ct = ct_raw
-    for arc in (FOOTER_ARC, FOOTER_BLANK_ARC):
-        part = '/' + arc
+    for part in ['/word/footer1.xml', '/word/footer2.xml']:
         if part not in new_ct:
             new_ct = new_ct.replace(
                 '</Types>',
-                '<Override PartName="%s" ContentType="%s"/></Types>' % (part, ft_ct)
+                f'<Override PartName="{part}" ContentType="{ft_ct}"/></Types>'
             )
 
     # ── Add relationship entries ──
-    # Relationship IDs for the two footer files
-    RID_FOOTER_PAGE  = 'rIdFooterPage'
-    RID_FOOTER_BLANK = 'rIdFooterBlank'
     new_rels = rels_raw
-    footer_rel = ('<Relationship Id="{rid}" '
-                  'Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" '
-                  'Target="{target}"/>')
-    if RID_FOOTER_PAGE not in new_rels:
+    # Remove all existing footer relationships
+    new_rels = re.sub(r'<Relationship[^>]*Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer"[^/>]*/>', '', new_rels)
+    new_rels = re.sub(r'<Relationship[^>]*Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer">.*?</Relationship>', '', new_rels)
+    
+    footer_rel = '<Relationship Id="{rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="{target}"/>'
+    
+    # footer1.xml = blank (first page)
+    if 'rIdFooter1' not in new_rels:
         new_rels = new_rels.replace(
             '</Relationships>',
-            footer_rel.format(rid=RID_FOOTER_PAGE, target='footer1.xml') + '</Relationships>'
+            footer_rel.format(rid='rIdFooter1', target='footer1.xml') + '</Relationships>'
         )
-    if RID_FOOTER_BLANK not in new_rels:
+    
+    # footer2.xml = PAGE field (default pages)
+    if 'rIdFooter2' not in new_rels:
         new_rels = new_rels.replace(
             '</Relationships>',
-            footer_rel.format(rid=RID_FOOTER_BLANK, target='footer2.xml') + '</Relationships>'
+            footer_rel.format(rid='rIdFooter2', target='footer2.xml') + '</Relationships>'
         )
 
     # ── Wire sectPr footerReference in document.xml ──
-    # We do this via regex on raw XML for safety
-    # Section 0 (cover — last sectPr before </w:body> that is inline): blank
-    # All other sectPr (inside paragraph pPr): page-number footer
-
-    # Remove all existing footerReference elements first (clean slate)
+    # Remove all existing footerReference elements
     new_doc = re.sub(r'<w:footerReference[^/]*/>', '', doc_raw)
     new_doc = re.sub(r'<w:footerReference[^>]*></w:footerReference>', '', new_doc)
 
-    # Remove existing headerReference elements (prevent stale references)
-    # — keep headers intact, just remove broken ones
-    # (we don't add headers here, so leave existing ones alone)
+    # Find the single sectPr and wire BOTH footer references:
+    # - default -> footer2 (PAGE field)
+    # - first   -> footer1 (blank for cover)
+    def _wire_section(m):
+        s = m.group(0)
+        if 'w:footerReference' in s:
+            return s
+        ref_default = f'<w:footerReference w:type="default" r:id="rIdFooter2" xmlns:r="{REL_URI}"/>'
+        ref_first = f'<w:footerReference w:type="first" r:id="rIdFooter1" xmlns:r="{REL_URI}"/>'
+        return s.replace('</w:sectPr>', ref_default + ref_first + '</w:sectPr>')
 
-    # For sectPr inside pPr (section breaks 1-N): add page-number footer
-    def _add_footer_ref_to_sectPr(m):
-        sectpr = m.group(0)
-        ref = '<w:footerReference w:type="default" r:id="%s"/>' % RID_FOOTER_PAGE
-        return sectpr.replace('</w:sectPr>', ref + '</w:sectPr>')
-
-    # sectPr that lives inside a pPr (section break — not cover)
-    sect_in_ppr = re.compile(
-        r'(<w:pPr\b[^>]*>.*?)((<w:sectPr\b[^>]*>).*?(</w:sectPr>))',
-        re.DOTALL
+    new_doc = re.sub(
+        r'<w:sectPr\b[^>]*>.*?</w:sectPr>',
+        _wire_section,
+        new_doc,
+        flags=re.DOTALL
     )
-    def _wire_mid_section(m):
-        return m.group(1) + _add_footer_ref_to_sectPr(
-            re.match(r'.*', m.group(2), re.DOTALL)
-        ) if False else m.group(0)  # placeholder — use targeted replace below
 
-    # Simpler targeted approach: find all <w:sectPr>...</w:sectPr> and add ref
-    # but for the LAST sectPr (cover/body-end) use blank
-    all_sectpr = list(re.finditer(r'<w:sectPr\b[^>]*>.*?</w:sectPr>', new_doc, re.DOTALL))
-    if all_sectpr:
-        # Last sectPr = final body section (section 0 in terms of page count = cover/last)
-        # Sections before last = interior sections (body chapters etc.)
-        # Actually in OOXML, sectPr inside pPr comes FIRST in document order,
-        # and the last sectPr (in w:body directly) is the LAST section rendered.
-        # Our sections: body-level sectPr = section after all pPr sectPr's.
-        # We give blank to the FIRST rendered section (cover = first pPr sectPr or body sectPr
-        # if only 1 section).
-
-        # Strategy: blank footer on sectPr that has pgNumType fmt=none (cover)
-        # page-number footer on all others
-        def _wire_section(m):
-            s = m.group(0)
-            if 'w:footerReference' in s:
-                return s   # already has one
-            if 'fmt="none"' in s or "fmt='none'" in s:
-                rid = RID_FOOTER_BLANK
-            else:
-                rid = RID_FOOTER_PAGE
-            ref = ('<w:footerReference w:type="default" '
-                   'r:id="%s" xmlns:r="%s"/>' % (rid, REL_URI))
-            return s.replace('</w:sectPr>', ref + '</w:sectPr>')
-
-        new_doc = re.sub(
-            r'<w:sectPr\b[^>]*>.*?</w:sectPr>',
-            _wire_section,
-            new_doc,
-            flags=re.DOTALL
-        )
-
+    # Prepare replacements
     replacements = {
-        FOOTER_ARC:                _FOOTER_XML.encode('utf-8'),
-        FOOTER_BLANK_ARC:          _FOOTER_BLANK_XML.encode('utf-8'),
+        'word/footer1.xml': _FOOTER_BLANK_XML.encode('utf-8'),
+        'word/footer2.xml': _FOOTER_XML.encode('utf-8'),
         'word/_rels/document.xml.rels': new_rels.encode('utf-8'),
         'word/document.xml':       new_doc.encode('utf-8'),
         '[Content_Types].xml':     new_ct.encode('utf-8'),
@@ -816,38 +803,31 @@ def main():
 
     doc = Document(path)
 
-    print('[1/11] Page numbering ...')
-    changes = fix_page_numbering(doc, changes)
-    for i in range(4):
-        k = 'page_num_sec%d' % i
-        if k in changes:
-            print('  sec%d: %s' % (i, changes[k]))
-
-    print('[2/11] Table column widths ...')
+    print('[1/10] Table column widths ...')
     changes = fix_table_column_widths(doc, changes)
     print('  %d tables sized' % len(changes['table_widths_set']))
 
-    print('[3/11] Table borders ...')
+    print('[2/10] Table borders ...')
     changes = add_table_borders(doc, changes)
     print('  %d tables bordered' % len(changes['table_borders_added']))
 
-    print('[4/11] Table cell padding ...')
+    print('[3/10] Table cell padding ...')
     changes = fix_table_cell_padding(doc, changes)
 
-    print('[5/11] Style-level font / spacing / RTL ...')
+    print('[4/10] Style-level font / spacing / RTL ...')
     changes = fix_styles(doc, changes)
     print('  %d style definitions updated' % changes['styles_updated'])
 
-    print('[6/11] Paragraph RTL (pPr bidi + jc) ...')
+    print('[5/10] Paragraph RTL (pPr bidi + jc) ...')
     changes = fix_paragraph_rtl(doc, changes)
     print('  %d paragraphs set RTL' % changes['para_rtl_fixed'])
 
-    print('[7/11] Run-level Arabic RTL + bloat cleanup ...')
+    print('[6/10] Run-level Arabic RTL + bloat cleanup ...')
     changes = fix_run_rtl(doc, changes)
     print('  Arabic runs fixed: %d | Body rPr cleared: %d' % (
         changes['run_rtl_fixed'], changes['run_rpr_cleared']))
 
-    print('[8/11] Empty paragraph cleanup ...')
+    print('[7/10] Empty paragraph cleanup ...')
     changes = clean_empty_paragraphs(doc, changes)
     print('  %d removed' % changes['empty_paras_removed'])
 
@@ -855,18 +835,18 @@ def main():
         doc.save(path)
         print('  [Saved doc-level changes]')
 
-    print('[9/11] Footnote RTL + namespace fix (zip-level) ...')
+    print('[8/10] Footnote RTL + namespace fix (zip-level) ...')
     if save:
         changes = fix_footnotes_zip(path, changes)
     print('  pPr fixes: %d | run RTL: %d | NS fixes: %d' % (
         changes['fn_rtl_fixes'], changes['fn_run_rtl'], changes['fn_ns_fixes']))
 
-    print('[10/11] Footer injection (PAGE field, no PAGE1 bug) ...')
+    print('[9/10] Footer injection (PAGE field, no PAGE1 bug) ...')
     if save:
         changes = inject_footer(path, changes)
     print('  Footer injected: %s' % changes['footer_injected'])
 
-    print('[11/11] Word namespace compat (ns0/ns1 → w/mc) ...')
+    print('[10/10] Word namespace compat (ns0/ns1 → w/mc) ...')
     if save:
         changes = fix_word_compat(path, changes)
     print('  Files fixed: %d' % changes['compat_fixes'])

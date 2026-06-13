@@ -35,9 +35,9 @@ DEFAULT_MD = os.path.join(PROJECT_ROOT, 'Thesis_Surgical_Edit', 'Memoire_DSS_Log
 
 # ─── GROUND TRUTH CONSTANTS (from thesis data) ───────────────────
 GROUND_TRUTH = {
-    'D': '1,546',
-    'Q*': '176',
-    'ROP': '212.4',
+    'D': '789',
+    'Q*': '37',
+    'ROP': '206',
     'SS': '200',
     'LT': '2',
     'S': '801.45',
@@ -97,7 +97,7 @@ def parse_md_constants(md_path):
         (r'SS\s*=\s*([0-9,.]+)', 'SS'),
         (r'[Aa]جل\s+[Tt]سليم.*?(\d+)\s*يوم', 'LT'),
         (r'LT\s*=\s*([0-9,.]+)', 'LT'),
-        (r'S\s*=\s*([0-9,.]+)', 'S'),
+        (r'(?<!S)S\s*=\s*([0-9,.]+)', 'S'),  # Negative lookbehind to avoid matching SS
         (r'I\s*=\s*([0-9,.]+)%?', 'I'),
     ]
     

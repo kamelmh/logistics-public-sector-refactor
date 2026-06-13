@@ -416,9 +416,10 @@ function Invoke-Phase4 {
     
     # Verify (29 checks)
     $script = Join-Path $styleDir "verify_docx_checks.py"
+    $backupPath = Join-Path $outDir "Memoire_DSS_Logistique_ElBayadh_v7c_BACKUP.docx"
     if (Test-Path $script) {
         $ok = (Invoke-PipelineStep "verify_docx_checks.py — 29 fast checks" {
-            python $script $docxPath --size-threshold 50000 2>&1 | Select-Object -Last 30
+            python $script $docxPath --size-threshold 50000 --backup $backupPath 2>&1 | Select-Object -Last 30
         }) -and $ok
     }
     
