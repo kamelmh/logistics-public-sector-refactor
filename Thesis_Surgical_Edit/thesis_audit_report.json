@@ -33,7 +33,18 @@
                 "rtl": null
             }
         ],
-        "visual_audit": []
+        "visual_audit": [
+            {
+                "page": 10,
+                "issue": "Footer rendered as \"1\" on non-page-1",
+                "text": "1"
+            },
+            {
+                "page": 20,
+                "issue": "Footer rendered as \"1\" on non-page-1",
+                "text": "1"
+            }
+        ]
     },
     "status": "FAIL"
 }

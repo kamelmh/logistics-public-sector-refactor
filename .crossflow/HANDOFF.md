@@ -1,6 +1,16 @@
 # CrossFlow Handoff — Academix v13.4
 
-## Current Priority (Session 34 — COMPLETE)
+## Current Priority (Session 41 — Claude Desktop Context Setup)
+**Claude Desktop context ready.** CLAUDE.md created in project root with comprehensive project context.
+Claude Desktop has filesystem MCP access to project root for thesis review and assistance.
+
+## Current Status
+- **Thesis DOCX**: 32/32 verification checks PASS
+- **ERP Workbook**: 114/114 verification checks PASS
+- **Page numbering**: Fixed - single section with continuous numbering
+- **Next step**: Open in Word, Ctrl+A → F9 to update fields, final visual inspection
+
+## What Was Fixed (Session 40)
 **Thesis DOCX rendering bug RESOLVED.** All 32/32 verification checks pass.
 The "stuffed" 300-page rendering bug has been eliminated. The DOCX is stable.
 
@@ -57,9 +67,15 @@ python "Thesis_Surgical_Edit/style/verify_docx_checks.py" `
 python quick_verify.py "Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx"
 ```
 
+## Claude Desktop Integration
+- **CLAUDE.md**: Created in project root with comprehensive context for Claude Desktop
+- **MCP Access**: Filesystem server provides access to project root and Google Drive
+- **Purpose**: Thesis review, content verification, academic standards checking
+
 ## Key Files
 | File | Path |
 |------|------|
+| Claude Context | CLAUDE.md (project root) |
 | Thesis DOCX | Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx |
 | Thesis BACKUP v7c | Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh_v7c_BACKUP.docx |
 | Full fixer (v3) | Thesis_Surgical_Edit/style/fix_thesis_all.py |

@@ -232,6 +232,22 @@
     </phase>
   </decision-history>
 
+  <!-- ===== CLAUDE DESKTOP INTEGRATION ===== -->
+  <claude-desktop>
+    <config-path>C:\Users\Administrator\AppData\Roaming\Claude\claude_desktop_config.json</config-path>
+    <mcp-server name="filesystem">
+      <command>node</command>
+      <args>
+        <arg>C:\Users\Administrator\AppData\Roaming\Claude\Claude Extensions\ant.dir.ant.anthropic.filesystem\dist\index.js</arg>
+        <arg>C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor</arg>
+        <arg>C:\Users\Administrator\My Drive</arg>
+      </args>
+    </mcp-server>
+    <context-file>CLAUDE.md (project root)</context-file>
+    <purpose>Thesis review, content verification, academic standards checking</purpose>
+    <access>Full filesystem access to project root and Google Drive</access>
+  </claude-desktop>
+
 </master-bootstrap>
 ```
 
