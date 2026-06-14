@@ -15,7 +15,7 @@ if ($Regulated) {
 
 $projectRoot = Split-Path $PSScriptRoot -Parent
 $sourcePath = Join-Path $projectRoot "Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md"
-$desktopDocx = "C:\Users\Administrator\Desktop\Memoire_DSS_Logistique_ElBayadh_v7c_FIXED.docx"
+$desktopDocx = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\Latest-thesis-backup-Memoire_DSS_Logistique_ElBayadh.docx"
 $styleDir = Join-Path $PSScriptRoot "style"
 $refDocx = Join-Path $styleDir "reference.docx"
 $outDir = Join-Path $PSScriptRoot "output"

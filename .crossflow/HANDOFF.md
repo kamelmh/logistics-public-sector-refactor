@@ -1,15 +1,13 @@
 # CrossFlow Handoff — Academix v13.4
 
-## Current Priority (Session 45 — Claude Desktop Deep Verification)
-**Ready for deep verification.** Claude Desktop GUI setup complete:
-- `CLAUDE.md` updated with Session 45 status (99% complete)
-- `ClaudeDesktop_DEEP_VERIFICATION.md` — 7-step verification strategy
-- `ClaudeDesktop_LAUNCH_CHECKLIST.md` — Step-by-step launch guide
-- `CROSSFLOW_CLAUDE_DESKTOP.md` — Session history and git context
-- Git synced (fd9c342), all files committed and pushed
-- MCP filesystem access confirmed in `claude_desktop_config.json`
+## Current Priority (Session 46 — Claude Desktop Deep Verification)
+**Ready for Claude Desktop deep verification.** Rebuilt DOCX with corrected ground truth:
+- Fixed markdown tables: PU=400→4,500, ABC calculation corrected
+- Rebuilt DOCX: 32/32 PASS (all RTL issues resolved)
+- Created ClaudeDesktop_HANDOFF_PLAN.md — 7-phase rate-limit-aware strategy
+- All ground truth values verified correct in DOCX tables and text
 
-**Next**: Launch Claude Desktop GUI, follow verification strategy, provide final assessment.
+**Next**: Launch Claude Desktop GUI, follow 7-phase handoff plan, provide final assessment.
 
 ## Current Status
 - **Thesis DOCX**: 32/32 verification checks PASS

@@ -373,7 +373,7 @@ def fix_paragraph_rtl(doc, changes):
 
 # ── Fix 7: Run-level RTL for Arabic text ──────────────────────────────────────
 
-def _fix_runs_in_para(p, is_body, rtl_counter, clear_counter):
+def _fix_runs_in_para(p, is_body, sname, rtl_counter, clear_counter):
     """Apply Arabic RTL + bloat cleanup to runs in a paragraph element."""
     PURE_FORMAT_TAGS = {qn('w:rFonts'), qn('w:sz'), qn('w:szCs'),
                         qn('w:b'), qn('w:color'), qn('w:bCs')}
@@ -394,12 +394,12 @@ def _fix_runs_in_para(p, is_body, rtl_counter, clear_counter):
                     if szCs is not None:
                         rPr.remove(szCs)
                     # If rPr is empty after clearing, remove it
-                    if not list(rPr): 
+                    if not list(rPr):
                         r._r.remove(rPr)
                         clear_counter[0] += 1
-                elif children and all(c.tag in PURE_FORMAT_TAGS for c in children):
+                elif list(rPr) and all(c.tag in PURE_FORMAT_TAGS for c in list(rPr)):
                     # Original logic for other pure format tags
-                    if not list(rPr): # If rPr is empty after clearing, remove it
+                    if not list(rPr):
                         r._r.remove(rPr)
                         clear_counter[0] += 1
 
@@ -419,7 +419,7 @@ def fix_run_rtl(doc, changes):
         sname = (p.style.name or '') if p.style else ''
         if any(k in sname for k in skip_styles):
             continue
-        _fix_runs_in_para(p, sname in BODY_STYLES, rtl_c, clr_c)
+        _fix_runs_in_para(p, sname in BODY_STYLES, sname, rtl_c, clr_c)
 
     # Table cell paragraphs
     for table in doc.tables:
@@ -429,7 +429,7 @@ def fix_run_rtl(doc, changes):
                     sname = (p.style.name or '') if p.style else ''
                     if any(k in sname for k in skip_styles):
                         continue
-                    _fix_runs_in_para(p, sname in BODY_STYLES, rtl_c, clr_c)
+                    _fix_runs_in_para(p, sname in BODY_STYLES, sname, rtl_c, clr_c)
 
     changes['run_rtl_fixed'] = rtl_c[0]
     changes['run_rpr_cleared'] = clr_c[0]
