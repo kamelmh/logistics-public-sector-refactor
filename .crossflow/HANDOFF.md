@@ -1,19 +1,31 @@
 # CrossFlow Handoff — Academix v13.4
 
-## Current Priority (Session 46 — Claude Desktop Deep Verification)
-**Ready for Claude Desktop deep verification.** Rebuilt DOCX with corrected ground truth:
-- Fixed markdown tables: PU=400→4,500, ABC calculation corrected
-- Rebuilt DOCX: 32/32 PASS (all RTL issues resolved)
-- Created ClaudeDesktop_HANDOFF_PLAN.md — 7-phase rate-limit-aware strategy
-- All ground truth values verified correct in DOCX tables and text
+## Current Priority (Session 47d — 2026-06-15)
+**Golden source complete — ready for Claude Desktop deep verification.**
+Latest-thesis-backup-1 (146 KB) has been fixed IN-PLACE:
+- Footnote RTL: 52 Arabic runs → ALL have bidi+rtl
+- Cover logo: 200x200 institute logo restored
+- All original content preserved: endnotes, customXml (3 files), footers
+- Verification: 32/32 PASS (table styles match v7c backup)
 
-**Next**: Launch Claude Desktop GUI, follow 7-phase handoff plan, provide final assessment.
+**Next**: Launch Claude Desktop GUI, follow 7-phase handoff plan in `ClaudeDesktop_HANDOFF_PLAN.md`.
 
 ## Current Status
-- **Thesis DOCX**: 32/32 verification checks PASS
+- **Thesis Golden Source**: 32/32 verification checks PASS
 - **ERP Workbook**: 114/114 verification checks PASS
-- **Page numbering**: Fixed - single section with continuous numbering
-- **Next step**: Open in Word, Ctrl+A → F9 to update fields, final visual inspection
+- **Page numbering**: Fixed — single section with continuous numbering
+- **Footnote RTL**: Fixed — 52 Arabic runs all have bidi+rtl
+- **Cover Logo**: Restored — 200x200 institute logo on first paragraph
+- **Git**: Synced with remote (fcbb9f5)
+
+## What Was Fixed (Session 47d)
+**Golden source directly fixed for Claude Desktop:**
+1. Applied fix_docx_sections + fix_thesis_all v3 IN-PLACE to Latest-thesis-backup-1
+2. Footnote RTL: 52 Arabic runs → ALL 52 now have bidi+rtl (was 0)
+3. Cover logo restored from pre-fix backup (10,942 bytes, 200x200 RGB)
+4. All original content preserved: endnotes.xml, customXml (3 files), footers
+5. Verification: 32/32 PASS, table styles match v7c backup
+6. Size: 146 KB (golden source is now the fixed version)
 
 ## What Was Fixed (Session 40)
 **Thesis DOCX rendering bug RESOLVED.** All 32/32 verification checks pass.
@@ -81,13 +93,10 @@ python quick_verify.py "Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBay
 ## Key Files
 | File | Path |
 |------|------|
-| Claude Desktop Deep Verification | ClaudeDesktop_DEEP_VERIFICATION.md |
-| Claude Desktop Launch Checklist | ClaudeDesktop_LAUNCH_CHECKLIST.md |
-| Claude Desktop CrossFlow | CROSSFLOW_CLAUDE_DESKTOP.md |
+| Golden Source (FIXED) | Thesis_Surgical_Edit/output/Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx |
+| Claude Desktop Handoff | ClaudeDesktop_HANDOFF_PLAN.md |
 | Project Context | CLAUDE.md |
 | Thesis Context | THESIS_CONTEXT.md |
-| Thesis DOCX | Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx |
-| Thesis BACKUP v7c | Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh_v7c_BACKUP.docx |
 | Full fixer (v3) | Thesis_Surgical_Edit/style/fix_thesis_all.py |
 | Verify tool | Thesis_Surgical_Edit/style/verify_docx_checks.py |
 | Build script | Thesis_Surgical_Edit/build-thesis.ps1 |
