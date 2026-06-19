@@ -37,6 +37,11 @@ function Apply-Fixes-And-Audit {
     python (Join-Path $styleDir "fix_docx_sections.py") $DocxPath --save 2>&1
     if ($LASTEXITCODE -ne 0) { Write-Warning "  fix_docx_sections reported issues (non-critical)" }
     
+    # Apply surgical polishing (RTL footnotes, link removal, CNEPD scrubbing)
+    Write-Host "  [BUILD] Applying surgical polish (surgical_polish)..." -ForegroundColor Yellow
+    python (Join-Path $styleDir "surgical_polish.py") $DocxPath --save 2>&1
+    if ($LASTEXITCODE -ne 0) { Write-Warning "  surgical_polish reported issues (non-critical)" }
+
     # Apply comprehensive fixes LAST (namespace fix + PAGE field fix must be final)
     Write-Host "  [BUILD] Applying comprehensive fixes (fix_thesis_all)..." -ForegroundColor Yellow
     python (Join-Path $styleDir "fix_thesis_all.py") $DocxPath --save 2>&1

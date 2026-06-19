@@ -75,7 +75,8 @@ Private Repo (this)
 │   ├── build-thesis.ps1        ← 5 build modes
 │   ├── style/
 │   │   ├── fix_thesis_all.py   ← 7-step comprehensive fixer
-│   │   ├── verify_docx_checks.py ← 28 checks
+│   │   ├── surgical_polish.py  ← RTL footnotes, link removal, CNEPD scrubbing
+│   │   ├── verify_docx_checks.py ← 32 checks
 │   │   ├── docx_md_sync.py     ← MD ↔ DOCX sync tool
 │   │   ├── audit_thesis_comprehensive.py
 │   │   └── ...
@@ -92,7 +93,7 @@ Private Repo (this)
 
 | Check | Count | Tools |
 |-------|-------|-------|
-| Thesis DOCX | 28/28 | verify_docx_checks.py (python-docx) |
+| Thesis DOCX | 32/32 | verify_docx_checks.py (python-docx) |
 | English Paper | 12/12 | verify-english-paper.ps1 |
 | ERP Build | 174/174 | vbe-auto verify.ps1 |
 | ERP Macro Tests | 20/20 | test-macros.ps1 |
