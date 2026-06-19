@@ -1,4 +1,4 @@
-# Academix v13.3 — DSS Logistique El Bayadh
+# Academix v13.4 — DSS Logistique El Bayadh
 
 [![CI](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml/badge.svg)](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml)
 [![VBA Validate](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml/badge.svg?job=vba-validate)](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml)
@@ -6,7 +6,6 @@
 [![Model Health](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/model-health.yml/badge.svg)](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/model-health.yml)
 [![Release](https://img.shields.io/github/v/release/kamelmh/logistics-public-sector-refactor?include_prereleases&label=release)](https://github.com/kamelmh/logistics-public-sector-refactor/releases)
 [![VBA](https://img.shields.io/badge/VBA-Excel%202010%2B-green)](https://docs.microsoft.com/en-us/office/vba/)
-[![License](https://img.shields.io/github/license/kamelmh/logistics-public-sector-refactor)](LICENSE)
 [![Thesis](https://img.shields.io/badge/Thesis-DSS%20Logistique%20El--Bayadh-8A2BE2)](https://github.com/kamelmh/lsm-vba-core)
 [![GitHub Models](https://img.shields.io/badge/GitHub_Models-Free_tier-181717?logo=github)](tools/gh-models.ps1)
 
@@ -16,12 +15,13 @@ Decision Support System for inventory management at the **Direction de l'Éducat
 
 | Parameter | Value | Description |
 |-----------|-------|-------------|
-| D | 1,546 units/yr | Annual demand |
-| Q* | 176 units | Wilson EOQ |
-| ROP | 212.4 units | Reorder Point |
+| D | 789 units/yr | Annual demand |
+| Q* | 37 units | Wilson EOQ |
+| ROP | 206 units | Reorder Point |
 | SS | 200 units | Safety Stock |
 | LT | 2 days | Lead Time |
 | S | 801.45 DZD | Order Cost |
+| PU | 4,500 DZD | Unit Price |
 | I | 20% | Holding Rate |
 
 > Canonical thesis constants — locked, never modify.
@@ -47,8 +47,14 @@ Decision Support System for inventory management at the **Direction de l'Éducat
 # Full pipeline (build → fix → audit → verify → metrics)
 & "Thesis_Surgical_Edit\build-thesis.ps1"
 
-# Or verify only
-python Thesis_Surgical_Edit/style/verify_docx_checks.py Research_and_Development/Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx
+# Use Golden Source directly (No Rebuild)
+& "Thesis_Surgical_Edit\build-thesis.ps1" -NoRebuild
+
+# Restore Golden Source from latest backup
+& "Thesis_Surgical_Edit\build-thesis.ps1" -Restore
+
+# Or rebuild from MD via pandoc
+& "Thesis_Surgical_Edit\build-thesis.ps1" -FromMD
 ```
 
 ### English Paper
@@ -64,6 +70,7 @@ python Thesis_Surgical_Edit/style/verify_docx_checks.py Research_and_Development
 | `thesis` | ✅ Must pass | Builds DOCX + PDF, 28 verify checks, uploads artifacts |
 | `erp` | ⚠️ Optional | Requires Excel (skips on GitHub Actions runners) |
 | `lint` | ✅ Must pass | PSScriptAnalyzer + ruff checks |
+| `model-health` | ✅ Must pass | Checks model version and availability |
 
 ## Architecture
 
@@ -72,7 +79,7 @@ Private Repo (this)
 ├── Thesis_Surgical_Edit/       ← Thesis source (MD) + build + verify scripts
 │   ├── Memoire_DSS_Logistique_ElBayadh.md
 │   ├── English_Research_Paper.md
-│   ├── build-thesis.ps1        ← 5 build modes
+│   ├── build-thesis.ps1        ← 5 build modes (build, pandoc-only, copy-desktop, sync-md, restore)
 │   ├── style/
 │   │   ├── fix_thesis_all.py   ← 7-step comprehensive fixer
 │   │   ├── surgical_polish.py  ← RTL footnotes, link removal, CNEPD scrubbing

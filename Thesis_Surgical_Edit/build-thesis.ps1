@@ -4,13 +4,34 @@ param(
     [Parameter()]
     [switch]$FromMD = $false,
     [Parameter()]
-    [switch]$Regulated = $false
+    [switch]$Regulated = $false,
+    [Parameter()]
+    [switch]$NoRebuild = $false,
+    [Parameter()]
+    [switch]$Restore = $false
 )
 
 if ($Regulated) {
     Write-Host "  [BUILD] Regulated mode enabled. Delegating to Orchestrator..." -ForegroundColor Cyan
     & "Thesis_Surgical_Edit/Thesis_Orchestrator.ps1"
     return
+}
+
+if ($Restore) {
+    Write-Host "  [BUILD] Restoring Golden Source from latest backup..." -ForegroundColor Cyan
+    $backupDir = Join-Path $PSScriptRoot "..\..\backups"
+    $latestBackup = Get-ChildItem -Path $backupDir -Filter "*.docx" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+    $desktopDocx = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\Latest-thesis-backup-Memoire_DSS_Logistique_ElBayadh.docx"
+    
+    if ($null -eq $latestBackup) {
+        Write-Error "No backups found in $backupDir"
+        exit 1
+    }
+    
+    Write-Host "  [BUILD] Found latest backup: $($latestBackup.FullName)" -ForegroundColor Cyan
+    Copy-Item $latestBackup.FullName $desktopDocx -Force
+    Write-Host "  [BUILD] Restored $desktopDocx from $($latestBackup.Name)" -ForegroundColor Green
+    exit 0
 }
 
 $projectRoot = Split-Path $PSScriptRoot -Parent
@@ -41,7 +62,7 @@ function Apply-Fixes-And-Audit {
     Write-Host "  [BUILD] Applying surgical polish (surgical_polish)..." -ForegroundColor Yellow
     python (Join-Path $styleDir "surgical_polish.py") $DocxPath --save 2>&1
     if ($LASTEXITCODE -ne 0) { Write-Warning "  surgical_polish reported issues (non-critical)" }
-
+    
     # Apply comprehensive fixes LAST (namespace fix + PAGE field fix must be final)
     Write-Host "  [BUILD] Applying comprehensive fixes (fix_thesis_all)..." -ForegroundColor Yellow
     python (Join-Path $styleDir "fix_thesis_all.py") $DocxPath --save 2>&1
@@ -77,13 +98,17 @@ function Apply-Fixes-And-Audit {
 }
 
 if ($Command -eq "" -or $Command -eq "build") {
-    if (-not $FromMD -and (Test-Path $desktopDocx)) {
-        # === MODE A: Desktop DOCX as golden source ===
-        Write-Host "  [BUILD] Copying golden desktop DOCX (v7c_FIXED)..." -ForegroundColor Green
+    if ($NoRebuild) {
+        # === MODE A: Use Golden Source directly (No Rebuild) ===
+        Write-Host "  [BUILD] Using Golden Source directly (No Rebuild mode)..." -ForegroundColor Cyan
+        if (-not (Test-Path $desktopDocx)) {
+            Write-Error "Golden source not found: $desktopDocx"
+            exit 1
+        }
         Copy-Item $desktopDocx $docxPath -Force
         Write-Host "  [BUILD] Source: $desktopDocx" -ForegroundColor Cyan
         Write-Host "  [BUILD] Output: $docxPath" -ForegroundColor Cyan
-    } else {
+    } elseif ($FromMD) {
         # === MODE B: Rebuild from MD via pandoc ===
         Write-Host "  [BUILD] Converting markdown to DOCX..." -ForegroundColor Yellow
         $metadata = @(
@@ -96,6 +121,16 @@ if ($Command -eq "" -or $Command -eq "build") {
         & $pandoc $sourcePath -o $docxPath --reference-doc=$refDocx -f markdown-yaml_metadata_block $metadata 2>&1
         if ($LASTEXITCODE -ne 0) { Write-Error "Pandoc failed"; exit 1 }
         Write-Host "  [BUILD] DOCX created from MD: $docxPath" -ForegroundColor Green
+    } else {
+        # === MODE C: Desktop DOCX as golden source ===
+        Write-Host "  [BUILD] Copying golden desktop DOCX (v7c_FIXED)..." -ForegroundColor Green
+        if (-not (Test-Path $desktopDocx)) {
+            Write-Error "Golden source not found: $desktopDocx"
+            exit 1
+        }
+        Copy-Item $desktopDocx $docxPath -Force
+        Write-Host "  [BUILD] Source: $desktopDocx" -ForegroundColor Cyan
+        Write-Host "  [BUILD] Output: $docxPath" -ForegroundColor Cyan
     }
     
     # Apply fixes and audit
@@ -145,5 +180,5 @@ if ($Command -eq "sync-md") {
 
 # Golden source: Memoire_DSS_Logistique_ElBayadh_v7c_FIXED.docx (Desktop)
 # All standard commands (build, pandoc-only, copy-desktop, sync-md) handled above.
-Write-Host "  Unknown command: '$Command'. Available: build, pandoc-only, copy-desktop, sync-md" -ForegroundColor Yellow
+Write-Host "  Unknown command: '$Command'. Available: build, pandoc-only, copy-desktop, sync-md, restore" -ForegroundColor Yellow
 exit 1

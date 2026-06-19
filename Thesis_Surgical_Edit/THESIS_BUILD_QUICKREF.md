@@ -7,12 +7,28 @@
 
 ## Full Pipeline (what build-thesis.ps1 does)
 ```
-1. Copy desktop golden (v2) → output DOCX
+1. Copy golden desktop DOCX (v7c_FIXED) → output DOCX
 2. fix_docx_sections.py — insert section breaks
-3. surgical_polish.py — RTL footnotes, remove GitHub links, scrub CNEPD compliance proof
+3. surgical_polish.py — RTL footnotes, link removal, CNEPD scrubbing
 4. fix_thesis_all.py — 8 fixes (steps 9-10 SKIPPED)
 5. verify_docx_checks.py — 32 checks
 6. audit_thesis_comprehensive.py — 10 categories
+```
+
+## Advanced Commands
+### No Rebuild (Use Golden Source directly)
+```powershell
+& "Thesis_Surgical_Edit\build-thesis.ps1" -NoRebuild
+```
+
+### Restore Golden Source from latest backup
+```powershell
+& "Thesis_Surgical_Edit\build-thesis.ps1" -Restore
+```
+
+### Rebuild from Markdown
+```powershell
+& "Thesis_Surgical_Edit\build-thesis.ps1" -FromMD
 ```
 
 ## After Build — PDF Generation
@@ -53,12 +69,6 @@ python "Thesis_Surgical_Edit\style\fix_thesis_pagenum.py" "Thesis_Surgical_Edit\
 
 ## Page Numbering Scheme
 - Single section with continuous decimal numbering starting at 1 (continuous from cover, with cover page number hidden).
-
-## Surgical Polish Tool (`surgical_polish.py`)
-This tool is executed automatically during the build process to apply precise, academic-grade refinements to the generated DOCX:
-- **Footnote RTL Alignment**: Programmatically forces Right-to-Left (RTL) alignment and bidi support on all footnotes, ensuring Arabic text is correctly formatted.
-- **GitHub Link Removal**: Automatically strips references to the GitHub repository to keep the thesis focused strictly on academic content.
-- **CNEPD Compliance Scrubbing**: Removes sections and tables that explicitly attempt to "prove" compliance with CNEPD standards (e.g., "التوثيق الذكي المتقاطع", "التوافق مع معايير تقييم لجنة CNEPD"), ensuring a professional, objective tone.
 
 ## DO NOT
 1. Remove cached text from PAGE fields
