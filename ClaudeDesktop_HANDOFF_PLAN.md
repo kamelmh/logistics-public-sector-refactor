@@ -11,7 +11,7 @@
 | Paragraphs | 312 body + 867 table cells |
 | Footnotes | 46 (RTL verified) |
 | RTL | 1,189 paragraphs + 51 footnote runs fixed |
-| File size | 71.4 KB |
+| File size | 146 KB |
 
 ## What Was Fixed (Before Handoff)
 
@@ -346,7 +346,7 @@ Provide a signed assessment with:
 
 | File | Path | Purpose |
 |------|------|---------|
-| Thesis DOCX | Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx | Main output |
+| Thesis DOCX | Thesis_Surgical_Edit/output/Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx | Main output (Golden Source) |
 | Thesis PDF | Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.pdf | PDF version |
 | Source Markdown | Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md | Source of truth |
 | Verify Script | Thesis_Surgical_Edit/style/verify_docx_checks.py | 32-point check |

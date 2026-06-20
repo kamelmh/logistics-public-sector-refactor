@@ -14,21 +14,22 @@
 ## GROUND TRUTH (Never Modify)
 | Param | Value | Description |
 |-------|-------|-------------|
-| D | 1,546 | Annual demand (38-day observation) |
-| Q* (EOQ) | 176 | Wilson EOQ for ART-001 Toner G030 |
-| ROP | 212.4 | Reorder Point = (D/250)*LT + SS |
+| D | 789 | Annual demand (38-day observation) |
+| Q* (EOQ) | 37 | Wilson EOQ for ART-001 Toner G030 |
+| ROP | 206 | Reorder Point = (D/250)*LT + SS |
 | SS | 200 | Safety Stock |
 | LT | 2 days | Lead Time |
 | S | 801.45 DZD | Order Cost |
+| PU | 4,500 DZD | Unit Price |
 | I | 20% | Holding Rate |
 | MASTER_PWD | erp_secure_pwd_2026 | Sheet protection password |
-| VERSION | v13.2 | Current |
+| VERSION | v13.4 | Current |
 
 ## PROJECT ASSETS
 | Asset | Path |
 |-------|------|
 | Thesis source (MD) | `Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md` |
-| Thesis DOCX | `Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx` |
+| Thesis DOCX | `Thesis_Surgical_Edit/output/Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx` |
 | English paper (MD) | `Thesis_Surgical_Edit/English_Research_Paper.md` |
 | English paper DOCX | `Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.docx` |
 | English paper PDF | `Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.pdf` |

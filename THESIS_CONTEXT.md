@@ -34,7 +34,7 @@
 
 ## File Paths
 - **Source Markdown**: `Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md`
-- **Output DOCX**: `Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx`
+- **Output DOCX**: `Thesis_Surgical_Edit/output/Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx`
 - **Output PDF**: `Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.pdf`
 - **Verification Script**: `Thesis_Surgical_Edit/style/verify_docx_checks.py`
 

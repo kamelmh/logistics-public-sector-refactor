@@ -22,8 +22,8 @@ test-macros.ps1 → automated macro test
 ```
 
 ## Ground Truth (NEVER modify)
-D=1546, Q*=176, ROP=212.4, SS=200, LT=2d, S=500DZD, I=20%
-MASTER_PWD=erp_secure_pwd_2026, VERSION=v13.2
+D=789, Q*=37, ROP=206, SS=200, LT=2d, S=801.45DZD, PU=4500DZD, I=20%
+MASTER_PWD=erp_secure_pwd_2026, VERSION=v13.4
 
 ## Critical Rules
 - French column headers/tab names — NEVER translate

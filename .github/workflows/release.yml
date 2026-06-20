@@ -63,7 +63,7 @@ jobs:
       shell: pwsh
       run: |
         $files = @()
-        if (Test-Path "ERP_v13.2.xlsm") { $files += "ERP_v13.2.xlsm" }
+        if (Test-Path "ERP_v13.4.xlsm") { $files += "ERP_v13.4.xlsm" }
         if (Test-Path "Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx") {
           $files += "Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx"
         }
@@ -83,7 +83,7 @@ jobs:
         draft: true
         generate_release_notes: true
         files: |
-          ERP_v13.2.xlsm
+ERP_v13.4.xlsm
           Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx
           Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.docx
           Thesis_Surgical_Edit/output/English_Research_Paper_IEEE.pdf
