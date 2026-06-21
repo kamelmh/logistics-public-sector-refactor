@@ -345,7 +345,7 @@ def fix_paragraph_rtl(doc, changes):
     - table cell paragraphs (not included in doc.paragraphs)
     Skips: headers, footers, footnote containers, TOC entries.
     """
-    skip_styles = ('Header', 'Footer', 'toc', 'TOC')
+    skip_styles = ('Header', 'Footer', 'toc', 'TOC', 'table of figures', 'TableofFigures')
     count = 0
 
     # Body paragraphs
@@ -410,7 +410,7 @@ def fix_run_rtl(doc, changes):
     Covers body paragraphs AND table cell paragraphs.
     Also clears pure-formatting rPr overrides on body paragraphs.
     """
-    skip_styles = ('Header', 'Footer', 'toc', 'TOC')
+    skip_styles = ('Header', 'Footer', 'toc', 'TOC', 'table of figures', 'TableofFigures')
     rtl_c = [0]
     clr_c = [0]
 

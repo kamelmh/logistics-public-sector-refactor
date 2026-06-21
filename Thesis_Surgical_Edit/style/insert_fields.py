@@ -12,11 +12,14 @@ def insert_field(p, field_type):
     Inserts a field into a paragraph.
     field_type: 'TOC' or 'LISTOFTABLES'
     """
-    instr = "TOC \\h \\z \\u" if field_type == 'TOC' else "LISTOF TABLES \\h \\z \\u"
-    # Note: LISTOF TABLES is the standard switch for List of Tables in Word.
-    # Some versions use LISTOFTABLES (no space). Let's use the most compatible one.
-    if field_type == 'LISTOFTABLES':
-        instr = "LISTOF TABLES \\h \\z \\u"
+    if field_type == 'TOC':
+        instr = "TOC \\h \\z \\u"
+    elif field_type == 'LISTOFTABLES':
+        # Use TOC with \c switch for table captions (Arabic "جدول" = table)
+        # This matches the golden source which uses: TOC \c "جدول"
+        instr = 'TOC \\c "جدول" \\h \\z \\u'
+    else:
+        instr = "TOC \\h \\z \\u"
 
     # We'll use the standard field structure
     p._element.append(parse_xml(

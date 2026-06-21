@@ -40,7 +40,7 @@ def check_caption_rtl(doc):
     total_captions = 0
     for p in doc.paragraphs:
         sname = (p.style.name or '') if p.style else ''
-        if 'toc' in sname.lower():
+        if 'toc' in sname.lower() or 'table of figures' in sname.lower() or 'tableoffigures' in sname.lower():
             continue
         text = p.text or ""
         if "جدول" in text or "شكل" in text:
