@@ -1,13 +1,10 @@
 """
-Word COM Automation v11 — Production-ready.
+Word COM Automation v12 — Production-ready.
 
-ROOT CAUSE FIX (v10→v11):
-  v9 used Range.Fields.Add() which corrupts the document XML
-  (causes content loss: abstract, paragraphs). 
-  v11 uses Selection.Find + Selection.Fields.Add which is SAFE.
-
-  Also fixes: Content.Find couldn't find Arabic text "قائمة الجداول".
-  Selection.Find CAN find it.
+ROOT CAUSE FIX (v11→v12):
+  v11 inserted duplicate TOC/TOF fields when Golden Source already had them.
+  v12 checks for existing field after heading and UPDATES it instead of inserting duplicate.
+  Also ensures hyperlinks are properly generated via field update.
 """
 import win32com.client
 import os
@@ -18,10 +15,10 @@ def log(msg):
     print(f"[WORD-AUTO] {msg}", flush=True)
 
 
-def find_and_insert_field_via_selection(word_app, heading_text, field_code):
-    """Use Selection.Find to locate heading, then Selection.Fields.Add.
+def find_and_update_field_via_selection(word_app, heading_text, field_code):
+    """Use Selection.Find to locate heading, then update existing field or insert new one.
     
-    This approach is proven safe — no XML corruption, no content loss.
+    This avoids duplicate TOC/TOF fields when Golden Source already has them.
     """
     sel = word_app.Selection
     
@@ -36,12 +33,28 @@ def find_and_insert_field_via_selection(word_app, heading_text, field_code):
     if not found:
         return False
     
-    # Move selection to end of the found paragraph, then to next para
+    # Get the heading paragraph
+    heading_para = sel.Paragraphs(1)
+    
+    # Check the NEXT paragraph for existing TOC/TOF field
+    # In Word COM, Next is a method
+    next_para = heading_para.Next()
+    if next_para:
+        fields = next_para.Range.Fields
+        if fields.Count > 0:
+            # Update existing field
+            field = fields(1)
+            field.Code.Text = field_code
+            log(f"  Updated existing field in next paragraph: {field_code[:40]}...")
+            return True
+    
+    # No existing field - move to end of heading paragraph and insert new field
     sel.EndOf(5, 0)  # wdParagraph=0, wdMove=0
     sel.Move(5, 1)   # Move down 1 paragraph
     
-    # Add the field via Selection.Fields.Add (safe — no XML corruption)
+    # Add the field via Selection.Fields.Add
     sel.Fields.Add(sel.Range, -1, field_code, True)
+    log(f"  Inserted new field: {field_code[:40]}...")
     return True
 
 
@@ -58,22 +71,27 @@ def automate_word_tasks(docx_path, logo1_path, logo2_path):
         log(f"Opened: {doc.Paragraphs.Count} paras")
 
         # --- TOC ---
-        log("Inserting TOC field via Selection.Find + Selection.Fields.Add...")
-        if find_and_insert_field_via_selection(
+        log("Updating/Inserting TOC field via Selection.Find...")
+        if find_and_update_field_via_selection(
             word, "فهرس المحتويات", r'TOC \o "1-3" \h \z \u'
         ):
-            log("  TOC field inserted")
+            log("  TOC field ready")
         else:
             log("  WARNING: TOC heading not found")
 
         # --- TOF ---
-        log("Inserting TOF field via Selection.Find + Selection.Fields.Add...")
-        if find_and_insert_field_via_selection(
+        log("Updating/Inserting TOF field via Selection.Find...")
+        if find_and_update_field_via_selection(
             word, "قائمة الجداول", r'TOC \h \z \c "جدول"'
         ):
-            log("  TOF field inserted")
+            log("  TOF field ready")
         else:
             log("  WARNING: TOF heading not found")
+
+        # --- Update all fields (generates hyperlinks) ---
+        log("Updating all fields (Ctrl+A F9 equivalent)...")
+        doc.Fields.Update()
+        log("  Fields updated")
 
         # --- Logos ---
         log("Placing logos...")
@@ -102,7 +120,7 @@ def automate_word_tasks(docx_path, logo1_path, logo2_path):
             except Exception as e:
                 log(f"  {label} FAILED: {e}")
 
-        # --- Save (no field update — user does Ctrl+A F9) ---
+        # --- Save ---
         log("Saving...")
         doc.Save()
         log("SAVED")
