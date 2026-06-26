@@ -1,0 +1,74 @@
+You are an academic thesis verifier. Analyze this BTS CNEPD thesis for Direction de l'Education El Bayadh.
+
+THESIS CONTENT (first 5000 chars):
+---
+title: "نظام دعم القرار لتسيير المخزونات"
+subtitle: "مذكرة تخرج لنيل شهادة التقني السامي"
+author: "ماحي كمال عبد الغني"
+institution: "المعهد الوطني المتخصص في التكوين المهني بن سعيدي عبد العاطي بالبيض"
+department: "تسيير المخزونات واللوجستيك"
+supervisor: "الأستاذة المشرفة: دهيني ميمونة"
+academic_year: "السنة الجامعية: 2025/2026"
+date: "2026-05-18"
+lang: ar
+dir: rtl
+---
+## إهداء
+
+**أهدي ثمرة هذا الجهد المتواضع إلى والديّ الكريمين اللذين لم يبخلا عليّ يوماً بالدعم والحنان والتشجيع، وإلى كل من أضاء دربي من أساتذة ومشرفين وزملاء طوال مسيرتي التكوينية.**
+**وإلى كل من آمن بأن التكنولوجيا أداة لخدمة الإدارة الجزائرية وتطويرها، وإلى كل من يؤمن بأن الرقمنة ليست ترفاً بل ضرورة تشغيلية.**
+
+## شكر وتقدير
+
+**أتقدم بجزيل الشكر والعرفان إلى الأستاذة المشرفة دهيني ميمونة التي لم تبخل بتوجيهاتها ونصائحها القيمة في جميع مراحل إعداد هذا العمل.**
+**كما أتوجه بالشكر الجزيل إلى إطارات المعهد الوطني المتخصص في التكوين المهني بن سعيدي عبد العاطي بالبيض على ما أبدوه من دعم لوجستي ومنهجي طوال فترة التكوين.**
+**وأخص بالذكر السيد مسؤول مصلحة المخازن بمديرية التربية لولاية البيض الذي أتاح لنا فرصة التربص وفتح لنا أبواب المعرفة الميدانية، وقدم لنا كل التسهيلات الضرورية لإنجاز هذا البحث.**
+**وإلى لجنة المناقشة الموقرة على تفضلها بقراءة هذا العمل وتقييمه.**
+
+## فهرس المحتويات
+
+*جدول المحتويات سيتم توليده تلقائياً عند بناء الوثيقة*
+
+## قائمة الجداول
+
+*قائمة الجداول سيتم توليدها تلقائياً عند بناء الوثيقة*
+
+## الملخص
+
+**تتناول هذه الدراسة بالتحليل والبحث إشكالية التسيير اليدوي للمخزون في مخزن مديرية التربية لولاية البيض، وترمي إلى تصميم وإنجاز نظام دعم قرار متكامل مبني على بيئة Excel/VBA قادر على أتمتة دورة الشراء والتخزين بتكلفة صفرية. اعتمدت الدراسة منهجاً وصفياً تحليلياً في التشخيص الميداني، ومنهجاً تجريبياً تطبيقياً في قياس الأثر، ارتكازاً على بيانات فعلية جُمعت خلال 38 يوم عمل ميداني (شملت 62 معاملة مخزنية). طُبِّقت ثلاثة نماذج كمية على الصنف المرجعي ART-001 (حبر الطابعة Toner G030): نموذج ويلسون الذي أنتج كمية طلب اقتصادية Q* = 37 وحدة، ونقطة إعادة طلب ROP = 206 وحدة، ومخزون أمان SS = 200 وحدة. كشفت نتائج التطبيق أن النظام خفَّض وقت معالجة الطلبية الواحدة من 20--30 دقيقة إلى أقل من 5 ثوانٍ، أي بنسبة تخفيض 99.7%، مع إلغاء جميع حالات النفاد المسجلة للمواد الاستراتيجية. وتأتي هذه النتائج لتؤكد صحة الفرضيتين المُصاغتين في المقدمة وتؤكد جدوى التحول الرقمي في مؤسسات القطاع التربوي الجزائري.**
+**الكلمات المفتاحية: نظام دعم القرار، تسيير المخزونات، نموذج ويلسون، تحليل ABC، Excel/VBA، القطاع التربوي.**
+
+## Résumé
+
+**Cette étude porte sur la problématique de la gestion manuelle des stocks dans l'entrepôt de la Direction de l'Éducation de la wilaya d'El Bayadh. L'objectif est de concevoir et de réaliser un système d'aide à la décision intégré, basé sur Excel/VBA, capable d'automatiser le cycle d'achat et de stockage à coût zéro. L'approche adoptée combine une méthode descriptive-analytique pour le diagnostic terrain et une méthode expérimentale pour la mesure d'impact, à partir de données réelles collectées sur 38 jours ouvrables. Trois modèles quantitatifs ont été appliqués sur l'article de référence ART-001 (Toner d'imprimante G030) : le modèle de Wilson, qui a généré une quantité économique Q* = 37 unités, un point de réapprovisionnement ROP = 206 unités, et un stock de sécurité SS = 200 unités. Les résultats montrent une réduction du temps de traitement par transaction de 20--30 minutes à moins de 5 secondes, soit une amélioration de 99,7%, avec élimination totale des ruptures de stock des articles stratégiques. Ces résultats valident les deux hypothèses formulées et confirment la faisabilité de la transition numérique dans les institutions éducatives publiques algériennes.**
+**Mots-clés : Système d'aide à la décision, gestion des stocks, modèle de Wilson, .analyse ABC, Excel/VBA, secteur éducatif**
+
+# المقدمة العامة
+
+## تمهيد
+
+يُشكِّل التسيير اللوجيستي الفعّال للمخزونات ركيزةً جوهريةً من ركائز الأداء المؤسسي في القطاع العام، حيث ترتبط جودة الخدمة العمومية ارتباطاً وثيقاً بتوفر المواد والتجهيزات الضرورية في الوقت والمكان المناسبين. في قطاع التربية الوطنية، يتجلى هذا الارتباط بصورة خاصة، إذ أن انقطاع المواد الاستراتيجية كأحبار الطابعات وورق الامتحانات في فترات الذروة كالامتحانات الفصلية قد يؤدي إلى تعطيل العملية التربوية برمتها. من هذا المنطلق، تبرز الحاجة الملحة إلى تطوير أنظمة تسيير رقمية قادرة على تجاوز القيود البنيوية للنظم اليدوية التقليدية، مع مراعاة خصوصية القطاع العام الجزائري والإطار التنظيمي الذي يحكمه.
+
+## الإشكالية
+
+تواجه مصلحة المخازن في مديرية التربية لولاية البيض تحدياتٍ هيكليةً مزمنةً تتمثل في الاعتماد شبه الكامل على التسيير اليدوي عبر بطاقات المخزون الورقية وجداول Excel البسيطة غير المبرمجة، مما يؤدي إلى تكرار حالات نفاد المواد الاستراتيجية، وازدواجية التسجيل بين الوثائق الورقية والرقمية، وصعوبة التتبع التاريخي لحركة الأصناف، فضلاً عن غياب آليات التنبيه الآلي عند الاقتراب من نقطة إعادة الطلب. بناءً على هذا التشخيص، تتمثل الإشكالية المحورية لهذه الدراسة في السؤال التالي:
+**كيف يمكن أتمتة دورة الشراء والتخزين وتعزيز الجرد الدائم في مخزن مؤسسة عمومية باستخدام أدوات Microsoft 
+
+GROUND TRUTH (LOCKED):
+- D = 789 (Annual Demand)
+- Q* = 37 (EOQ via Wilson)
+- ROP = 206 (Reorder Point)
+- SS = 200 (Safety Stock)
+- S = 801.45 DZD (Order Cost)
+- PU = 4,500 DZD (Unit Price)
+- I = 20% (Holding Rate)
+
+VERIFICATION TASKS:
+1. Verify Wilson EOQ formula: Q* = √(2DS / I×PU) = 37
+2. Verify ROP: (789/250) × 2 + 200 = 206
+3. Check RTL formatting quality
+4. Check bilingual consistency (Arabic/French)
+5. Verify academic citation format
+6. Score: Content (0-100), Academic (0-100), RTL (0-100), Overall (0-100)
+
+Provide structured report with PASS/FAIL for each check.

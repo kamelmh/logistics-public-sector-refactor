@@ -64,8 +64,8 @@ Private Sub SeedArticles()
     ' 15 articles (incl. ART-013/014/015 for BORDEREAU_COMMANDE compatibility)
     Dim articles As Variant
     articles = Array( _
-        Array("ART-001", "Toner imprimante G030 (noir)", "Informatique", "F-001", 500, 4500, 200, "A", "Fournitures d'impression"), _
-        Array("ART-002", "Rame papier A4 80g/m2", "Fournitures Bureau", "F-002", 800, 850, 100, "A", "Papeterie standard"), _
+        Array("ART-001", "Rame papier A4 80g/m²", "Fournitures Bureau", "F-002", 400, 400, 400, "A", "Papeterie standard"), _
+        Array("ART-002", "Toner imprimante G030 (noir)", "Informatique", "F-001", 3000, 3000, 3, "B", "Fournitures d'impression"), _
         Array("ART-003", "Rame papier A3 80g/m2", "Fournitures Bureau", "F-002", 400, 1200, 80, "B", "Papier grand format"), _
         Array("ART-004", "Boite archives carton", "Admin", "F-003", 300, 350, 50, "B", "Archivage physique"), _
         Array("ART-005", "Agrafeuse de bureau", "Fournitures Bureau", "F-003", 150, 280, 30, "C", "Petit materiel"), _

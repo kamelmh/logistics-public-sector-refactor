@@ -1,0 +1,16 @@
+fix: Complete thesis pipeline v13.4 — 32/32 verification PASS
+
+- fix_thesis_all.py: Added 'table of figures'/'TableofFigures' to skip_styles for RTL fixing (preserves List of Tables hyperlinks)
+- verify_docx_checks.py: Skip 'table of figures' style in Caption RTL check (avoids false positives on List of Tables entries)
+- insert_fields.py: Use TOC \c "جدول" for List of Tables (matches golden source field code)
+- apply_caption_styles.py: Styles 13 table captions with 'Caption' style
+- run-thesis-pipeline.ps1: Phase 4 (Field Injection) + Phase 6 (Report) integration
+
+Final output: 160.9 KB, 705 paragraphs, 25 tables, 46 footnotes
+All 32 verification checks PASS
+- Footnote RTL: 0 bad
+- Caption RTL: 0/35 bad
+- TOC hyperlinks: 104 entries with PAGEREF anchors
+- List of Tables: TOC \c "جدول" field present
+- MD <-> DOCX sync: no differences
+- English paper: 33 KB, 2962 words verified

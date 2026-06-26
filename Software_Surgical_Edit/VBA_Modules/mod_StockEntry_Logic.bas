@@ -292,9 +292,9 @@ Private Sub LoadArticleComboBox(ByVal filterCat As String, ByRef state As FormSt
     On Error GoTo 0
 
     If wsArt Is Nothing Then
-        state.formRef.cmbArticle.AddItem "ART-001 | Papier A4"
-        state.formRef.cmbArticle.AddItem "ART-002 | Papier A3"
-        state.formRef.cmbArticle.AddItem "ART-003 | Sous-Chemise"
+        state.formRef.cmbArticle.AddItem "ART-001 | Papier A4 80g/m²"
+        state.formRef.cmbArticle.AddItem "ART-002 | Toner G030 (noir)"
+        state.formRef.cmbArticle.AddItem "ART-003 | Rame papier A3 80g/m²"
         Exit Sub
     End If
 
@@ -509,7 +509,7 @@ Private Sub EvaluateStockStatus(ByVal artCode As String, ByRef state As FormStat
     state.m_StockActuel = stock
     state.ArticleStock = stock
 
-    If artCode = "ART-001" Then
+    If artCode = "ART-002" Then
         ropVal = CANON_ROP
         ssVal = CANON_SS
     Else
@@ -543,8 +543,8 @@ Private Sub EvaluateStockStatus(ByVal artCode As String, ByRef state As FormStat
         state.unitPrice = Format(pu, "0.00")
     End If
 
-    ' Wilson alert for case study article
-    If artCode = "ART-001" Then
+    ' Wilson alert for case study article (ART-002 Toner G030)
+    If artCode = "ART-002" Then
         state.WilsonAlertText = "Wilson EOQ -- Q* = " & CANON_QSTAR & " u  |  SS = " & CANON_SS & " u"
         state.WilsonAlertVisible = True
     Else
@@ -707,7 +707,7 @@ Public Function AddLineToGrid(ByRef state As FormState) As Boolean
             Exit Function
         End If
         
-        ropSeuil = IIf(state.m_CurrentArticle = "ART-001", CANON_ROP, 60)
+        ropSeuil = IIf(state.m_CurrentArticle = "ART-002", CANON_ROP, 60)
         If netProjected <= ropSeuil Then
             Dim ropResp As VbMsgBoxResult
             ropResp = MsgBox("ALERTE -- Point de commande atteint." & vbCrLf & _

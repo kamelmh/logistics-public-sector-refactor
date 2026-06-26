@@ -1,0 +1,3 @@
+This thesis excerpt presents a "Decision Support System for Inventory Management" for the Directorate of Education in El Bayadh, Algeria, focusing on automating inventory processes using Excel/VBA.
+
+Here

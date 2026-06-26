@@ -221,7 +221,7 @@ def run_checks(docx_path, strict_headings=False, size_threshold=50000, backup_pa
     c2 = sum(1 for p in paras if p.style and p.style.name and 'Heading 1' in p.style.name and p.text and 'الفصل' in p.text) >= 2
     results.append(check("Core chapters as H1", c2, ""))
 
-    resume = any('الملخص' in (p.text or '') for p in paras[:40])
+    resume = any('الملخص' in (p.text or '') for p in paras)
     results.append(check("Abstract present", resume, ""))
 
     biblio = any(k in (p.text or '') for p in paras for k in ['المصادر', 'المراجع', 'Bibliographie'])

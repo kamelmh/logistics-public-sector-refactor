@@ -210,6 +210,56 @@ def fix_page_numbering(doc, changes):
 
 
 # ── Fix 2: Table column widths ─────────────────────────────────────────────────
+    """Insert a Table of Figures field after the 'قائمة الجداول' heading.
+    
+    This creates a Word TOC field with \\c "Caption" to list all table captions
+    as clickable hyperlinks (using \\h switch).
+    """
+    # Find the "قائمة الجداول" heading paragraph
+    target_idx = -1
+    for i, p in enumerate(doc.paragraphs):
+        if 'قائمة الجداول' in p.text and p.style and 'Heading' in p.style.name:
+            target_idx = i
+            break
+    
+    if target_idx == -1:
+        changes['tof_inserted'] = False
+        return changes
+    
+    # Create the Table of Figures field paragraph
+    # Field: TOC \h \z \c "Caption"  (hyperlink, hide tab leader, use Caption label)
+    tof_field_xml = (
+        '<w:p %s>'
+        '  <w:pPr>'
+        '    <w:pStyle w:val="Normal"/>'
+        '    <w:bidi w:val="1"/>'
+        '    <w:jc w:val="right"/>'
+        '  </w:pPr>'
+        '  <w:r>'
+        '    <w:fldChar w:fldCharType="begin"/>'
+        '  </w:r>'
+        '  <w:r>'
+        r'    <w:instrText xml:space="preserve">TOC \h \z \c "Caption" </w:instrText>'
+        '  </w:r>'
+        '  <w:r>'
+        '    <w:fldChar w:fldCharType="separate"/>'
+        '  </w:r>'
+        '  <w:r>'
+        '    <w:fldChar w:fldCharType="end"/>'
+        '  </w:r>'
+        '</w:p>' % nsdecls('w')
+    )
+    
+    tof_p = parse_xml(tof_field_xml)
+    
+    # Insert after the target paragraph
+    target_p = doc.paragraphs[target_idx]._element
+    parent = target_p.getparent()
+    idx = list(parent).index(target_p)
+    parent.insert(idx + 1, tof_p)
+    
+    changes['tof_inserted'] = True
+    return changes
 
 def fix_table_column_widths(doc, changes):
     avail = (GOLDEN['pageWidthCm'] - 2 * GOLDEN['marginsCm']) * 914400 / 2.54

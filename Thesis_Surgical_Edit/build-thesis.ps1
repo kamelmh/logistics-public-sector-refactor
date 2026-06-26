@@ -21,7 +21,7 @@ if ($Restore) {
     Write-Host "  [BUILD] Restoring Golden Source from latest backup..." -ForegroundColor Cyan
     $backupDir = Join-Path $PSScriptRoot "..\..\backups"
     $latestBackup = Get-ChildItem -Path $backupDir -Filter "*.docx" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-    $desktopDocx = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\Latest-thesis-backup-Memoire_DSS_Logistique_ElBayadh.docx"
+    $desktopDocx = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\recent-backup-Memoire_DSS_Logistique_ElBayadh.docx"
     
     if ($null -eq $latestBackup) {
         Write-Error "No backups found in $backupDir"
@@ -36,7 +36,7 @@ if ($Restore) {
 
 $projectRoot = Split-Path $PSScriptRoot -Parent
 $sourcePath = Join-Path $projectRoot "Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md"
-$desktopDocx = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\Latest-thesis-backup-Memoire_DSS_Logistique_ElBayadh.docx"
+$desktopDocx = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\recent-backup-Memoire_DSS_Logistique_ElBayadh.docx"
 $styleDir = Join-Path $PSScriptRoot "style"
 $refDocx = Join-Path $styleDir "reference.docx"
 $outDir = Join-Path $PSScriptRoot "output"
@@ -135,7 +135,33 @@ if ($Command -eq "" -or $Command -eq "build") {
     
     # Apply fixes and audit
     Apply-Fixes-And-Audit $docxPath
-    
+
+    # --- Word COM Automation for Logos, TOC, Table of Figures, and PDF Export ---
+    Write-Host "  [BUILD] Running Word COM automation for logos, TOC, TOF, PDF..." -ForegroundColor Cyan
+    $logo1Path = Join-Path $PSScriptRoot "style\logo1.png" # Assuming logo1.png is in style folder
+    $logo2Path = Join-Path $PSScriptRoot "style\logo2.png" # Assuming logo2.png is in style folder
+    $outputPdfPath = Join-Path $outDir "Memoire_DSS_Logistique_ElBayadh.pdf"
+
+    python (Join-Path $styleDir "word_automation.py") $docxPath $logo1Path $logo2Path 2>&1
+    if ($LASTEXITCODE -ne 0) { Write-Error "Word COM automation failed"; exit 1 }
+
+    # --- Post-automation fixes (Word COM resets some XML properties) ---
+    Write-Host "  [BUILD] Re-applying surgical polish after COM automation..." -ForegroundColor Yellow
+    python (Join-Path $styleDir "surgical_polish.py") $docxPath --save 2>&1
+    if ($LASTEXITCODE -ne 0) { Write-Warning "  surgical_polish (post-COM) reported issues (non-critical)" }
+
+    Write-Host "  [BUILD] Re-applying comprehensive fixes after COM automation..." -ForegroundColor Yellow
+    python (Join-Path $styleDir "fix_thesis_all.py") $docxPath --save 2>&1
+    if ($LASTEXITCODE -ne 0) { Write-Warning "  fix_thesis_all (post-COM) reported issues (non-critical)" }
+
+    Write-Host "  [BUILD] Re-applying section fixes after COM automation (page numbering)..." -ForegroundColor Yellow
+    python (Join-Path $styleDir "fix_docx_sections.py") $docxPath --save 2>&1
+    if ($LASTEXITCODE -ne 0) { Write-Warning "  fix_docx_sections (post-COM) reported issues (non-critical)" }
+
+    # --- Final verification ---
+    Write-Host "  [BUILD] Running final verification..." -ForegroundColor Yellow
+    python (Join-Path $styleDir "verify_docx_checks.py") $docxPath --size-threshold 50000 2>&1
+
     Write-Host "  [BUILD] Build complete." -ForegroundColor Green
     exit 0
 }

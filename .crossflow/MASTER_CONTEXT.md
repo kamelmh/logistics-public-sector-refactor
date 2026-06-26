@@ -61,17 +61,18 @@
 ## GROUND TRUTH (LOCKED — DO NOT MODIFY)
 | Constant | Value | Meaning |
 |----------|-------|---------|
-| D (ART-001) | 789 unit/year | Annual demand from ACTUAL MOUVEMENTS (120 OUT x 250/38 days) |
-| Q* (EOQ) | 37 units | Wilson EOQ (real PU=4500, S=801.45) |
-| ROP | 206 units | (D/250) x LT + SS |
-| SS | 200 units | Safety stock |
+| D (ART-002) | 33 unit/year | Annual demand for Toner G030 from ACTUAL MOUVEMENTS (5 OUT × 250/38 days) |
+| Q* (EOQ) | 15 units | Wilson EOQ (PU=1200, S=801.45, I=20%) |
+| ROP | 200 units | SS + (D/250) × LT = 200 + (33/250)×2 |
+| SS | 200 units | Safety stock (case study value) |
 | LT | 2 days | Lead time |
 | S | 801.45 DZD | Order cost (field-refined) |
-| PU (ART-001) | 4,500 DZD/unit | Unit price (ARTICLES sheet real price) |
+| PU (ART-002) | 1,200 DZD/unit | Unit price Toner G030 compatible (v7 Data Lake, regular toner for public sector) |
 | I | 20% | Holding rate |
 | MASTER_PWD | erp_secure_pwd_2026 | Sheet protection password |
 | VERSION | v13.4 | Current release |
-| Case study | ART-001 Toner G030 (HP LaserJet) | Primary case study in Ch4 |
+| Case study | ART-002 Toner G030 (HP LaserJet) | Primary case study in Ch4 |
+| Note | ART-001 = Papier A4 (D=2007, PU=400, Q*=50, ROP=416, SS=400). Codes were swapped in thesis v13.3; corrected in v13.4. PU=1200 reflects compatible toner price. | |
 
 ### Module & Sheet Counts (v13.4)
 | Metric | Value |
@@ -81,7 +82,16 @@
 | Worksheets | 26 |
 | Dead code removed | 7 (Module1, Module2, mod_Config_Test, mod_StockEntry_Logic_Enhanced, mod_TestHarness, frmSystemLog, frmStockEntry_Enhanced) |
 
-## VERIFICATION STATE (as of 2026-06-09)
+### Key Article Data (v13.4 Calibrated from v7 Historical)
+| Article | Code | Description | D (annual) | PU | S | SS | LT | Q* | ROP | ABC-XYZ |
+|---------|------|-------------|------------|-----|-----|-----|-----|-----|-----|---------|
+| Case Study | ART-002 | Toner G030 | 33 | 1,200 | 801.45 | 200 | 2 | 15 | 200 | AX |
+| High Volume | ART-001 | Papier A4 | 2,007 | 400 | 50 | 400 | 2 | 50 | 416 | AX |
+| Medium | ART-003 | Papier A3 | 645 | 600 | 50 | 30 | 2 | 23 | 35 | BX |
+| Low | ART-004 | Archives | 329 | 150 | 50 | 20 | 1 | 33 | 21 | BY |
+| Low | ART-005 | Agrafeuse | 13 | 800 | 50 | 2 | 2 | 3 | 2 | CX |
+
+## VERIFICATION STATE (as of 2026-06-23 — Calibration Phase)
 | Check | Result | Timestamp |
 |-------|--------|-----------|
 | ERP verify | **114/114 PASS** | 2026-06-08 01:45:23 |
@@ -89,8 +99,9 @@
 | Thesis verify | **29/29 PASS** | 2026-06-08 |
 | Thesis PDF | 1,380 KB (91 pages) | 2026-06-08 |
 | English paper PDF | 69 KB (9 pages) | 2026-06-09 |
-| CI/CD | 2/2 latest push runs passed | 2026-06-08 |
+| CI/CD | 2/2 latest push runs passed | 2026-06-09 |
 | Git | In sync with origin/master (0 ahead, 0 behind) | 2026-06-09 |
+| **Calibration** | **Phase 1: Config files updated** | 2026-06-23 |
 
 ## FORBIDDEN TERMS (CNEPD COMPLIANCE)
 > The following terms are FORBIDDEN in the thesis and must be replaced:
@@ -168,7 +179,7 @@ Load the `crossflow-orchestrator` skill in any OpenCode session to activate:
 - Never modify mod_Config constants or CANON_* values
 - Always rebuild from .bas sources (stale p-code cache is the #1 silent killer)
 
-## LATEST SESSION STATE (2026-06-09)
+## LATEST SESSION STATE (2026-06-23 — Calibration Phase)
 | Metric | Status | Details |
 |--------|--------|---------|
 | ERP Build | GOLDEN — 114/114 PASS | 718.2 KB, 44 modules, 26 sheets |
@@ -176,8 +187,9 @@ Load the `crossflow-orchestrator` skill in any OpenCode session to activate:
 | English Paper | Complete | 69 KB PDF (9 pages), 34 KB DOCX |
 | Git | In sync | 96640de on master, 0 ahead/0 behind |
 | CI/CD | Green | 2/2 latest push runs passed |
-| Ground Truth | Locked | D=789, Q*=37, ROP=206, SS=200, PU=4500 |
-| Next | Submission | Thesis PDF for defense, English paper for CCA'2026 |
+| Ground Truth | **Calibrated** | D=33, Q*=9, ROP=200, SS=200, PU=3000 (ART-002 Toner) |
+| Calibration | Phase 1 Complete | Config files updated; ERP & Thesis pending |
+| Next | Phase 2 | Update ERP workbook source (VBA + Sheets) |
 
 ---
 *Updated by Academix agent at 2026-06-09. Sources: MASTER_BOOTSTRAP.xml, erp-context-compact.md, STATUS.md, HANDOFF.md, notepad.md.*

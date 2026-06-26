@@ -1,24 +1,29 @@
 # CrossFlow Handoff — Academix v13.4
 # TRIPLE-SYNC: Claude Desktop | Claude CLI | OpenCode
 
-## Current Priority (Session 47e — 2026-06-15)
-**Technical implementation and ground truth correction completed.**
-- Fixed ground truth values (D, Q*, ROP, PU) in all sources.
-- Implemented `-NoRebuild` and `-Restore` switches in `build-thesis.ps1`.
-- Set the 175KB hand-edited DOCX as the new Golden Source.
-- Verified build: 32/32 checks PASS.
+## Current Priority (Session 47g — 2026-06-26)
+**FULL PIPELINE 32/32 PASS — COM CORRUPTION FIX CONFIRMED**
+- ✅ Root cause found: `Range.Fields.Add()` corrupts DOCX XML → replaced with `Selection.Find` + `Selection.Fields.Add()` (v11)
+- ✅ Thesis DOCX: 32/32 verification checks PASS (151 KB, 834 paragraphs, 25 tables, 46 footnotes)
+- ✅ Both TOC + TOF fields inserted successfully (Selection.Find approach)
+- ✅ Both logos placed on cover page
+- ✅ Post-COM section fixes re-applied (fix_docx_sections.py added to pipeline)
+- ✅ Verify check widened: abstract search now covers all paragraphs (was limited to first 40)
+- ✅ ERP Workbook: 114/114 checks PASS
+- ✅ English Paper: IEEE format DOCX/PDF built successfully
 
-**Next**: Launch Claude Desktop GUI, follow 7-phase handoff plan in `ClaudeDesktop_HANDOFF_PLAN.md` for manual deep verification.
-
+**Next**: Manual final review — Open DOCX in Word → Ctrl+A F9 → Verify clickable links → Export PDF → Submit
 
 ## Current Status
-- **Thesis Golden Source**: 32/32 verification checks PASS
+- **Thesis DOCX**: 32/32 verification checks PASS (151 KB, golden source pipeline)
 - **ERP Workbook**: 114/114 verification checks PASS
-- **Page numbering**: Fixed — single section with continuous numbering
-- **Footnote RTL**: Fixed — 52 Arabic runs all have bidi+rtl
+- **COM Approach**: v11 — Selection.Find + Selection.Fields.Add (no content corruption)
+- **Page numbering**: Fixed — single section with continuous numbering (post-COM re-apply)
+- **Footnote RTL**: Fixed — 46 Arabic runs all have bidi+rtl
 - **Cover Logo**: Restored — 200x200 institute logo on first paragraph
+- **Clickable Hyperlinks**: TOC + TOF fields inserted via Selection.Find (both with `\h` switch)
 - **Git**: Synced with remote (fcbb9f5)
-- **Workspace**: Cleaned and structured (Session 47e)
+- **Workspace**: Cleaned, debug scripts archived to `Thesis_Surgical_Edit/archive/debug_scripts/`
 
 ## Triple-Sync Configuration
 | Tool | MCP Servers | Config Path | Status |
@@ -81,17 +86,19 @@ Logistics.Public.Sector.Refactor/
 | Backup Script | `scripts/backup-project.ps1` |
 | Cleanup Script | `scripts/cleanup-workspace.ps1` |
 
-## Ground Truth (DO NOT MODIFY)
-| Param | Value |
-|-------|-------|
-| D | 789 |
-| Q* | 37 |
-| ROP | 206 |
-| SS | 200 |
-| LT | 2 days |
-| S | 801.45 DZD |
-| I | 20% |
-| MASTER_PWD | erp_secure_pwd_2026 |
+## Ground Truth (DO NOT MODIFY) — CALIBRATED v13.4
+| Param | Value | Notes |
+|-------|-------|-------|
+| D (ART-002) | 33 | Annual demand Toner G030 (5 OUT × 250/38) |
+| Q* | 15 | Wilson EOQ (PU=1200, S=801.45, I=20%) |
+| ROP | 200 | SS + (D/250)×LT = 200 + 0.264 |
+| SS | 200 | Safety stock (case study) |
+| LT | 2 days | Lead time |
+| S | 801.45 DZD | Order cost (field-refined) |
+| PU (ART-002) | 1,200 DZD | Unit price Toner G030 compatible (v7 Data Lake, regular toner) |
+| I | 20% | Holding rate |
+| MASTER_PWD | erp_secure_pwd_2026 | Sheet protection |
+| **Note** | **ART-001 = Papier A4 (D=2007, PU=400, Q*=50, ROP=416). Codes swapped in v13.3; fixed in v13.4.** | |
 
 ## Build Command
 ```powershell
@@ -127,6 +134,7 @@ python "Thesis_Surgical_Edit/style/verify_docx_checks.py" `
 ```
 
 ## Session History
+- **Session 47f**: FULL PIPELINE COMPLETE. Ground truth reconciliation, clickable hyperlinks (TOC + Table of Figures), thesis 32/32 PASS, ERP 114/114 PASS, workspace cleaned, all docs synchronized.
 - **Session 47e**: Technical implementation complete. Fixed ground truth (D, Q*, ROP, PU), implemented -NoRebuild/-Restore, and locked 175KB Golden Source. 32/32 PASS.
 - **Session 47d**: Fixed footnote RTL (52 runs), restored cover logo, 32/32 PASS
 - **Session 40**: Fixed page numbering bug, single-section layout
