@@ -78,24 +78,55 @@ def automate_word_tasks(docx_path, logo1_path, logo2_path):
         # --- Logos ---
         log("Placing logos...")
         for label, path, left in [("Logo1", logo1_path, 36), ("Logo2", logo2_path, 432)]:
-            if os.path.exists(path):
-                try:
-                    shape = doc.Shapes.AddPicture(
-                        FileName=os.path.abspath(path),
-                        LinkToFile=False, SaveWithDocument=True,
-                        Left=left, Top=36, Width=108, Height=108
-                    )
-                    shape.WrapFormat.Type = 3  # wdWrapBehind
-                    log(f"  {label} placed")
-                except Exception as e:
-                    log(f"  {label} FAILED: {e}")
-            else:
-                log(f"  SKIP: {label}")
+            if not path or not os.path.exists(path):
+                log(f"  SKIP: {label} — {'no path' if not path else 'file not found'}")
+                continue
+            # Validate: must be >100 bytes and start with PNG magic bytes
+            fsize = os.path.getsize(path)
+            with open(path, 'rb') as f:
+                header = f.read(8)
+            is_png = header[:4] == b'\x89PNG'
+            is_jpeg = header[:2] == b'\xff\xd8'
+            is_real = fsize > 100 and (is_png or is_jpeg)
+            if not is_real:
+                log(f"  SKIP: {label} — placeholder ({fsize} bytes, not a real image)")
+                continue
+            try:
+                shape = doc.Shapes.AddPicture(
+                    FileName=os.path.abspath(path),
+                    LinkToFile=False, SaveWithDocument=True,
+                    Left=left, Top=36, Width=108, Height=108
+                )
+                shape.WrapFormat.Type = 3  # wdWrapBehind
+                log(f"  {label} placed ({fsize/1024:.1f} KB)")
+            except Exception as e:
+                log(f"  {label} FAILED: {e}")
 
         # --- Save (no field update — user does Ctrl+A F9) ---
         log("Saving...")
         doc.Save()
         log("SAVED")
+
+        # --- Export PDF ---
+        pdf_path = docx_path.rsplit('.', 1)[0] + '.pdf'
+        try:
+            log(f"Exporting PDF: {pdf_path}")
+            doc.ExportAsFixedFormat(
+                OutputFileName=pdf_path,
+                ExportFormat=17,  # wdExportFormatPDF
+                OpenAfterExport=False,
+                OptimizeFor=0,  # wdExportOptimizeForPrint
+                Range=0,  # wdExportAllDocument
+                IncludeDocProps=True,
+                DocStructureTags=True,
+                BitmapMissingFonts=True,
+                UseISO19005_1=False
+            )
+            pdf_size = os.path.getsize(pdf_path) / 1024
+            log(f"PDF exported: {pdf_size:.0f} KB")
+        except Exception as e:
+            log(f"PDF export FAILED: {e}")
+
         return True
 
     except Exception as e:
@@ -113,17 +144,17 @@ def automate_word_tasks(docx_path, logo1_path, logo2_path):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 4:
-        print("Usage: python word_automation.py <docx> <logo1> <logo2>",
+    if len(sys.argv) < 2:
+        print("Usage: python word_automation.py <docx> [logo1] [logo2]",
               file=sys.stderr)
         sys.exit(1)
 
     docx_path = os.path.abspath(sys.argv[1])
-    logo1_path = os.path.abspath(sys.argv[2])
-    logo2_path = os.path.abspath(sys.argv[3])
+    logo1_path = os.path.abspath(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2] else ""
+    logo2_path = os.path.abspath(sys.argv[3]) if len(sys.argv) > 3 and sys.argv[3] else ""
 
     log(f"DOCX:  {docx_path}")
-    log(f"Logo1: {logo1_path}")
-    log(f"Logo2: {logo2_path}")
+    log(f"Logo1: {logo1_path or '(none)'}")
+    log(f"Logo2: {logo2_path or '(none)'}")
 
     sys.exit(0 if automate_word_tasks(docx_path, logo1_path, logo2_path) else 1)

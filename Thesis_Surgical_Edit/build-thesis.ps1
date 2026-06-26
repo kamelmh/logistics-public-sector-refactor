@@ -137,10 +137,11 @@ if ($Command -eq "" -or $Command -eq "build") {
     Apply-Fixes-And-Audit $docxPath
 
     # --- Word COM Automation for Logos, TOC, Table of Figures, and PDF Export ---
-    Write-Host "  [BUILD] Running Word COM automation for logos, TOC, TOF, PDF..." -ForegroundColor Cyan
-    $logo1Path = Join-Path $PSScriptRoot "style\logo1.png" # Assuming logo1.png is in style folder
-    $logo2Path = Join-Path $PSScriptRoot "style\logo2.png" # Assuming logo2.png is in style folder
-    $outputPdfPath = Join-Path $outDir "Memoire_DSS_Logistique_ElBayadh.pdf"
+    Write-Host "  [BUILD] Running Word COM automation for TOC, TOF, PDF..." -ForegroundColor Cyan
+    $logo1Path = Join-Path $PSScriptRoot "style\logo1.png"
+    $logo2Path = Join-Path $PSScriptRoot "style\logo2.png"
+    if (-not (Test-Path $logo1Path)) { $logo1Path = "" }
+    if (-not (Test-Path $logo2Path)) { $logo2Path = "" }
 
     python (Join-Path $styleDir "word_automation.py") $docxPath $logo1Path $logo2Path 2>&1
     if ($LASTEXITCODE -ne 0) { Write-Error "Word COM automation failed"; exit 1 }
