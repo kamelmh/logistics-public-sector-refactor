@@ -1,7 +1,7 @@
 """
-⚠️  DEPRECATED — Replaced by: Manual sync (no automated replacement)
-    This script is superseded and no longer part of the active pipeline.
-    Kept for reference only. Do not use in new workflows.
+⚠️  SEMI-DEPRECATED — Used only for --verify mode (MD ↔ DOCX comparison)
+    Replaced by: manual sync for edits. This script is still called by
+    build-thesis.ps1 for verification purposes only.
 """
 #!/usr/bin/env python
 """
@@ -35,14 +35,14 @@ DEFAULT_MD = os.path.join(PROJECT_ROOT, 'Thesis_Surgical_Edit', 'Memoire_DSS_Log
 
 # ─── GROUND TRUTH CONSTANTS (from thesis data) ───────────────────
 GROUND_TRUTH = {
-    'D': '789',
-    'Q*': '37',
-    'ROP': '206',
-    'SS': '200',
+    'D': '2007',  # ART-001 Papier A4
+    'Q*': '50',
+    'ROP': '416',
+    'SS': '400',  # ART-001 SS (different from ART-002 SS=200)
     'LT': '2',
     'S': '801.45',
     'I': '20%',
-    'VERSION': 'v13.2',
+    'VERSION': 'v13.4',
 }
 
 # ─── MD PARSING ─────────────────────────────────────────────────

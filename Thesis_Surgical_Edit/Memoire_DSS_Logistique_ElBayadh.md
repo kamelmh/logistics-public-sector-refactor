@@ -38,7 +38,7 @@ dir: rtl
 ## Résumé
 
 **Cette étude porte sur la problématique de la gestion manuelle des stocks dans l'entrepôt de la Direction de l'Éducation de la wilaya d'El Bayadh. L'objectif est de concevoir et de réaliser un système d'aide à la décision intégré, basé sur Excel/VBA, capable d'automatiser le cycle d'achat et de stockage à coût zéro. L'approche adoptée combine une méthode descriptive-analytique pour le diagnostic terrain et une méthode expérimentale pour la mesure d'impact, à partir de données réelles collectées sur 38 jours ouvrables. Trois modèles quantitatifs ont été appliqués sur l'article de référence ART-002 (Toner d'imprimante G030) : le modèle de Wilson, qui a généré une quantité économique Q* = 15 unités, un point de réapprovisionnement ROP = 200 unités, et un stock de sécurité SS = 200 unités. Les résultats montrent une réduction du temps de traitement par transaction de 20--30 minutes à moins de 5 secondes, soit une amélioration de 99,7%, avec élimination totale des ruptures de stock des articles stratégiques. Ces résultats valident les deux hypothèses formulées et confirment la faisabilité de la transition numérique dans les institutions éducatives publiques algériennes.**
-**Mots-clés : Système d'aide à la décision, gestion des stocks, modèle de Wilson, .analyse ABC, Excel/VBA, secteur éducatif**
+**Mots-clés : Système d'aide à la décision, gestion des stocks, modèle de Wilson, analyse ABC, Excel/VBA, secteur éducatif**
 
 # المقدمة العامة
 
@@ -77,7 +77,6 @@ dir: rtl
 ## الانسجام مع منهاج BTS في تسيير المخزونات واللوجستيك (TAG1801)
 
 صُمِّمت هذه المذكرة لتغطي مجمل الكفاءات المستهدفة في منهاج شهادة التقني السامي في تسيير المخزونات واللوجستيك، وفق التصنيف التالي:
-**الانسجام مع منهاج BTS في تسيير المخزونات واللوجستيك (TAG1801)**
 
 | السداسي | المقاييس المُغطَّاة | مظاهر التغطية في المذكرة |
 | --- | --- | --- |
@@ -223,7 +222,7 @@ dir: rtl
 - **طريقة FIFO (أول دخول أول خروج): تعتمد على إخراج الوحدات الأقدم أولاً. تُناسب المواد القابلة للتلف.**
 - **طريقة CMUP (المتوسط المرجّح للتكلفة): تُحسب تكلفة وحدة الخروج كمتوسط مرجّح لتكلفة المخزون الموجود قبل كل عملية دخول جديدة. الصيغة الرياضية:**
 
-- **CMUP = (قيمة الرصيد قبل الدخول + قيمة الدخول) ÷ (كمية الرصيد قبل الدخول + كمية الدخول)****
+- **CMUP = (قيمة الرصيد قبل الدخول + قيمة الدخول) ÷ (كمية الرصيد قبل الدخول + كمية الدخول)**
 
 ## المبحث الخامس: تقييم الموردين ومفهوم ERP
 
@@ -265,7 +264,6 @@ dir: rtl
 #### ثانياً: التطبيق على الصنف المرجعي ART-002
 
 **استُخرجت البيانات التالية ميدانياً من سجلات مصلحة المخازن خلال 38 يوم عمل، ومن وثائق مصلحة الميزانية: [^fn13]**
-**ثانياً: التطبيق على الصنف المرجعي ART-002 (Toner G030)**
 
 | المُعامل | القيمة الميدانية | المصدر |
 | --- | --- | --- |
@@ -836,7 +834,6 @@ dir: rtl
 ## الملحق الأول: هيكل ملف النظام
 
 وصف موجز لأوراق العمل الرئيسية في ملف Excel:
-**الملحق الأول: هيكل ملف النظام**
 
 | ورقة العمل | الوظيفة |
 | --- | --- |
@@ -869,7 +866,6 @@ dir: rtl
 ## الملحق الثالث: بيانات المخزون الميدانية
 
 عينة من بيانات المخزون الفعلية كما تظهر في السجل الرقمي:
-**الملحق الثالث: بيانات المخزون الميدانية**
 
 | الرمز | التسمية | الرصيد | ROP | التصنيف |
 | --- | --- | --- | --- | --- |
@@ -899,7 +895,6 @@ dir: rtl
 ## الملحق الخامس: نشر النماذج اللغوية الكبيرة (LLM Deployment)
 
 تم استخدام نماذج لغوية كبيرة (LLM) كأدوات مساعدة في تطوير نظام دعم القرار وتحسين جودة المذكرة الأكاديمية:
-**الملحق الخامس: نشر النماذج اللغوية الكبيرة (LLM Deployment)**
 
 | المعيار | التفاصيل |
 | --- | --- |
