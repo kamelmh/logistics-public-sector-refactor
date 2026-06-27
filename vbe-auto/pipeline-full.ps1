@@ -51,7 +51,7 @@ $ErrorActionPreference = "Continue"
 $ScriptDir = Split-Path $MyInvocation.MyCommand.Path -Parent
 $ProjectRoot = Resolve-Path "$ScriptDir\.."
 $VbaSourceDir = "$ProjectRoot\Software_Surgical_Edit\VBA_Modules"
-$ConfigPath = "$ScriptDir\config.json"
+$ConfigPath = "$ScriptDir\vbe-auto-config.json"
 $ReportDir = "$ScriptDir\results"
 
 if (-not $OutputPath) {

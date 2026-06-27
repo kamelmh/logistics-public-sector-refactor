@@ -15,7 +15,7 @@ $OcrDir = "$env:USERPROFILE\Desktop\OCR_Output"
 $AutoFixScript = "$ScriptDir\vba-autofix.ps1"
 $CheckScript = "$ScriptDir\vba-check.py"
 $BuildScript = "$ScriptDir\build.ps1"
-$ConfigPath = "$ScriptDir\config.json"
+$ConfigPath = "$ScriptDir\vbe-auto-config.json"
 
 # Ensure OCR output directory exists
 if (-not (Test-Path $OcrDir)) { New-Item -ItemType Directory -Path $OcrDir -Force | Out-Null }

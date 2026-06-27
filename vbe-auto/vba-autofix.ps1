@@ -30,7 +30,7 @@ $VbaSourceDir = "$ProjectRoot\Software_Surgical_Edit\VBA_Modules"
 $OcrDir = "$env:USERPROFILE\Desktop\OCR_Output"
 $BuildScript = "$ScriptDir\build.ps1"
 $VerifyScript = "$ScriptDir\verify.ps1"
-$ConfigPath = "$ScriptDir\config.json"
+$ConfigPath = "$ScriptDir\vbe-auto-config.json"
 
 # ============================================================================
 # Helpers

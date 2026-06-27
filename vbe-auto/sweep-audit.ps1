@@ -2,7 +2,8 @@
 # Finds: undeclared module-level vars, unresolved unqualified function calls,
 # unresolved cross-module calls, missing UDT types.
 
-$src = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Software_Surgical_Edit\VBA_Modules"
+$ScriptDir = Split-Path $MyInvocation.MyCommand.Path -Parent
+$src = Join-Path (Split-Path $ScriptDir -Parent) "Software_Surgical_Edit\VBA_Modules"
 
 # Sub/End Sub and Function/End Function balance check (Catches "Expected End Function",
 # "Expected End Sub" errors that VBE swallows in some cases)

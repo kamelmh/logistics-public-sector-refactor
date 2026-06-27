@@ -2,7 +2,7 @@
 $OcrDir = "$env:USERPROFILE\Desktop\OCR_Output"
 $ScriptDir = Split-Path $MyInvocation.MyCommand.Path -Parent
 $BuildScript = Join-Path $ScriptDir "build.ps1"
-$ConfigPath = Join-Path $ScriptDir "config.json"
+$ConfigPath = Join-Path $ScriptDir "vbe-auto-config.json"
 
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
