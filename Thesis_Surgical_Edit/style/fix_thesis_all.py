@@ -793,7 +793,7 @@ def main():
 
     sep = '=' * 62
     print(sep)
-    print('ACADEMIX — Full Thesis Fixer v3 (Anti-Stuffed + Full RTL)')
+    print('ACADEMIX — Full Thesis Fixer v4 (Anti-Stuffed + Full RTL)')
     print(sep)
     print('File : %s' % path)
     print('Mode : %s' % ('SAVE' if save else 'DRY RUN'))

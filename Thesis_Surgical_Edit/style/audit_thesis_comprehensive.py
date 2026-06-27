@@ -320,7 +320,7 @@ def print_report(report):
         return
     
     print("=" * 70)
-    print("ACADEMIX v13.2 — COMPREHENSIVE THESIS AUDIT")
+    print("ACADEMIX v13.4 — COMPREHENSIVE THESIS AUDIT")
     print("=" * 70)
     
     ov = report['overview']

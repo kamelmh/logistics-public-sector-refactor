@@ -154,7 +154,7 @@ def automate_word_tasks(docx_path, logo1_path, logo2_path):
         return False
     finally:
         try:
-            if doc: doc.Close(SaveChanges=False)
+            if doc: doc.Close(SaveChanges=True)
         except: pass
         try:
             if word: word.Quit()

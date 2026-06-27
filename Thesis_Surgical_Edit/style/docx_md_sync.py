@@ -343,7 +343,7 @@ dir: rtl
 def print_report(issues, info, md_path, docx_path):
     """Print formatted comparison report."""
     print('=' * 70)
-    print('  ACADEMIX v13.2 — DOCX ↔ MD Sync Report')
+    print('  ACADEMIX v13.4 — DOCX ↔ MD Sync Report')
     print('=' * 70)
     print(f'  MD:   {md_path}')
     print(f'  DOCX: {docx_path}')

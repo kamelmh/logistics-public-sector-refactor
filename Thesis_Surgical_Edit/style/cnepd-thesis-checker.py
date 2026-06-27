@@ -12,17 +12,17 @@ Usage: python cnepd-thesis-checker.py <thesis.md>
 import sys, os, re, json
 
 GROUND_TRUTH = {
-    "D": "1,546",
-    "Q*": "176",
-    "ROP": "212.4",
-    "SS": "200",
+    "D": "2,007",
+    "Q*": "50",
+    "ROP": "416",
+    "SS": "400",
     "LT": "2",
-    "S": "500",
+    "S": "801.45",
     "I": "20%",
     "performance": "99.7%",
     "articles": {
-        "ART-001": {"fr": "Toner imprimante G030 (noir)", "ar": "حبر الطابعة Toner G030"},
-        "ART-002": {"fr": "Rame papier A4 80g/m²", "ar": "رزم الورق A4"},
+        "ART-001": {"fr": "Rame papier A4 80g/m²", "ar": "رزم الورق A4"},
+        "ART-002": {"fr": "Toner imprimante G030 (noir)", "ar": "حبر الطابعة Toner G030"},
         "ART-003": {"fr": "Rame papier A3 80g/m²", "ar": "رزم الورق A3"},
         "ART-004": {"fr": "Boîte archives carton", "ar": "صندوق أرشيف كرتوني"},
         "ART-005": {"fr": "Agrafeuse de bureau", "ar": "أغرف الأغراض (دباسة)"},

@@ -1,4 +1,4 @@
-"""verify_docx_checks.py — 25 fast verification checks via python-docx (no COM)
+"""verify_docx_checks.py — 32 fast verification checks via python-docx (no COM)
 Usage: python verify_docx_checks.py <path/to.docx> [--json]
 """
 import sys, os, json, zipfile, argparse
@@ -265,6 +265,34 @@ def run_checks(docx_path, strict_headings=False, size_threshold=50000, backup_pa
     results.append(check("Opens without corruption", True, "python-docx ok"))
 
     results.append(check("Body has content", sum(1 for p in bp[:30] if p.text and p.text.strip()) >= 15, ""))
+
+    # ── Hyperlink & bookmark verification ──────────────────────────────
+    try:
+        with zipfile.ZipFile(docx_path) as z:
+            doc_xml = z.read('word/document.xml')
+        doc_tree = ET.fromstring(doc_xml)
+        hyperlink_count = len(doc_tree.findall('.//w:hyperlink', W_NS))
+        bookmark_count = len(doc_tree.findall('.//w:bookmarkStart', W_NS))
+        # Count PAGEREF fields (inside instrText)
+        pageref_count = 0
+        for instr in doc_tree.findall('.//w:instrText', W_NS):
+            if instr.text and 'PAGEREF' in instr.text:
+                pageref_count += 1
+        # Check TOC field has \h switch
+        has_toc_h = False
+        for instr in doc_tree.findall('.//w:instrText', W_NS):
+            if instr.text and 'TOC' in instr.text and '\\h' in instr.text:
+                has_toc_h = True
+                break
+        results.append(check("Hyperlinks present", hyperlink_count > 0, f"count={hyperlink_count}"))
+        results.append(check("PAGEREF fields present", pageref_count > 0, f"count={pageref_count}"))
+        results.append(check("TOC has \\h switch", has_toc_h, "clickable hyperlinks enabled"))
+        results.append(check("Bookmarks present", bookmark_count > 0, f"count={bookmark_count}"))
+    except Exception as e:
+        results.append(check("Hyperlinks present", False, f"Error: {e}"))
+        results.append(check("PAGEREF fields present", False, f"Error: {e}"))
+        results.append(check("TOC has \\h switch", False, f"Error: {e}"))
+        results.append(check("Bookmarks present", False, f"Error: {e}"))
 
     passed = sum(1 for r in results if r["passed"])
     failed = sum(1 for r in results if not r["passed"])

@@ -1,7 +1,8 @@
 # VBA Scan-Once: Bring VBE to front -> Screenshot -> OCR -> Detect -> Fix
 $OcrDir = "$env:USERPROFILE\Desktop\OCR_Output"
-$BuildScript = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\vbe-auto\build.ps1"
-$ConfigPath = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\vbe-auto\config.json"
+$ScriptDir = Split-Path $MyInvocation.MyCommand.Path -Parent
+$BuildScript = Join-Path $ScriptDir "build.ps1"
+$ConfigPath = Join-Path $ScriptDir "config.json"
 
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
@@ -148,7 +149,7 @@ if ($hasError) {
     Write-Host "═══════════════════════════════════════════════" -ForegroundColor Green
     Write-Host "  ✅ AUTOFIX COMPLETE - Workbook rebuilt!" -ForegroundColor Green
     Write-Host "  Error: $errorType in $errorModule" -ForegroundColor Green
-    Write-Host "  Reopen ERP_v13.3.xlsm to test" -ForegroundColor Green
+    Write-Host "  Reopen ERP_v13.4.xlsm to test" -ForegroundColor Green
     Write-Host "═══════════════════════════════════════════════" -ForegroundColor Green
 } else {
     Write-Host "[5/6] ✅ No compile error detected" -ForegroundColor Green

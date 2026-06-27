@@ -25,25 +25,25 @@ OUTPUT_PATH = os.path.join(PROJECT_ROOT, 'Thesis_Surgical_Edit', 'output', 'gold
 
 NS = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 
-# ─── GROUND TRUTH CORRECT DATA (from ERP v13.3) ─────────────────────
+# ─── GROUND TRUTH CORRECT DATA (from ERP v13.4) ─────────────────────
 GROUND_TRUTH = {
-    'D_annual': '789',
-    'D_old': '1,546',
-    'PU': '4,500',
-    'PU_old': '400',
-    'Qstar': '37',
-    'Qstar_old': '176',
-    'ROP': '206',
-    'ROP_old': '212.4',
-    'SS': '200',
+    'D_annual': '2007',  # ART-001 Papier A4
+    'D_old': '789',
+    'PU': '400',  # ART-001
+    'PU_old': '4,500',
+    'Qstar': '50',  # ART-001
+    'Qstar_old': '37',
+    'ROP': '416',  # ART-001
+    'ROP_old': '206',
+    'SS': '400',  # ART-001
     'LT': '2',
     'S': '801.45',
     'I': '20%',
     'I_float': 0.20,
-    'VERSION': 'v13.3',
-    'VERSION_old': 'v13.2',
-    'TC_denom': '900',  # PU * I = 4500 * 0.2
-    'TC_denom_old': '80',  # 400 * 0.2
+    'VERSION': 'v13.4',
+    'VERSION_old': 'v13.3',
+    'TC_denom': '80',  # PU * I = 400 * 0.2
+    'TC_denom_old': '900',  # 4500 * 0.2
 }
 
 # Data fix replacements: old_pattern -> new_value
