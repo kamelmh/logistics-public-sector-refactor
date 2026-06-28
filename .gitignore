@@ -39,6 +39,9 @@ thesis_screenshot*.png
 # Build artifacts
 vbe-auto/results/*.json
 
+# Nested workspace copy (not part of this repo)
+Logistics.Public.Sector.Refactor/
+
 # Symlink hub (pointer files only)
 links/
 

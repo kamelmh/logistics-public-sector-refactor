@@ -310,15 +310,29 @@ if __name__ == "__main__":
     if args.json:
         print(json.dumps(r, indent=2, ensure_ascii=False))
     else:
+        # Auto-detect encoding support — fall back to ASCII if Unicode chars not supported
+        _use_unicode = True
+        try:
+            # Test whether the console can render the emoji characters we use
+            '\u2705'.encode(sys.stdout.encoding or 'utf-8')
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            _use_unicode = False
+        
+        _PASS = "PASS" if not _use_unicode else "\u2705 PASS"
+        _FAIL = "FAIL" if not _use_unicode else "\u274C FAIL"
+        _SEP  = " - " if not _use_unicode else " \u2014 "
+        _OK   = "All checks passed!" if not _use_unicode else "\u2728 All checks passed successfully! \u2728"
+        _NOK  = "Some checks failed." if not _use_unicode else "\u26A0\uFE0F Some checks failed. Please review the errors above."
+        
         print(f"\n--- Verification Results for {os.path.basename(args.docx)} ---")
         for c in r["checks"]:
-            s = "✅ PASS" if c["passed"] else "❌ FAIL"
-            m = f" — {c['message']}" if c["message"] else ""
+            s = _PASS if c["passed"] else _FAIL
+            m = f"{_SEP}{c['message']}" if c["message"] else ""
             print(f"  {s} {c['name']}{m}")
         s = r["summary"]
         print(f"\n  Summary: {s['passed']}/{s['total']} Passed | {s['failed']} Failed")
         if s['failed'] == 0:
-            print("  ✨ All checks passed successfully! ✨")
+            print(f"  {_OK}")
         else:
-            print("  ⚠️  Some checks failed. Please review the errors above.")
+            print(f"  {_NOK}")
     sys.exit(0 if r["summary"]["failed"] == 0 else 1)
