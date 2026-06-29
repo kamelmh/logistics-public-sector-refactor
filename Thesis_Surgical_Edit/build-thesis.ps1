@@ -136,6 +136,11 @@ if ($Command -eq "" -or $Command -eq "build") {
     # Apply fixes and audit
     Apply-Fixes-And-Audit $docxPath
 
+    # --- Thorough field update (Ctrl+A F9) before final PDF export ---
+    Write-Host "  [BUILD] Updating all fields via Word COM (body, headers/footers, TOC, footnotes)..." -ForegroundColor Cyan
+    python (Join-Path $styleDir "update_fields.py") $docxPath --save-only 2>&1
+    if ($LASTEXITCODE -ne 0) { Write-Error "Field update failed"; exit 1 }
+
     # --- Word COM Automation for Logos, TOC, Table of Figures, and PDF Export ---
     Write-Host "  [BUILD] Running Word COM automation for TOC, TOF, PDF..." -ForegroundColor Cyan
     $logo1Path = Join-Path $PSScriptRoot "style\logo1.png"
