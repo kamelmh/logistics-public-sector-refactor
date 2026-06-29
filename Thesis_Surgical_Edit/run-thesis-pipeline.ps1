@@ -320,7 +320,7 @@ with zipfile.ZipFile(path, 'r') as z:
     
     # Quick check: PAGE field should have no cached result
     $ok = (Invoke-PipelineStep "Verify PAGE field: no cached result" {
-        python "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\style\check_page_field.py" $docxPath 2>&1
+        python "$styleDir\check_page_field.py" $docxPath 2>&1
     }) -and $ok
     
     return $ok

@@ -1,7 +1,9 @@
 """vba_module_map.py — Map VBA module sizes and procedures"""
 import zipfile, re
+from pathlib import Path
 
-xlsm = r'C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\ERP_v13.2.xlsm'
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+xlsm = str(PROJECT_ROOT / 'ERP_v13.4.xlsm')
 with zipfile.ZipFile(xlsm, 'r') as z:
     vba = z.read('xl/vbaProject.bin')
     text = vba.decode('latin-1', errors='replace')

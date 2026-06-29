@@ -1,7 +1,9 @@
 """Fix pgNumType in document.xml after doc.save() regenerates it"""
 import zipfile, tempfile, os, re
+from pathlib import Path
 
-path = r"C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+path = str(PROJECT_ROOT / "output" / "Memoire_DSS_Logistique_ElBayadh.docx")
 W_NS = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
 
 fd, tmp = tempfile.mkstemp(suffix='.tmp', dir=os.path.dirname(path))

@@ -1,8 +1,10 @@
 """Check pgNumType in thesis DOCX"""
 import zipfile
+from pathlib import Path
 from lxml import etree
 
-docx = r"C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+docx = str(PROJECT_ROOT / "output" / "Memoire_DSS_Logistique_ElBayadh.docx")
 NSMAP = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
 
 with zipfile.ZipFile(docx) as z:

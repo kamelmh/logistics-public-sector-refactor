@@ -1,7 +1,7 @@
 # sync-skills.ps1 — Regenerates all missing SKILL.md files and fixes links/09-Skills pointers
-$ocSkills = "C:\Users\Administrator\.opencode\skills"
-$specRoot = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\.opencode\skills_spectrum"
-$root = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor"
+$ocSkills = Join-Path $env:USERPROFILE ".opencode\skills"
+$root = Split-Path -Parent $PSScriptRoot
+$specRoot = Join-Path $root ".opencode\skills_spectrum"
 
 $coreSkills = @{
     "crossflow" = @"

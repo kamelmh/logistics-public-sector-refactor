@@ -1,9 +1,10 @@
 # Convert thesis DOCX to PDF (Color + Grayscale)
 # Uses Word COM for highest fidelity conversion
 
-$docxPath = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx"
-$pdfColorPath = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh_COLOR.pdf"
-$pdfGrayPath = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh_GRAYSCALE.pdf"
+$projectRoot = Split-Path -Parent $PSScriptRoot
+$docxPath = Join-Path $projectRoot "Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx"
+$pdfColorPath = Join-Path $projectRoot "Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh_COLOR.pdf"
+$pdfGrayPath = Join-Path $projectRoot "Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh_GRAYSCALE.pdf"
 
 Write-Host "Starting Word COM..." -ForegroundColor Cyan
 $word = New-Object -ComObject Word.Application

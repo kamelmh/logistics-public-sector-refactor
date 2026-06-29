@@ -53,7 +53,8 @@ if ($oldSessions) {
 
 # Clean Dropbox Temp
 Write-Host "[3/5] Cleaning Dropbox Temp..." -ForegroundColor Yellow
-$tempFiles = Get-ChildItem "C:\Users\Administrator\Dropbox\Temp\*" -ErrorAction SilentlyContinue
+$projectRoot = Split-Path -Parent $PSScriptRoot
+$tempFiles = Get-ChildItem "$projectRoot\..\Temp\*" -ErrorAction SilentlyContinue
 if ($tempFiles) {
     $tempSize = ($tempFiles | Measure-Object -Property Length -Sum).Sum
     $tempFiles | Remove-Item -Force
@@ -65,7 +66,7 @@ if ($tempFiles) {
 
 # Clean project temp files
 Write-Host "[4/5] Cleaning project temp files..." -ForegroundColor Yellow
-$projectTemp = Get-ChildItem "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\*.tmp" -ErrorAction SilentlyContinue
+$projectTemp = Get-ChildItem "$projectRoot\*.tmp" -ErrorAction SilentlyContinue
 if ($projectTemp) {
     $tmpSize = ($projectTemp | Measure-Object -Property Length -Sum).Sum
     $projectTemp | Remove-Item -Force

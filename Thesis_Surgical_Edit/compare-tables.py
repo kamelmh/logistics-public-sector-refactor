@@ -98,7 +98,8 @@ def compare_tables(current_file, backup_file):
         return False
 
 if __name__ == "__main__":
-    base = r"C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output"
+    from pathlib import Path
+    base = str(Path(__file__).resolve().parent / "output")
     current = f"{base}\\Memoire_DSS_Logistique_ElBayadh.docx"
     backup = f"{base}\\Memoire_DSS_Logistique_ElBayadh_v7c_BACKUP.docx"
     

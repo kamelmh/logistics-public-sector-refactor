@@ -7,8 +7,10 @@ from docx.shared import Cm, Pt
 from docx.oxml.ns import qn
 import xml.etree.ElementTree as ET
 import re, os, sys
+from pathlib import Path
 
-DOCX = sys.argv[1] if len(sys.argv) > 1 else r"C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx"
+DEFAULT_DOCX = str(Path(__file__).resolve().parent.parent / "output" / "Memoire_DSS_Logistique_ElBayadh.docx")
+DOCX = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_DOCX
 
 doc = Document(DOCX)
 file_size = os.path.getsize(DOCX) / 1024

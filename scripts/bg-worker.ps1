@@ -4,7 +4,7 @@ param(
     [switch]$Status
 )
 
-$ROOT = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor"
+$ROOT = Split-Path -Parent $PSScriptRoot
 $harness = Join-Path $ROOT "scripts\harness.ps1"
 
 if (-not (Test-Path $harness)) {

@@ -1,7 +1,9 @@
 """Fix footer XMLs - ensure footer1.xml is blank, footer2.xml has clean PAGE field"""
 import zipfile, tempfile, os
+from pathlib import Path
 
-path = r"C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+path = str(PROJECT_ROOT / "output" / "Memoire_DSS_Logistique_ElBayadh.docx")
 
 FOOTER1_BLANK = b'''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">

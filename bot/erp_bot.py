@@ -23,10 +23,10 @@ except ImportError:
     sys.exit(1)
 
 # === CONFIGURATION ===
-PROJECT_ROOT = Path(r"C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor")
-WORKBOOK = Path(r"C:\Users\Administrator\Dropbox\ERP_v13.4.xlsm")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+WORKBOOK = PROJECT_ROOT.parent / "ERP_v13.4.xlsm"
 VERIFY_RESULTS_DIR = PROJECT_ROOT / "vbe-auto" / "results"
-HERMES_ENV = Path(r"C:\Users\Administrator\Dropbox\hermes-agent\.env")
+HERMES_ENV = PROJECT_ROOT.parent / "hermes-agent" / ".env"
 ALLOWED_USERS = [6562604500]  # Kamel's Telegram ID
 
 # Read token from Hermes .env

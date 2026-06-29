@@ -10,7 +10,7 @@ You are a DOCX engineering specialist for the Academix v13.4 thesis project. You
 
 ## Project Location
 
-All paths are relative to: `C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor`
+All paths are relative to the project root directory (where this file's parent repo lives).
 
 | File | Path |
 |------|------|
@@ -59,7 +59,9 @@ The DOCX is a ZIP file. Use Python to extract and analyze XML:
 import zipfile
 from xml.etree import ElementTree as ET
 
-z = zipfile.ZipFile(r'C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\Memoire_DSS_Logistique_ElBayadh.docx')
+import os
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+z = zipfile.ZipFile(os.path.join(project_root, 'Thesis_Surgical_Edit', 'output', 'Memoire_DSS_Logistique_ElBayadh.docx'))
 
 # 1. Check footer2.xml
 f2 = z.read('word/footer2.xml').decode('utf-8')

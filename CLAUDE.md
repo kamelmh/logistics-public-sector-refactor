@@ -35,14 +35,13 @@ All three tools share the same MCP servers and project context:
 | **context7** | Library documentation (React, Next.js, etc.) | Free tier |
 
 ### Shared File Paths
-- **Project Root**: `C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor`
-- **Google Drive**: `C:\Users\Administrator\My Drive`
+- **Project Root**: project root directory (where this file lives)
+- **ERP Workbook**: `../ERP_v13.4.xlsm` (parent of project root)
 - **Thesis Source**: `Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md`
 - **Thesis Golden Source**: `Thesis_Surgical_Edit/output/Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx`
 - **ERP Workbook**: `ERP_v13.4.xlsm`
-- **Handoff**: `.crossflow/HANDOFF.md`
-- **Session Memory**: `C:\Users\Administrator\.opencode\notepad.md`
-- **Resume Prompt**: `C:\Users\Administrator\.opencode\resume-prompt.md`
+- **Handoff**: `HANDOFF.md`
+- **Session Memory**: `.opencode/notepad.md`
 
 ## RATE LIMIT AWARENESS
 
@@ -118,8 +117,8 @@ Next: Launch Claude Desktop GUI for deep verification
 Read: .crossflow/HANDOFF.md for full context
 ```
 
-### Full Resume Prompt (For comprehensive context)
-See: `C:\Users\Administrator\.opencode\resume-prompt.md`
+### Full Resume Prompt
+See: `.opencode/resume-prompt.md`
 
 ## PHASE-BASED WORKFLOW
 
@@ -159,7 +158,7 @@ See: `C:\Users\Administrator\.opencode\resume-prompt.md`
 - **Output PDF**: `Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.pdf`
 - **Build Script**: `Thesis_Surgical_Edit/build-thesis.ps1`
 - **Verification**: `Thesis_Surgical_Edit/style/verify_docx_checks.py`
-- **Handoff Plan**: `ClaudeDesktop_HANDOFF_PLAN.md`
+- **Handoff Plan**: (removed — see git history for ClaudeDesktop_HANDOFF_PLAN.md)
 
 ## KEY SCRIPTS
 - **Pipeline**: `Thesis_Surgical_Edit/run-thesis-pipeline.ps1` (orchestrates build → fixes → verification)
@@ -184,17 +183,9 @@ See: `C:\Users\Administrator\.opencode\resume-prompt.md`
 7. Updated HANDOFF.md with new structure
 
 ## NEXT STEPS
-1. Launch Claude Desktop GUI for deep verification
-2. Follow 7-phase handoff plan in `ClaudeDesktop_HANDOFF_PLAN.md`
-3. Open DOCX in Word, Ctrl+A → F9 to update fields
-4. Verify page numbers, RTL, table layout
-5. Final review and submission
-
-## DEEP VERIFICATION SESSION (Claude Desktop GUI)
-1. Launch Claude Desktop GUI (desktop application, not CLI)
-2. Read `ClaudeDesktop_DEEP_VERIFICATION.md` for full strategy
-3. Follow the 7-step verification process
-4. Provide final assessment and sign-off
+1. Open DOCX in Word, Ctrl+A → F9 to update fields
+2. Verify page numbers, RTL, table layout
+3. Final review and submission
 
 ## HOW TO HELP
 - Review thesis content for accuracy
@@ -204,6 +195,3 @@ See: `C:\Users\Administrator\.opencode\resume-prompt.md`
 
 ## ADDITIONAL CONTEXT FILES
 - **THESIS_CONTEXT.md**: Detailed thesis information and verification results
-- **CrossFlow HANDOFF.md**: Current project status and handoff information
-- **MASTER_BOOTSTRAP.xml**: Complete system context and configuration
-- **Resume Prompt**: `C:\Users\Administrator\.opencode\resume-prompt.md`

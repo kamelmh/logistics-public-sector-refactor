@@ -23,7 +23,7 @@ param(
 )
 
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
-$projectRoot = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor"
+$projectRoot = Split-Path -Parent $PSScriptRoot
 $backupRoot = "$projectRoot\backups"
 $archiveRoot = "$projectRoot\archive"
 

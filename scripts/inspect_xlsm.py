@@ -1,8 +1,10 @@
 """inspect_xlsm.py — ERP workbook structure explorer"""
 import zipfile, os, re
+from pathlib import Path
 from xml.etree import ElementTree as ET
 
-xlsm = r'C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\ERP_v13.2.xlsm'
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+xlsm = str(PROJECT_ROOT / 'ERP_v13.4.xlsm')
 ns_x = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'
 
 with zipfile.ZipFile(xlsm, 'r') as z:

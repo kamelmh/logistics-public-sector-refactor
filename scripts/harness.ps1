@@ -10,7 +10,7 @@ param(
     [string[]]$Args
 )
 
-$ROOT = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor"
+$ROOT = Split-Path -Parent $PSScriptRoot
 $TASKS_DIR = "$ROOT\.tasks"
 $TEAM_DIR = "$ROOT\.team"
 $INBOX_DIR = "$TEAM_DIR\inbox"

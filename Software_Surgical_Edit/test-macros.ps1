@@ -1,5 +1,5 @@
 param(
-    [string]$WorkbookPath = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\ERP_v13.3.xlsm"
+    [string]$WorkbookPath = (Join-Path (Split-Path -Parent $PSScriptRoot) "ERP_v13.4.xlsm")
 )
 
 $ErrorActionPreference = "Stop"

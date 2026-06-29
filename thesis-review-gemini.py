@@ -20,7 +20,7 @@ def review_thesis():
     print()
     
     # Read context files
-    project_root = Path(r"C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor")
+    project_root = Path(__file__).resolve().parent
     
     context_files = [
         "CLAUDE.md",
