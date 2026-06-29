@@ -4,15 +4,19 @@ tmp_*
 .tmp.driveupload/
 bin/
 
-# Binaries & build artifacts
+# Binaries, build artifacts & installers (NEVER commit these)
 *.xlsm
+*.msi
+*.zip
+*.exe
+pandoc*
 opencode.exe
 tesseract-ocr-w64-setup.exe
 
 # Session transcripts (not project code)
 session-ses_*.md
 
-# Archive & backup directories (both naming conventions)
+# Archive & backup directories
 _archive/
 ARCHIVED/
 backups/
@@ -84,3 +88,7 @@ oh-my-claudecode/
 
 # Backup of old golden master
 *.BAK
+*.bak
+
+# Delivery packages (archived, not part of active repo)
+DELIVERY_v*/
