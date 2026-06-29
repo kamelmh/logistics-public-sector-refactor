@@ -30,7 +30,7 @@ All three tools share the same MCP servers and project context:
 | Server | Purpose | Token/Limits |
 |--------|---------|--------------|
 | **filesystem** | Read/write project files | Local MSIX path |
-| **github** | Git operations, PRs, issues | github_pat_11APRYXRQ0TVeTcHzbdqRG |
+| **github** | Git operations, PRs, issues | `$env:GH_TOKEN` (never commit; see SECURITY.md) |
 | **microsoft-learn** | Documentation lookup | Public endpoint |
 | **context7** | Library documentation (React, Next.js, etc.) | Free tier |
 

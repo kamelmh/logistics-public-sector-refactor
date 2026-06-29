@@ -15,16 +15,16 @@ Decision Support System for inventory management at the **Direction de l'Éducat
 
 | Parameter | Value | Description |
 |-----------|-------|-------------|
-| D | 789 units/yr | Annual demand |
-| Q* | 37 units | Wilson EOQ |
-| ROP | 206 units | Reorder Point |
+| D | 33 units/yr | Annual demand |
+| Q* | 15 units | Wilson EOQ |
+| ROP | 200 units | Reorder Point |
 | SS | 200 units | Safety Stock |
 | LT | 2 days | Lead Time |
 | S | 801.45 DZD | Order Cost |
-| PU | 4,500 DZD | Unit Price |
+| PU | 1,200 DZD | Unit Price |
 | I | 20% | Holding Rate |
 
-> Canonical thesis constants — locked, never modify.
+> Canonical thesis constants for reference article **ART-002 (Toner G030)** — locked, never modify. See `status_board.txt` for the full multi-article ground-truth set.
 
 ## Repositories
 
