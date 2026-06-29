@@ -147,17 +147,29 @@ def validate_file(fpath):
 def main():
     global CHECKS_PASSED, CHECKS_FAILED
     
+    # Auto-detect console encoding for Unicode-safe output
+    _use_unicode = True
+    try:
+        '\u2705'.encode(sys.stdout.encoding or 'utf-8')
+    except (UnicodeEncodeError, UnicodeDecodeError):
+        _use_unicode = False
+    _OK  = "[PASS]" if not _use_unicode else "\u2705"
+    _BAD = "[FAIL]" if not _use_unicode else "\u274C"
+    _WARN = "[WARN]" if not _use_unicode else "\u26A0\uFE0F"
+    _SEP = "-" if not _use_unicode else "\u2014"  # em dash fallback
+    _BANNER_LINE = "+--------------------------------------------+"
+    
     if not os.path.isdir(VBA_DIR):
-        print(f"❌ Source directory not found: {VBA_DIR}")
+        print(f"{_BAD} Source directory not found: {VBA_DIR}")
         sys.exit(1)
     
     files = sorted(glob.glob(os.path.join(VBA_DIR, "*.bas")) + 
                    glob.glob(os.path.join(VBA_DIR, "*.frm")) +
                    glob.glob(os.path.join(VBA_DIR, "*.cls")))
     
-    print("╔══════════════════════════════════════════════╗")
-    print("║        VBA Pre-Build Validator v1.2         ║")
-    print("╚══════════════════════════════════════════════╝")
+    print(_BANNER_LINE)
+    print("|        VBA Pre-Build Validator v1.2         |")
+    print(_BANNER_LINE)
     print(f"  Scanning: {VBA_DIR}")
     print(f"  Files:    {len(files)}")
     print()
@@ -166,31 +178,31 @@ def main():
         validate_file(fpath)
     
     # RESULTS
-    print("╔══════════════════════════════════════════════╗")
-    print("║                  RESULTS                    ║")
-    print("╚══════════════════════════════════════════════╝")
+    print(_BANNER_LINE)
+    print("|                  RESULTS                    |")
+    print(_BANNER_LINE)
     print()
     print(f"  Files scanned: {len(files)}")
     print(f"  Errors:       {CHECKS_FAILED}")
     
     if ERRORS:
         print()
-        print("── ERRORS ────────────────────────────────────────")
+        print("-- ERRORS ------------------------------------------")
         for e in ERRORS:
-            print(f"  ❌ {e}")
+            print(f"  {_BAD} {e}")
     
     if WARNINGS:
         print()
-        print("── WARNINGS ──────────────────────────────────────")
+        print("-- WARNINGS ----------------------------------------")
         for w in WARNINGS:
-            print(f"  ⚠️  {w}")
+            print(f"  {_WARN} {w}")
     
     print()
     if CHECKS_FAILED == 0:
-        print("  ✅ ALL CHECKS PASSED — SAFE TO BUILD")
+        print(f"  {_OK} ALL CHECKS PASSED {_SEP} SAFE TO BUILD")
         return 0
     else:
-        print(f"  ❌ {CHECKS_FAILED} ERROR(S) — FIX BEFORE BUILD")
+        print(f"  {_BAD} {CHECKS_FAILED} ERROR(S) {_SEP} FIX BEFORE BUILD")
         return 1
 
 if __name__ == "__main__":

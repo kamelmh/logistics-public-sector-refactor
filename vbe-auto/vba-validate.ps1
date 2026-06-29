@@ -97,9 +97,9 @@ function Test-BasFile {
 }
 
 Write-Host "`n" -NoNewline
-Write-Host "╔══════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║        VBA Pre-Build Validator              ║" -ForegroundColor Cyan
-Write-Host "╚══════════════════════════════════════════════╝" -ForegroundColor Cyan
+Write-Host "+--------------------------------------------+" -ForegroundColor Cyan
+Write-Host "|        VBA Pre-Build Validator              |" -ForegroundColor Cyan
+Write-Host "+--------------------------------------------+" -ForegroundColor Cyan
 Write-Host ""
 
 # Resolve source directory
@@ -124,13 +124,13 @@ $cleanFiles = $totalFiles - ($global:errors | Where-Object {$_} | Select-Object 
     $_.Split(':')[0] 
 } | Select-Object -Unique).Count
 
-Write-Host "╔══════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║                  RESULTS                      ║" -ForegroundColor Cyan
-Write-Host "╚══════════════════════════════════════════════╝" -ForegroundColor Cyan
+Write-Host "+--------------------------------------------+" -ForegroundColor Cyan
+Write-Host "|                  RESULTS                      |" -ForegroundColor Cyan
+Write-Host "+--------------------------------------------+" -ForegroundColor Cyan
 Write-Host ""
 
 if ($global:errors.Count -eq 0 -and $global:warnings.Count -eq 0) {
-    Write-Host "  ✅ ALL $totalFiles FILES PASS — NO ISSUES" -ForegroundColor Green
+    Write-Host "  [PASS] ALL $totalFiles FILES PASS -- NO ISSUES" -ForegroundColor Green
 } else {
     Write-Host "  Files scanned: $totalFiles" -ForegroundColor Gray
     Write-Host "  Errors:       $($global:errors.Count)" -ForegroundColor $(if($global:errors.Count -gt 0){'Red'}else{'Green'})
@@ -138,25 +138,25 @@ if ($global:errors.Count -eq 0 -and $global:warnings.Count -eq 0) {
     
     if ($global:errors.Count -gt 0) {
         Write-Host ""
-        Write-Host "── ERRORS ────────────────────────────────────────" -ForegroundColor Red
-        $global:errors | ForEach-Object { Write-Host "  ❌ $_" -ForegroundColor Red }
+        Write-Host "-- ERRORS -----------------------------------------" -ForegroundColor Red
+        $global:errors | ForEach-Object { Write-Host "  [FAIL] $_" -ForegroundColor Red }
     }
     
     if ($global:warnings.Count -gt 0) {
         Write-Host ""
-        Write-Host "── WARNINGS ──────────────────────────────────────" -ForegroundColor Yellow
-        $global:warnings | ForEach-Object { Write-Host "  ⚠️  $_" -ForegroundColor Yellow }
+        Write-Host "-- WARNINGS ---------------------------------------" -ForegroundColor Yellow
+        $global:warnings | ForEach-Object { Write-Host "  [WARN] $_" -ForegroundColor Yellow }
     }
 }
 
 Write-Host ""
 Write-Host "Build recommendation:" -NoNewline -ForegroundColor Cyan
 if ($global:errors.Count -eq 0) {
-    Write-Host " ✅ SAFE TO BUILD" -ForegroundColor Green
+    Write-Host " [PASS] SAFE TO BUILD" -ForegroundColor Green
 } else {
-    Write-Host " ❌ FIX ERRORS FIRST" -ForegroundColor Red
+    Write-Host " [FAIL] FIX ERRORS FIRST" -ForegroundColor Red
     Write-Host ""
     Write-Host "HINT: Most VBA encoding errors come from UTF-8 special characters" -ForegroundColor Yellow
     Write-Host "      that VBA can't parse. Check comments and string literals" -ForegroundColor Yellow
-    Write-Host "      for: É, è, — (em dash), → (arrow), « », °, etc." -ForegroundColor Yellow
+    Write-Host "      for: accent marks, special punctuation, and symbols." -ForegroundColor Yellow
 }

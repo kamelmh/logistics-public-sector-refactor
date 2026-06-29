@@ -77,16 +77,16 @@ $global:pipeline = @{
 # === Helpers ===
 function Write-Phase($number, $title) {
     Write-Host ""
-    Write-Host "╔═══════════════════════════════════════════════════════" -ForegroundColor Cyan
-    Write-Host "║ PHASE $number : $title" -ForegroundColor Cyan
-    Write-Host "╚═══════════════════════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host "+-----------------------------------------------+" -ForegroundColor Cyan
+    Write-Host "| PHASE $number : $title" -ForegroundColor Cyan
+    Write-Host "+-----------------------------------------------+" -ForegroundColor Cyan
 }
 
 function Write-Step($label, $status, $detail="") {
-    $icons = @{PASS="✅"; FAIL="❌"; SKIP="⏭️"; WARN="⚠️"; INFO="ℹ️"}
+    $icons = @{PASS="[PASS]"; FAIL="[FAIL]"; SKIP="[SKIP]"; WARN="[WARN]"; INFO="[INFO]"}
     $icon = $icons[$status]
-    if (-not $icon) { $icon = "  " }
-    $msg = "  $icon [$status] $label"
+    if (-not $icon) { $icon = "      " }
+    $msg = "  $icon $label"
     if ($detail) { $msg += " — $detail" }
     switch ($status) {
         "PASS" { Write-Host $msg -ForegroundColor Green }
@@ -412,16 +412,16 @@ function Invoke-Phase6 {
     $reportLines += "  Duration: $([math]::Round($duration, 1))s"
     $reportLines += "=" * 80
     $reportLines += ""
-    $reportLines += "  Summary: ✅ $($global:pipeline.totalPassed) passed | ❌ $($global:pipeline.totalFailed) failed | ⏭️ $($global:pipeline.totalSkipped) skipped"
+    $reportLines += "  Summary: [PASS] $($global:pipeline.totalPassed) passed | [FAIL] $($global:pipeline.totalFailed) failed | [SKIP] $($global:pipeline.totalSkipped) skipped"
     $reportLines += ""
     $reportLines += "  Current Phase: $currentPhase"
     $reportLines += ""
     $currentPhase = 0
     foreach ($step in $global:pipeline.results) {
-        $icons = @{PASS="✅"; FAIL="❌"; SKIP="⏭️"; WARN="⚠️"}
+        $icons = @{PASS="[PASS]"; FAIL="[FAIL]"; SKIP="[SKIP]"; WARN="[WARN]"}
         $icon = $icons[$step.status]
         if (-not $icon) { $icon = "  " }
-        $reportLines += "  $icon [$($step.status)] $($step.label) — $($step.detail) ($([math]::Round($step.duration, 1))s)"
+        $reportLines += "  $icon [$($step.status)] $($step.label) -- $($step.detail) ($([math]::Round($step.duration, 1))s)"
     }
     
     $reportLines += ""
@@ -474,9 +474,9 @@ function Invoke-Phase6 {
 # MAIN — Phase Routing
 # ===================================================================
 Write-Host ""
-Write-Host "╔══════════════════════════════════════════════════════════════╗" -ForegroundColor Magenta
-Write-Host "║     ACADEMIX v13.4 — Comprehensive Thesis Pipeline v2      ║" -ForegroundColor Magenta
-Write-Host "╚══════════════════════════════════════════════════════════════╝" -ForegroundColor Magenta
+Write-Host "+------------------------------------------------------------+" -ForegroundColor Magenta
+Write-Host "|     ACADEMIX v13.4 -- Comprehensive Thesis Pipeline v2      |" -ForegroundColor Magenta
+Write-Host "+------------------------------------------------------------+" -ForegroundColor Magenta
 Write-Host "  Output: $docxPath" -ForegroundColor Gray
  
 $allOk = $true
@@ -519,7 +519,7 @@ switch -Wildcard ($Phase) {
 }
  
 if (-not $allOk) {
-    Write-Host "`n⚠️  Pipeline completed with failures — review report for details." -ForegroundColor Yellow
+    Write-Host "`n[WARN] Pipeline completed with failures -- review report for details." -ForegroundColor Yellow
 }
  
 exit $(if ($allOk) {0} else {1})

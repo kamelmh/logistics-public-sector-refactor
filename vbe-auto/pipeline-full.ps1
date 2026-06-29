@@ -80,16 +80,16 @@ $script:pipelineAborted = $false
 function Write-Banner {
     param([string]$Title)
     Write-Host ""
-    Write-Host "╔═══════════════════════════════════════════════════╗" -ForegroundColor Cyan
+    Write-Host "+-----------------------------------------------+" -ForegroundColor Cyan
     Write-Host "  $Title" -ForegroundColor Cyan
-    Write-Host "╚═══════════════════════════════════════════════════╝" -ForegroundColor Cyan
+    Write-Host "+-----------------------------------------------+" -ForegroundColor Cyan
 }
 
 function Write-StageHeader {
     param([int]$Index, [string]$Name, [int]$Total)
     $n = $Index + 1
     Write-Host ""
-    Write-Host "─── [$n/$Total] $Name ───" -ForegroundColor Yellow
+    Write-Host "--- [$n/$Total] $Name ---" -ForegroundColor Yellow
 }
 
 function Invoke-Stage {
@@ -100,7 +100,7 @@ function Invoke-Stage {
 
     # Check skip condition
     if ($Stage.ContainsKey('SkipIf') -and (& $Stage.SkipIf)) {
-        Write-Host "  ⏭️  Skipped (SkipBuild active)" -ForegroundColor DarkGray
+        Write-Host "  [SKIP] Skipped (SkipBuild active)" -ForegroundColor DarkGray
         $script:pipelineResults += [PSCustomObject]@{
             Stage = $stageName
             Status = "SKIPPED"
@@ -136,9 +136,9 @@ function Invoke-Stage {
 
     Write-Host ""
     if ($status -eq "PASS") {
-        Write-Host "  ✅ $stageName PASSED ($durationMs ms)" -ForegroundColor Green
+        Write-Host "  [PASS] $stageName PASSED ($durationMs ms)" -ForegroundColor Green
     } else {
-        Write-Host "  ❌ $stageName FAILED (exit: $exitCode, $durationMs ms)" -ForegroundColor Red
+        Write-Host "  [FAIL] $stageName FAILED (exit: $exitCode, $durationMs ms)" -ForegroundColor Red
         if (-not $ContinueOnError) {
             $script:pipelineAborted = $true
             return $false
@@ -148,7 +148,7 @@ function Invoke-Stage {
 }
 
 # ─── MAIN PIPELINE ──────────────────────────────────────────────────────────
-Write-Banner "ACADEMIX v13.4 — FULL PIPELINE"
+Write-Banner "ACADEMIX v13.4 -- FULL PIPELINE"
 
 Write-Host ""
 Write-Host "  Project:  $ProjectRoot"
@@ -164,8 +164,8 @@ for ($i = 0; $i -lt $stages.Count; $i++) {
     if (-not $ok) {
         if ($script:pipelineAborted) {
             Write-Host ""
-            Write-Host "  ⛔ Pipeline aborted at [$($stages[$i].Name)]" -ForegroundColor Red
-            Write-Host "  → Run with -ContinueOnError to run all stages regardless." -ForegroundColor Yellow
+            Write-Host "  [ABORT] Pipeline aborted at [$($stages[$i].Name)]" -ForegroundColor Red
+            Write-Host "  -> Run with -ContinueOnError to run all stages regardless." -ForegroundColor Yellow
             break
         }
     }
@@ -174,11 +174,11 @@ for ($i = 0; $i -lt $stages.Count; $i++) {
 $pipelineStart.Stop()
 $totalDurationMs = $pipelineStart.ElapsedMilliseconds
 
-# ─── SUMMARY ─────────────────────────────────────────────────────────────────
-Write-Host ""
-Write-Host "╔═══════════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║              PIPELINE SUMMARY                    ║" -ForegroundColor Cyan
-Write-Host "╚═══════════════════════════════════════════════════╝" -ForegroundColor Cyan
+# ─── SUMMARY ─────────────────────────────────────────────────────────────────Write-Host "
+"
+Write-Host "+-----------------------------------------------+" -ForegroundColor Cyan
+Write-Host "|              PIPELINE SUMMARY                    |" -ForegroundColor Cyan
+Write-Host "+-----------------------------------------------+" -ForegroundColor Cyan
 Write-Host ""
 
 $total = $script:pipelineResults.Count
@@ -188,16 +188,16 @@ $skipped = ($script:pipelineResults | Where-Object { $_.Status -eq "SKIPPED" }).
 
 foreach ($r in $script:pipelineResults) {
     $icon = switch ($r.Status) {
-        "PASS"    { "✅" }
-        "FAIL"    { "❌" }
-        "SKIPPED" { "⏭️"  }
+        "PASS"    { "[PASS]" }
+        "FAIL"    { "[FAIL]" }
+        "SKIPPED" { "[SKIP]" }
     }
     $color = switch ($r.Status) {
         "PASS"    { "Green" }
         "FAIL"    { "Red" }
         "SKIPPED" { "DarkGray" }
     }
-    Write-Host "  $icon [$($r.Status)] $($r.Stage) — $($r.DurationMs) ms" -ForegroundColor $color
+    Write-Host "  $icon [$($r.Status)] $($r.Stage) -- $($r.DurationMs) ms" -ForegroundColor $color
 }
 
 Write-Host ""
@@ -206,20 +206,20 @@ Write-Host "  Duration: $([math]::Round($totalDurationMs / 1000, 1)) seconds" -F
 
 if ($failed -eq 0 -and $passed -gt 0) {
     Write-Host ""
-    Write-Host "  🎉 ALL PIPELINE STAGES PASSED" -ForegroundColor Green
+    Write-Host "  [PASS] ALL PIPELINE STAGES PASSED" -ForegroundColor Green
     $pipelineOk = $true
 } elseif ($failed -gt 0) {
     Write-Host ""
-    Write-Host "  ❌ $failed STAGE(S) FAILED — Review output above" -ForegroundColor Red
+    Write-Host "  [FAIL] $failed STAGE(S) FAILED -- Review output above" -ForegroundColor Red
     $pipelineOk = $false
 } else {
     Write-Host ""
-    Write-Host "  ⏭️  No stages executed" -ForegroundColor DarkGray
+    Write-Host "  [SKIP] No stages executed" -ForegroundColor DarkGray
     $pipelineOk = $true
 }
 
 Write-Host ""
-Write-Host "══════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "==============================================================" -ForegroundColor Cyan
 
 # ─── Save report ─────────────────────────────────────────────────────────────
 $report = [PSCustomObject]@{

@@ -228,7 +228,7 @@ def compare(md_path, docx_path):
         if key in md_sections:
             md_status = md_sections.get(key, 'missing')
             if md_status == 'missing' and present:
-                issues.append(('warning', f'Docx.{key}', f'in DOCX but NOT in MD — may need manual sync'))
+                issues.append(('warning', f'Docx.{key}', f'in DOCX but NOT in MD -- may need manual sync'))
     
     # 4. Constants comparison
     for key, expected in GROUND_TRUTH.items():
@@ -244,7 +244,7 @@ def compare(md_path, docx_path):
                 md_num = float(md_clean)
                 exp_num = float(exp_clean)
                 if abs(md_num - exp_num) <= 0.1:
-                    info.append(('ok', f'Constant.{key}', f'MD={md_val} ≈ {expected} ✓'))
+                    info.append(('ok', f'Constant.{key}', f'MD={md_val} ~= {expected} (ok)'))
                 elif abs(md_num - exp_num) < 1:
                     issues.append(('info', f'Constant.{key}', f'MD={md_val}, expected={expected} (close)'))
                 else:
@@ -252,7 +252,7 @@ def compare(md_path, docx_path):
             except ValueError:
                 # String comparison fallback
                 if md_clean == exp_clean:
-                    info.append(('ok', f'Constant.{key}', f'MD={md_val} ✓'))
+                    info.append(('ok', f'Constant.{key}', f'MD={md_val} (ok)'))
                 else:
                     issues.append(('warning', f'Constant.{key}', f'MD={md_val}, expected={expected}'))
         else:
@@ -342,8 +342,22 @@ dir: rtl
 # ─── OUTPUT ──────────────────────────────────────────────────────
 def print_report(issues, info, md_path, docx_path):
     """Print formatted comparison report."""
+    # Auto-detect encoding support
+    _use_enc = True
+    try:
+        '\u2713'.encode(sys.stdout.encoding or 'utf-8')
+    except (UnicodeEncodeError, UnicodeDecodeError):
+        _use_enc = False
+    
+    _OK   = 'v' if not _use_enc else '\u2713'
+    _WARN = '!' if not _use_enc else '\u26A0'
+    _BAD  = 'x' if not _use_enc else '\u2718'
+    _DOT = '.' if not _use_enc else '\u00B7'
+    
     print('=' * 70)
-    print('  ACADEMIX v13.4 — DOCX ↔ MD Sync Report')
+    _ARROW = '<->' if not _use_enc else '\u2194'
+    _EMDASH = '--' if not _use_enc else '\u2014'
+    print(f'  ACADEMIX v13.4 {_EMDASH} DOCX {_ARROW} MD Sync Report')
     print('=' * 70)
     print(f'  MD:   {md_path}')
     print(f'  DOCX: {docx_path}')
@@ -354,28 +368,28 @@ def print_report(issues, info, md_path, docx_path):
     
     # Info lines
     if info:
-        print('  ── Structural Info ──')
+        print('  -- Structural Info --')
         for icon, section, msg in info:
-            ico = {'ok': '✓', 'info': '·'}.get(icon, '·')
+            ico = _OK if icon == 'ok' else _DOT
             print(f'    [{ico}] {section}: {msg}')
         print()
     
     # Warnings
     if warnings:
-        print('  ⚠  Warnings (non-critical):')
+        print(f'  {_WARN}  Warnings (non-critical):')
         for _, section, msg in warnings:
-            print(f'    [⚠] {section}: {msg}')
+            print(f'    [{_WARN}] {section}: {msg}')
         print()
     
     # Critical
     if critical:
-        print('  ✘  CRITICAL:')
+        print(f'  {_BAD}  CRITICAL:')
         for _, section, msg in critical:
-            print(f'    [✘] {section}: {msg}')
+            print(f'    [{_BAD}] {section}: {msg}')
         print()
     
     if not critical and not warnings:
-        print('  ✓ MD and DOCX are in sync — no differences found.')
+        print(f'  {_OK} MD and DOCX are in sync -- no differences found.')
     
     print('=' * 70)
     return len(critical) == 0 and len(warnings) == 0
@@ -500,7 +514,7 @@ if __name__ == '__main__':
         if changes:
             print(f'[PATCH] Applied {len(changes)} patches to MD:')
             for c in changes:
-                print(f'  • {c}')
+                print(f'  - {c}')
         else:
             print('[PATCH] No sections to patch.')
         # Re-verify after patching
@@ -511,7 +525,7 @@ if __name__ == '__main__':
         if changes:
             print(f'[SYNC] Applied {len(changes)} changes to MD:')
             for c in changes:
-                print(f'  • {c}')
+                print(f'  - {c}')
         else:
             print('[SYNC] No changes needed.')
     

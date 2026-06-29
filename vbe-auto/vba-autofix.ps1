@@ -37,9 +37,9 @@ $ConfigPath = "$ScriptDir\vbe-auto-config.json"
 # ============================================================================
 
 function Write-Step($msg) { Write-Host "[AUTOFIX] $msg" -ForegroundColor Magenta }
-function Write-OK($msg) { Write-Host "  ✅ $msg" -ForegroundColor Green }
-function Write-Err($msg) { Write-Host "  ❌ $msg" -ForegroundColor Red }
-function Write-Warn($msg) { Write-Host "  ⚠️  $msg" -ForegroundColor Yellow }
+function Write-OK($msg) { Write-Host "  [PASS] $msg" -ForegroundColor Green }
+function Write-Err($msg) { Write-Host "  [FAIL] $msg" -ForegroundColor Red }
+function Write-Warn($msg) { Write-Host "  [WARN] $msg" -ForegroundColor Yellow }
 
 # ============================================================================
 # MODE 1: Scan OCR Output for Compile Errors
@@ -383,9 +383,9 @@ function Invoke-Rebuild {
 
 function Invoke-FullPipeline {
     Write-Host ""
-    Write-Host "╔══════════════════════════════════════════════╗" -ForegroundColor Cyan
-    Write-Host "║        VBA AutoFix Pipeline v1.0            ║" -ForegroundColor Cyan
-    Write-Host "╚══════════════════════════════════════════════╝" -ForegroundColor Cyan
+    Write-Host "+--------------------------------------------+" -ForegroundColor Cyan
+    Write-Host "|        VBA AutoFix Pipeline v1.0            |" -ForegroundColor Cyan
+    Write-Host "+--------------------------------------------+" -ForegroundColor Cyan
     Write-Host ""
     
     # Phase 1: Run pre-build validator first
@@ -428,13 +428,13 @@ function Invoke-FullPipeline {
     }
     
     Write-Host ""
-    Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host "===================================================" -ForegroundColor Cyan
     if ($buildOK) {
-        Write-Host "  ✅ AUTOFIX COMPLETE — RECOMPILE AND CLOSE DIALOG" -ForegroundColor Green
+        Write-Host "  [PASS] AUTOFIX COMPLETE -- RECOMPILE AND CLOSE DIALOG" -ForegroundColor Green
     } else {
-        Write-Err "AUTOFIX FAILED — manual intervention needed"
+        Write-Err "AUTOFIX FAILED -- manual intervention needed"
     }
-    Write-Host "═══════════════════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host "===================================================" -ForegroundColor Cyan
 }
 
 # ============================================================================
