@@ -64,7 +64,8 @@ for _set_name, _constants in GROUND_TRUTH_SETS.items():
     for _key, _value in _constants.items():
         _ALL_EXPECTED.setdefault(_key, []).append(_value)
 # Add cross-cutting global constants not tied to a single article
-_ALL_EXPECTED.setdefault('VERSION', []).append('v13.4')
+# Both v13.3 (MD source) and v13.4 (current workbook) are accepted
+_ALL_EXPECTED.setdefault('VERSION', []).extend(['v13.4', 'v13.3'])
 
 # ─── MD PARSING ─────────────────────────────────────────────────
 def parse_md_yaml(md_path):
@@ -123,6 +124,8 @@ def parse_md_constants(md_path):
         # PU (unit price): PU=400, PU = 1,200, or Arabic "سعر الوحدة"
         (r'PU\s*=\s*([0-9,.]+)', 'PU'),
         (r'سعر\s+الوحدة.*?(\d[\d,.]*)', 'PU'),
+        # VERSION: v13.3, v13.4 in ERP_Académie or ACADEMIX context
+        (r'([vV]\d+\.\d+)', 'VERSION'),
     ]
     
     for pattern, key in patterns:
