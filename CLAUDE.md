@@ -8,13 +8,51 @@
 - **Ground Truth**: D=33 (ART-002 Toner), Q*=15, ROP=200, SS=200, LT=2 days, S=801.45 DZD, PU=1200 DZD, I=20%
 - **Master Password**: erp_secure_pwd_2026
 
-## CURRENT STATUS (Session 47e — 2026-06-15)
+## CURRENT STATUS (Session 48 — 2026-06-29)
 - **ERP Workbook**: ERP_v13.4.xlsm (718.2 KB, 114/114 PASS) ✅
-- **Thesis Golden Source**: Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx (146 KB, 32/32 PASS) ✅
-- **Thesis PDF**: Memoire_DSS_Logistique_ElBayadh.pdf (1,380 KB) ✅
+- **Thesis Golden Source**: Thesis_Surgical_Edit/output/Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx (146 KB, 32/32 PASS) ✅
+- **Thesis PDF**: Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.pdf (1,380 KB) ✅
 - **English Paper**: English_Research_Paper_IEEE.pdf (69 KB, 9 pages) ✅
-- **Git**: Synced with remote (fcbb9f5) ✅
-- **Workspace**: Cleaned and structured (Session 47e) ✅
+- **Git**: Synced with remote (94122d2) ✅
+- **Workspace**: Cleaned — 629 MB, 7,885 files ✅
+
+## PROJECT STRUCTURE (Post-Cleanup)
+```
+Logistics.Public.Sector.Refactor/       629 MB total
+├── bin/                                136 MB   OpenCode binary
+├── Thesis_Surgical_Edit/                76 MB   Thesis source, build, style fixes
+├── Academic_References/                5.8 MB   Reference PDFs & courses
+├── superpowers/                        4.4 MB   Git submodule
+├── milestone_13_2/                     1.5 MB   Git submodule (public-lsm)
+├── archive/                            1.5 MB   Project archive
+├── external/                           1.1 MB   Git submodule (lsm-vba-core)
+├── Software_Surgical_Edit/             871 KB   ERP VBA modules
+├── vbe-auto/                            56 KB   Build/verify automation
+├── scripts/                             32 KB   Utility scripts
+├── bot/                                 24 KB   Telegram bot
+├── tools/                               16 KB   GH model tools
+├── tests/                                8 KB   Tests
+├── docs/                               256 KB   Documentation
+├── .claude/                                      Claude settings
+├── .github/                                      GitHub config
+├── .opencode/                                    OpenCode config
+├── CLAUDE.md                                    Project context (this file)
+├── README.md                                    Readme
+├── requirements.txt                             Python deps
+└── opencode.jsonc                               OpenCode config
+```
+
+### What Was Removed (Session 48 — ~2 GB reclaimed)
+- **Nested duplicate folder** (1.7 GB) — full project copy inside itself
+- **Pandoc installers** (77 MB) — .msi and .zip in project root
+- **DELIVERY_v13.4/** (4.4 MB) — frozen delivery package with duplicates
+- **backups/** (81 MB) — redundant project backup
+- **Thesis_Surgical_Edit/archive/** (41 MB) — old thesis backups, grayscale PDF
+- **.crossflow/** (485 KB) — abandoned orchestration system
+- **oh-my-claudecode/** (113 MB) — OpenCode plugin with own .git
+- **harness/** (19 MB) — separate git repo at root
+- **12 stale docs/scripts** — completed plans, session logs
+- **vbe-auto/results/_inject_drawing.py** — deprecated, hardcoded paths
 
 ## TRIPLE-SYNC CONFIGURATION
 All three tools share the same MCP servers and project context:
@@ -34,13 +72,11 @@ All three tools share the same MCP servers and project context:
 | **microsoft-learn** | Documentation lookup | Public endpoint |
 | **context7** | Library documentation (React, Next.js, etc.) | Free tier |
 
-### Shared File Paths
+### Shared File Paths (All Relative)
 - **Project Root**: project root directory (where this file lives)
-- **ERP Workbook**: `../ERP_v13.4.xlsm` (parent of project root)
+- **ERP Workbook**: `../ERP_v13.4.xlsm` (parent of project root — Dropbox level)
 - **Thesis Source**: `Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md`
 - **Thesis Golden Source**: `Thesis_Surgical_Edit/output/Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx`
-- **ERP Workbook**: `ERP_v13.4.xlsm`
-- **Handoff**: `HANDOFF.md`
 - **Session Memory**: `.opencode/notepad.md`
 
 ## RATE LIMIT AWARENESS
@@ -80,15 +116,6 @@ All three tools share the same MCP servers and project context:
 | **Debug** | debug, debugging-wizard, trace | Error diagnosis |
 | **Research** | external-context, context7-docs, web-to-markdown | Documentation |
 
-### Claude Skills (87 skills)
-| Category | Key Skills | Purpose |
-|----------|------------|---------|
-| **Research** | deep-research, literature-review, research-report | Academic work |
-| **Writing** | technical-writing, blog-post-writing, copywriting | Content creation |
-| **Analysis** | data-analysis, data-visualization, exploratory-data-analysis | Data work |
-| **Security** | security-audit, threat-modeling, dependency-scanning | Security review |
-| **DevOps** | ci-cd, docker-compose-setup, kubernetes-deployment | Infrastructure |
-
 ### When to Use Which Tool
 | Task | Best Tool | Why |
 |------|-----------|-----|
@@ -107,30 +134,48 @@ Project: Academix v13.4 — VBA/Excel DSS for Direction de l'Education El Bayadh
 Thesis: BTS CNEPD — 4 chapters, 17 مباحث, 52 مطالب
 Ground Truth (LOCKED): D=33 (ART-002 Toner), Q*=15, ROP=200, SS=200, LT=2 days, S=801.45 DZD, PU=1200 DZD, I=20%, MASTER_PWD=erp_secure_pwd_2026
 
-Current State (Session 47e):
+Current State (Session 48):
 - ERP: 114/114 PASS ✅
 - Thesis: 32/32 PASS ✅
-- Git: Synced (fcbb9f5) ✅
-- Workspace: Cleaned and structured ✅
+- Git: Synced (94122d2) ✅
+- Workspace: 629 MB, 7885 files, cleaned ✅
 
-Next: Launch Claude Desktop GUI for deep verification
-Read: .crossflow/HANDOFF.md for full context
+Next: Open DOCX in Word, Ctrl+A → F9 to update fields
 ```
 
 ### Full Resume Prompt
 See: `.opencode/resume-prompt.md`
 
-## PHASE-BASED WORKFLOW
+## THESIS FILE PATHS
+- **Source Markdown**: `Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md`
+- **Golden Source**: `Thesis_Surgical_Edit/output/Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx`
+- **Output PDF**: `Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.pdf`
+- **Build Script**: `Thesis_Surgical_Edit/build-thesis.ps1`
+- **Pipeline**: `Thesis_Surgical_Edit/run-thesis-pipeline.ps1`
+- **Verification**: `Thesis_Surgical_Edit/style/verify_docx_checks.py`
 
-### Phase Structure
-| Phase | Description | Deliverable | Verification |
-|-------|-------------|-------------|--------------|
-| **Phase 1** | Planning & Research | Implementation plan | Plan review |
-| **Phase 2** | Implementation | Working code | Unit tests |
-| **Phase 3** | Integration | Combined system | Integration tests |
-| **Phase 4** | Verification | Tested system | All tests pass |
-| **Phase 5** | Documentation | Updated docs | Doc review |
-| **Phase 6** | Deployment | Production ready | Final sign-off |
+## KEY SCRIPTS
+- **Pipeline**: `Thesis_Surgical_Edit/run-thesis-pipeline.ps1` (orchestrates build → fixes → verification)
+- **Section Fix**: `Thesis_Surgical_Edit/style/fix_docx_sections.py` (single-section layout)
+- **Comprehensive Fix**: `Thesis_Surgical_Edit/style/fix_thesis_all.py` (tables, RTL, footers, etc.)
+- **Backup**: `scripts/backup-project.ps1` (unified backup)
+- **Cleanup**: `scripts/cleanup-workspace.ps1` (workspace cleanup)
+- **Harness**: `scripts/harness.ps1` (task DAG, background runner, worktree isolation)
+
+## PAGE NUMBERING CONFIGURATION
+- **Single section** with `titlePg` (different first page enabled)
+- **Cover page**: No page number displayed (uses blank footer1.xml)
+- **Page numbering**: Continuous decimal from cover (page 1 hidden, TOC=page 2, body continues)
+- **Footer**: `footer2.xml` contains PAGE field (no cached value)
+
+## GIT HISTORY (Session 48 Commits)
+```
+94122d2  chore: remove deprecated vbe-auto/results/_inject_drawing.py
+23da534  chore: update .gitignore to prevent large installers and nested dirs
+06289d7  fix: correct path in check_pgnum.py
+b2959da  fix: replace hardcoded Dropbox paths with relative paths across 18 files
+d38baaf  chore: cleanup stale docs, old backups, DELIVERY_v13.4, and .crossflow
+```
 
 ### Phase Handoff Template
 ```markdown
@@ -151,36 +196,6 @@ See: `.opencode/resume-prompt.md`
 - Key decisions: [list]
 - Blockers: [list]
 ```
-
-## THESIS FILE PATHS
-- **Source Markdown**: `Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md`
-- **Golden Source (FIXED)**: `Thesis_Surgical_Edit/output/Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx`
-- **Output PDF**: `Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.pdf`
-- **Build Script**: `Thesis_Surgical_Edit/build-thesis.ps1`
-- **Verification**: `Thesis_Surgical_Edit/style/verify_docx_checks.py`
-- **Handoff Plan**: (removed — see git history for ClaudeDesktop_HANDOFF_PLAN.md)
-
-## KEY SCRIPTS
-- **Pipeline**: `Thesis_Surgical_Edit/run-thesis-pipeline.ps1` (orchestrates build → fixes → verification)
-- **Section Fix**: `Thesis_Surgical_Edit/style/fix_docx_sections.py` (single-section layout)
-- **Comprehensive Fix**: `Thesis_Surgical_Edit/style/fix_thesis_all.py` (tables, RTL, footers, etc.)
-- **Backup**: `scripts/backup-project.ps1` (unified backup)
-- **Cleanup**: `scripts/cleanup-workspace.ps1` (workspace cleanup)
-
-## PAGE NUMBERING CONFIGURATION
-- **Single section** with `titlePg` (different first page enabled)
-- **Cover page**: No page number displayed (uses blank footer1.xml)
-- **Page numbering**: Continuous decimal from cover (page 1 hidden, TOC=page 2, body continues)
-- **Footer**: `footer2.xml` contains PAGE field (no cached value)
-
-## WHAT WAS ACCOMPLISHED (Session 47e)
-1. Workspace cleanup and structure improvements
-2. Removed Dropbox conflicts and duplicates
-3. Archived stale repos (hermes-agent, quant-mind)
-4. Deleted dead code and old backups
-5. Created unified backup and cleanup scripts
-6. Added context7 MCP for documentation lookup
-7. Updated HANDOFF.md with new structure
 
 ## NEXT STEPS
 1. Open DOCX in Word, Ctrl+A → F9 to update fields
