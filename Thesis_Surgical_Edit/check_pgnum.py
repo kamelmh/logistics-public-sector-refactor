@@ -3,7 +3,7 @@ import zipfile
 from pathlib import Path
 from lxml import etree
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parent
 docx = str(PROJECT_ROOT / "output" / "Memoire_DSS_Logistique_ElBayadh.docx")
 NSMAP = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
 
