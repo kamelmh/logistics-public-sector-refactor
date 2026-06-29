@@ -1,32 +1,30 @@
 # CrossFlow Handoff — Academix v13.4
 # TRIPLE-SYNC: Claude Desktop | Claude CLI | OpenCode
 
-## Current Priority (Session 48+ — 2026-06-29)
-**UNICODE FIXES + BOM FIXES + UPDATE_FIELDS.PY + GROUND_TRUTH FIX 36/36 PASS**
-- ✅ `update_fields.py` — New Word COM field update step (body, headers/footers, TOC, footnotes, shapes)
-- ✅ Unicode/cp1256 crash fixed — 7 build scripts patched with encoding detection + ASCII fallbacks
-- ✅ UTF-8 BOM added to `build-thesis.ps1` + `run-thesis-pipeline.ps1` (Arabic metadata in PowerShell)
-- ✅ `build-thesis.ps1` — Field update step integrated before COM automation
-- ✅ `audit_thesis_comprehensive.py` — Content coverage fixed (EOQ/ROP/safety_stock concept-level patterns)
-- ✅ `docx_md_sync.py` — Multi-article GROUND_TRUTH_SETS (ART-001 + ART-002), false-positive warnings eliminated
-- ✅ Thesis DOCX: 36/36 verification checks PASS (expanded from 32 checks)
-- ✅ ERP Workbook: 114/114 checks PASS
-- ✅ VBA pre-build: 46 files, 0 errors PASS
-- ✅ Git: Pushed (4c2d5fc)
+## Current Priority (Session 49 — 2026-06-29)
+**GROUND TRUTH CONFIG FIX + GT NUMERICAL AUDIT + BUILD PORTABILITY + CCA'2026 REBUILD**
+- ✅ `CLAUDE.md`, `THESIS_CONTEXT.md`, `MASTER_CONTEXT.md` — Ground truth values aligned to thesis source (D=33, Q*=15, PU=1200)
+- ✅ `audit_thesis_comprehensive.py` — 8 numerical ground truth verification checks added + table cell text included in scan
+- ✅ `audit_thesis_comprehensive.py` — Removed dead `gt_missing` variable, ground truth display in print_report()
+- ✅ `build-thesis.ps1` — Hardcoded `Administrator/Dropbox` paths replaced with portable `Join-Path` + `$PSScriptRoot`
+- ✅ Unicode/cp1256 fixes — 4 more files patched (→→`->`, ⚠️→`[!!]`): `fix_thesis_all.py`, `fix_bidi_final.py`, `fix_backup_v7c.py`, `debug_footer2.py`
+- ✅ Thesis pipeline: 36/36 PASS, PDF 1,257 KB, all 8 ground truth checks PASS
+- ✅ English Paper CCA'2026: Rebuilt via MiKTeX + Pandoc (IEEE double-column PDF 162 KB + DOCX 22 KB)
+- ✅ Environment: Pandoc 3.6.3 (Scoop), python-docx + pywin32 (uv), MiKTeX (Scoop)
+- ✅ Git: Committed (864a8a5)
 
-**Next**: Desktop — Pandoc build + COM field update → PDF export → Submission
+**Next**: Visual verification in Word → Final submission
 
 ## Current Status
-- **Thesis DOCX**: 36/36 verification checks PASS (expanded from 29→32→36)
-- **Thesis PDF**: Needs rebuild on desktop (Pandoc + COM)
+- **Thesis DOCX**: 36/36 verification checks PASS — all ground truth numerical checks PASS
+- **Thesis PDF**: 1,257 KB — rebuilt via COM automation (TOC/TOF with \h hyperlinks)
+- **English Paper CCA'2026**: PDF 162 KB + DOCX 22 KB — IEEE double-column format
 - **ERP Workbook**: 114/114 verification checks PASS
-- **COM Approach**: v13 — now includes `update_fields.py` before `word_automation.py` for thorough field refresh
-- **update_fields.py**: New — COM field update across body, headers/footers, TOC, footnotes, shapes
-- **Unicode safety**: 7 build scripts patched — auto-detect console encoding, ASCII fallback, no cp1256 crashes
-- **BOM fix**: `build-thesis.ps1` + `run-thesis-pipeline.ps1` — UTF-8 BOM for PowerShell Arabic compatibility
-- **GROUND_TRUTH**: Multi-article sets (ART-001 + ART-002) — false-positive warnings eliminated
-- **Git**: Synced with remote (4c2d5fc)
-- **Workspace**: Clean, debug scripts cleaned
+- **Ground Truth**: Config files (CLAUDE.md, THESIS_CONTEXT.md, MASTER_CONTEXT.md) now aligned with thesis source values
+- **GT Audit**: 8 automated checks in audit_thesis_comprehensive.py detect missing/mismatched numerical values
+- **Build**: Pipeline runs fully on this machine (no Administrator/Dropbox dependency) — uses uv for Python, Scoop for system tools
+- **Unicode safety**: 11 build scripts now patched for cp1256 console compat
+- **Git**: Committed (864a8a5) — 9 files, push pending
 
 ## Triple-Sync Configuration
 | Tool | MCP Servers | Config Path | Status |
@@ -140,6 +138,7 @@ python "Thesis_Surgical_Edit/style/verify_docx_checks.py" `
 ```
 
 ## Session History
+- **Session 49**: GROUND TRUTH CONFIG FIX + GT NUMERICAL AUDIT + BUILD PORTABILITY + CCA'2026. Fixed ground truth in CLAUDE.md/THESIS_CONTEXT.md/MASTER_CONTEXT.md (D=33, Q*=15, PU=1200), added 8 numerical GT checks to audit_thesis_comprehensive.py with table cell text inclusion, replaced hardcoded Administrator/Dropbox paths in build-thesis.ps1 with Join-Path, patched 4 more scripts for cp1256 Unicode (→, ⚠️), rebuilt CCA'2026 English Paper via MiKTeX, full thesis pipeline 36/36 PASS + PDF 1,257 KB, committed (864a8a5).
 - **Session 48+**: UNICODE + BOM + FIELD UPDATE + GROUND_TRUTH FIX. Patched 7 scripts for cp1256 Unicode crash, added `update_fields.py` COM step, UTF-8 BOM on both .ps1 build scripts, multi-article GROUND_TRUTH_SETS, content coverage audit fix, 36/36 PASS, 4 commits pushed (`4c2d5fc`).
 - **Session 48a**: PIPELINE FIX + MD CLEANUP + REBUILD 32/32. Fixed dead code in fix_thesis_all.py (IndentationError), cleaned MD source, updated docx_md_sync.py, full rebuild 32/32 PASS, git pushed (9c1a0b2).
 - **Session 47g**: FULL PIPELINE COMPLETE. COM corruption fix confirmed (v11 Selection.Find), post-COM section fixes, verify check widened, 32/32 PASS, workspace cleaned.

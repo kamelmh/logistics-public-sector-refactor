@@ -53,22 +53,22 @@ function Apply-Fixes-And-Audit {
     
     # Fix section breaks FIRST (python-docx save re-corrupts namespace + PAGE field)
     Write-Host "  [BUILD] Adding section breaks (fix_docx_sections)..." -ForegroundColor Yellow
-    python (Join-Path $styleDir "fix_docx_sections.py") $DocxPath --save 2>&1
+    uv run python (Join-Path $styleDir "fix_docx_sections.py") $DocxPath --save 2>&1
     if ($LASTEXITCODE -ne 0) { Write-Warning "  fix_docx_sections reported issues (non-critical)" }
     
     # Apply surgical polishing (RTL footnotes, link removal, CNEPD scrubbing)
     Write-Host "  [BUILD] Applying surgical polish (surgical_polish)..." -ForegroundColor Yellow
-    python (Join-Path $styleDir "surgical_polish.py") $DocxPath --save 2>&1
+    uv run python (Join-Path $styleDir "surgical_polish.py") $DocxPath --save 2>&1
     if ($LASTEXITCODE -ne 0) { Write-Warning "  surgical_polish reported issues (non-critical)" }
     
     # Apply comprehensive fixes LAST (namespace fix + PAGE field fix must be final)
     Write-Host "  [BUILD] Applying comprehensive fixes (fix_thesis_all)..." -ForegroundColor Yellow
-    python (Join-Path $styleDir "fix_thesis_all.py") $DocxPath --save 2>&1
+    uv run python (Join-Path $styleDir "fix_thesis_all.py") $DocxPath --save 2>&1
     if ($LASTEXITCODE -ne 0) { Write-Warning "  fix_thesis_all reported issues (non-critical)" }
     
     # Run comprehensive audit
     Write-Host "  [BUILD] Running comprehensive audit..." -ForegroundColor Yellow
-    python (Join-Path $styleDir "audit_thesis_comprehensive.py") $DocxPath 2>&1
+    uv run python (Join-Path $styleDir "audit_thesis_comprehensive.py") $DocxPath 2>&1
     if ($LASTEXITCODE -eq 0) {
         Write-Host "  [AUDIT] Audit PASSED" -ForegroundColor Green
     } else {
@@ -77,7 +77,7 @@ function Apply-Fixes-And-Audit {
     
     # Run verify checks
     Write-Host "  [BUILD] Running verify checks..." -ForegroundColor Yellow
-    python (Join-Path $styleDir "verify_docx_checks.py") $DocxPath --size-threshold 50000 2>&1
+    uv run python (Join-Path $styleDir "verify_docx_checks.py") $DocxPath --size-threshold 50000 2>&1
     if ($LASTEXITCODE -eq 0) {
         Write-Host "  [VERIFY] All checks PASSED" -ForegroundColor Green
     } else {
@@ -86,7 +86,7 @@ function Apply-Fixes-And-Audit {
     
     # Run MD ↔ DOCX sync check
     Write-Host "  [BUILD] Running MD ↔ DOCX sync check..." -ForegroundColor Yellow
-    $syncResult = python (Join-Path $styleDir "docx_md_sync.py") $DocxPath --verify 2>&1
+    $syncResult = uv run python (Join-Path $styleDir "docx_md_sync.py") $DocxPath --verify 2>&1
     $syncPass = $LASTEXITCODE -eq 0
     if ($syncPass) {
         Write-Host "  [SYNC] MD ↔ DOCX verified" -ForegroundColor Green
@@ -136,7 +136,7 @@ if ($Command -eq "" -or $Command -eq "build") {
 
     # --- Thorough field update (Ctrl+A F9) before final PDF export ---
     Write-Host "  [BUILD] Updating all fields via Word COM (body, headers/footers, TOC, footnotes)..." -ForegroundColor Cyan
-    python (Join-Path $styleDir "update_fields.py") $docxPath --save-only 2>&1
+    uv run python (Join-Path $styleDir "update_fields.py") $docxPath --save-only 2>&1
     if ($LASTEXITCODE -ne 0) { Write-Error "Field update failed"; exit 1 }
 
     # --- Word COM Automation for Logos, TOC, Table of Figures, and PDF Export ---
@@ -146,25 +146,25 @@ if ($Command -eq "" -or $Command -eq "build") {
     if (-not (Test-Path $logo1Path)) { $logo1Path = "" }
     if (-not (Test-Path $logo2Path)) { $logo2Path = "" }
 
-    python (Join-Path $styleDir "word_automation.py") $docxPath $logo1Path $logo2Path 2>&1
+    uv run python (Join-Path $styleDir "word_automation.py") $docxPath $logo1Path $logo2Path 2>&1
     if ($LASTEXITCODE -ne 0) { Write-Error "Word COM automation failed"; exit 1 }
 
     # --- Post-automation fixes (Word COM resets some XML properties) ---
     Write-Host "  [BUILD] Re-applying surgical polish after COM automation..." -ForegroundColor Yellow
-    python (Join-Path $styleDir "surgical_polish.py") $docxPath --save 2>&1
+    uv run python (Join-Path $styleDir "surgical_polish.py") $docxPath --save 2>&1
     if ($LASTEXITCODE -ne 0) { Write-Warning "  surgical_polish (post-COM) reported issues (non-critical)" }
 
     Write-Host "  [BUILD] Re-applying comprehensive fixes after COM automation..." -ForegroundColor Yellow
-    python (Join-Path $styleDir "fix_thesis_all.py") $docxPath --save 2>&1
+    uv run python (Join-Path $styleDir "fix_thesis_all.py") $docxPath --save 2>&1
     if ($LASTEXITCODE -ne 0) { Write-Warning "  fix_thesis_all (post-COM) reported issues (non-critical)" }
 
     Write-Host "  [BUILD] Re-applying section fixes after COM automation (page numbering)..." -ForegroundColor Yellow
-    python (Join-Path $styleDir "fix_docx_sections.py") $docxPath --save 2>&1
+    uv run python (Join-Path $styleDir "fix_docx_sections.py") $docxPath --save 2>&1
     if ($LASTEXITCODE -ne 0) { Write-Warning "  fix_docx_sections (post-COM) reported issues (non-critical)" }
 
     # --- Final verification ---
     Write-Host "  [BUILD] Running final verification..." -ForegroundColor Yellow
-    python (Join-Path $styleDir "verify_docx_checks.py") $docxPath --size-threshold 50000 2>&1
+    uv run python (Join-Path $styleDir "verify_docx_checks.py") $docxPath --size-threshold 50000 2>&1
 
     Write-Host "  [BUILD] Build complete." -ForegroundColor Green
     exit 0
@@ -196,7 +196,7 @@ if ($Command -eq "copy-desktop") {
 if ($Command -eq "sync-md") {
     if (-not (Test-Path $desktopDocx)) { Write-Error "Desktop DOCX not found: $desktopDocx"; exit 1 }
     Write-Host "  [SYNC] Patching MD from golden DOCX..." -ForegroundColor Yellow
-    python (Join-Path $styleDir "docx_md_sync.py") $desktopDocx --patch-md 2>&1
+    uv run python (Join-Path $styleDir "docx_md_sync.py") $desktopDocx --patch-md 2>&1
     if ($LASTEXITCODE -eq 0) {
         Write-Host "  [SYNC] MD patched successfully" -ForegroundColor Green
     } else {
@@ -204,7 +204,7 @@ if ($Command -eq "sync-md") {
     }
     # Re-verify
     Write-Host "  [SYNC] Re-verifying..." -ForegroundColor Yellow
-    python (Join-Path $styleDir "docx_md_sync.py") $desktopDocx --verify 2>&1
+    uv run python (Join-Path $styleDir "docx_md_sync.py") $desktopDocx --verify 2>&1
     exit 0
 }
 
