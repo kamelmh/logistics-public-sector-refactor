@@ -34,16 +34,37 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..
 DEFAULT_MD = os.path.join(PROJECT_ROOT, 'Thesis_Surgical_Edit', 'Memoire_DSS_Logistique_ElBayadh.md')
 
 # ─── GROUND TRUTH CONSTANTS (from thesis data) ───────────────────
-GROUND_TRUTH = {
-    'D': '2007',  # ART-001 Papier A4
-    'Q*': '50',
-    'ROP': '416',
-    'SS': '400',  # ART-001 SS (different from ART-002 SS=200)
-    'LT': '2',
-    'S': '801.45',
-    'I': '20%',
-    'VERSION': 'v13.4',
+# Multiple article sets — a constant match against ANY set is accepted
+GROUND_TRUTH_SETS = {
+    'ART-001 (Papier A4)': {
+        'D': '2007',
+        'Q*': '50',
+        'ROP': '416',
+        'SS': '400',
+        'LT': '2',
+        'S': '50',
+        'PU': '400',
+        'I': '20%',
+    },
+    'ART-002 (Toner G030)': {
+        'D': '33',
+        'Q*': '15',
+        'ROP': '200',
+        'SS': '200',
+        'LT': '2',
+        'S': '801.45',
+        'PU': '1200',
+        'I': '20%',
+    },
 }
+
+# Build master lookup: key -> list of all accepted values across all sets
+_ALL_EXPECTED = {}
+for _set_name, _constants in GROUND_TRUTH_SETS.items():
+    for _key, _value in _constants.items():
+        _ALL_EXPECTED.setdefault(_key, []).append(_value)
+# Add cross-cutting global constants not tied to a single article
+_ALL_EXPECTED.setdefault('VERSION', []).append('v13.4')
 
 # ─── MD PARSING ─────────────────────────────────────────────────
 def parse_md_yaml(md_path):
@@ -99,6 +120,9 @@ def parse_md_constants(md_path):
         (r'LT\s*=\s*([0-9,.]+)', 'LT'),
         (r'(?<!S)S\s*=\s*([0-9,.]+)', 'S'),  # Negative lookbehind to avoid matching SS
         (r'I\s*=\s*([0-9,.]+)%?', 'I'),
+        # PU (unit price): PU=400, PU = 1,200, or Arabic "سعر الوحدة"
+        (r'PU\s*=\s*([0-9,.]+)', 'PU'),
+        (r'سعر\s+الوحدة.*?(\d[\d,.]*)', 'PU'),
     ]
     
     for pattern, key in patterns:
@@ -183,10 +207,10 @@ def parse_docx_sections(docx_path):
     for key, marker in markers.items():
         info['content'][key] = marker in body_text
     
-    # Constants in DOCX
+    # Constants in DOCX — match against ANY known article set
     info['constants'] = {}
-    for key, expected in GROUND_TRUTH.items():
-        found = expected in body_text
+    for key, values in _ALL_EXPECTED.items():
+        found = any(v in body_text for v in values)
         info['constants'][key] = 'found' if found else 'not_found'
     
     return info
@@ -230,36 +254,59 @@ def compare(md_path, docx_path):
             if md_status == 'missing' and present:
                 issues.append(('warning', f'Docx.{key}', f'in DOCX but NOT in MD -- may need manual sync'))
     
-    # 4. Constants comparison
-    for key, expected in GROUND_TRUTH.items():
+    # 4. Constants comparison — accept match against ANY article set
+    for key, expected_values in _ALL_EXPECTED.items():
         md_val = md_constants.get(key)
         docx_status = docx_info['constants'].get(key, 'not_found')
         
         if md_val:
-            # Normalize for numeric comparison
+            # Normalize MD value
             md_clean = md_val.strip().replace(',', '').replace(' ', '').replace('%', '')
-            exp_clean = expected.replace(',', '').replace(' ', '').replace('%', '')
+            
+            # Check against each expected value
+            matched_any = False
+            best_match = None
+            best_diff = float('inf')
             
             try:
                 md_num = float(md_clean)
-                exp_num = float(exp_clean)
-                if abs(md_num - exp_num) <= 0.1:
-                    info.append(('ok', f'Constant.{key}', f'MD={md_val} ~= {expected} (ok)'))
-                elif abs(md_num - exp_num) < 1:
-                    issues.append(('info', f'Constant.{key}', f'MD={md_val}, expected={expected} (close)'))
-                else:
-                    issues.append(('warning', f'Constant.{key}', f'MD={md_val}, expected={expected}'))
+                for exp_val in expected_values:
+                    exp_clean = exp_val.replace(',', '').replace(' ', '').replace('%', '')
+                    try:
+                        exp_num = float(exp_clean)
+                        diff = abs(md_num - exp_num)
+                        if diff < best_diff:
+                            best_diff = diff
+                            best_match = exp_val
+                        if diff <= 0.1:
+                            matched_any = True
+                            info.append(('ok', f'Constant.{key}', f'MD={md_val} ~= {exp_val} (ok)'))
+                            break
+                    except ValueError:
+                        if md_clean == exp_clean:
+                            matched_any = True
+                            info.append(('ok', f'Constant.{key}', f'MD={md_val} (ok)'))
+                            break
             except ValueError:
                 # String comparison fallback
-                if md_clean == exp_clean:
-                    info.append(('ok', f'Constant.{key}', f'MD={md_val} (ok)'))
+                for exp_val in expected_values:
+                    if md_clean == exp_val.replace(',', '').replace(' ', '').replace('%', ''):
+                        matched_any = True
+                        info.append(('ok', f'Constant.{key}', f'MD={md_val} (ok)'))
+                        break
+            
+            if not matched_any and best_match:
+                if best_diff < 1:
+                    issues.append(('info', f'Constant.{key}', f'MD={md_val}, best match={best_match} (close)'))
                 else:
-                    issues.append(('warning', f'Constant.{key}', f'MD={md_val}, expected={expected}'))
+                    expected_str = ', '.join(expected_values)
+                    issues.append(('warning', f'Constant.{key}', f'MD={md_val}, expected one of: [{expected_str}]'))
         else:
             if docx_status == 'found':
                 info.append(('info', f'Constant.{key}', f'in DOCX (not extracted from MD)'))
             else:
-                issues.append(('warning', f'Constant.{key}', 'not found in either source'))
+                expected_str = ', '.join(expected_values)
+                issues.append(('warning', f'Constant.{key}', f'not found in either source (expected: {expected_str})'))
     
     # 5. Heading counts
     h_counts = {'h1': 0, 'h2': 0, 'h3': 0, 'h4': 0, 'toc': 0}
@@ -318,7 +365,7 @@ dir: rtl
     
     # 2. Ensure constants are consistent
     # Only fix if MD has wrong values
-    for key, expected in GROUND_TRUTH.items():
+    for key, expected_values in _ALL_EXPECTED.items():
         # Don't auto-rewrite - just report
         pass
     
