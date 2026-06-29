@@ -23,7 +23,7 @@ with zipfile.ZipFile(docx_path, 'r') as z:
             
             # Also check for cached "page1" or "1" text
             if 'page1' in raw.lower() or 'page 1' in raw.lower():
-                print("  ⚠️  CONTAINS 'page1' TEXT!")
+                print("  [!!] CONTAINS 'page1' TEXT!")
             if '<w:t>1</w:t>' in raw or '<w:t> 1 </w:t>' in raw:
-                print("  ⚠️  CONTAINS cached '1' in w:t!")
+                print("  [!!] CONTAINS cached '1' in w:t!")
             print()

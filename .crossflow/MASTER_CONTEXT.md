@@ -187,7 +187,7 @@ Load the `crossflow-orchestrator` skill in any OpenCode session to activate:
 | English Paper | Complete | 69 KB PDF (9 pages), 34 KB DOCX |
 | Git | In sync | 96640de on master, 0 ahead/0 behind |
 | CI/CD | Green | 2/2 latest push runs passed |
-| Ground Truth | **Calibrated** | D=33, Q*=9, ROP=200, SS=200, PU=3000 (ART-002 Toner) |
+| Ground Truth | **Calibrated** | D=33, Q*=15, ROP=200, SS=200, PU=1200 (ART-002 Toner) |
 | Calibration | Phase 1 Complete | Config files updated; ERP & Thesis pending |
 | Next | Phase 2 | Update ERP workbook source (VBA + Sheets) |
 

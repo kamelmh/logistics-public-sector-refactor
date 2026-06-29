@@ -158,7 +158,7 @@ def main():
         if new_fn:
             replacements['word/footnotes.xml'] = new_fn.encode('utf-8')
         _zip_write(path, replacements)
-        print('SAVED → %s' % path)
+        print('SAVED -> %s' % path)
     else:
         print('DRY RUN — use --save to apply')
 

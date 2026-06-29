@@ -21,7 +21,8 @@ if ($Restore) {
     Write-Host "  [BUILD] Restoring Golden Source from latest backup..." -ForegroundColor Cyan
     $backupDir = Join-Path $PSScriptRoot "..\..\backups"
     $latestBackup = Get-ChildItem -Path $backupDir -Filter "*.docx" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-    $desktopDocx = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\recent-backup-Memoire_DSS_Logistique_ElBayadh.docx"
+    $outDir = Join-Path $PSScriptRoot "output"
+    $desktopDocx = Join-Path $outDir "recent-backup-Memoire_DSS_Logistique_ElBayadh.docx"
     
     if ($null -eq $latestBackup) {
         Write-Error "No backups found in $backupDir"
@@ -36,18 +37,15 @@ if ($Restore) {
 
 $projectRoot = Split-Path $PSScriptRoot -Parent
 $sourcePath = Join-Path $projectRoot "Thesis_Surgical_Edit\Memoire_DSS_Logistique_ElBayadh.md"
-$desktopDocx = "C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor\Thesis_Surgical_Edit\output\recent-backup-Memoire_DSS_Logistique_ElBayadh.docx"
 $styleDir = Join-Path $PSScriptRoot "style"
 $refDocx = Join-Path $styleDir "reference.docx"
 $outDir = Join-Path $PSScriptRoot "output"
+$desktopDocx = Join-Path $outDir "recent-backup-Memoire_DSS_Logistique_ElBayadh.docx"
 $null = New-Item -ItemType Directory -Path $outDir -Force
 $docxPath = Join-Path $outDir "Memoire_DSS_Logistique_ElBayadh.docx"
 
-$pandoc = "C:\Users\ADMINISTRATOR\AppData\Local\Pandoc\pandoc.exe"
-if (-not (Test-Path $pandoc)) {
-    $pandoc = Get-Command pandoc -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
-    if (-not $pandoc) { Write-Error "Pandoc not found"; exit 1 }
-}
+$pandoc = Get-Command pandoc -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
+if (-not $pandoc) { Write-Error "Pandoc not found (install via 'scoop install pandoc')"; exit 1 }
 
 # ---- Helper: Apply fixes + audit + verify + sync ----
 function Apply-Fixes-And-Audit {

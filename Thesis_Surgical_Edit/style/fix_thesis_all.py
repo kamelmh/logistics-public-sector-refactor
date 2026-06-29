@@ -844,7 +844,7 @@ def main():
         changes = inject_footer(path, changes)
     print('  Footer injected: %s' % changes['footer_injected'])
 
-    print('[10/10] Word namespace compat (ns0/ns1 → w/mc) ...')
+    print('[10/10] Word namespace compat (ns0/ns1 -> w/mc) ...')
     if save:
         changes = fix_word_compat(path, changes)
     print('  Files fixed: %d' % changes['compat_fixes'])

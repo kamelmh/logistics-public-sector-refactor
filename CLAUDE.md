@@ -5,7 +5,7 @@
 - **System**: VBA/Excel DSS for inventory management
 - **Organization**: Direction de l'Education El Bayadh
 - **Thesis**: BTS CNEPD — 4 chapters, 17 مباحث, 52 مطالب
-- **Ground Truth**: D=1546, Q*=176, ROP=212.4, SS=200, LT=2 days, S=801.45 DZD, PU=400 DZD, I=20%
+- **Ground Truth**: D=33 (ART-002 Toner), Q*=15, ROP=200, SS=200, LT=2 days, S=801.45 DZD, PU=1200 DZD, I=20%
 - **Master Password**: erp_secure_pwd_2026
 
 ## CURRENT STATUS (Session 47e — 2026-06-15)
@@ -106,7 +106,7 @@ All three tools share the same MCP servers and project context:
 ```
 Project: Academix v13.4 — VBA/Excel DSS for Direction de l'Education El Bayadh
 Thesis: BTS CNEPD — 4 chapters, 17 مباحث, 52 مطالب
-Ground Truth (LOCKED): D=1546, Q*=176, ROP=212.4, SS=200, LT=2 days, S=801.45 DZD, PU=400 DZD, I=20%, MASTER_PWD=erp_secure_pwd_2026
+Ground Truth (LOCKED): D=33 (ART-002 Toner), Q*=15, ROP=200, SS=200, LT=2 days, S=801.45 DZD, PU=1200 DZD, I=20%, MASTER_PWD=erp_secure_pwd_2026
 
 Current State (Session 47e):
 - ERP: 114/114 PASS ✅

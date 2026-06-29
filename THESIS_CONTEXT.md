@@ -15,16 +15,17 @@
 - **Chapter 4**: DSS Implementation
 
 ## Ground Truth Parameters
-| Parameter | Value | Description |
+| Parameter | Value (ART-002 Toner G030) | Description |
 |-----------|-------|-------------|
-| D | 789 | Annual Demand (from 38-day observation) |
-| Q* (EOQ) | 37 | Economic Order Quantity via Wilson formula |
-| ROP | 206 | Reorder Point |
+| D | 33 | Annual Demand ART-002 Toner G030 (5 OUT × 250/38 days) |
+| Q* (EOQ) | 15 | Economic Order Quantity via Wilson (PU=1200, S=801.45, I=20%) |
+| ROP | 200 | Reorder Point (SS + (D/250)×LT) |
 | SS | 200 | Safety Stock |
 | LT | 2 days | Lead Time |
 | S | 801.45 DZD | Order Cost |
-| PU | 4500 DZD | Unit Price (ART-001: Toner G030) |
+| PU | 1200 DZD | Unit Price (ART-002: Toner G030 compatible) |
 | I | 20% | Holding Rate |
+| **Note** | ART-001 (Papier A4): D=2007, Q*=50, ROP=416, SS=400, PU=400 | Codes were swapped in v13.3; corrected in v13.4 |
 
 ## Current Status
 - **Thesis DOCX**: 143.3 KB, 32/32 verification checks PASS

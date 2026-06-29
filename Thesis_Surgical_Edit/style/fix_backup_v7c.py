@@ -558,7 +558,7 @@ def main():
 
     doc = Document(target if save else path)
 
-    print('[1/6] Fixing table widths (pct→dxa, full text width) ...')
+    print('[1/6] Fixing table widths (pct->dxa, full text width) ...')
     changes = fix_table_widths(doc, changes)
     print('  %d tables fixed (%d were overflow/pct)' % (
         len(changes['tables_width_fixed']), changes['tables_overflow_fixed']))
@@ -578,7 +578,7 @@ def main():
 
     if save:
         doc.save(target)
-        print('  [Saved doc-level changes → %s]' % target)
+        print('  [Saved doc-level changes -> %s]' % target)
 
     print('[5/6] Fixing footnote bidi (zip-level) ...')
     if save:
@@ -606,7 +606,7 @@ def main():
         print('  DRY RUN — use --save to apply changes')
         print('  Example: python fix_backup_v7c.py "%s" --save' % path)
     else:
-        print('  SAVED → %s' % target)
+        print('  SAVED -> %s' % target)
     return 0
 
 
