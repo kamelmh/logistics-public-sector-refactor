@@ -92,3 +92,24 @@ oh-my-claudecode/
 
 # Delivery packages (archived, not part of active repo)
 DELIVERY_v*/
+
+# Word/Excel temp files (lock files)
+~$*
+
+# Pip install artifacts (broken files from bad pip commands)
+=*.0
+
+# Log files
+*.log
+
+# LaTeX build artifacts
+*.aux
+*.out
+
+# Python virtual environments
+.venv/
+
+# Empty scaffold directories (unused)
+ai-models/
+scripts-tools/
+benchmarks/

@@ -1,7 +1,0 @@
-As an expert academic thesis verifier, I have thoroughly reviewed the provided excerpt from the BTS CNEPD thesis. My verification focuses on the specified criteria: Wilson EOQ formula, ROP, RTL quality, and overall academic standards.
-
----
-
-### Verification Report
-
-**Thesis Title:** نظام دعم

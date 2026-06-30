@@ -2,33 +2,39 @@
 > Last updated: 2026-06-13 01:18 UTC
 
 ## STATE: THESIS FINAL — READY FOR SUBMISSION ✅
+> Last verified: 2026-06-30 10:00 UTC — 36/36 PASS
 
 | Asset | Status | Notes |
 |-------|--------|-------|
 | Source MD | ✅ 1,125 lines (154 KB) | `Memoire_DSS_Logistique_ElBayadh.md` |
-| DOCX | ✅ 143.3 KB, 32/32 PASS | Single section, continuous page numbering |
-| PDF | ✅ 1,380 KB | Word COM automation |
+| DOCX | ✅ 164 KB, 36/36 PASS | Single section, continuous decimal numbering |
+| PDF | ✅ 1,257 KB | Word COM automation |
+| Submission Package | ✅ Updated 2026-06-30 | `submission/package/` — latest verified output |
 | ERP Workbook (Golden) | ✅ 718.2 KB, 114/114 PASS | `GOLDEN_ERP_v13.4.xlsm` |
 | ERP Workbook (Active) | ✅ 718.2 KB, 114/114 PASS | `ERP_v13.4.xlsm` |
 | Build | ✅ Pipeline complete | pandoc → fix_docx_sections → fix_thesis_all |
-| Verify | ✅ 32/32 PASS | All formatting, structure, content checks |
+| Verify | ✅ 36/36 PASS | All formatting, structure, content checks |
 | English Paper | ✅ 69 KB, 9 pages | IEEE format, PDF + DOCX |
 | Claude Desktop | ✅ Context ready | CLAUDE.md + THESIS_CONTEXT.md created |
 
 ## PAGE NUMBERING CONFIGURATION
 - **Single section** with `titlePg` (different first page enabled)
-- **Cover page**: No page number displayed (blank footer1.xml)
+- **Cover page**: No page number displayed (blank first-page footer)
 - **Page numbering**: Continuous decimal from cover (page 1 hidden, TOC=page 2, body continues)
-- **Footer**: `footer2.xml` contains PAGE field (no cached value)
+- **Footer**: SDT-wrapped PAGE field via `footer2.xml`
 
-## VERIFICATION RESULTS (Latest)
+## VERIFICATION RESULTS (Latest — 2026-06-30)
 ```
-✅ 32/32 checks passed
-- 709 paragraphs, 26 tables, 46 footnotes
-- Single section, A4 page size
-- Traditional Arabic 14pt, full RTL
-- Table styles match backup v7c
-- Page numbering: decimal, continuous
+✅ 36/36 checks passed
+- 705 paragraphs, 25 tables, 46 footnotes
+- 1 section (single section, continuous decimal numbering)
+- A4 page size, 2.5cm margins
+- Traditional Arabic 14pt, full RTL (0 bad)
+- Footnote RTL: 0 bad
+- Caption RTL: 0/31 bad
+- Hyperlinks: 103, PAGEREF: 129, Bookmarks: 245
+- TOC with \h switch (clickable)
+- Page numbering: decimal, start=1, single section with titlePg
 ```
 
 ## NEXT STEPS
