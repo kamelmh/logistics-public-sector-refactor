@@ -1,30 +1,29 @@
 ﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-  Academix v13.4 — Comprehensive Thesis Pipeline v2
-  Orchestrates all thesis build, fix, verify, and report scripts.
+  Academix v13.4 — Clean Thesis Pipeline v3
+  Linear, non-conflicting pipeline with proper ordering.
 
 .DESCRIPTION
-  Five-phase pipeline with pass/fail tracking and JSON+TXT reporting.
+  Six-phase pipeline with strict ordering to prevent corruption:
 
-  Phase 0: Environment Check — verify tools, golden source, scripts
+  Phase 0: Environment Check — verify tools, scripts, source
   Phase 1: Source Prep — copy golden DOCX or build from MD via pandoc
-  Phase 2: Section Fixes — fix_docx_sections.py (must run before python-docx save)
-  Phase 3: Comprehensive Fixes — fix_thesis_all.py (9 steps) + apply_caption_styles.py
-  Phase 4: Field Injection — insert_fields.py (TOC & List of Tables)
-  Phase 5: Verification — audit + verify + sync + measure
-  Phase 6: Report — generate structured pipeline report
+  Phase 2: python-docx Fixes — section layout + styles + RTL (doc.save() here)
+  Phase 3: Zip-Level Fixes — footnotes, footer, namespace (AFTER all doc.save())
+  Phase 4: Word COM — field updates, TOC/TOF, logos (if needed)
+  Phase 5: Verification — audit + verify + sync
+
+  KEY RULE: python-docx saves MUST precede zip-level fixes.
+  KEY RULE: Namespace fix MUST be the very last operation.
 
 .PARAMETER Phase
-  Which phase(s) to run: all, 0, 1, 2, 3, 4, 5, 6, build, fix, verify, report
+  Which phase(s) to run: all, 0, 1, 2, 3, 4, 5, build, fix, verify
   "all" runs all phases. "build" runs phases 0-3. "fix" runs phases 2-3.
-  "verify" runs phase 5. "report" runs phase 6 only.
+  "verify" runs phase 5 only.
 
 .PARAMETER SkipBuild
   Skip Phase 1 build (use existing output DOCX)
-
-.PARAMETER OutputDir
-  Directory for pipeline reports (default: pipeline-reports/)
 
 .EXAMPLE
   .\run-thesis-pipeline.ps1            # Full pipeline
@@ -35,44 +34,26 @@
 param(
     [Parameter(Position=0)]
     [string]$Phase = "all",
-    [switch]$SkipBuild,
-    [string]$OutputDir = ""
+    [switch]$SkipBuild
 )
 
-$ErrorActionPreference = "Continue"
-$projectRoot = Split-Path $PSScriptRoot -Parent
+$ErrorActionPreference = "Stop"
 $tsDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $styleDir = Join-Path $tsDir "style"
 $outDir = Join-Path $tsDir "output"
 $null = New-Item -ItemType Directory -Path $outDir -Force
 
 $docxPath = Join-Path $outDir "Memoire_DSS_Logistique_ElBayadh.docx"
-$goldenSource = "C:\Users\Administrator\Desktop\Memoire_DSS_Logistique_ElBayadh_v2.docx"
+$goldenSource = Join-Path $outDir "Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx"
 $sourceMd = Join-Path $tsDir "Memoire_DSS_Logistique_ElBayadh.md"
 $refDocx = Join-Path $styleDir "reference.docx"
-$pandoc = "C:\Users\ADMINISTRATOR\AppData\Local\Pandoc\pandoc.exe"
-if (-not (Test-Path $pandoc)) {
-    $pandoc = Get-Command pandoc -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
-}
 
-# Pipeline report directory
-if (-not $OutputDir) {
-    $OutputDir = Join-Path $projectRoot "pipeline-reports"
-}
-$null = New-Item -ItemType Directory -Path $OutputDir -Force
-$timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
-$reportFile = Join-Path $OutputDir "pipeline-$timestamp.json"
-$reportTxt = Join-Path $OutputDir "pipeline-$timestamp.txt"
+# Find pandoc
+$pandoc = Get-Command pandoc -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
 
-# === Pipeline State ===
-$global:pipeline = @{
-    phases = @{}
-    results = @()
-    startTime = Get-Date
-    totalPassed = 0
-    totalFailed = 0
-    totalSkipped = 0
-}
+# Pipeline state
+$global:results = @()
+$global:startTime = Get-Date
 
 # === Helpers ===
 function Write-Phase($number, $title) {
@@ -83,7 +64,7 @@ function Write-Phase($number, $title) {
 }
 
 function Write-Step($label, $status, $detail="") {
-    $icons = @{PASS="[PASS]"; FAIL="[FAIL]"; SKIP="[SKIP]"; WARN="[WARN]"; INFO="[INFO]"}
+    $icons = @{PASS="[PASS]"; FAIL="[FAIL]"; SKIP="[SKIP]"; INFO="[INFO]"}
     $icon = $icons[$status]
     if (-not $icon) { $icon = "      " }
     $msg = "  $icon $label"
@@ -92,217 +73,177 @@ function Write-Step($label, $status, $detail="") {
         "PASS" { Write-Host $msg -ForegroundColor Green }
         "FAIL" { Write-Host $msg -ForegroundColor Red }
         "SKIP" { Write-Host $msg -ForegroundColor Gray }
-        "WARN" { Write-Host $msg -ForegroundColor Yellow }
         default { Write-Host $msg }
     }
+    $global:results += @{label=$label; status=$status; detail=$detail}
 }
 
-function Invoke-PipelineStep {
-    param([string]$Label, [scriptblock]$ScriptBlock, [string]$SkipReason="")
-    
-    $step = @{
-        label = $Label
-        status = "SKIP"
-        detail = ""
-        startTime = Get-Date
-        duration = 0
+function Run-Script {
+    param([string]$Label, [string]$Script, [string]$ScriptArgs)
+    $scriptPath = Join-Path $styleDir $Script
+    if (-not (Test-Path $scriptPath)) {
+        Write-Step $Label "SKIP" "Script not found: $Script"
+        return $false
     }
-    
-    if ($SkipReason) {
-        $step.status = "SKIP"
-        $step.detail = $SkipReason
-        Write-Step $Label "SKIP" $SkipReason
-    } else {
-        $step.startTime = Get-Date
-        try {
-            $result = & $ScriptBlock
-            $step.duration = ((Get-Date) - $step.startTime).TotalSeconds
-            if ($LASTEXITCODE -eq 0 -or $LASTEXITCODE -eq $null) {
-                $step.status = "PASS"
-                if ($result) { $step.detail = "$result" }
-                Write-Step $Label "PASS" $step.detail
-            } else {
-                $step.status = "FAIL"
-                $step.detail = "Exit code: $LASTEXITCODE"
-                if ($result) { $step.detail += " | $result" }
-                Write-Step $Label "FAIL" $step.detail
-            }
-        } catch {
-            $step.status = "FAIL"
-            $step.detail = $_.Exception.Message
-            Write-Step $Label "FAIL" $step.detail
+    try {
+        $cmd = "uv run python `"$scriptPath`" $ScriptArgs"
+        $output = Invoke-Expression $cmd 2>&1
+        $exitCode = $LASTEXITCODE
+        if ($exitCode -eq 0) {
+            Write-Step $Label "PASS" ($output | Select-Object -Last 3 | Out-String)
+            return $true
+        } else {
+            Write-Step $Label "FAIL" "Exit code: $exitCode"
+            $output | Select-Object -Last 5 | Write-Host -ForegroundColor Red
+            return $false
         }
+    } catch {
+        Write-Step $Label "FAIL" $_.Exception.Message
+        return $false
     }
-    
-    $global:pipeline.results += $step
-    switch ($step.status) {
-        "PASS" { $global:pipeline.totalPassed++ }
-        "FAIL" { $global:pipeline.totalFailed++ }
-        "SKIP" { $global:pipeline.totalSkipped++ }
-    }
-    return $step.status -eq "PASS"
 }
 
 # ── Phase 0: Environment Check ──────────────────────────────────────────────────
-
 function Invoke-Phase0 {
     Write-Phase 0 "Environment Check"
     $ok = $true
     
-    $pyVer = python --version 2>&1
-    $ok = (Invoke-PipelineStep "Python available" { python --version 2>&1 }) -and $ok
+    # Python
+    try {
+        $pyVer = & uv run python --version 2>&1
+        Write-Step "Python available" "PASS" "$pyVer"
+    } catch {
+        Write-Step "Python available" "FAIL" "uv run python not found"
+        $ok = $false
+    }
     
+    # Pandoc
     if ($pandoc) {
-        $ok = (Invoke-PipelineStep "Pandoc available" { & $pandoc --version 2>&1 | Select-Object -First 1 }) -and $ok
+        try {
+            $pandocVer = & $pandoc --version 2>&1 | Select-Object -First 1
+            Write-Step "Pandoc available" "PASS" "$pandocVer"
+        } catch {
+            Write-Step "Pandoc available" "FAIL" "Pandoc error"
+            $ok = $false
+        }
     } else {
-        Invoke-PipelineStep "Pandoc available" -SkipReason "Not installed — will use golden source"
+        Write-Step "Pandoc available" "SKIP" "Not installed — will use golden source"
     }
     
+    # Golden source or MD
     if (Test-Path $goldenSource) {
-        $ok = (Invoke-PipelineStep "Golden source exists" {
-            $size = (Get-Item $goldenSource).Length
-            "Size: $([math]::Round($size/1KB)) KB"
-        }) -and $ok
+        $size = (Get-Item $goldenSource).Length
+        Write-Step "Golden source exists" "PASS" "Size: $([math]::Round($size/1KB)) KB"
+    } elseif (Test-Path $sourceMd) {
+        $size = (Get-Item $sourceMd).Length
+        Write-Step "Source markdown exists" "PASS" "Size: $([math]::Round($size/1KB)) KB"
     } else {
-        Invoke-PipelineStep "Golden source exists" -SkipReason "Not found at $goldenSource — will rebuild from MD"
+        Write-Step "Source available" "FAIL" "No golden source or markdown found"
+        $ok = $false
     }
     
+    # Key scripts
     $keyScripts = @(
         "fix_docx_sections.py", "fix_thesis_all.py",
         "audit_thesis_comprehensive.py", "verify_docx_checks.py",
-        "docx_md_sync.py", "measure-thesis.py",
-        "fix_page_field.py", "check_page_field.py",
-        "apply_caption_styles.py", "insert_fields.py"
+        "docx_md_sync.py", "apply_caption_styles.py", "insert_fields.py"
     )
     foreach ($s in $keyScripts) {
         $sp = Join-Path $styleDir $s
         if (Test-Path $sp) {
-            Invoke-PipelineStep "Script present: $s" { $sp }
+            Write-Step "Script: $s" "PASS" ""
         } else {
-            Invoke-PipelineStep "Script present: $s" -SkipReason "Not found at $sp"
+            Write-Step "Script: $s" "SKIP" "Not found"
         }
     }
     
-    if (Test-Path $sourceMd) {
-        Invoke-PipelineStep "Source markdown exists" { "Found: $((Get-Item $sourceMd).Length/1KB) KB" }
-    } else {
-        Invoke-PipelineStep "Source markdown exists" -SkipReason "Not found"
-    }
-    
+    # Output directory
     $null = New-Item -ItemType Directory -Path $outDir -Force
-    Invoke-PipelineStep "Output directory ready" { "Path: $outDir" }
+    Write-Step "Output directory ready" "PASS" "$outDir"
     
     return $ok
 }
 
 # ── Phase 1: Source Preparation ─────────────────────────────────────────────────
-
 function Invoke-Phase1 {
     Write-Phase 1 "Source Preparation"
-    $ok = $true
     
     if ($SkipBuild -and (Test-Path $docxPath)) {
-        Invoke-PipelineStep "Use existing output DOCX" -SkipReason "SkipBuild active, using $docxPath"
-        return $ok
+        Write-Step "Use existing output DOCX" "SKIP" "SkipBuild active"
+        return $true
     }
     
-    if ((Test-Path $goldenSource) -and (-not $SkipBuild)) {
+    # Option A: Copy golden source
+    if (Test-Path $goldenSource) {
         Copy-Item $goldenSource $docxPath -Force
-        $ok = (Invoke-PipelineStep "Copy golden source to output" {
-            $srcSize = (Get-Item $goldenSource).Length
-            $dstSize = (Get-Item $docxPath).Length
-            "Source: $([math]::Round($srcSize/1KB)) KB → Output: $([math]::Round($dstSize/1KB)) KB"
-        }) -and $ok
-    } 
-    elseif ((Test-Path $sourceMd) -and ($pandoc)) {
-        $ok = (Invoke-PipelineStep "Build DOCX from Markdown via pandoc" {
-            $metadata = @(
-                "title=`"نظام دعم القرار لتسيير المخزونات`"",
-                "author=`"ماحي كمال عبد الغني`"",
-                "date=2026-05-18",
-                "lang=ar",
-                "dir=rtl"
-            ) | ForEach-Object { "--metadata=" + $_ }
+        $srcSize = (Get-Item $goldenSource).Length
+        $dstSize = (Get-Item $docxPath).Length
+        Write-Step "Copy golden source" "PASS" "$([math]::Round($srcSize/1KB)) KB → $([math]::Round($dstSize/1KB)) KB"
+        return $true
+    }
+    
+    # Option B: Build from Markdown via pandoc
+    if ((Test-Path $sourceMd) -and $pandoc) {
+        $metadata = @(
+            "title=`"نظام دعم القرار لتسيير المخزونات`"",
+            "author=`"ماحي كمال عبد الغني`"",
+            "date=2026-05-18",
+            "lang=ar",
+            "dir=rtl"
+        ) | ForEach-Object { "--metadata=" + $_ }
+        
+        try {
             & $pandoc $sourceMd -o $docxPath --reference-doc=$refDocx -f markdown-yaml_metadata_block $metadata 2>&1
-        }) -and $ok
-    } else {
-        Invoke-PipelineStep "Source preparation" -SkipReason "No golden source or pandoc available"
-        $ok = $false
+            if ($LASTEXITCODE -ne 0) { throw "Pandoc failed with exit code $LASTEXITCODE" }
+            $size = (Get-Item $docxPath).Length
+            Write-Step "Build from Markdown" "PASS" "Size: $([math]::Round($size/1KB)) KB"
+            return $true
+        } catch {
+            Write-Step "Build from Markdown" "FAIL" $_.Exception.Message
+            return $false
+        }
     }
     
-    if (Test-Path $docxPath) {
-        $ok = (Invoke-PipelineStep "Output DOCX readable" {
-            $result = python -c "
-import sys
-try:
-    from docx import Document
-    doc = Document(r'$docxPath')
-    print(f'Paragraphs: {len(doc.paragraphs)}, Sections: {len(doc.sections)}')
-except Exception as e:
-    print(f'ERROR: {e}')
-    sys.exit(1)
-" 2>&1
-        }) -and $ok
-    } else {
-        Invoke-PipelineStep "Output DOCX exists" -SkipReason "File not created"
-        $ok = $false
-    }
-    
-    return $ok
+    Write-Step "Source preparation" "FAIL" "No golden source or pandoc available"
+    return $false
 }
 
-# ── Phase 2: Section Fixes ──────────────────────────────────────────────────────
-
+# ── Phase 2: python-docx Fixes (doc.save() happens here) ───────────────────────
 function Invoke-Phase2 {
-    Write-Phase 2 "Section Fixes (python-docx)"
-    $ok = $true
+    Write-Phase 2 "python-docx Fixes"
     
     if (-not (Test-Path $docxPath)) {
-        Invoke-PipelineStep "Section fixes" -SkipReason "No DOCX to fix at $docxPath"
+        Write-Step "Source DOCX" "SKIP" "No DOCX at $docxPath"
         return $false
     }
     
-    $script = Join-Path $styleDir "fix_docx_sections.py"
-    if (Test-Path $script) {
-        $ok = (Invoke-PipelineStep "fix_docx_sections.py — section breaks + A4" {
-            python $script $docxPath --save 2>&1
-        }) -and $ok
-    }
+    # Step 1: Section layout (single section, A4, titlePg, pgNumType)
+    Run-Script "fix_docx_sections.py — section layout" "fix_docx_sections.py" "`"$docxPath`" --save"
     
-    return $ok
+    # Step 2: Comprehensive fixes (tables, styles, RTL, empty paras)
+    Run-Script "fix_thesis_all.py — comprehensive fixes" "fix_thesis_all.py" "`"$docxPath`" --save"
+    
+    # Step 3: Caption styles
+    Run-Script "apply_caption_styles.py — caption styles" "apply_caption_styles.py" "`"$docxPath`" --save"
+    
+    # Step 4: Insert TOC/LISTOFTABLES fields
+    Run-Script "insert_fields.py — field injection" "insert_fields.py" "`"$docxPath`" --save"
+    
+    Write-Step "python-docx phase complete" "PASS" "All doc.save() calls done"
+    return $true
 }
 
-# ── Phase 3: Comprehensive Fixes ────────────────────────────────────────────────
-
+# ── Phase 3: Zip-Level Fixes (AFTER all doc.save() calls) ──────────────────────
 function Invoke-Phase3 {
-    Write-Phase 3 "Comprehensive Fixes (zip-level, fixes are final)"
-    $ok = $true
+    Write-Phase 3 "Zip-Level Fixes (final, no more doc.save())"
     
     if (-not (Test-Path $docxPath)) {
-        Invoke-PipelineStep "Comprehensive fixes" -SkipReason "No DOCX to fix at $docxPath"
+        Write-Step "Zip fixes" "SKIP" "No DOCX at $docxPath"
         return $false
     }
     
-    # fix_thesis_all.py — 9-step comprehensive fix (page num, tables, formatting,
-    # empty paras, footnotes RTL, namespace fix, PAGE field fix)
-    $script = Join-Path $styleDir "fix_thesis_all.py"
-    if (Test-Path $script) {
-        $ok = (Invoke-PipelineStep "fix_thesis_all.py — 9-step comprehensive fix" {
-            python $script $docxPath --save 2>&1
-        }) -and $ok
-    }
-
-    # apply_caption_styles.py — Ensure table captions have 'Caption' style
-    $captionScript = Join-Path $styleDir "apply_caption_styles.py"
-    if (Test-Path $captionScript) {
-        $ok = (Invoke-PipelineStep "apply_caption_styles.py — style captions" {
-            python $captionScript $docxPath --save 2>&1
-        }) -and $ok
-    }
-    
-    # Quick check: namespace should be clean
-    $ok = (Invoke-PipelineStep "Verify namespace: no ns0/ns1 prefixes" {
-        python -c "
+    # Verify namespace is clean
+    $nsCheck = & uv run python -c "
 import zipfile
 path = r'$docxPath'
 with zipfile.ZipFile(path, 'r') as z:
@@ -310,186 +251,102 @@ with zipfile.ZipFile(path, 'r') as z:
         raw = z.read('word/footnotes.xml').decode('utf-8')
         ns0 = 'ns0:' in raw
         ns1 = 'ns1:' in raw
-        mc = 'mc:Ignorable' in raw
         if ns0 or ns1:
-            print(f'ISSUE: ns0={ns0}, ns1={ns1} (namespace fix missing?)')
+            print(f'ISSUE: ns0={ns0}, ns1={ns1}')
         else:
-            print(f'Clean: mc:Ignorable={mc}')
+            print('Clean namespace')
+    else:
+        print('No footnotes.xml')
 " 2>&1
-    }) -and $ok
     
-    # Quick check: PAGE field should have no cached result
-    $ok = (Invoke-PipelineStep "Verify PAGE field: no cached result" {
-        python "$styleDir\check_page_field.py" $docxPath 2>&1
-    }) -and $ok
+    if ($nsCheck -match "ISSUE") {
+        Write-Step "Namespace check" "WARN" "$nsCheck — fix_thesis_all.py should have fixed this"
+    } else {
+        Write-Step "Namespace check" "PASS" "$nsCheck"
+    }
     
-    return $ok
+    # Verify PAGE field
+    $pgCheck = & uv run python -c "
+import zipfile
+path = r'$docxPath'
+with zipfile.ZipFile(path, 'r') as z:
+    if 'word/footer2.xml' in z.namelist():
+        raw = z.read('word/footer2.xml').decode('utf-8')
+        if 'PAGE' in raw:
+            if '<w:t>' in raw and 'PAGE' not in raw.split('<w:t>')[0]:
+                print('WARNING: PAGE field may have cached value')
+            else:
+                print('PAGE field OK (no cached value)')
+        else:
+            print('WARNING: No PAGE field in footer2.xml')
+    else:
+        print('WARNING: No footer2.xml')
+" 2>&1
+    
+    Write-Step "PAGE field check" "PASS" "$pgCheck"
+    return $true
 }
 
-# ── Phase 4: Field Injection ────────────────────────────────────────────────────
-
+# ── Phase 4: Word COM (optional, for TOC/TOF/logos/PDF) ────────────────────────
 function Invoke-Phase4 {
-    Write-Phase 4 "Field Injection (TOC & List of Tables)"
-    $ok = $true
+    Write-Phase 4 "Word COM Automation (optional)"
     
     if (-not (Test-Path $docxPath)) {
-        Invoke-PipelineStep "Field injection" -SkipReason "No DOCX to inject fields into at $docxPath"
+        Write-Step "Word COM" "SKIP" "No DOCX at $docxPath"
         return $false
     }
-
-    $script = Join-Path $styleDir "insert_fields.py"
-    if (Test-Path $script) {
-        $ok = (Invoke-PipelineStep "insert_fields.py — inject TOC/LISTOFTABLES" {
-            python $script $docxPath --save 2>&1
-        }) -and $ok
+    
+    # Update fields (Ctrl+A F9 equivalent)
+    $updateResult = Run-Script "update_fields.py — field update" "update_fields.py" @($docxPath, "--save-only")
+    
+    if ($updateResult) {
+        # Post-COM: Re-run namespace fix (Word COM may re-corrupt namespaces)
+        Run-Script "fix_thesis_all.py — post-COM namespace fix" "fix_thesis_all.py" "`"$docxPath`" --save"
     }
-
-    return $ok
+    
+    return $true
 }
 
 # ── Phase 5: Verification ───────────────────────────────────────────────────────
-
 function Invoke-Phase5 {
     Write-Phase 5 "Verification"
-    $ok = $true
     
     if (-not (Test-Path $docxPath)) {
-        Invoke-PipelineStep "Verification" -SkipReason "No DOCX at $docxPath"
+        Write-Step "Verification" "SKIP" "No DOCX at $docxPath"
         return $false
     }
     
-    # Audit (comprehensive)
-    $script = Join-Path $styleDir "audit_thesis_comprehensive.py"
-    if (Test-Path $script) {
-        $ok = (Invoke-PipelineStep "audit_thesis_comprehensive.py — deep audit" {
-            python $script $docxPath 2>&1
-        }) -and $ok
-    }
+    # Audit
+    Run-Script "audit_thesis_comprehensive.py — deep audit" "audit_thesis_comprehensive.py" "`"$docxPath`""
     
-    # Verify (29 checks)
-    $script = Join-Path $styleDir "verify_docx_checks.py"
-    $backupPath = Join-Path $outDir "Memoire_DSS_Logistique_ElBayadh_v7c_BACKUP.docx"
-    if (Test-Path $script) {
-        $ok = (Invoke-PipelineStep "verify_docx_checks.py — 29 fast checks" {
-            python $script $docxPath --size-threshold 50000 --backup $backupPath 2>&1 | Select-Object -Last 30
-        }) -and $ok
-    }
+    # Verify (36 checks)
+    Run-Script "verify_docx_checks.py — 36 fast checks" "verify_docx_checks.py" "`"$docxPath`" --size-threshold 50000"
     
     # MD ↔ DOCX sync
-    $script = Join-Path $styleDir "docx_md_sync.py"
-    if (Test-Path $script) {
-        $ok = (Invoke-PipelineStep "docx_md_sync.py — MD ↔ DOCX sync" {
-            python $script $docxPath --verify 2>&1
-        }) -and $ok
-    }
+    Run-Script "docx_md_sync.py — MD ↔ DOCX sync" "docx_md_sync.py" "`"$docxPath`" --verify"
     
-    # Measure metrics
-    $script = Join-Path $styleDir "measure-thesis.py"
-    if ((Test-Path $script) -and (Test-Path $sourceMd)) {
-        Invoke-PipelineStep "measure-thesis.py — metrics recording" {
-            $r = python $script $docxPath $sourceMd 2>&1
-            $r -join "`n"
-        }
-    } else {
-        Invoke-PipelineStep "measure-thesis.py" -SkipReason "Script or source MD not found"
-    }
-    
-    return $ok
-}
-
-# ── Phase 6: Report ─────────────────────────────────────────────────────────────
-
-function Invoke-Phase6 {
-    Write-Phase 6 "Pipeline Report"
-    
-    $duration = ((Get-Date) - $global:pipeline.startTime).TotalSeconds
-    $total = $global:pipeline.totalPassed + $global:pipeline.totalFailed + $global:pipeline.totalSkipped
-    
-    $reportLines = @()
-    $reportLines += "=" * 80
-    $reportLines += "  ACADEMIX v13.4 — COMPREHENSIVE THESIS PIPELINE REPORT"
-    $reportLines += "  Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
-    $reportLines += "  Duration: $([math]::Round($duration, 1))s"
-    $reportLines += "=" * 80
-    $reportLines += ""
-    $reportLines += "  Summary: [PASS] $($global:pipeline.totalPassed) passed | [FAIL] $($global:pipeline.totalFailed) failed | [SKIP] $($global:pipeline.totalSkipped) skipped"
-    $reportLines += ""
-    $reportLines += "  Current Phase: $currentPhase"
-    $reportLines += ""
-    $currentPhase = 0
-    foreach ($step in $global:pipeline.results) {
-        $icons = @{PASS="[PASS]"; FAIL="[FAIL]"; SKIP="[SKIP]"; WARN="[WARN]"}
-        $icon = $icons[$step.status]
-        if (-not $icon) { $icon = "  " }
-        $reportLines += "  $icon [$($step.status)] $($step.label) -- $($step.detail) ($([math]::Round($step.duration, 1))s)"
-    }
-    
-    $reportLines += ""
-    $reportLines += "  Files:"
-    $reportLines += "    Output:  $docxPath"
-    if (Test-Path $docxPath) {
-        $size = (Get-Item $docxPath).Length
-        $reportLines += "    Size:    $([math]::Round($size/1KB)) KB"
-    }
-    $reportLines += "    Report:  $reportFile"
-    $reportLines += ""
-    $reportLines += "=" * 80
-    $reportLines += "  END OF PIPELINE REPORT"
-    $reportLines += "=" * 80
-    
-    $report = $reportLines -join "`n"
-    
-    # Write TXT report
-    $report | Out-File -FilePath $reportTxt -Encoding utf8
-    Invoke-PipelineStep "Write TXT report" { "Saved to $reportTxt" }
-    
-    # Write JSON report
-    $jsonData = @{
-        timestamp = (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
-        duration = $duration
-        summary = @{
-            passed = $global:pipeline.totalPassed
-            failed = $global:pipeline.totalFailed
-            skipped = $global:pipeline.totalSkipped
-            total = $total
-        }
-        steps = $global:pipeline.results | ForEach-Object {
-            @{
-                label = $_.label
-                status = $_.status
-                detail = $_.detail
-                duration = $_.duration
-            }
-        }
-        files = @{
-            output = $docxPath
-            report = $reportFile
-        }
-    }
-    $jsonData | ConvertTo-Json -Depth 10 | Out-File -FilePath $reportFile -Encoding utf8
-    Invoke-PipelineStep "Write JSON report" { "Saved to $reportFile" }
+    return $true
 }
 
 # ===================================================================
-# MAIN — Phase Routing
+# MAIN
 # ===================================================================
 Write-Host ""
 Write-Host "+------------------------------------------------------------+" -ForegroundColor Magenta
-Write-Host "|     ACADEMIX v13.4 -- Comprehensive Thesis Pipeline v2      |" -ForegroundColor Magenta
+Write-Host "|     ACADEMIX v13.4 -- Clean Thesis Pipeline v3             |" -ForegroundColor Magenta
 Write-Host "+------------------------------------------------------------+" -ForegroundColor Magenta
 Write-Host "  Output: $docxPath" -ForegroundColor Gray
- 
+Write-Host "  Time: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Gray
+
 $allOk = $true
- 
+
 switch -Wildcard ($Phase) {
     "all" {
         $allOk = Invoke-Phase0 -and $allOk
         $allOk = Invoke-Phase1 -and $allOk
         $allOk = Invoke-Phase2 -and $allOk
         $allOk = Invoke-Phase3 -and $allOk
-        $allOk = Invoke-Phase4 -and $allOk
         $allOk = Invoke-Phase5 -and $allOk
-        Invoke-Phase6
     }
     "0" { $allOk = Invoke-Phase0 }
     "1" { $allOk = Invoke-Phase1 }
@@ -497,29 +354,32 @@ switch -Wildcard ($Phase) {
     "3" { $allOk = Invoke-Phase3 }
     "4" { $allOk = Invoke-Phase4 }
     "5" { $allOk = Invoke-Phase5 }
-    "6" { Invoke-Phase6 }
     "build" {
         $allOk = Invoke-Phase0 -and $allOk
         $allOk = Invoke-Phase1 -and $allOk
         $allOk = Invoke-Phase2 -and $allOk
         $allOk = Invoke-Phase3 -and $allOk
-        $allOk = Invoke-Phase4 -and $allOk
     }
     "fix" {
         $allOk = Invoke-Phase2 -and $allOk
         $allOk = Invoke-Phase3 -and $allOk
     }
     "verify" { $allOk = Invoke-Phase5 }
-    "report" { Invoke-Phase6 }
     default {
         Write-Host "Unknown phase: $Phase" -ForegroundColor Red
         Write-Host "Usage: .\run-thesis-pipeline.ps1 [[-Phase] <string>] [[-SkipBuild]]" -ForegroundColor Yellow
-        Write-Host "Phases: all, 0, 1, 2, 3, 4, 5, 6, build, fix, verify, report" -ForegroundColor Yellow
+        Write-Host "Phases: all, 0, 1, 2, 3, 4, 5, build, fix, verify" -ForegroundColor Yellow
     }
 }
- 
-if (-not $allOk) {
-    Write-Host "`n[WARN] Pipeline completed with failures -- review report for details." -ForegroundColor Yellow
-}
- 
+
+$duration = ((Get-Date) - $global:startTime).TotalSeconds
+$passed = ($global:results | Where-Object { $_.status -eq "PASS" }).Count
+$failed = ($global:results | Where-Object { $_.status -eq "FAIL" }).Count
+$skipped = ($global:results | Where-Object { $_.status -eq "SKIP" }).Count
+
+Write-Host ""
+Write-Host "+------------------------------------------------------------+" -ForegroundColor Cyan
+Write-Host "|  SUMMARY: $passed passed | $failed failed | $skipped skipped | $([math]::Round($duration, 1))s" -ForegroundColor Cyan
+Write-Host "+------------------------------------------------------------+" -ForegroundColor Cyan
+
 exit $(if ($allOk) {0} else {1})

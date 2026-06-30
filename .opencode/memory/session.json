@@ -1,17 +1,35 @@
 {
-  "project": "Academix v13.3",
-  "last_session": "2026-05-08T17:01:08",
-  "last_build": "2026-05-08T16:32:29",
-  "last_verify": "97/97 PASS",
-  "last_test": "10/10 PASS",
-  "active_workbook": "C:\\Users\\Administrator\\Dropbox\\ERP_v13.3.xlsm",
-  "source_modules": 36,
-  "source_lines": 11396,
+  "project": "Academix v13.4",
+  "last_session": "2026-06-30T18:00:00",
+  "last_build": "2026-06-30T17:30:00",
+  "last_verify": "36/36 PASS",
+  "last_test": "N/A",
+  "active_workbook": "C:\\Users\\Admin\\Dropbox\\ERP_v13.4.xlsm",
+  "source_modules": 12,
+  "source_lines": 4919,
   "drive_config": {
-    "primary": "C:\\Users\\Administrator\\Dropbox",
-    "ssd_expected": "F:",
+    "primary": "C:\\Users\\Admin\\Dropbox",
+    "ssd_expected": "C:",
     "usb_expected": ""
   },
   "workspace_mode": "idle",
-  "session_count": 2
+  "session_count": 1,
+  "jumbo_project": "publicsectorlogistics",
+  "jumbo_goal": "43345631-3a0b-4567-8133-c76210ff9705",
+  "components": {
+    "ERP Workbook": "a69b8792-34ba-401f-8010-6e0393b982ba",
+    "Thesis Pipeline": "f13873a9-69a9-4149-b52f-19fdcd6036b5",
+    "thesis-skills": "cf415d91-7abf-434d-acde-53d902edd630",
+    "jumbo-cli": "29c027c1-f247-496b-a7c8-1d7b8f29baa2"
+  },
+  "invariants": {
+    "Ground Truth": "ea5f855a-09c9-4e22-8665-7e7d74753fb2",
+    "MASTER_PWD": "5b852e98-4f5f-4af8-853f-9d35c2e4686f",
+    "Single-section DOCX": "9f0e1521-b243-4c8b-81b7-5b8748f5a946"
+  },
+  "decisions": {
+    "Pipeline v3": "b1bcc275-dddb-4f1c-962b-b1c66db89837",
+    "thesis-skills": "f3d748bc-4a19-40e9-a6c5-3037f8749188",
+    "Free-tier models": "84434766-c949-4ace-ba9a-be4cd9162363"
+  }
 }

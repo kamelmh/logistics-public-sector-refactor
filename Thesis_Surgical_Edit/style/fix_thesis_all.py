@@ -188,27 +188,6 @@ def _apply_style_formatting(style, font_name, font_size_pt, line_spacing=True, r
 
 # ── Fix 1: Page numbering ──────────────────────────────────────────────────────
 
-def fix_page_numbering(doc, changes):
-    """cover=none, TOC=decimal start=1, body/annexes=decimal CONTINUE (no start attr)."""
-    formats = ['none', 'decimal', 'decimal', 'decimal']
-    for i, sec in enumerate(doc.sections):
-        sect_pr = sec._sectPr
-        old = sect_pr.find(qn('w:pgNumType'))
-        if old is not None:
-            sect_pr.remove(old)
-        fmt = formats[i] if i < len(formats) else 'decimal'
-        # Only TOC (section 1) starts at 1; body (2) and annexes (3) CONTINUE
-        start = ' w:start="1"' if i == 1 else ''
-        pg = parse_xml('<w:pgNumType %s w:fmt="%s"%s/>' % (nsdecls('w'), fmt, start))
-        changes['page_num_sec%d' % i] = 'fmt=%s%s' % (fmt, ' start=1' if start else ' continue')
-        first = sect_pr.find(qn('w:type'))
-        if first is not None:
-            sect_pr.insert(list(sect_pr).index(first) + 1, pg)
-        else:
-            sect_pr.insert(0, pg)
-    return changes
-
-
 def fix_table_column_widths(doc, changes):
     avail = (GOLDEN['pageWidthCm'] - 2 * GOLDEN['marginsCm']) * 914400 / 2.54
     for ti, t in enumerate(doc.tables):
