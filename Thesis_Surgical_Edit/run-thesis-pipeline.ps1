@@ -45,7 +45,11 @@ $null = New-Item -ItemType Directory -Path $outDir -Force
 
 $docxPath = Join-Path $outDir "Memoire_DSS_Logistique_ElBayadh.docx"
 $sourceMd = Join-Path $tsDir "Memoire_DSS_Logistique_ElBayadh.md"
-$refDocx = Join-Path $styleDir "reference.docx"
+$refDocx = Join-Path $outDir "Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx"
+# Fallback to style reference.docx if golden source not found
+if (-not (Test-Path $refDocx)) {
+    $refDocx = Join-Path $styleDir "reference.docx"
+}
 
 # Find pandoc
 $pandoc = Get-Command pandoc -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
@@ -294,22 +298,33 @@ with zipfile.ZipFile(path, 'r') as z:
     return $true
 }
 
-# ── Phase 4: Word COM (optional, for TOC/TOF/logos/PDF) ────────────────────────
+# ── Phase 4: Word COM (TOC/TOF/logos/cover page/field update) ──────────────────
 function Invoke-Phase4 {
-    Write-Phase 4 "Word COM Automation (optional)"
+    Write-Phase 4 "Word COM Automation"
     
     if (-not (Test-Path $docxPath)) {
         Write-Step "Word COM" "SKIP" "No DOCX at $docxPath"
         return $false
     }
     
-    # Update fields (Ctrl+A F9 equivalent)
-    $updateResult = Run-Script "update_fields.py — field update" "update_fields.py" @($docxPath, "--save-only")
+    # Step 1: Update fields (Ctrl+A F9 equivalent)
+    Run-Script "update_fields.py — field update" "update_fields.py" @($docxPath, "--save-only")
     
-    if ($updateResult) {
-        # Post-COM: Re-run namespace fix (Word COM may re-corrupt namespaces)
-        Run-Script "fix_thesis_all.py — post-COM namespace fix" "fix_thesis_all.py" "`"$docxPath`" --save"
-    }
+    # Step 2: Word COM automation (logos, TOC, Table of Figures, cover page)
+    $logo1Path = Join-Path $tsDir "style\logo1.png"
+    $logo2Path = Join-Path $tsDir "style\logo2.png"
+    if (-not (Test-Path $logo1Path)) { $logo1Path = "" }
+    if (-not (Test-Path $logo2Path)) { $logo2Path = "" }
+    Run-Script "word_automation.py — TOC/TOF/logos" "word_automation.py" @($docxPath, $logo1Path, $logo2Path)
+    
+    # Step 3: Post-COM surgical polish (Word COM resets some XML properties)
+    Run-Script "surgical_polish.py — post-COM polish" "surgical_polish.py" "`"$docxPath`" --save"
+    
+    # Step 4: Re-apply comprehensive fixes after COM automation
+    Run-Script "fix_thesis_all.py — post-COM fixes" "fix_thesis_all.py" "`"$docxPath`" --save"
+    
+    # Step 5: Re-apply section fixes (page numbering after COM)
+    Run-Script "fix_docx_sections.py — post-COM sections" "fix_docx_sections.py" "`"$docxPath`" --save"
     
     return $true
 }
@@ -353,6 +368,7 @@ switch -Wildcard ($Phase) {
         $allOk = Invoke-Phase1 -and $allOk
         $allOk = Invoke-Phase2 -and $allOk
         $allOk = Invoke-Phase3 -and $allOk
+        $allOk = Invoke-Phase4 -and $allOk
         $allOk = Invoke-Phase5 -and $allOk
     }
     "0" { $allOk = Invoke-Phase0 }
@@ -366,6 +382,7 @@ switch -Wildcard ($Phase) {
         $allOk = Invoke-Phase1 -and $allOk
         $allOk = Invoke-Phase2 -and $allOk
         $allOk = Invoke-Phase3 -and $allOk
+        $allOk = Invoke-Phase4 -and $allOk
     }
     "fix" {
         $allOk = Invoke-Phase2 -and $allOk
