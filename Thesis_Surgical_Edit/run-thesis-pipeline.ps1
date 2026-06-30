@@ -179,9 +179,16 @@ function Invoke-Phase1 {
             "dir=rtl"
         ) | ForEach-Object { "--metadata=" + $_ }
         
+        # Strip YAML frontmatter if present (prevent it from rendering as content)
+        $mdContent = Get-Content $sourceMd -Raw -Encoding UTF8
+        $mdContent = $mdContent -replace '(?s)^---\s*\n.*?\n---\s*\n', ''
+        $tempMd = Join-Path $outDir "temp_build.md"
+        [System.IO.File]::WriteAllText($tempMd, $mdContent, [System.Text.UTF8Encoding]::new($false))
+        
         try {
-            & $pandoc $sourceMd -o $docxPath --reference-doc=$refDocx -f markdown-yaml_metadata_block $metadata 2>&1
+            & $pandoc $tempMd -o $docxPath --reference-doc=$refDocx -f markdown-yaml_metadata_block $metadata 2>&1
             if ($LASTEXITCODE -ne 0) { throw "Pandoc failed with exit code $LASTEXITCODE" }
+            Remove-Item $tempMd -ErrorAction SilentlyContinue
             $size = (Get-Item $docxPath).Length
             Write-Step "Build from Markdown" "PASS" "Size: $([math]::Round($size/1KB)) KB"
             return $true

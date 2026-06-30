@@ -146,7 +146,6 @@ def parse_md_sections(md_path):
         text = f.read()
     
     checks = {
-        'yaml': bool(re.match(r'^---\s*\n', text)),
         'cover': bool(re.search(r'الجمهورية الجزائرية', text)),
         'dedication': bool(re.search(r'إهداء', text)),
         'thanks': bool(re.search(r'شكر\s*وتقدير', text)),
@@ -190,7 +189,6 @@ def parse_docx_sections(docx_path):
     info['content'] = {}
     body_text = ' '.join(p.text for p in doc.paragraphs)
     markers = {
-        'yaml': 'title:',
         'cover': 'الجمهورية الجزائرية',
         'dedication': 'إهداء',
         'thanks': 'شكر',
@@ -231,13 +229,8 @@ def compare(md_path, docx_path):
     issues = []
     info = []
     
-    # 1. YAML comparison
-    info.append(('info', 'YAML', f'MD has {len(md_yaml)} fields: {list(md_yaml.keys())}'))
-    for key in ['title', 'author', 'lang', 'dir']:
-        if key in md_yaml:
-            info.append(('ok', f'YAML.{key}', md_yaml[key]))
-        else:
-            issues.append(('warning', f'YAML.{key}', 'missing from MD'))
+    # 1. YAML comparison — skip (metadata passed via pandoc --metadata flags)
+    # YAML is optional; pipeline strips it before build
     
     # 2. Section coverage
     for section, status in md_sections.items():
