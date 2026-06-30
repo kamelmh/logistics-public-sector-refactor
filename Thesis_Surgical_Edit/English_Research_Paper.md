@@ -84,7 +84,7 @@ To prevent stockouts during the replenishment lead time, the Reorder Point is co
 
 $$ROP = \frac{D}{WD} \times LT + SS$$
 
-Where \(WD\) is working days per year (288, based on the Algerian administrative calendar), \(LT\) is lead time in days (2 days for local suppliers), and \(SS\) is safety stock. The safety stock is set to buffer against demand volatility, targeting a service level of approximately 99.7%.
+Where \(WD\) is working days per year (288, based on the Algerian administrative calendar), \(LT\) is lead time of 7 days for local suppliers), and \(SS\) is safety stock. The safety stock is set to buffer against demand volatility, targeting a service level of approximately 99.7%.
 
 ### C. Verification and Validation Framework
 
@@ -136,7 +136,7 @@ Table III compares the manual (pre-DSS) approach with the Academix-driven method
 | Safety Stock | None / Arbitrary | 200 units (SS) | 99.7% service level guaranteed |
 | Decision Basis | Intuition | Empirical (Wilson model) | Reproducible, auditable |
 
-The system's computed ROP of 206 ensures that a replenishment order is triggered when remaining stock can still cover the 2-day lead time plus the 200-unit safety buffer, effectively replacing panic-ordering cycles with data-driven precision.
+The system's computed ROP of 206 ensures that a replenishment order is triggered when remaining stock can still cover the 7-day lead time plus the 200-unit safety buffer, effectively replacing panic-ordering cycles with data-driven precision.
 
 ### C. ABC Classification Results
 
@@ -174,7 +174,7 @@ The introduction of automated ROP alerts shifts the organizational paradigm from
 
 ### C. Limitations
 
-Several limitations warrant acknowledgment. First, the 38-day observation period, while statistically sufficient for the high-turnover items studied, does not capture seasonal demand patterns typical of educational supply chains (e.g., pre-exam period surges). Second, the single-user architecture of Excel constrains concurrent access—simultaneous data entry by multiple clerks is not supported. Third, the current framework does not implement dynamic lead time estimation; the 2-day lead time is a fixed parameter derived from supplier historical averages.
+Several limitations warrant acknowledgment. First, the 38-day observation period, while statistically sufficient for the high-turnover items studied, does not capture seasonal demand patterns typical of educational supply chains (e.g., pre-exam period surges). Second, the single-user architecture of Excel constrains concurrent access—simultaneous data entry by multiple clerks is not supported. Third, the current framework does not implement dynamic lead time estimation; the 7-day lead time is a fixed parameter derived from supplier historical averages.
 
 ### D. Comparison with Existing Approaches
 
