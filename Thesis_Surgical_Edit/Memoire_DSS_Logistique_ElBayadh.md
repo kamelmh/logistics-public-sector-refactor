@@ -1052,7 +1052,6 @@ DSS ──→ تصدير CSV/Excel ──→ استيراد SIGLE ──→ مح
 [^fn9]: E. A. Silver, D. F. Pyke & D. J. Thomas, Inventory and Production Management in Supply Chains, 4th ed., Springer, 2017, p. 74. وكذلك: P. H. Zipkin, Foundations of Inventory Management, McGraw-Hill, 2000, p. 52.
 [^fn10]: T. E. Vollmann, W. L. Berry, D. C. Whybark & F. R. Jacobs, Manufacturing Planning and Control for Supply Chain Management, 5th ed., McGraw-Hill, 2005, p. 3.
 [^fn11]: R. H. Wilson, "A Scientific Routine for Stock Control", Harvard Business Review, Vol. 13, N° 1, 1934, p. 120. وكذلك: F. W. Harris, "How Many Parts to Make at Once", Factory, The Magazine of Management, Vol. 10, N° 2, 1913, p. 136.
-[^fn12]: E. A. Silver, D. F. Pyke & D. J. Thomas, Inventory and Production Management in Supply Chains, 4th ed., Springer, 2017, p. 74.
 [^fn13]: مديرية التربية لولاية البيض — مصلحة المخازن، السجلات السنوية لحركة المخزون، وثائق داخلية غير منشورة، 2025. ومديرية التربية لولاية البيض — مصلحة الميزانية، بيانات تكاليف الطلب والاحتفاظ، وثائق داخلية غير منشورة، 2025.
 [^fn24]: الجمهورية الجزائرية الديمقراطية الشعبية، المرسوم التنفيذي رقم 20-270 المتعلق بتنظيم الميزانية والمحاسبة العمومية، الجريدة الرسمية، 2020.
 [^fn25]: وزارة المالية ووزارة التربية الوطنية، المنشور الوزاري المشترك المتعلق بتسيير المستودعات في المؤسسات التربوية، وثيقة داخلية، 2023.
