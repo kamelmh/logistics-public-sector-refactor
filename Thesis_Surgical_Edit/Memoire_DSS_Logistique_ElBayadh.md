@@ -490,6 +490,39 @@ dir: rtl
 
 يقوم المحرك بتنفيذ عملية "التحسين المستمر" للكمية الاقتصادية عبر تدفق منطقي يبدأ باسترداد الطلب السنوي () وتكلفة الطلب () ومعدل الاحتفاظ () وسعر الوحدة () من سجل الإعدادات، ثم تطبيق المعادلة: . يتم تحديث هذه القيمة تلقائياً عند تغير أي معامل، مما يضمن أن النظام يقترح دائماً الكمية التي تقلص التكاليف الإجمالية إلى حدها الأدنى.
 
+**نقطة الكود (Code Excerpt):** النموذج التالي يُظهر الجزء الأساسي من خوارزمية حساب EOQ في وحدة `mod_StockEngine`:
+
+```vba
+' === Wilson EOQ Calculation ===
+Public Function CalculateEOQ(ByVal annualDemand As Double, _
+                             ByVal orderCost As Double, _
+                             ByVal holdingRate As Double, _
+                             ByVal unitPrice As Double) As Double
+    ' Q* = SQRT(2 * D * S / (I * PU))
+    Dim numerator As Double
+    Dim denominator As Double
+    
+    numerator = 2 * annualDemand * orderCost
+    denominator = holdingRate * unitPrice
+    
+    If denominator = 0 Then
+        CalculateEOQ = 0
+    Else
+        CalculateEOQ = WorksheetFunction.RoundUp(Sqr(numerator / denominator), 0)
+    End If
+End Function
+
+' === ROP with Individual Safety Stock ===
+Public Function CalculateROP(ByVal dailyDemand As Double, _
+                             ByVal leadTimeDays As Long, _
+                             ByVal safetyStock As Double) As Double
+    ' ROP = (D/250) * LT + SS
+    CalculateROP = (dailyDemand * leadTimeDays) + safetyStock
+End Function
+```
+
+**ملاحظة:** الدالة `RoundUp` تضمن أن الكمية المحسوبة دائماً عدد صحيح موجب، وهو ما يتوافق مع واقع طلب القطع الفعلية.
+
 #### ثانياً: ديناميكية نقطة إعادة الطلب (ROP)
 
 لا يتعامل النظام مع ROP كقيمة ثابتة، بل كمتغير ديناميكي يرتبط بأجل التزويد الفعلي () ومخزون الأمان (). يقوم المحرك بحساب  بشكل لحظي، ويقوم بتفعيل التنبيهات اللونية (الأصفر/الأحمر) في واجهة المستخدم بمجرد ملامسة الرصيد لهذه القيمة، مما ينقل الإدارة من "رد الفعل" عند النفاد إلى "الاستباقية" في الطلب.

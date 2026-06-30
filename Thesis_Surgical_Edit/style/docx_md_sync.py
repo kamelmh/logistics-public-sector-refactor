@@ -37,11 +37,11 @@ DEFAULT_MD = os.path.join(PROJECT_ROOT, 'Thesis_Surgical_Edit', 'Memoire_DSS_Log
 # Multiple article sets — a constant match against ANY set is accepted
 GROUND_TRUTH_SETS = {
     'ART-001 (Papier A4)': {
-        'D': '2007',
+        'D': '2112',
         'Q*': '50',
-        'ROP': '416',
+        'ROP': '417',
         'SS': '400',
-        'LT': '2',
+        'LT': '7',
         'S': '50',
         'PU': '400',
         'I': '20%',
@@ -49,9 +49,9 @@ GROUND_TRUTH_SETS = {
     'ART-002 (Toner G030)': {
         'D': '33',
         'Q*': '15',
-        'ROP': '200',
+        'ROP': '201',
         'SS': '200',
-        'LT': '2',
+        'LT': '7',
         'S': '801.45',
         'PU': '1200',
         'I': '20%',
