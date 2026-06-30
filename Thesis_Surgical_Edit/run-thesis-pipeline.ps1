@@ -1,21 +1,21 @@
 ﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-  Academix v13.4 — Clean Thesis Pipeline v3
+  Academix v13.4 — Clean Thesis Pipeline v4
   Linear, non-conflicting pipeline with proper ordering.
 
 .DESCRIPTION
-  Six-phase pipeline with strict ordering to prevent corruption:
+  Five-phase pipeline with strict ordering to prevent corruption:
 
   Phase 0: Environment Check — verify tools, scripts, source
-  Phase 1: Source Prep — copy golden DOCX or build from MD via pandoc
+  Phase 1: Source Build — build DOCX from MD via pandoc (always fresh)
   Phase 2: python-docx Fixes — section layout + styles + RTL (doc.save() here)
   Phase 3: Zip-Level Fixes — footnotes, footer, namespace (AFTER all doc.save())
-  Phase 4: Word COM — field updates, TOC/TOF, logos (if needed)
   Phase 5: Verification — audit + verify + sync
 
   KEY RULE: python-docx saves MUST precede zip-level fixes.
   KEY RULE: Namespace fix MUST be the very last operation.
+  KEY RULE: Always build from MD — no golden source template.
 
 .PARAMETER Phase
   Which phase(s) to run: all, 0, 1, 2, 3, 4, 5, build, fix, verify
@@ -44,7 +44,6 @@ $outDir = Join-Path $tsDir "output"
 $null = New-Item -ItemType Directory -Path $outDir -Force
 
 $docxPath = Join-Path $outDir "Memoire_DSS_Logistique_ElBayadh.docx"
-$goldenSource = Join-Path $outDir "Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx"
 $sourceMd = Join-Path $tsDir "Memoire_DSS_Logistique_ElBayadh.md"
 $refDocx = Join-Path $styleDir "reference.docx"
 
@@ -130,15 +129,12 @@ function Invoke-Phase0 {
         Write-Step "Pandoc available" "SKIP" "Not installed — will use golden source"
     }
     
-    # Golden source or MD
-    if (Test-Path $goldenSource) {
-        $size = (Get-Item $goldenSource).Length
-        Write-Step "Golden source exists" "PASS" "Size: $([math]::Round($size/1KB)) KB"
-    } elseif (Test-Path $sourceMd) {
+    # Source markdown
+    if (Test-Path $sourceMd) {
         $size = (Get-Item $sourceMd).Length
         Write-Step "Source markdown exists" "PASS" "Size: $([math]::Round($size/1KB)) KB"
     } else {
-        Write-Step "Source available" "FAIL" "No golden source or markdown found"
+        Write-Step "Source markdown" "FAIL" "No markdown found at $sourceMd"
         $ok = $false
     }
     
@@ -164,25 +160,16 @@ function Invoke-Phase0 {
     return $ok
 }
 
-# ── Phase 1: Source Preparation ─────────────────────────────────────────────────
+# ── Phase 1: Source Build (always from MD via pandoc) ──────────────────────────
 function Invoke-Phase1 {
-    Write-Phase 1 "Source Preparation"
+    Write-Phase 1 "Source Build (from Markdown)"
     
     if ($SkipBuild -and (Test-Path $docxPath)) {
         Write-Step "Use existing output DOCX" "SKIP" "SkipBuild active"
         return $true
     }
     
-    # Option A: Copy golden source
-    if (Test-Path $goldenSource) {
-        Copy-Item $goldenSource $docxPath -Force
-        $srcSize = (Get-Item $goldenSource).Length
-        $dstSize = (Get-Item $docxPath).Length
-        Write-Step "Copy golden source" "PASS" "$([math]::Round($srcSize/1KB)) KB → $([math]::Round($dstSize/1KB)) KB"
-        return $true
-    }
-    
-    # Option B: Build from Markdown via pandoc
+    # Always build from Markdown via pandoc
     if ((Test-Path $sourceMd) -and $pandoc) {
         $metadata = @(
             "title=`"نظام دعم القرار لتسيير المخزونات`"",
@@ -204,7 +191,7 @@ function Invoke-Phase1 {
         }
     }
     
-    Write-Step "Source preparation" "FAIL" "No golden source or pandoc available"
+    Write-Step "Source build" "FAIL" "No markdown or pandoc available"
     return $false
 }
 
@@ -333,7 +320,7 @@ function Invoke-Phase5 {
 # ===================================================================
 Write-Host ""
 Write-Host "+------------------------------------------------------------+" -ForegroundColor Magenta
-Write-Host "|     ACADEMIX v13.4 -- Clean Thesis Pipeline v3             |" -ForegroundColor Magenta
+Write-Host "|     ACADEMIX v13.4 -- Clean Thesis Pipeline v4             |" -ForegroundColor Magenta
 Write-Host "+------------------------------------------------------------+" -ForegroundColor Magenta
 Write-Host "  Output: $docxPath" -ForegroundColor Gray
 Write-Host "  Time: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Gray
