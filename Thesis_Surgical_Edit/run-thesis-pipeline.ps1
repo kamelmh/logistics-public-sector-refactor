@@ -5,21 +5,22 @@
   Linear, non-conflicting pipeline with proper ordering.
 
 .DESCRIPTION
-  Five-phase pipeline with strict ordering to prevent corruption:
+  Six-phase pipeline with strict ordering to prevent corruption:
 
   Phase 0: Environment Check — verify tools, scripts, source
-  Phase 1: Source Build — build DOCX from MD via pandoc (always fresh)
+  Phase 1: Source Build — copy golden source DOCX (canonical version)
   Phase 2: python-docx Fixes — section layout + styles + RTL (doc.save() here)
   Phase 3: Zip-Level Fixes — footnotes, footer, namespace (AFTER all doc.save())
+  Phase 4: Word COM — field update, TOC/TOF, logos, surgical polish
   Phase 5: Verification — audit + verify + sync
 
   KEY RULE: python-docx saves MUST precede zip-level fixes.
   KEY RULE: Namespace fix MUST be the very last operation.
-  KEY RULE: Always build from MD — no golden source template.
+  KEY RULE: Golden source is canonical — MD is for reference only.
 
 .PARAMETER Phase
   Which phase(s) to run: all, 0, 1, 2, 3, 4, 5, build, fix, verify
-  "all" runs all phases. "build" runs phases 0-3. "fix" runs phases 2-3.
+  "all" runs all phases. "build" runs phases 0-4. "fix" runs phases 2-3.
   "verify" runs phase 5 only.
 
 .PARAMETER SkipBuild
@@ -45,11 +46,7 @@ $null = New-Item -ItemType Directory -Path $outDir -Force
 
 $docxPath = Join-Path $outDir "Memoire_DSS_Logistique_ElBayadh.docx"
 $sourceMd = Join-Path $tsDir "Memoire_DSS_Logistique_ElBayadh.md"
-$refDocx = Join-Path $outDir "Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx"
-# Fallback to style reference.docx if golden source not found
-if (-not (Test-Path $refDocx)) {
-    $refDocx = Join-Path $styleDir "reference.docx"
-}
+$goldenSource = Join-Path $outDir "Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx"
 
 # Find pandoc
 $pandoc = Get-Command pandoc -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
@@ -142,6 +139,15 @@ function Invoke-Phase0 {
         $ok = $false
     }
     
+    # Golden source
+    if (Test-Path $goldenSource) {
+        $size = (Get-Item $goldenSource).Length
+        Write-Step "Golden source exists" "PASS" "Size: $([math]::Round($size/1KB)) KB"
+    } else {
+        Write-Step "Golden source" "FAIL" "Not found at $goldenSource"
+        $ok = $false
+    }
+    
     # Key scripts
     $keyScripts = @(
         "fix_docx_sections.py", "fix_thesis_all.py",
@@ -164,58 +170,29 @@ function Invoke-Phase0 {
     return $ok
 }
 
-# ── Phase 1: Source Build (always from MD via pandoc) ──────────────────────────
+# ── Phase 1: Source Build (copy golden source) ─────────────────────────────────
 function Invoke-Phase1 {
-    Write-Phase 1 "Source Build (from Markdown)"
+    Write-Phase 1 "Source Build (golden source)"
     
     if ($SkipBuild -and (Test-Path $docxPath)) {
         Write-Step "Use existing output DOCX" "SKIP" "SkipBuild active"
         return $true
     }
     
-    # Always build from Markdown via pandoc
-    if ((Test-Path $sourceMd) -and $pandoc) {
-        # Step 1: Parse YAML frontmatter from MD source for --metadata flags
-        $mdContent = Get-Content $sourceMd -Raw -Encoding UTF8
-        $yamlMatch = [regex]::Match($mdContent, '(?s)^---\s*\n(.*?)\n---\s*\n')
-        
-        $metadata = @()
-        if ($yamlMatch.Success) {
-            $yamlBlock = $yamlMatch.Groups[1].Value
-            # Extract key: value pairs from YAML
-            $yamlLines = $yamlBlock -split "`n"
-            foreach ($line in $yamlLines) {
-                if ($line -match '^(\w+):\s*"?([^"]*)"?$') {
-                    $key = $Matches[1]
-                    $val = $Matches[2]
-                    # Only pass pandoc-supported metadata keys
-                    if ($key -in @('title', 'author', 'date', 'lang', 'dir')) {
-                        $metadata += "--metadata=${key}=${val}"
-                    }
-                }
-            }
-        }
-        
-        # Step 2: Strip YAML frontmatter from content (prevent it from rendering)
-        $cleanMd = $mdContent -replace '(?s)^---\s*\n.*?\n---\s*\n', ''
-        $tempMd = Join-Path $outDir "temp_build.md"
-        [System.IO.File]::WriteAllText($tempMd, $cleanMd, [System.Text.UTF8Encoding]::new($false))
-        
-        # Step 3: Build with -f markdown-yaml_metadata_block (YAML already stripped)
+    # Copy the golden source DOCX (canonical version with cover page, formatting, etc.)
+    if (Test-Path $goldenSource) {
         try {
-            & $pandoc $tempMd -o $docxPath --reference-doc=$refDocx -f markdown-yaml_metadata_block $metadata 2>&1
-            if ($LASTEXITCODE -ne 0) { throw "Pandoc failed with exit code $LASTEXITCODE" }
-            Remove-Item $tempMd -ErrorAction SilentlyContinue
+            Copy-Item $goldenSource $docxPath -Force
             $size = (Get-Item $docxPath).Length
-            Write-Step "Build from Markdown" "PASS" "Size: $([math]::Round($size/1KB)) KB"
+            Write-Step "Copy golden source" "PASS" "Size: $([math]::Round($size/1KB)) KB"
             return $true
         } catch {
-            Write-Step "Build from Markdown" "FAIL" $_.Exception.Message
+            Write-Step "Copy golden source" "FAIL" $_.Exception.Message
             return $false
         }
     }
     
-    Write-Step "Source build" "FAIL" "No markdown or pandoc available"
+    Write-Step "Golden source" "FAIL" "Not found at $goldenSource"
     return $false
 }
 
