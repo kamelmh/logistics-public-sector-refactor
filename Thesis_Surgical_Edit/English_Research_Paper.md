@@ -1,4 +1,4 @@
-# An Offline-First Decision Support System for Inventory Optimization in Public Sector Logistics: The Academix v13.3 Framework
+﻿# An Offline-First Decision Support System for Inventory Optimization in Public Sector Logistics: The Academix v13.4 Framework
 
 Mahi Kamel Abdelghani
 National Specialized Institute of Professional Training (CNEPD) / Directorate of Education, Wilaya de El Bayadh, Algeria
@@ -6,7 +6,7 @@ mahi.kamel@example.dz
 
 ## Abstract
 
-Public sector logistics in developing regions often rely on manual inventory methods prone to overstocking and stockouts, yet commercial Enterprise Resource Planning (ERP) systems are prohibitively expensive and depend on reliable connectivity. This paper presents Academix v13.3, an offline-first Decision Support System (DSS) implemented entirely in Pure VBA (Visual Basic for Applications) that requires zero external dependencies. The framework integrates ABC classification with the Wilson Economic Order Quantity (EOQ) model to automate reorder decisions, augmented by four DSS intelligence pillars: print engineering, UX optimization, stockout projection, and fuzzy search. Empirical validation using 38 days of field data from the Education Directorate of El Bayadh, Algeria, demonstrates a 99.7% operational performance rate, with 112/112 verification checks passed and zero critical audit failures. For the benchmark article ART-001 (Toner G030), the system computed an Economic Order Quantity of 37 units and a Reorder Point of 206 units, effectively eliminating stockout risk. The results establish that mathematically rigorous, low-tech architectures can deliver sustainable digitalization for resource-constrained public administrations.
+Public sector logistics in developing regions often rely on manual inventory methods prone to overstocking and stockouts, yet commercial Enterprise Resource Planning (ERP) systems are prohibitively expensive and depend on reliable connectivity. This paper presents Academix v13.4, an offline-first Decision Support System (DSS) implemented entirely in Pure VBA (Visual Basic for Applications) that requires zero external dependencies. The framework integrates ABC classification with the Wilson Economic Order Quantity (EOQ) model to automate reorder decisions, augmented by four DSS intelligence pillars: print engineering, UX optimization, stockout projection, and fuzzy search. Empirical validation using 38 days of field data from the Education Directorate of El Bayadh, Algeria, demonstrates a 99.7% operational performance rate, with 112/112 verification checks passed and zero critical audit failures. For the benchmark article ART-002 (Toner G030), the system computed an Economic Order Quantity of 15 units and a Reorder Point of 200 units, effectively eliminating stockout risk. The results establish that mathematically rigorous, low-tech architectures can deliver sustainable digitalization for resource-constrained public administrations.
 
 **Keywords:** Public Sector Logistics, Decision Support System, Pure VBA, Inventory Optimization, Wilson EOQ, Offline-First Architecture, ABC Classification
 
@@ -16,7 +16,7 @@ Efficient inventory management is a critical pillar of operational stability in 
 
 The root cause is not a lack of awareness about modern inventory theory. Rather, it is a structural mismatch between commercially available ERP systems and the operating realities of regional public administrations. Cloud-based solutions require persistent internet connectivity—frequently unavailable in semi-urban and rural Algerian localities. Licensed enterprise software imposes annual costs that strain already tight operational budgets. Even free or open-source ERP suites demand IT infrastructure (dedicated servers, database administrators) that most directorates lack [2].
 
-This paper proposes Academix v13.3, a Decision Support System designed specifically for these constraints. The system adopts an offline-first philosophy, implemented entirely in Pure VBA within Microsoft Excel, to achieve zero-dependency deployment on any Windows machine with Excel 2010 or later. The framework's contributions are fourfold:
+This paper proposes Academix v13.4, a Decision Support System designed specifically for these constraints. The system adopts an offline-first philosophy, implemented entirely in Pure VBA within Microsoft Excel, to achieve zero-dependency deployment on any Windows machine with Excel 2010 or later. The framework's contributions are fourfold:
 
 1. A hybrid mathematical model coupling ABC classification with the Wilson Economic Order Quantity (EOQ) to automate reorder decisions for both high-value and routine inventory items.
 2. A rigorous verification methodology—144 discrete checks across build integrity, logic audit, and empirical validation—that provides statistical confidence in the system's outputs.
@@ -41,13 +41,13 @@ Visual Basic for Applications has been employed in operational research contexts
 
 ### D. Gap Analysis
 
-Existing work has not synthesized three elements simultaneously: (1) a mathematically rigorous optimization engine (ABC + EOQ + ROP), (2) a zero-dependency deployment model (Pure VBA, no external libraries), and (3) an auditable verification framework ensuring institutional confidence. Academix v13.3 bridges this gap by delivering all three within a single offline-first workbook, augmented by four intelligence pillars that address the practical usability challenges identified during field deployment.
+Existing work has not synthesized three elements simultaneously: (1) a mathematically rigorous optimization engine (ABC + EOQ + ROP), (2) a zero-dependency deployment model (Pure VBA, no external libraries), and (3) an auditable verification framework ensuring institutional confidence. Academix v13.4 bridges this gap by delivering all three within a single offline-first workbook, augmented by four intelligence pillars that address the practical usability challenges identified during field deployment.
 
 ## III. Methodology
 
 ### A. System Architecture
 
-Academix v13.3 is implemented as a standalone Excel workbook (.xlsm) containing 42 VBA modules and 1 form totaling approximately 17,700 lines of code across 26 worksheets. The architecture follows a three-layer design:
+Academix v13.4 is implemented as a standalone Excel workbook (.xlsm) containing 42 VBA modules and 1 form totaling approximately 17,700 lines of code across 26 worksheets. The architecture follows a three-layer design:
 - **Data Layer:** A structured digital ledger (transactions sheet) enforcing mandatory reference numbering, timestamps, and user attribution for every inventory movement (receipt or issue).
 - **Processing Layer:** Modular VBA classes implementing ABC classification, EOQ calculation, Reorder Point (ROP) computation, and automated alert generation.
 - **Presentation Layer:** A dashboard interface that displays stock status, highlights items below ROP, and provides one-click reorder report generation.
@@ -109,9 +109,9 @@ The system passed all 112 build verification checks, all 16 empirical macro test
 | DSS Audit (5-phase) | 16 | 16 | 0 | PASS |
 | **Total** | **144** | **144** | **0** | **PASS** |
 
-### B. Case Study: ART-001 (Toner G030)
+### B. Case Study: ART-002 (Toner G030)
 
-The primary benchmark article, ART-001 (Toner G030), was analyzed over the 38-day observation period. The annual demand was computed as 789 units. Applying the Wilson formula with the parameters in Table II yielded an Economic Order Quantity of 37 units and a Reorder Point of 206 units.
+The primary benchmark article, ART-002 (Toner G030), was analyzed over the 38-day observation period. The annual demand was computed as 33 units. Applying the Wilson formula with the parameters in Table II yielded an Economic Order Quantity of 15 units and a Reorder Point of 200 units.
 
 **TABLE II: Model Parameters for ART-001**
 
@@ -129,7 +129,7 @@ Table III compares the manual (pre-DSS) approach with the Academix-driven method
 
 **TABLE III: Manual vs. DSS-Driven Reordering for ART-001**
 
-| Metric | Manual Method | Academix v13.3 | Impact |
+| Metric | Manual Method | Academix v13.4 | Impact |
 |--------|---------------|----------------|--------|
 | Order Quantity | Variable (user-defined) | 37 units (Q*) | Cost-optimized per order |
 | Reorder Trigger | Reactive (near stockout) | 206 units (ROP) | Stockout risk eliminated |
@@ -146,7 +146,7 @@ The system classified inventory into three tiers. Class A items (the top 5 artic
 
 Over the observation period, the system recorded zero data entry errors (enforced by mandatory reference numbering and validation rules), zero calculation discrepancies (verified against manual recomputation), and zero crashes or unhandled runtime errors. The p-code caching issue common in VBA projects was eliminated by adopting the "Surgical Edit" methodology—all source code is maintained in .bas files and compiled from scratch on each build, preventing stale cache corruption.
 
-### E. DSS Intelligence Pillars (v13.3)
+### E. DSS Intelligence Pillars (v13.4)
 
 Building on the validated v13.2 foundation, four intelligence pillars were implemented to enhance operational usability without increasing system complexity:
 
@@ -156,7 +156,7 @@ Building on the validated v13.2 foundation, four intelligence pillars were imple
 
 **Pillar 3 — Stockout Projection:** A real-time alert banner on the home screen (ACCUEIL) that scans the ARTICLES sheet and displays stock status using a traffic-light system: green (all items above ROP), orange (items approaching ROP), or red (items at or below ROP, indicating imminent stockout). The banner includes a manual refresh button for on-demand status checks.
 
-**Pillar 4 — Fuzzy Search:** The article combo box on the data entry form supports type-to-filter functionality. Users can type partial text to filter the 15-article list by code or designation (case-insensitive). The full list is preserved in memory and restored when a selection is made, preventing permanent filter corruption. A guard flag (`m_IsFiltering`) prevents recursive filtering during programmatic list updates.
+**Pillar 4 — Fuzzy Search:** The article combo box on the data entry form supports type-to-filter functionality. Users can type partial text to filter the 12-article list by code or designation (case-insensitive). The full list is preserved in memory and restored when a selection is made, preventing permanent filter corruption. A guard flag (`m_IsFiltering`) prevents recursive filtering during programmatic list updates.
 
 These pillars collectively reduce data entry time by an estimated 40% and improve print output quality from ad-hoc to professional-grade, addressing the two most common user complaints identified during the 38-day field deployment.
 
@@ -164,7 +164,7 @@ These pillars collectively reduce data entry time by an estimated 40% and improv
 
 ### A. Strategic Value of Offline-First Architecture
 
-The central finding of this work is that decision support efficacy depends not on technological sophistication but on mathematical precision and deployment practicality. Academix v13.3 achieves in Pure VBA what many cloud platforms cannot: guaranteed availability under any connectivity condition, zero licensing cost, and operability by staff with only basic Excel competency. The addition of four intelligence pillars in v13.3 demonstrates that even within the constraints of Pure VBA, meaningful UX improvements are achievable—print engineering, fuzzy search, stockout projection, and input validation each address specific friction points identified during field deployment without compromising the zero-dependency philosophy.
+The central finding of this work is that decision support efficacy depends not on technological sophistication but on mathematical precision and deployment practicality. Academix v13.4 achieves in Pure VBA what many cloud platforms cannot: guaranteed availability under any connectivity condition, zero licensing cost, and operability by staff with only basic Excel competency. The addition of four intelligence pillars in v13.4 demonstrates that even within the constraints of Pure VBA, meaningful UX improvements are achievable—print engineering, fuzzy search, stockout projection, and input validation each address specific friction points identified during field deployment without compromising the zero-dependency philosophy.
 
 This challenges the prevailing assumption that digitalization requires investment in enterprise software. For the approximately 40% of public sector organizations in developing regions with unreliable internet access [15], an offline-first DSS represents not a compromise but the optimal strategy.
 
@@ -182,7 +182,7 @@ Compared to web-based ERP systems, Academix eliminates infrastructure costs but 
 
 ## VI. Conclusion and Future Work
 
-Academix v13.3 demonstrates that a mathematically rigorous inventory optimization system can be delivered through a zero-dependency, offline-first architecture. The hybrid ABC-EOQ-ROP model, implemented entirely in Pure VBA, achieved a 99.7% operational performance rate over 38 days of field deployment, passing 144/144 verification checks. The case study of ART-001 (Toner G030) showed a computed Economic Order Quantity of 37 units and a Reorder Point of 206 units, replacing intuition-based reordering with a reproducible, auditable decision framework. Four DSS intelligence pillars—print engineering, UX optimization, stockout projection, and fuzzy search—further enhanced operational usability without increasing system complexity.
+Academix v13.4 demonstrates that a mathematically rigorous inventory optimization system can be delivered through a zero-dependency, offline-first architecture. The hybrid ABC-EOQ-ROP model, implemented entirely in Pure VBA, achieved a 99.7% operational performance rate over 38 days of field deployment, passing 144/144 verification checks. The case study of ART-002 (Toner G030) showed a computed Economic Order Quantity of 15 units and a Reorder Point of 200 units, replacing intuition-based reordering with a reproducible, auditable decision framework. Four DSS intelligence pillars—print engineering, UX optimization, stockout projection, and fuzzy search—further enhanced operational usability without increasing system complexity.
 
 Future work will proceed along three axes. First, the observation period will be extended to a full annual cycle to capture seasonal demand fluctuations and validate the current parameter estimates. Second, the single-user limitation will be addressed by integrating a lightweight SQLite backend through VBA's ADO interface, enabling concurrent multi-user access while preserving the offline-first philosophy. Third, a dynamic lead time estimator—incorporating supplier performance history—will replace the current fixed-parameter approach. These enhancements aim to generalize the framework beyond the education sector to other domains of public administration in developing regions.
 

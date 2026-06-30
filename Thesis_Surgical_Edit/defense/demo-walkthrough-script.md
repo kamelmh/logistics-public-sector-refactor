@@ -1,4 +1,4 @@
-# Academix v13.4 — Demo Walkthrough Script
+﻿# Academix v13.4 — Demo Walkthrough Script
 ## Soutenance / Defense — Direction de l'Éducation d'El Bayadh
 **Auteur :** Mahi Kamel Abdelghani | **Durée :** 9 min | **Workbook :** `ERP_v13.4.xlsm`
 
@@ -31,17 +31,17 @@
 
 ### Action
 1. Cliquer sur l'onglet **ARTICLES** (ou bouton de navigation)
-2. Montrer la liste des 15 articles (ART-001 à ART-015)
+2. Montrer la liste des 12 articles (ART-001 à ART-012)
 3. Pointer les colonnes : Code, Désignation, Stock Actuel, Seuil Min, Classe ABC, PU, Fournisseur
-4. Cliquer sur **ART-001 — Toner G030** (ligne 2)
+4. Cliquer sur **ART-002 — Toner G030** (ligne 3)
 5. Montrer : Stock Actuel, Stock de Sécurité (200), Classe A
 
 ### Discours (Arabe)
-> صفحة المخزون تضم 15 صنفاً مسجلاً، كل صنف له رمز فريد (ART-001 إلى ART-015). الصنف المرجعي ART-001 هو حبر الطابعة Toner G030 — وهو صنف استراتيجي من الفئة A حسب تصنيف ABC. نلاحظ هنا أن المخزون الحالي مسجل، مع حد أدنى ومخزون أمان محددين. هذه البيانات هي الأساس الذي تبني عليه خوارزميات النظام حساباتها.
+> صفحة المخزون تضم 12 صنفاً مسجلاً، كل صنف له رمز فريد (ART-001 إلى ART-012). الصنف المرجعي ART-002 هو حبر الطابعة Toner G030 — وهو صنف استراتيجي من الفئة A حسب تصنيف ABC. نلاحظ هنا أن المخزون الحالي مسجل، مع حد أدنى ومخزون أمان محددين. هذه البيانات هي الأساس الذي تبني عليه خوارزميات النظام حساباتها.
 
 ### Métriques clés
-- 15 articles (ART-001 → ART-015)
-- ART-001 : Toner G030 — Classe A
+- 12 articles (ART-001 → ART-012)
+- ART-002 : Toner G030 — Classe A
 - SS = 200 unités
 
 ### Transition
@@ -57,7 +57,7 @@
 2. Cliquer sur `[ENTRY] Formulaire de Saisie` (appelle `OpenStockForm`)
 3. Le formulaire `frmStockEntry` s'ouvre
 4. Remplir :
-   - Code Article : ART-001 (ou le sélectionner dans la liste déroulante)
+   - Code Article : ART-002 (ou le sélectionner dans la liste déroulante)
    - Type : **Sortie** (Bon de Sortie)
    - Quantité : 50
    - Réf. Document : BS-2026-001
@@ -66,7 +66,7 @@
 7. Pointer que la cellule du stock s'est mise à jour instantanément
 
 ### Discours (Arabe)
-> نقوم الآن بتسجيل خروج 50 وحدة من حبر ART-001. النموذج يتحقق من صحة البيانات قبل الحفظ — يمنع إدخال قيم سالبة أو أكواد غير موجودة. بمجرد الضغط على "موافق"، يقوم محرك VBA بتحديث رصيد المخزون آنياً، وتسجيل الحركة في سجل المعاملات الرقمي، وتدوينها في سجل المراجعة. هذا هو جوهر الجرد الدائم المحوسب — كل حركة تنعكس فوراً على جميع المؤشرات.
+> نقوم الآن بتسجيل خروج 50 وحدة من حبر ART-002. النموذج يتحقق من صحة البيانات قبل الحفظ — يمنع إدخال قيم سالبة أو أكواد غير موجودة. بمجرد الضغط على "موافق"، يقوم محرك VBA بتحديث رصيد المخزون آنياً، وتسجيل الحركة في سجل المعاملات الرقمي، وتدوينها في سجل المراجعة. هذا هو جوهر الجرد الدائم المحوسب — كل حركة تنعكس فوراً على جميع المؤشرات.
 
 ### Métriques clés
 - Temps de traitement : < 5 secondes (vs 20-30 min en mode manuel)
@@ -88,17 +88,17 @@
 1. Depuis **Accueil**, cliquer sur `[ABC] Classement ABC` sous la section **ANALYSE**
 2. Attendre le message *"Classification ABC-XYZ mise à jour"*
 3. Aller à l'onglet **ARTICLES** — pointer la colonne **Classe ABC** (colonne F)
-4. Montrer : ART-001 = **A**, certains en B, d'autres en C
+4. Montrer : ART-002 = **A**, certains en B, d'autres en C
 5. Optionnel : Lancer `[FULL] Analyse Complète` pour montrer les analyses groupées
 6. Pointer la feuille **FORECAST** (créée dynamiquement)
 
 ### Discours (Arabe)
-> تصنيف ABC يوزع الأصناف حسب مبدأ باريتو: الفئة A تمثل 20% من الأصناف لكنها تستحوذ على 80% من القيمة المخزنية. هنا، حبر ART-001 من الفئة A — أي صنف استراتيجي يجب مراقبته يومياً. أما الفئة B فتراقب أسبوعياً، والفئة C شهرياً. هذا التصنيف يتغير ديناميكياً مع كل حركة، وهو ما يعجز عنه النظام اليدوي بالكامل.
+> تصنيف ABC يوزع الأصناف حسب مبدأ باريتو: الفئة A تمثل 20% من الأصناف لكنها تستحوذ على 80% من القيمة المخزنية. هنا، حبر ART-002 من الفئة A — أي صنف استراتيجي يجب مراقبته يومياً. أما الفئة B فتراقب أسبوعياً، والفئة C شهرياً. هذا التصنيف يتغير ديناميكياً مع كل حركة، وهو ما يعجز عنه النظام اليدوي بالكامل.
 
 ### Métriques clés
 - A : 20% des articles ≈ 80% de la valeur
 - Classification dynamique (recalculée à chaque mouvement)
-- 15 articles classés ABC-XYZ
+- 12 articles classés ABC-XYZ
 
 ### Backup plan
 > إذا لم يعمل زر ABC: افتح `Alt+F8` → `mod_SyncBridge.SyncMetricsFromLedger`
@@ -113,25 +113,25 @@
 
 ### Action
 1. Aller à la feuille **ARTICLES**
-2. Pointer la ligne ART-001
+2. Pointer la ligne ART-002
 3. Afficher les colonnes de calcul (ou cliquer sur `[SYNC] Synchronisation` pour rafraîchir)
 4. Expliquer en pointant :
-    - **D = 789** (demande annuelle extraite des mouvements réels)
+    - **D = 33** (demande annuelle extraite des mouvements réels)
    - **S = 801.45 DZD** (coût d'une commande)
    - **t = 20%** (taux de possession)
    - **PU** (prix unitaire) — le montrer dans la cellule
-5. Pointer la cellule de **Q\*** → **37**
-6. Pointer **ROP** → **206** (formule : demande quotidienne × délai + SS)
+5. Pointer la cellule de **Q\*** → **15**
+6. Pointer **ROP** → **200** (formule : demande quotidienne × délai + SS)
 7. Pointer **SS** → **200**
 8. Optionnel : cliquer sur `[CMUP] Rafraichir CMUP` pour montrer le calcul du coût moyen pondéré
 
 ### Discours (Arabe)
-> هنا نرى قلب النظام — النماذج الكمية مطبقة على بيانات حقيقية. الطلب السنوي D = 789 حُسب تلقائياً من سجل الحركات. تكلفة الطلب S = 801.45 دينار جزائري، ومعدل الحيازة 20%. بتطبيق معادلة ويلسون: الجذر التربيعي لـ (2 × 789 × 801.45) ÷ (السعر × 0.2) = كمية اقتصادية 37 وحدة. نقطة إعادة الطلب ROP = (789 ÷ 250) × 2 + 200 = 206. هذا يعني: عندما يصل المخزون إلى 206 وحدة، يصدر النظام تنبيهاً آلياً.
+> هنا نرى قلب النظام — النماذج الكمية مطبقة على بيانات حقيقية. الطلب السنوي D = 33 حُسب تلقائياً من سجل الحركات. تكلفة الطلب S = 801.45 دينار جزائري، ومعدل الحيازة 20%. بتطبيق معادلة ويلسون: الجذر التربيعي لـ (2 × 33 × 801.45) ÷ (السعر × 0.2) = كمية اقتصادية 15 وحدة. نقطة إعادة الطلب ROP = (33 ÷ 250) × 2 + 200 ≈ 200. هذا يعني: عندما يصل المخزون إلى 200 وحدة، يصدر النظام تنبيهاً آلياً.
 
 ### Métriques clés
-- **D = 789** unités/an (demande annuelle ART-001)
-- **Q\* = 37** unités (EOQ — Wilson)
-- **ROP = 206** unités
+- **D = 33** unités/an (demande annuelle ART-002)
+- **Q\* = 15** unités (EOQ — Wilson)
+- **ROP = 200** unités
 - **SS = 200** unités
 - **LT = 2** jours
 - **S = 801.45** DZD
@@ -186,14 +186,14 @@
 2. La feuille **BORDEREAU_COMMANDE** s'affiche ou se crée
 3. Pointer :
    - En-tête : SKU, Désignation, Stock Actuel, Seuil ROP, Suggestion (EOQ), PU, Total Estimé
-   - Ligne ART-001 : Stock = X, ROP = 206, Suggestion = 37, Total = 37 × PU
+   - Ligne ART-002 : Stock = X, ROP = 200, Suggestion = 15, Total = 15 × PU
 4. Mentionner que ce bordereau peut être exporté en PDF ou Excel
 
 ### Discours (Arabe)
-> بناءً على الوضع الحالي، يقترح النظام أمر تموين آلي. لكل صنف تجاوز نقطة إعادة الطلب، يقترح النظام كمية مساوية لكمية ويلسون الاقتصادية — 37 للصنف ART-001. هذا يلغي تماماً التخمين البشري والتقدير الذاتي. يمكن تصدير هذا الأمر مباشرة إلى PDF أو Excel لتقديمه إلى مصلحة المشتريات.
+> بناءً على الوضع الحالي، يقترح النظام أمر تموين آلي. لكل صنف تجاوز نقطة إعادة الطلب، يقترح النظام كمية مساوية لكمية ويلسون الاقتصادية — 15 للصنف ART-002. هذا يلغي تماماً التخمين البشري والتقدير الذاتي. يمكن تصدير هذا الأمر مباشرة إلى PDF أو Excel لتقديمه إلى مصلحة المشتريات.
 
 ### Métriques clés
-- Suggestion EOQ = 37 unités (ART-001)
+- Suggestion EOQ = 15 unités (ART-002)
 - Bordereau formaté et prêt à l'emploi
 - Exportable en PDF / Excel
 
