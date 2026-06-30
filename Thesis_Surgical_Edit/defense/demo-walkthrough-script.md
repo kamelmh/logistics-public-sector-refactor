@@ -131,9 +131,9 @@
 ### Métriques clés
 - **D = 33** unités/an (demande annuelle ART-002)
 - **Q\* = 15** unités (EOQ — Wilson)
-- **ROP = 200** unités
+- **ROP = 201** unités
 - **SS = 200** unités
-- **LT = 2** jours
+- **LT = 7** jours
 - **S = 801.45** DZD
 - **I = 20%**
 
@@ -186,7 +186,7 @@
 2. La feuille **BORDEREAU_COMMANDE** s'affiche ou se crée
 3. Pointer :
    - En-tête : SKU, Désignation, Stock Actuel, Seuil ROP, Suggestion (EOQ), PU, Total Estimé
-   - Ligne ART-002 : Stock = X, ROP = 200, Suggestion = 15, Total = 15 × PU
+   - Ligne ART-002 : Stock = X, ROP = 201, Suggestion = 15, Total = 15 × PU
 4. Mentionner que ce bordereau peut être exporté en PDF ou Excel
 
 ### Discours (Arabe)
