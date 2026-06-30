@@ -171,24 +171,11 @@ function Invoke-Phase1 {
     
     # Always build from Markdown via pandoc
     if ((Test-Path $sourceMd) -and $pandoc) {
-        $metadata = @(
-            "title=`"نظام دعم القرار لتسيير المخزونات`"",
-            "author=`"ماحي كمال عبد الغني`"",
-            "date=2026-05-18",
-            "lang=ar",
-            "dir=rtl"
-        ) | ForEach-Object { "--metadata=" + $_ }
-        
-        # Strip YAML frontmatter if present (prevent it from rendering as content)
-        $mdContent = Get-Content $sourceMd -Raw -Encoding UTF8
-        $mdContent = $mdContent -replace '(?s)^---\s*\n.*?\n---\s*\n', ''
-        $tempMd = Join-Path $outDir "temp_build.md"
-        [System.IO.File]::WriteAllText($tempMd, $mdContent, [System.Text.UTF8Encoding]::new($false))
-        
+        # Use -f markdown so pandoc processes YAML frontmatter as metadata
+        # (NOT -f markdown-yaml_metadata_block which would render YAML as visible text)
         try {
-            & $pandoc $tempMd -o $docxPath --reference-doc=$refDocx -f markdown-yaml_metadata_block $metadata 2>&1
+            & $pandoc $sourceMd -o $docxPath --reference-doc=$refDocx -f markdown 2>&1
             if ($LASTEXITCODE -ne 0) { throw "Pandoc failed with exit code $LASTEXITCODE" }
-            Remove-Item $tempMd -ErrorAction SilentlyContinue
             $size = (Get-Item $docxPath).Length
             Write-Step "Build from Markdown" "PASS" "Size: $([math]::Round($size/1KB)) KB"
             return $true
