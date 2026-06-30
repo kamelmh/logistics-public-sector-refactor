@@ -171,11 +171,37 @@ function Invoke-Phase1 {
     
     # Always build from Markdown via pandoc
     if ((Test-Path $sourceMd) -and $pandoc) {
-        # Use -f markdown so pandoc processes YAML frontmatter as metadata
-        # (NOT -f markdown-yaml_metadata_block which would render YAML as visible text)
+        # Step 1: Parse YAML frontmatter from MD source for --metadata flags
+        $mdContent = Get-Content $sourceMd -Raw -Encoding UTF8
+        $yamlMatch = [regex]::Match($mdContent, '(?s)^---\s*\n(.*?)\n---\s*\n')
+        
+        $metadata = @()
+        if ($yamlMatch.Success) {
+            $yamlBlock = $yamlMatch.Groups[1].Value
+            # Extract key: value pairs from YAML
+            $yamlLines = $yamlBlock -split "`n"
+            foreach ($line in $yamlLines) {
+                if ($line -match '^(\w+):\s*"?([^"]*)"?$') {
+                    $key = $Matches[1]
+                    $val = $Matches[2]
+                    # Only pass pandoc-supported metadata keys
+                    if ($key -in @('title', 'author', 'date', 'lang', 'dir')) {
+                        $metadata += "--metadata=${key}=${val}"
+                    }
+                }
+            }
+        }
+        
+        # Step 2: Strip YAML frontmatter from content (prevent it from rendering)
+        $cleanMd = $mdContent -replace '(?s)^---\s*\n.*?\n---\s*\n', ''
+        $tempMd = Join-Path $outDir "temp_build.md"
+        [System.IO.File]::WriteAllText($tempMd, $cleanMd, [System.Text.UTF8Encoding]::new($false))
+        
+        # Step 3: Build with -f markdown-yaml_metadata_block (YAML already stripped)
         try {
-            & $pandoc $sourceMd -o $docxPath --reference-doc=$refDocx -f markdown 2>&1
+            & $pandoc $tempMd -o $docxPath --reference-doc=$refDocx -f markdown-yaml_metadata_block $metadata 2>&1
             if ($LASTEXITCODE -ne 0) { throw "Pandoc failed with exit code $LASTEXITCODE" }
+            Remove-Item $tempMd -ErrorAction SilentlyContinue
             $size = (Get-Item $docxPath).Length
             Write-Step "Build from Markdown" "PASS" "Size: $([math]::Round($size/1KB)) KB"
             return $true
