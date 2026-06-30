@@ -1088,8 +1088,6 @@ DSS ──→ تصدير CSV/Excel ──→ استيراد SIGLE ──→ مح
 [^fn13]: مديرية التربية لولاية البيض — مصلحة المخازن، السجلات السنوية لحركة المخزون، وثائق داخلية غير منشورة، 2025. ومديرية التربية لولاية البيض — مصلحة الميزانية، بيانات تكاليف الطلب والاحتفاظ، وثائق داخلية غير منشورة، 2025.
 [^fn24]: الجمهورية الجزائرية الديمقراطية الشعبية، المرسوم التنفيذي رقم 20-270 المتعلق بتنظيم الميزانية والمحاسبة العمومية، الجريدة الرسمية، 2020.
 [^fn25]: وزارة المالية ووزارة التربية الوطنية، المنشور الوزاري المشترك المتعلق بتسيير المستودعات في المؤسسات التربوية، وثيقة داخلية، 2023.
-[^fn26]: الجمهورية الجزائرية الديمقراطية الشعبية.. (2003). الأمر رقم 03-07 المؤرخ في 19 جمادى الأولى 1424 الموافق 19 يوليو 2003 المتعلق ببراءات الاختراع. الجريدة الرسمية.
-[^fn27]: الجمهورية الجزائرية الديمقراطية الشعبية.. (2003). الأمر رقم 03-05 المؤرخ في 19 جمادى الأولى 1424 الموافق 19 يوليو 2003 المتعلق بحقوق المؤلف والحقوق المجاورة. الجريدة الرسمية.
 [^fn31]: A. Sebti, Élaboration d'un outil d'aide à la décision pour la gestion des stocks basé sur l'étude prévisionnelle, Mémoire PFE, École Nationale Polytechnique d'Alger, 1993, p. 12.
 [^fn32]: A. Yahi, Élaboration d'un logiciel de gestion de stocks de pièces de rechange, Mémoire PFE, École Nationale Polytechnique d'Alger, 1992, p. 8.
 [^fn33]: M. Bouchahlata, Contribution à l'amélioration du lead time de la chaîne logistique en combinant une solution VBA et la business intelligence : application Ericsson Algérie, Mémoire PFE, École Nationale Polytechnique d'Alger, 2021, p. 45.
