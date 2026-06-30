@@ -1,0 +1,13 @@
+{
+  "summary": {
+    "checker": "check_bib_quality",
+    "ruleset": "el-bayadh-thesis",
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "status": "PASS",
+    "files_scanned": 1,
+    "entries_scanned": 0
+  },
+  "findings": []
+}

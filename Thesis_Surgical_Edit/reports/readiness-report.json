@@ -1,0 +1,134 @@
+{
+  "mode": "advisor-handoff",
+  "overall_verdict": "WARN",
+  "summary": {
+    "headline": "Readiness verdict: WARN",
+    "evidence_status": "partial",
+    "dimension_count": 7,
+    "missing_evidence_count": 3
+  },
+  "dimensions": {
+    "references": {
+      "verdict": "PASS",
+      "evidence_status": "present",
+      "reason": "citation integrity reported no blockers",
+      "source": "citation-integrity-report.json",
+      "issue_count": 0
+    },
+    "language": {
+      "verdict": "PASS",
+      "evidence_status": "present",
+      "reason": "check_language reported no blockers",
+      "errors": 0,
+      "warnings": 0
+    },
+    "format": {
+      "verdict": "PASS",
+      "evidence_status": "present",
+      "reason": "check_format reported no blockers",
+      "errors": 0,
+      "warnings": 0
+    },
+    "content": {
+      "verdict": "PASS",
+      "evidence_status": "present",
+      "reason": "check_content reported no blockers",
+      "errors": 0,
+      "warnings": 0
+    },
+    "compile": {
+      "verdict": "WARN",
+      "evidence_status": "missing",
+      "reason": "compile evidence missing"
+    },
+    "export": {
+      "verdict": "WARN",
+      "evidence_status": "missing",
+      "reason": "export evidence missing"
+    },
+    "review_debt": {
+      "verdict": "WARN",
+      "evidence_status": "missing",
+      "reason": "review-loop evidence missing"
+    }
+  },
+  "blockers": [],
+  "warnings": [
+    {
+      "dimension": "compile",
+      "verdict": "WARN",
+      "evidence_status": "missing",
+      "reason": "compile evidence missing"
+    },
+    {
+      "dimension": "export",
+      "verdict": "WARN",
+      "evidence_status": "missing",
+      "reason": "export evidence missing"
+    },
+    {
+      "dimension": "review_debt",
+      "verdict": "WARN",
+      "evidence_status": "missing",
+      "reason": "review-loop evidence missing"
+    }
+  ],
+  "next_actions": [
+    "Generate or locate missing evidence for compile.",
+    "Generate or locate missing evidence for export.",
+    "Generate or locate missing evidence for review_debt."
+  ],
+  "sources": [
+    {
+      "name": "project_root",
+      "status": "present",
+      "path": "C:\\Users\\Admin\\Logistics.Public.Sector.Refactor\\Thesis_Surgical_Edit"
+    },
+    {
+      "name": "run_summary",
+      "status": "present",
+      "path": "reports/run-summary.json"
+    },
+    {
+      "name": "fix_summary",
+      "status": "missing",
+      "path": "reports/fix-summary.json",
+      "reason": "fix-summary.json not found"
+    },
+    {
+      "name": "checker_reports",
+      "status": "present",
+      "count": 6
+    },
+    {
+      "name": "compile",
+      "status": "missing",
+      "path": "reports/check_compile-report.json",
+      "reason": "compile report not found"
+    },
+    {
+      "name": "export",
+      "status": "missing",
+      "path": "reports/latex_to_word-report.json",
+      "reason": "latex-to-word export report not found"
+    },
+    {
+      "name": "review_diff",
+      "status": "missing",
+      "path": "reports/review-diff-artifact.json",
+      "reason": "review-diff artifact not found"
+    },
+    {
+      "name": "review_ingest",
+      "status": "missing",
+      "path": "reports/review-ingest-artifact.json",
+      "reason": "review-ingest artifact not found"
+    },
+    {
+      "name": "review_loop",
+      "status": "missing",
+      "path": "reports/review-diff-artifact.json",
+      "reason": "review-loop artifact not found"
+    }
+  ]
+}

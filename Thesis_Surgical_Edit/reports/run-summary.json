@@ -1,0 +1,118 @@
+{
+  "ruleset": "el-bayadh-thesis",
+  "project_root": "C:\\Users\\Admin\\Logistics.Public.Sector.Refactor\\Thesis_Surgical_Edit",
+  "steps": {
+    "bib-quality": {
+      "exit_code": 0,
+      "report": "reports/check_bib_quality-report.json",
+      "report_summary": {
+        "checker": "check_bib_quality",
+        "ruleset": "el-bayadh-thesis",
+        "errors": 0,
+        "warnings": 0,
+        "infos": 0,
+        "status": "PASS",
+        "files_scanned": 1,
+        "entries_scanned": 0
+      }
+    },
+    "references": {
+      "exit_code": 0,
+      "report": "reports/check_references-report.json",
+      "report_summary": {
+        "checker": "check_references",
+        "ruleset": "el-bayadh-thesis",
+        "errors": 0,
+        "warnings": 0,
+        "infos": 0,
+        "status": "PASS",
+        "files_scanned": 1,
+        "citation_integrity_status": "PASS",
+        "citation_integrity_report": "reports/citation-integrity-report.json"
+      }
+    },
+    "language": {
+      "exit_code": 0,
+      "report": "reports/check_language-report.json",
+      "report_summary": {
+        "checker": "check_language",
+        "ruleset": "el-bayadh-thesis",
+        "errors": 0,
+        "warnings": 0,
+        "infos": 0,
+        "status": "PASS",
+        "files_scanned": 0
+      }
+    },
+    "language-deep": {
+      "exit_code": 0,
+      "report": "reports/check_language_deep-report.json",
+      "report_summary": {
+        "checker": "check_language_deep",
+        "ruleset": "el-bayadh-thesis",
+        "errors": 0,
+        "warnings": 0,
+        "infos": 0,
+        "status": "PASS",
+        "files_scanned": 0,
+        "coverage_mode": "partial_latex_aware_screening",
+        "review_mode": "manual_first",
+        "review_required": 0,
+        "stratified_counts": {
+          "deep_language": 0,
+          "consistency": 0,
+          "high_confidence": 0,
+          "conservative_suggestions": 0
+        },
+        "category_counts": {},
+        "review_digest": {
+          "priority_counts": {
+            "high": 0,
+            "medium": 0,
+            "low": 0
+          },
+          "cluster_count": 0,
+          "deduplicated_action_items": 0
+        }
+      }
+    },
+    "format": {
+      "exit_code": 0,
+      "report": "reports/check_format-report.json",
+      "report_summary": {
+        "checker": "check_format",
+        "ruleset": "el-bayadh-thesis",
+        "errors": 0,
+        "warnings": 0,
+        "infos": 0,
+        "status": "PASS",
+        "files_scanned": 1
+      }
+    },
+    "content": {
+      "exit_code": 0,
+      "report": "reports/check_content-report.json",
+      "report_summary": {
+        "checker": "check_content",
+        "ruleset": "el-bayadh-thesis",
+        "errors": 0,
+        "warnings": 0,
+        "infos": 0,
+        "status": "PASS",
+        "files_scanned": 0,
+        "acronym_candidates": []
+      }
+    },
+    "compile": {
+      "status": "skipped",
+      "reason": "Skipped by --skip-compile"
+    }
+  },
+  "derived_artifacts": {
+    "readiness_gate": {
+      "mode": "advisor-handoff",
+      "report": "reports/readiness-report.json",
+      "overall_verdict": "WARN"
+    }
+  }
+}

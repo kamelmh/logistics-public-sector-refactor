@@ -1,0 +1,53 @@
+{
+  "summary": {
+    "checker": "check_language_deep",
+    "ruleset": "el-bayadh-thesis",
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0,
+    "status": "PASS",
+    "files_scanned": 0,
+    "coverage_mode": "partial_latex_aware_screening",
+    "review_mode": "manual_first",
+    "review_required": 0,
+    "stratified_counts": {
+      "deep_language": 0,
+      "consistency": 0,
+      "high_confidence": 0,
+      "conservative_suggestions": 0
+    },
+    "category_counts": {},
+    "review_digest": {
+      "priority_counts": {
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "cluster_count": 0,
+      "deduplicated_action_items": 0
+    }
+  },
+  "findings": [],
+  "coverage": {
+    "mode": "partial_latex_aware_screening",
+    "checked_files": [],
+    "masked_construct_counts": {
+      "comments": 0,
+      "latex_commands": 0,
+      "math_regions": 0,
+      "structured_environments": 0
+    }
+  },
+  "uncovered_risks": [
+    "Math regions are skipped to reduce LaTeX-side false positives.",
+    "Figure/table and tabular environments are skipped, so caption-style wording is not part of deep prose screening.",
+    "Citation, cross-reference, label, and section command arguments are skipped to avoid engineering-noise findings.",
+    "Zero findings only means no configured deep issues were detected in checked prose after LaTeX-aware masking."
+  ],
+  "review_guidance": {
+    "positioning": "Deep language review is a screening assistant plus human-review aid, not final thesis sign-off.",
+    "default_edit_policy": "Treat all suggestions as conservative review prompts before applying edits."
+  },
+  "review_queue": [],
+  "review_clusters": []
+}
