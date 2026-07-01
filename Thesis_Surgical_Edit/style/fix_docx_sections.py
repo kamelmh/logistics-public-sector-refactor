@@ -24,7 +24,7 @@ A4_HEIGHT_CM = 29.7
 
 
 def set_a4_page_size(sect_pr):
-    """Set page size to A4 (21.0 x 29.7 cm) on a sectPr element."""
+    """Set page size to A4 (21.0 x 29.7 cm) with 2.5cm margins on a sectPr element."""
     pgSz = sect_pr.find(qn('w:pgSz'))
     if pgSz is None:
         pgSz = parse_xml(f'<w:pgSz {nsdecls("w")} w:w="11906" w:h="16838"/>')
@@ -33,6 +33,18 @@ def set_a4_page_size(sect_pr):
         pgSz.set(qn('w:w'), '11906')
         pgSz.set(qn('w:h'), '16838')
     pgSz.attrib.pop(qn('w:orient'), None)
+
+    # Set margins to 2.5cm = 1418 twips (on pgMar element, which is the standard location)
+    MAR_TWIPS = '1418'  # 2.5cm in twips
+    pgMar = sect_pr.find(qn('w:pgMar'))
+    if pgMar is None:
+        pgMar = parse_xml(f'<w:pgMar {nsdecls("w")} w:top="{MAR_TWIPS}" w:bottom="{MAR_TWIPS}" w:left="{MAR_TWIPS}" w:right="{MAR_TWIPS}" w:header="709" w:footer="709" w:gutter="0"/>')
+        sect_pr.insert(0, pgMar)
+    else:
+        pgMar.set(qn('w:top'), MAR_TWIPS)
+        pgMar.set(qn('w:bottom'), MAR_TWIPS)
+        pgMar.set(qn('w:left'), MAR_TWIPS)
+        pgMar.set(qn('w:right'), MAR_TWIPS)
 
 
 def ensure_single_section(path, save=False):

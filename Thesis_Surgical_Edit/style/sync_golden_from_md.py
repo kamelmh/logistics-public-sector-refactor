@@ -22,6 +22,8 @@ import os
 from docx import Document
 from lxml import etree
 
+W_NS = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+
 
 def is_toc_paragraph(para):
     """Check if paragraph is a TOC entry."""
@@ -98,13 +100,10 @@ def replace_body_from_pandoc(golden_path, pandoc_path, save=False):
     print("[SYNC] Golden body paragraphs: %d" % (len(golden.paragraphs) - body_start))
     
     # === Step 4: Replace golden body with pandoc body ===
-    # Remove old body paragraphs from golden (from body_start onwards)
-    # Keep cover + TOC
-    
-    # Get the body element
     body = golden.element.body
     
-    # Remove all paragraphs after TOC
+    # 4a: Remove old body paragraphs (from body_start onwards)
+    # TOC entries are KEPT — Word COM will regenerate them
     to_remove = []
     for i, p in enumerate(golden.paragraphs[body_start:]):
         to_remove.append(p._element)
