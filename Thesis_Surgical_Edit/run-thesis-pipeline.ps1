@@ -1,22 +1,24 @@
 ﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-  Academix v13.4 — Clean Thesis Pipeline v4
-  Linear, non-conflicting pipeline with proper ordering.
+  Academix v13.4 — Clean Thesis Pipeline v5
+  Golden-source-first pipeline: correct formatting + correct content.
 
 .DESCRIPTION
-  Six-phase pipeline with strict ordering to prevent corruption:
+  Five-phase pipeline with golden source as base:
 
   Phase 0: Environment Check — verify tools, scripts, source
-  Phase 1: Source Build — copy golden source DOCX (canonical version)
-  Phase 2: python-docx Fixes — section layout + styles + RTL (doc.save() here)
-  Phase 3: Zip-Level Fixes — footnotes, footer, namespace (AFTER all doc.save())
-  Phase 4: Word COM — field update, TOC/TOF, logos, surgical polish
+  Phase 1: Source Build — copy golden source + sync body text from pandoc MD
+  Phase 2: python-docx Fixes — section layout + styles (doc.save() here)
+  Phase 3: Zip-Level Fixes — namespace check (AFTER all doc.save())
+  Phase 4: Word COM — field update, TOC/TOF refresh (no PDF export)
   Phase 5: Verification — audit + verify + sync
 
-  KEY RULE: python-docx saves MUST precede zip-level fixes.
+  KEY RULE: Golden source = correct formatting, cover page, TOC, hyperlinks
+  KEY RULE: Pandoc MD = correct content (numbers, text, tables)
+  KEY RULE: Sync ONLY body text — skip cover, TOC, headings, hyperlinks
+  KEY RULE: No PDF export — user exports from Word manually
   KEY RULE: Namespace fix MUST be the very last operation.
-  KEY RULE: Golden source is canonical — MD is for reference only.
 
 .PARAMETER Phase
   Which phase(s) to run: all, 0, 1, 2, 3, 4, 5, build, fix, verify
@@ -183,7 +185,7 @@ function Invoke-Phase1 {
         return $true
     }
     
-    # Step 1: Copy golden source (correct formatting, cover page, styles)
+    # Step 1: Copy golden source (correct formatting, cover page, TOC, hyperlinks)
     if (-not (Test-Path $goldenSource)) {
         Write-Step "Golden source" "FAIL" "Not found at $goldenSource"
         return $false
@@ -191,7 +193,7 @@ function Invoke-Phase1 {
     Copy-Item $goldenSource $docxPath -Force
     Write-Step "Copy golden source" "PASS" "$([math]::Round((Get-Item $docxPath).Length/1KB)) KB"
     
-    # Step 2: Build from MD via pandoc (correct content)
+    # Step 2: Build from MD via pandoc (correct content/numbers)
     if ((Test-Path $sourceMd) -and $pandoc) {
         $mdContent = Get-Content $sourceMd -Raw -Encoding UTF8
         $cleanMd = $mdContent -replace '(?s)^---\s*\n.*?\n---\s*\n', ''
@@ -203,7 +205,8 @@ function Invoke-Phase1 {
         Remove-Item $tempMd -ErrorAction SilentlyContinue
         
         if ($LASTEXITCODE -eq 0) {
-            # Step 3: Sync text from pandoc output into golden source
+            # Step 3: Sync body text from pandoc into golden source
+            # This patches numbers/text while preserving cover, TOC, headings, hyperlinks
             Run-Script "sync_golden_from_md.py — patch body text" "sync_golden_from_md.py" @($docxPath, $tempDocx, "--save")
             Remove-Item $tempDocx -ErrorAction SilentlyContinue
         } else {
@@ -232,8 +235,8 @@ function Invoke-Phase2 {
     # Step 3: Caption styles
     Run-Script "apply_caption_styles.py — caption styles" "apply_caption_styles.py" "`"$docxPath`" --save"
     
-    # Step 4: Insert TOC/LISTOFTABLES fields
-    Run-Script "insert_fields.py — field injection" "insert_fields.py" "`"$docxPath`" --save"
+    # NOTE: insert_fields.py REMOVED — golden source already has proper TOC/LISTOFTABLES fields
+    # Running insert_fields.py would corrupt the existing fields with raw text
     
     Write-Step "python-docx phase complete" "PASS" "All doc.save() calls done"
     return $true
@@ -293,7 +296,7 @@ with zipfile.ZipFile(path, 'r') as z:
     return $true
 }
 
-# ── Phase 4: Word COM (TOC/TOF/logos/cover page/field update) ──────────────────
+# ── Phase 4: Word COM (field update, TOC/TOF refresh) ──────────────────────────
 function Invoke-Phase4 {
     Write-Phase 4 "Word COM Automation"
     
@@ -302,15 +305,22 @@ function Invoke-Phase4 {
         return $false
     }
     
+    # Save footnotes before Word COM (Word strips empty footnotes on save)
+    Run-Script "preserve_footnotes.py — save footnotes" "preserve_footnotes.py" @("save", "`"$docxPath`"")
+    
     # Step 1: Update fields (Ctrl+A F9 equivalent)
     Run-Script "update_fields.py — field update" "update_fields.py" @($docxPath, "--save-only")
     
-    # Step 2: Word COM automation (logos, TOC, Table of Figures, cover page)
+    # Step 2: Word COM automation (logos, TOC, Table of Figures)
+    # NOTE: No PDF export — user exports from Word manually
     $logo1Path = Join-Path $tsDir "style\logo1.png"
     $logo2Path = Join-Path $tsDir "style\logo2.png"
     if (-not (Test-Path $logo1Path)) { $logo1Path = "" }
     if (-not (Test-Path $logo2Path)) { $logo2Path = "" }
     Run-Script "word_automation.py — TOC/TOF/logos" "word_automation.py" @($docxPath, $logo1Path, $logo2Path)
+    
+    # Restore footnotes after Word COM
+    Run-Script "preserve_footnotes.py — restore footnotes" "preserve_footnotes.py" @("restore", "`"$docxPath`"")
     
     # Step 3: Post-COM surgical polish (Word COM resets some XML properties)
     Run-Script "surgical_polish.py — post-COM polish" "surgical_polish.py" "`"$docxPath`" --save"

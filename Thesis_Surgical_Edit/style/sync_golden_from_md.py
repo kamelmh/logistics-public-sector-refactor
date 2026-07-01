@@ -1,19 +1,26 @@
 """
-sync_golden_from_md.py — Patch golden source DOCX body text from pandoc MD build.
+sync_golden_from_md.py — Patch golden source body text AND headings from pandoc MD build.
 
 Strategy:
-1. Golden source = correct formatting, cover page, styles
-2. Pandoc output = correct content from MD
-3. Patch: replace body text in golden source with text from pandoc output
-
-The golden source has ~717 paragraphs. First ~14 are cover page.
-The pandoc output has ~323 paragraphs starting with dedication.
-We map golden source paragraphs [cover_end:] to pandoc paragraphs [0:].
+1. Golden source = correct formatting, cover page, TOC, styles, hyperlinks, footnotes
+2. Pandoc output = correct content from MD (numbers, text, headings)
+3. Patch: replace body text AND headings in golden source (skip cover, TOC entries)
 
 Usage: python sync_golden_from_md.py <golden.docx> <pandoc.docx> [--save]
 """
 import sys
 from docx import Document
+
+
+def is_toc_paragraph(para):
+    """Check if paragraph is a TOC entry."""
+    style_name = para.style.name.lower()
+    return 'toc' in style_name
+
+
+def is_cover_page(para, cover_end_idx):
+    """Check if paragraph is in cover page."""
+    return False  # We handle this by index
 
 
 def sync_text(golden_path, pandoc_path, save=False):
@@ -30,29 +37,44 @@ def sync_text(golden_path, pandoc_path, save=False):
             cover_end = i
             break
     if cover_end == 0:
-        cover_end = 14  # Default
+        cover_end = 14
     
-    print("[SYNC] Cover page: paragraphs 0-%d" % (cover_end - 1))
-    print("[SYNC] Golden body: %d paragraphs" % (len(golden.paragraphs) - cover_end))
+    # Find TOC start/end in golden
+    toc_start = None
+    toc_end = None
+    for i, p in enumerate(golden.paragraphs):
+        if is_toc_paragraph(p):
+            if toc_start is None:
+                toc_start = i
+            toc_end = i + 1
+    
+    # Find body start (after TOC)
+    body_start = toc_end if toc_end else cover_end
+    
+    print("[SYNC] Cover page: 0-%d" % (cover_end - 1))
+    print("[SYNC] TOC: %s-%s" % (toc_start, toc_end - 1 if toc_end else "none"))
+    print("[SYNC] Body starts at: P%d" % body_start)
+    print("[SYNC] Golden body: %d paragraphs" % (len(golden.paragraphs) - body_start))
     print("[SYNC] Pandoc body: %d paragraphs" % len(pandoc.paragraphs))
     
-    # Build pandoc text index (skip empty paragraphs for matching)
+    # Build pandoc text index (skip empty paragraphs, keep headings)
     pandoc_texts = []
     for p in pandoc.paragraphs:
         text = p.text.strip()
         if text:
             pandoc_texts.append(text)
     
-    # Patch golden source body paragraphs
+    # Patch golden source body paragraphs (skip cover, TOC entries)
+    # BUT DO patch headings (so TOC regenerates correctly from MD)
     pandoc_idx = 0
     patched = 0
     skipped = 0
     
-    for i in range(cover_end, len(golden.paragraphs)):
+    for i in range(body_start, len(golden.paragraphs)):
         gp = golden.paragraphs[i]
         
-        # Skip headings (keep golden source headings for formatting)
-        if gp.style.name.startswith('Heading'):
+        # Skip TOC paragraphs
+        if is_toc_paragraph(gp):
             continue
         
         # Skip empty paragraphs
@@ -72,50 +94,44 @@ def sync_text(golden_path, pandoc_path, save=False):
         if gp.text.strip() != pt:
             # Replace text in all runs, preserving first run's formatting
             if gp.runs:
-                # Clear all runs except first
                 first_run = gp.runs[0]
                 first_run.text = pt
                 for run in gp.runs[1:]:
                     run.text = ''
                 patched += 1
-            else:
-                # No runs — add text via runs
-                from docx.oxml.ns import qn
-                from lxml import etree
-                r = etree.SubElement(gp._element, qn('w:r'))
-                t = etree.SubElement(r, qn('w:t'))
-                t.text = pt
-                t.set(qn('xml:space'), 'preserve')
-                patched += 1
     
-    print("[SYNC] Patched %d paragraphs" % patched)
+    print("[SYNC] Patched %d paragraphs (incl. headings)" % patched)
     print("[SYNC] Skipped %d (golden has more content)" % skipped)
     print("[SYNC] Pandoc texts consumed: %d/%d" % (pandoc_idx, len(pandoc_texts)))
     
-    # Also patch tables
+    # Patch tables (match by position)
     table_patched = 0
-    for pandoc_table in pandoc.tables:
-        for golden_table in golden.tables:
-            # Match tables by row count
-            if len(golden_table.rows) == len(pandoc_table.rows):
-                for ri in range(len(pandoc_table.rows)):
-                    for ci in range(len(pandoc_table.columns)):
-                        try:
-                            pt = pandoc_table.cell(ri, ci).text.strip()
-                            gt = golden_table.cell(ri, ci).text.strip()
-                            if pt and gt != pt:
-                                # Replace cell text
-                                cell = golden_table.cell(ri, ci)
-                                for p in cell.paragraphs:
-                                    if p.runs:
-                                        p.runs[0].text = pt
-                                        for r in p.runs[1:]:
-                                            r.text = ''
-                                        table_patched += 1
-                                        break
-                        except:
-                            pass
-                break  # Only match first table with same row count
+    pandoc_table_idx = 0
+    for golden_table in golden.tables:
+        if pandoc_table_idx >= len(pandoc.tables):
+            break
+        pandoc_table = pandoc.tables[pandoc_table_idx]
+        
+        # Only patch if row/col counts match
+        if (len(golden_table.rows) == len(pandoc_table.rows) and 
+            len(golden_table.columns) == len(pandoc_table.columns)):
+            for ri in range(len(pandoc_table.rows)):
+                for ci in range(len(pandoc_table.columns)):
+                    try:
+                        pt = pandoc_table.cell(ri, ci).text.strip()
+                        gt = golden_table.cell(ri, ci).text.strip()
+                        if pt and gt != pt:
+                            cell = golden_table.cell(ri, ci)
+                            for p in cell.paragraphs:
+                                if p.runs:
+                                    p.runs[0].text = pt
+                                    for r in p.runs[1:]:
+                                        r.text = ''
+                                    table_patched += 1
+                                    break
+                    except:
+                        pass
+            pandoc_table_idx += 1
     
     print("[SYNC] Patched %d table cells" % table_patched)
     

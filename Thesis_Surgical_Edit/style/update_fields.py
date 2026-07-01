@@ -85,22 +85,13 @@ def update_all_fields(docx_path, export_pdf=True):
                     pass
         log(f"  Headers/footers updated ({hf_count} containers)")
 
-        # ── Step 4: Update fields in footnotes ──
-        log("Updating footnotes...")
-        try:
-            fn_range = doc.StoryRanges(2)  # wdFootnotesStory
-            fn_range.Fields.Update()
-            log("  Footnotes updated")
-        except Exception:
-            log("  No footnotes story found")
+        # ── Step 4: Skip footnotes ──
+        # Word strips empty footnotes on save, reducing count from 48 to ~9.
+        # No fields exist in footnotes anyway — only reference text.
+        log("Skipping footnotes (Word strips empty ones on save)")
 
-        # ── Step 5: Update fields in endnotes ──
-        try:
-            en_range = doc.StoryRanges(3)  # wdEndnotesStory
-            en_range.Fields.Update()
-            log("  Endnotes updated")
-        except Exception:
-            log("  No endnotes story found")
+        # ── Step 5: Skip endnotes ──
+        log("Skipping endnotes (same reason)")
 
         # ── Step 6: Update fields in text boxes and shapes ──
         log("Updating text boxes and shapes...")
