@@ -1,36 +1,49 @@
 """
-sync_golden_from_md.py — Patch golden source body text AND headings from pandoc MD build.
+sync_golden_from_md.py — Rebuild DOCX body from pandoc, keep cover+TOC from golden.
 
-Strategy:
-1. Golden source = correct formatting, cover page, TOC, styles, hyperlinks, footnotes
-2. Pandoc output = correct content from MD (numbers, text, headings)
-3. Patch: replace body text AND headings in golden source (skip cover, TOC entries)
+Strategy (v2):
+1. Golden source = correct cover page, TOC, styles, hyperlinks
+2. Pandoc output = correct content (body text, headings, tables, footnotes)
+3. Build: copy golden → replace body content from pandoc → replace footnotes from pandoc
+
+This produces a clean DOCX with:
+- Correct cover page (from golden)
+- Correct TOC (from golden, headings match because body has correct headings)
+- Correct body content (from pandoc/MD)
+- Correct tables (from pandoc, matching MD exactly)
+- Correct footnotes (from pandoc, matching MD exactly)
 
 Usage: python sync_golden_from_md.py <golden.docx> <pandoc.docx> [--save]
 """
 import sys
+import shutil
+import zipfile
+import os
 from docx import Document
+from lxml import etree
 
 
 def is_toc_paragraph(para):
     """Check if paragraph is a TOC entry."""
-    style_name = para.style.name.lower()
-    return 'toc' in style_name
+    return 'toc' in para.style.name.lower()
 
 
-def is_cover_page(para, cover_end_idx):
-    """Check if paragraph is in cover page."""
-    return False  # We handle this by index
+def is_cover_page(para):
+    """Check if paragraph is in cover page (before first Heading with 'إهداء')."""
+    if para.style.name.startswith('Heading') and 'إهداء' in para.text:
+        return True
+    return False
 
 
-def sync_text(golden_path, pandoc_path, save=False):
-    print("[SYNC] Opening golden source: %s" % golden_path)
-    golden = Document(golden_path)
+def replace_body_from_pandoc(golden_path, pandoc_path, save=False):
+    """Replace body content from pandoc, keep cover page + TOC from golden."""
     
-    print("[SYNC] Opening pandoc output: %s" % pandoc_path)
+    golden = Document(golden_path)
     pandoc = Document(pandoc_path)
     
-    # Find cover page end in golden (first Heading 2 = إهداء)
+    # === Step 1: Find boundaries in golden ===
+    
+    # Cover page end: first Heading with 'إهداء'
     cover_end = 0
     for i, p in enumerate(golden.paragraphs):
         if p.style.name.startswith('Heading') and 'إهداء' in p.text:
@@ -39,7 +52,7 @@ def sync_text(golden_path, pandoc_path, save=False):
     if cover_end == 0:
         cover_end = 14
     
-    # Find TOC start/end in golden
+    # TOC start/end
     toc_start = None
     toc_end = None
     for i, p in enumerate(golden.paragraphs):
@@ -48,98 +61,140 @@ def sync_text(golden_path, pandoc_path, save=False):
                 toc_start = i
             toc_end = i + 1
     
-    # Find body start (after TOC)
     body_start = toc_end if toc_end else cover_end
     
-    print("[SYNC] Cover page: 0-%d" % (cover_end - 1))
-    print("[SYNC] TOC: %s-%s" % (toc_start, toc_end - 1 if toc_end else "none"))
+    print("[SYNC] Cover page: P0-P%d" % (cover_end - 1))
+    print("[SYNC] TOC: P%d-P%d" % (toc_start or 0, (toc_end or 0) - 1))
     print("[SYNC] Body starts at: P%d" % body_start)
-    print("[SYNC] Golden body: %d paragraphs" % (len(golden.paragraphs) - body_start))
-    print("[SYNC] Pandoc body: %d paragraphs" % len(pandoc.paragraphs))
     
-    # Build pandoc text index (skip empty paragraphs, keep headings)
-    pandoc_texts = []
-    for p in pandoc.paragraphs:
-        text = p.text.strip()
-        if text:
-            pandoc_texts.append(text)
+    # === Step 3: Find where real body starts in pandoc ===
+    # Pandoc doesn't separate cover/TOC from body — everything is flat.
+    # We need to find the abstract (الملخص) — that's where real content starts.
+    # Before that: cover (Title/Subtitle/Author), dedication, thanks, TOC, list of tables.
+    # Those are already in the golden source's cover+TOC sections.
     
-    # Patch golden source body paragraphs (skip cover, TOC entries)
-    # BUT DO patch headings (so TOC regenerates correctly from MD)
-    pandoc_idx = 0
-    patched = 0
-    skipped = 0
-    
-    for i in range(body_start, len(golden.paragraphs)):
-        gp = golden.paragraphs[i]
-        
-        # Skip TOC paragraphs
-        if is_toc_paragraph(gp):
-            continue
-        
-        # Skip empty paragraphs
-        if not gp.text.strip():
-            continue
-        
-        # Skip if pandoc text exhausted
-        if pandoc_idx >= len(pandoc_texts):
-            skipped += 1
-            continue
-        
-        # Get corresponding pandoc text
-        pt = pandoc_texts[pandoc_idx]
-        pandoc_idx += 1
-        
-        # Only patch if text actually changed
-        if gp.text.strip() != pt:
-            # Replace text in all runs, preserving first run's formatting
-            if gp.runs:
-                first_run = gp.runs[0]
-                first_run.text = pt
-                for run in gp.runs[1:]:
-                    run.text = ''
-                patched += 1
-    
-    print("[SYNC] Patched %d paragraphs (incl. headings)" % patched)
-    print("[SYNC] Skipped %d (golden has more content)" % skipped)
-    print("[SYNC] Pandoc texts consumed: %d/%d" % (pandoc_idx, len(pandoc_texts)))
-    
-    # Patch tables (match by position)
-    table_patched = 0
-    pandoc_table_idx = 0
-    for golden_table in golden.tables:
-        if pandoc_table_idx >= len(pandoc.tables):
+    pandoc_body_start = 0
+    for i, p in enumerate(pandoc.paragraphs):
+        if p.style.name.startswith('Heading') and 'الملخص' in p.text:
+            pandoc_body_start = i
             break
-        pandoc_table = pandoc.tables[pandoc_table_idx]
-        
-        # Only patch if row/col counts match
-        if (len(golden_table.rows) == len(pandoc_table.rows) and 
-            len(golden_table.columns) == len(pandoc_table.columns)):
-            for ri in range(len(pandoc_table.rows)):
-                for ci in range(len(pandoc_table.columns)):
-                    try:
-                        pt = pandoc_table.cell(ri, ci).text.strip()
-                        gt = golden_table.cell(ri, ci).text.strip()
-                        if pt and gt != pt:
-                            cell = golden_table.cell(ri, ci)
-                            for p in cell.paragraphs:
-                                if p.runs:
-                                    p.runs[0].text = pt
-                                    for r in p.runs[1:]:
-                                        r.text = ''
-                                    table_patched += 1
-                                    break
-                    except:
-                        pass
-            pandoc_table_idx += 1
     
-    print("[SYNC] Patched %d table cells" % table_patched)
+    if pandoc_body_start == 0:
+        # Fallback: find first H1
+        for i, p in enumerate(pandoc.paragraphs):
+            if p.style.name.startswith('Heading 1'):
+                pandoc_body_start = i
+                break
     
+    print("[SYNC] Pandoc body starts at: P%d (%s)" % (
+        pandoc_body_start, pandoc.paragraphs[pandoc_body_start].text[:40] if pandoc_body_start < len(pandoc.paragraphs) else "?"))
+    
+    # === Step 4: Get pandoc body paragraphs ===
+    pandoc_body = []
+    for p in pandoc.paragraphs[pandoc_body_start:]:
+        pandoc_body.append(p)
+    
+    print("[SYNC] Pandoc body paragraphs: %d" % len(pandoc_body))
+    print("[SYNC] Golden body paragraphs: %d" % (len(golden.paragraphs) - body_start))
+    
+    # === Step 4: Replace golden body with pandoc body ===
+    # Remove old body paragraphs from golden (from body_start onwards)
+    # Keep cover + TOC
+    
+    # Get the body element
+    body = golden.element.body
+    
+    # Remove all paragraphs after TOC
+    to_remove = []
+    for i, p in enumerate(golden.paragraphs[body_start:]):
+        to_remove.append(p._element)
+    
+    for elem in to_remove:
+        body.remove(elem)
+    
+    print("[SYNC] Removed %d old body paragraphs" % len(to_remove))
+    
+    # Add pandoc body paragraphs
+    from docx.oxml.ns import qn
+    added = 0
+    for p in pandoc_body:
+        # Copy paragraph element from pandoc
+        new_p = etree.SubElement(body, qn('w:p'))
+        # Copy all child elements
+        for child in p._element:
+            new_p.append(child)
+        added += 1
+    
+    print("[SYNC] Added %d pandoc body paragraphs" % added)
+    
+    # === Step 5: Replace tables ===
+    # Remove old tables
+    old_tables = list(golden.tables)
+    for t in old_tables:
+        try:
+            tbl = t._tbl
+            tbl.getparent().remove(tbl)
+        except:
+            pass
+    
+    print("[SYNC] Removed %d old tables" % len(old_tables))
+    
+    # Add pandoc tables
+    for t in pandoc.tables:
+        # Copy table element
+        new_tbl = etree.SubElement(body, qn('w:tbl'))
+        for child in t._tbl:
+            new_tbl.append(child)
+    
+    print("[SYNC] Added %d pandoc tables" % len(pandoc.tables))
+    
+    # === Step 6: Save and replace footnotes ===
     if save:
         golden.save(golden_path)
-        print("[SYNC] Saved: %s" % golden_path)
+        print("[SYNC] Saved body: %s" % golden_path)
+        
+        # Replace footnotes at zip level
+        replace_footnotes_zip(golden_path, pandoc_path)
     
-    return patched + table_patched
+    return added
+
+
+def replace_footnotes_zip(target_docx, source_docx):
+    """Replace footnotes.xml in target with the one from source."""
+    temp_fn = None
+    with zipfile.ZipFile(source_docx, 'r') as z:
+        if 'word/footnotes.xml' in z.namelist():
+            temp_fn = target_docx + '.fn_tmp'
+            with open(temp_fn, 'wb') as f:
+                f.write(z.read('word/footnotes.xml'))
+            print("[SYNC] Extracted footnotes.xml (%d bytes)" % os.path.getsize(temp_fn))
+        else:
+            print("[SYNC] WARNING: No footnotes.xml in pandoc output")
+            return False
+    
+    with open(temp_fn, 'rb') as f:
+        fn_raw = f.read()
+    
+    temp_docx = target_docx + '.tmp'
+    with zipfile.ZipFile(target_docx, 'r') as zin:
+        with zipfile.ZipFile(temp_docx, 'w', zipfile.ZIP_DEFLATED) as zout:
+            for item in zin.infolist():
+                if item.filename == 'word/footnotes.xml':
+                    zout.writestr(item, fn_raw)
+                else:
+                    zout.writestr(item, zin.read(item.filename))
+    
+    shutil.move(temp_docx, target_docx)
+    os.remove(temp_fn)
+    
+    with zipfile.ZipFile(target_docx, 'r') as z:
+        with z.open('word/footnotes.xml') as f:
+            root = etree.fromstring(f.read())
+            ns = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+            count = len(root.findall('.//w:footnote', ns))
+            print("[SYNC] Replaced footnotes.xml — %d footnotes" % count)
+    
+    return True
 
 
 if __name__ == "__main__":
@@ -151,5 +206,5 @@ if __name__ == "__main__":
     pandoc_path = sys.argv[2]
     save = "--save" in sys.argv
     
-    count = sync_text(golden_path, pandoc_path, save)
+    count = replace_body_from_pandoc(golden_path, pandoc_path, save)
     sys.exit(0 if count > 0 else 1)

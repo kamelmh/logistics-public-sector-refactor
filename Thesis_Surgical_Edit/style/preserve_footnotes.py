@@ -1,13 +1,13 @@
 """
-preserve_footnotes.py — Save and restore footnotes.xml around Word COM operations.
+preserve_footnotes.py — Save and restore critical XML parts around Word COM operations.
 
-Word COM strips empty footnotes on save. This script:
-  1. Saves the footnotes.xml from the golden source
-  2. After Word COM, restores it
+Word COM strips tables and empty footnotes on save. This script:
+  1. Saves footnotes.xml AND document.xml from the DOCX
+  2. After Word COM, restores both
 
 Usage:
-  python preserve_footnotes.py save <docx_path>    # Save footnotes to temp
-  python preserve_footnotes.py restore <docx_path>  # Restore footnotes from temp
+  python preserve_footnotes.py save <docx_path>    # Save XML parts to temp
+  python preserve_footnotes.py restore <docx_path>  # Restore XML parts from temp
 """
 import sys
 import os
@@ -16,51 +16,53 @@ import zipfile
 import tempfile
 
 
-def save_footnotes(docx_path):
-    """Save footnotes.xml from DOCX to temp file."""
+def save_parts(docx_path):
+    """Save footnotes.xml and document.xml from DOCX to temp files."""
     temp_dir = tempfile.gettempdir()
-    temp_fn = os.path.join(temp_dir, "preserved_footnotes.xml")
+    saved = 0
+    
+    parts = ['word/footnotes.xml', 'word/document.xml']
     
     with zipfile.ZipFile(docx_path, 'r') as z:
-        if 'word/footnotes.xml' in z.namelist():
-            raw = z.read('word/footnotes.xml')
-            with open(temp_fn, 'wb') as f:
-                f.write(raw)
-            print("[PRESERVE] Saved footnotes.xml (%d bytes) to %s" % (len(raw), temp_fn))
-            return True
-        else:
-            print("[PRESERVE] No footnotes.xml found in %s" % docx_path)
-            return False
+        for part in parts:
+            if part in z.namelist():
+                temp_fn = os.path.join(temp_dir, "preserved_%s" % part.replace('/', '_'))
+                raw = z.read(part)
+                with open(temp_fn, 'wb') as f:
+                    f.write(raw)
+                print("[PRESERVE] Saved %s (%d bytes)" % (part, len(raw)))
+                saved += 1
+            else:
+                print("[PRESERVE] No %s in %s" % (part, docx_path))
+    
+    return saved > 0
 
 
-def restore_footnotes(docx_path):
-    """Restore footnotes.xml into DOCX from temp file."""
+def restore_parts(docx_path):
+    """Restore footnotes.xml and document.xml into DOCX from temp files."""
     temp_dir = tempfile.gettempdir()
-    temp_fn = os.path.join(temp_dir, "preserved_footnotes.xml")
     
-    if not os.path.exists(temp_fn):
-        print("[PRESERVE] No saved footnotes.xml at %s" % temp_fn)
-        return False
+    parts = ['word/footnotes.xml', 'word/document.xml']
     
-    with open(temp_fn, 'rb') as f:
-        fn_raw = f.read()
-    
-    # Replace footnotes.xml in the DOCX
     temp_docx = docx_path + ".tmp"
     with zipfile.ZipFile(docx_path, 'r') as zin:
         with zipfile.ZipFile(temp_docx, 'w', zipfile.ZIP_DEFLATED) as zout:
             for item in zin.infolist():
-                if item.filename == 'word/footnotes.xml':
-                    zout.writestr(item, fn_raw)
-                    print("[PRESERVE] Restored footnotes.xml (%d bytes)" % len(fn_raw))
+                if item.filename in parts:
+                    temp_fn = os.path.join(temp_dir, "preserved_%s" % item.filename.replace('/', '_'))
+                    if os.path.exists(temp_fn):
+                        with open(temp_fn, 'rb') as f:
+                            raw = f.read()
+                        zout.writestr(item, raw)
+                        print("[PRESERVE] Restored %s (%d bytes)" % (item.filename, len(raw)))
+                        os.remove(temp_fn)
+                    else:
+                        zout.writestr(item, zin.read(item.filename))
                 else:
                     zout.writestr(item, zin.read(item.filename))
     
     shutil.move(temp_docx, docx_path)
     print("[PRESERVE] DOCX updated: %s" % docx_path)
-    
-    # Clean up temp
-    os.remove(temp_fn)
     return True
 
 
@@ -73,9 +75,9 @@ if __name__ == "__main__":
     docx_path = sys.argv[2]
     
     if action == "save":
-        sys.exit(0 if save_footnotes(docx_path) else 1)
+        sys.exit(0 if save_parts(docx_path) else 1)
     elif action == "restore":
-        sys.exit(0 if restore_footnotes(docx_path) else 1)
+        sys.exit(0 if restore_parts(docx_path) else 1)
     else:
         print("Unknown action: %s" % action)
         sys.exit(1)
