@@ -47,7 +47,10 @@ $null = New-Item -ItemType Directory -Path $outDir -Force
 $docxPath = Join-Path $outDir "Memoire_DSS_Logistique_ElBayadh.docx"
 $sourceMd = Join-Path $tsDir "Memoire_DSS_Logistique_ElBayadh.md"
 $goldenSource = Join-Path $outDir "Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx"
-$refDocx = Join-Path $styleDir "reference.docx"
+$refDocx = Join-Path $outDir "Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx"
+if (-not (Test-Path $refDocx)) {
+    $refDocx = Join-Path $styleDir "reference.docx"
+}
 
 # Find pandoc
 $pandoc = Get-Command pandoc -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
@@ -171,7 +174,7 @@ function Invoke-Phase0 {
     return $ok
 }
 
-# ── Phase 1: Source Build (from MD via pandoc) ──────────────────────────────────
+# ── Phase 1: Source Build (from MD via pandoc, golden source for styles) ─────────
 function Invoke-Phase1 {
     Write-Phase 1 "Source Build (from Markdown)"
     
@@ -187,7 +190,7 @@ function Invoke-Phase1 {
         $tempMd = Join-Path $outDir "temp_build.md"
         [System.IO.File]::WriteAllText($tempMd, $cleanMd, [System.Text.UTF8Encoding]::new($false))
         
-        # Build with pandoc — use minimal reference.docx for style definitions
+        # Build with pandoc — golden source as reference-doc for styles/formatting
         try {
             & $pandoc $tempMd -o $docxPath --reference-doc=$refDocx -f markdown-yaml_metadata_block 2>&1
             if ($LASTEXITCODE -ne 0) { throw "Pandoc failed with exit code $LASTEXITCODE" }
@@ -203,28 +206,6 @@ function Invoke-Phase1 {
     
     Write-Step "Source build" "FAIL" "No markdown or pandoc available"
     return $false
-}
-
-# ── Phase 1b: Inject cover page from golden source (via Word COM) ──────────────
-function Invoke-Phase1b {
-    Write-Phase "1b" "Inject cover page from golden source"
-    
-    if (-not (Test-Path $docxPath)) {
-        Write-Step "Cover page" "SKIP" "No DOCX at $docxPath"
-        return $false
-    }
-    
-    if (-not (Test-Path $goldenSource)) {
-        Write-Step "Cover page" "SKIP" "Golden source not found"
-        return $true  # Non-critical
-    }
-    
-    $tempDocx = Join-Path $outDir "temp_pandoc.docx"
-    Copy-Item $docxPath $tempDocx -Force
-    
-    Run-Script "inject_cover_com.py — cover page injection" "inject_cover_com.py" @($tempDocx, $goldenSource, $docxPath)
-    Remove-Item $tempDocx -ErrorAction SilentlyContinue
-    return $true
 }
 
 # ── Phase 2: python-docx Fixes (doc.save() happens here) ───────────────────────
@@ -374,7 +355,6 @@ switch -Wildcard ($Phase) {
     "all" {
         $allOk = Invoke-Phase0 -and $allOk
         $allOk = Invoke-Phase1 -and $allOk
-        $allOk = Invoke-Phase1b -and $allOk
         $allOk = Invoke-Phase2 -and $allOk
         $allOk = Invoke-Phase3 -and $allOk
         $allOk = Invoke-Phase4 -and $allOk
@@ -389,7 +369,6 @@ switch -Wildcard ($Phase) {
     "build" {
         $allOk = Invoke-Phase0 -and $allOk
         $allOk = Invoke-Phase1 -and $allOk
-        $allOk = Invoke-Phase1b -and $allOk
         $allOk = Invoke-Phase2 -and $allOk
         $allOk = Invoke-Phase3 -and $allOk
         $allOk = Invoke-Phase4 -and $allOk
