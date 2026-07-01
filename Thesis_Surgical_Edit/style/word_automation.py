@@ -58,7 +58,7 @@ def find_and_update_field_via_selection(word_app, heading_text, field_code):
     return True
 
 
-def automate_word_tasks(docx_path, logo1_path, logo2_path):
+def automate_word_tasks(docx_path, logo1_path, logo2_path, export_pdf=False):
     word = None
     doc = None
     try:
@@ -125,25 +125,28 @@ def automate_word_tasks(docx_path, logo1_path, logo2_path):
         doc.Save()
         log("SAVED")
 
-        # --- Export PDF ---
-        pdf_path = docx_path.rsplit('.', 1)[0] + '.pdf'
-        try:
-            log(f"Exporting PDF: {pdf_path}")
-            doc.ExportAsFixedFormat(
-                OutputFileName=pdf_path,
-                ExportFormat=17,  # wdExportFormatPDF
-                OpenAfterExport=False,
-                OptimizeFor=0,  # wdExportOptimizeForPrint
-                Range=0,  # wdExportAllDocument
-                IncludeDocProps=True,
-                DocStructureTags=True,
-                BitmapMissingFonts=True,
-                UseISO19005_1=False
-            )
-            pdf_size = os.path.getsize(pdf_path) / 1024
-            log(f"PDF exported: {pdf_size:.0f} KB")
-        except Exception as e:
-            log(f"PDF export FAILED: {e}")
+        # --- Export PDF (optional, off by default) ---
+        if export_pdf:
+            pdf_path = docx_path.rsplit('.', 1)[0] + '.pdf'
+            try:
+                log(f"Exporting PDF: {pdf_path}")
+                doc.ExportAsFixedFormat(
+                    OutputFileName=pdf_path,
+                    ExportFormat=17,  # wdExportFormatPDF
+                    OpenAfterExport=False,
+                    OptimizeFor=0,  # wdExportOptimizeForPrint
+                    Range=0,  # wdExportAllDocument
+                    IncludeDocProps=True,
+                    DocStructureTags=True,
+                    BitmapMissingFonts=True,
+                    UseISO19005_1=False
+                )
+                pdf_size = os.path.getsize(pdf_path) / 1024
+                log(f"PDF exported: {pdf_size:.0f} KB")
+            except Exception as e:
+                log(f"PDF export FAILED: {e}")
+        else:
+            log("PDF export skipped")
 
         return True
 
@@ -162,17 +165,28 @@ def automate_word_tasks(docx_path, logo1_path, logo2_path):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python word_automation.py <docx> [logo1] [logo2]",
+    export_pdf = False
+    args = [a for a in sys.argv[1:] if a.startswith('-')]
+    pos_args = [a for a in sys.argv[1:] if not a.startswith('-')]
+
+    for a in args:
+        if a == '--export-pdf':
+            export_pdf = True
+        elif a in ('--skip-pdf', '--save-only'):
+            export_pdf = False
+
+    if len(pos_args) < 1:
+        print("Usage: python word_automation.py <docx> [logo1] [logo2] [--export-pdf]",
               file=sys.stderr)
         sys.exit(1)
 
-    docx_path = os.path.abspath(sys.argv[1])
-    logo1_path = os.path.abspath(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2] else ""
-    logo2_path = os.path.abspath(sys.argv[3]) if len(sys.argv) > 3 and sys.argv[3] else ""
+    docx_path = os.path.abspath(pos_args[0])
+    logo1_path = os.path.abspath(pos_args[1]) if len(pos_args) > 1 and pos_args[1] else ""
+    logo2_path = os.path.abspath(pos_args[2]) if len(pos_args) > 2 and pos_args[2] else ""
 
     log(f"DOCX:  {docx_path}")
     log(f"Logo1: {logo1_path or '(none)'}")
     log(f"Logo2: {logo2_path or '(none)'}")
+    log(f"Export PDF: {export_pdf}")
 
-    sys.exit(0 if automate_word_tasks(docx_path, logo1_path, logo2_path) else 1)
+    sys.exit(0 if automate_word_tasks(docx_path, logo1_path, logo2_path, export_pdf) else 1)

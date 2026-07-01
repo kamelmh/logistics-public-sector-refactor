@@ -5,8 +5,13 @@ ROOT CAUSE FINDINGS:
 1. Golden source text replacement destroys TOC/PAGEREF fields via para.text
 2. python-docx save() is actually SAFE - preserves fields
 3. Paragraph alignment in golden source is fragile due to spacer paragraphs
+4. Pandoc --toc creates SDT-wrapped TOC with English heading, BUT MD
+   source has Arabic heading -- Word COM inserts a SECOND TOC field,
+   causing duplicates. FIX: NO --toc, let Word COM handle TOC insertion.
 
-SOLUTION: Build fresh from pandoc with --toc, apply fixes, run Word COM.
+SOLUTION: Build fresh from pandoc (no --toc), apply fixes, run Word COM.
+   Word COM word_automation.py inserts TOC/TOF fields via Selection.Find,
+   then doc.Fields.Update() resolves them.
 """
 import subprocess
 import shutil
@@ -44,14 +49,13 @@ def run_pipeline():
     print("  ACADEMIX v13.4 - Pipeline v12 (Fresh Pandoc + Fixes + COM)")
     print("=" * 65)
 
-    # Step 1: Fresh pandoc build
-    print("\n== Step 1: Pandoc Build (with --toc) ==")
+    # Step 1: Fresh pandoc build (NO --toc -- Word COM handles TOC/TOF insertion)
+    print("\n== Step 1: Pandoc Build (no --toc, Word COM handles TOC) ==")
     pandoc_tmp = OUTPUT_DIR / "_pandoc_tmp.docx"
     cmd = [
         'pandoc', str(MD_FILE), '-o', str(pandoc_tmp),
         '--from', 'markdown+smart',
-        '--to', 'docx',
-        '--toc'
+        '--to', 'docx'
     ]
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
     if r.returncode != 0:
@@ -97,7 +101,7 @@ def run_pipeline():
     logo2 = str(STYLE_DIR / "logo2.png")
     if not os.path.exists(logo1): logo1 = ""
     if not os.path.exists(logo2): logo2 = ""
-    code, out = run_python(str(STYLE_DIR / "word_automation.py"), f'"{OUTPUT}" "{logo1}" "{logo2}"')
+    code, out = run_python(str(STYLE_DIR / "word_automation.py"), f'"{OUTPUT}" "{logo1}" "{logo2}" --skip-pdf')
     for line in out.split('\n'):
         line = line.strip()
         if line and ('WORD-AUTO' in line or 'TOC' in line or 'Logo' in line or 'done' in line.lower()):
