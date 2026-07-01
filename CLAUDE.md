@@ -78,6 +78,10 @@ All three tools share the same MCP servers and project context:
 - **Thesis Source**: `Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md`
 - **Thesis Golden Source**: `Thesis_Surgical_Edit/output/Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx`
 - **Session Memory**: `.opencode/notepad.md`
+- **Thesis Output**: `Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx`
+- **Pipeline Script**: `Thesis_Surgical_Edit/pipeline_v12.py`
+- **Python Venv**: `C:\Users\Admin\AppData\Local\Temp\thesis-venv\Scripts\python.exe`
+- **Persist Script**: `.opencode/memory/persist.ps1`
 
 ## RATE LIMIT AWARENESS
 

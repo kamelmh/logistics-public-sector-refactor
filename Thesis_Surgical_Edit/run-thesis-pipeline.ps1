@@ -176,47 +176,42 @@ function Invoke-Phase0 {
     return $ok
 }
 
-# ── Phase 1: Source Build (fresh pandoc + python-docx fixes) ──────────────────
+# ── Phase 1: Source Build (golden source + MD sync) ────────────────────────────
 function Invoke-Phase1 {
-    Write-Phase 1 "Source Build (pandoc → python-docx)"
+    Write-Phase 1 "Source Build (golden + MD sync)"
     
     if ($SkipBuild -and (Test-Path $docxPath)) {
         Write-Step "Use existing output DOCX" "SKIP" "SkipBuild active"
         return $true
     }
     
-    # Step 1: Build from MD via pandoc (NO reference-doc — avoids XML corruption)
+    # Step 1: Copy golden source (correct formatting, cover page, TOC, hyperlinks)
+    if (-not (Test-Path $goldenSource)) {
+        Write-Step "Golden source" "FAIL" "Not found at $goldenSource"
+        return $false
+    }
+    Copy-Item $goldenSource $docxPath -Force
+    Write-Step "Copy golden source" "PASS" "$([math]::Round((Get-Item $docxPath).Length/1KB)) KB"
+    
+    # Step 2: Build from MD via pandoc (correct content/numbers)
     if ((Test-Path $sourceMd) -and $pandoc) {
-        $tempMd = Join-Path $outDir "temp_build.md"
-        $tempDocx = Join-Path $outDir "temp_pandoc.docx"
-        
-        # Strip YAML front matter
         $mdContent = Get-Content $sourceMd -Raw -Encoding UTF8
         $cleanMd = $mdContent -replace '(?s)^---\s*\n.*?\n---\s*\n', ''
+        $tempMd = Join-Path $outDir "temp_build.md"
+        $tempDocx = Join-Path $outDir "temp_pandoc.docx"
         [System.IO.File]::WriteAllText($tempMd, $cleanMd, [System.Text.UTF8Encoding]::new($false))
         
-        # Fresh pandoc (no reference-doc — clean XML output)
-        & $pandoc $tempMd -o $tempDocx -f markdown-yaml_metadata_block 2>&1
+        & $pandoc $tempMd -o $tempDocx --reference-doc=$refDocx -f markdown-yaml_metadata_block 2>&1
         Remove-Item $tempMd -ErrorAction SilentlyContinue
         
         if ($LASTEXITCODE -eq 0) {
-            Write-Step "Pandoc build" "PASS" "Fresh build from MD (no ref-doc)"
-            
-            # Step 2: Apply python-docx fixes BEFORE Word COM
-            Run-Script "fix_docx_sections.py — section layout" "fix_docx_sections.py" "`"$tempDocx`" --save"
-            Run-Script "fix_thesis_all.py — comprehensive fixes" "fix_thesis_all.py" "`"$tempDocx`" --save"
-            
-            # Step 3: Copy to output path
-            Copy-Item $tempDocx $docxPath -Force
+            # Step 3: Sync body text from pandoc into golden source
+            # This patches numbers/text while preserving cover, TOC, headings, hyperlinks
+            Run-Script "sync_golden_from_md.py — patch body text" "sync_golden_from_md.py" @($docxPath, $tempDocx, "--save")
             Remove-Item $tempDocx -ErrorAction SilentlyContinue
-            Write-Step "Copy to output" "PASS" "$([math]::Round((Get-Item $docxPath).Length/1KB)) KB"
         } else {
-            Write-Step "Pandoc build" "FAIL" "Pandoc returned exit code $LASTEXITCODE"
-            return $false
+            Write-Step "Pandoc build" "WARN" "Pandoc failed, using golden source as-is"
         }
-    } else {
-        Write-Step "Pandoc build" "SKIP" "No source MD or pandoc not found"
-        return $false
     }
     
     return $true

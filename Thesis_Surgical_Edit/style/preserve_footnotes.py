@@ -1,16 +1,13 @@
 """
-preserve_footnotes.py — Save and restore footnotes around Word COM operations.
+preserve_footnotes.py — Save and restore critical XML parts around Word COM operations.
 
-Word COM strips empty footnotes and may corrupt footnote XML on save. This script:
-  1. Saves footnotes.xml from the DOCX
-  2. After Word COM, restores it
-
-IMPORTANT: We do NOT preserve document.xml — that would overwrite Word COM's
-TOC/TOF field insertions and field updates.
+Word COM strips tables and empty footnotes on save. This script:
+  1. Saves footnotes.xml AND document.xml from the DOCX
+  2. After Word COM, restores both
 
 Usage:
-  python preserve_footnotes.py save <docx_path>    # Save footnotes.xml to temp
-  python preserve_footnotes.py restore <docx_path>  # Restore footnotes.xml from temp
+  python preserve_footnotes.py save <docx_path>    # Save XML parts to temp
+  python preserve_footnotes.py restore <docx_path>  # Restore XML parts from temp
 """
 import sys
 import os
@@ -20,11 +17,11 @@ import tempfile
 
 
 def save_parts(docx_path):
-    """Save footnotes.xml from DOCX to temp file."""
+    """Save footnotes.xml and document.xml from DOCX to temp files."""
     temp_dir = tempfile.gettempdir()
     saved = 0
     
-    parts = ['word/footnotes.xml']
+    parts = ['word/footnotes.xml', 'word/document.xml']
     
     with zipfile.ZipFile(docx_path, 'r') as z:
         for part in parts:
@@ -42,10 +39,10 @@ def save_parts(docx_path):
 
 
 def restore_parts(docx_path):
-    """Restore footnotes.xml into DOCX from temp file."""
+    """Restore footnotes.xml and document.xml into DOCX from temp files."""
     temp_dir = tempfile.gettempdir()
     
-    parts = ['word/footnotes.xml']
+    parts = ['word/footnotes.xml', 'word/document.xml']
     
     temp_docx = docx_path + ".tmp"
     with zipfile.ZipFile(docx_path, 'r') as zin:
