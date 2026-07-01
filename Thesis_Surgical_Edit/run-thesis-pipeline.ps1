@@ -174,38 +174,44 @@ function Invoke-Phase0 {
     return $ok
 }
 
-# ── Phase 1: Source Build (from MD via pandoc, golden source for styles) ─────────
+# ── Phase 1: Source Build (golden source + MD sync) ────────────────────────────
 function Invoke-Phase1 {
-    Write-Phase 1 "Source Build (from Markdown)"
+    Write-Phase 1 "Source Build (golden + MD sync)"
     
     if ($SkipBuild -and (Test-Path $docxPath)) {
         Write-Step "Use existing output DOCX" "SKIP" "SkipBuild active"
         return $true
     }
     
+    # Step 1: Copy golden source (correct formatting, cover page, styles)
+    if (-not (Test-Path $goldenSource)) {
+        Write-Step "Golden source" "FAIL" "Not found at $goldenSource"
+        return $false
+    }
+    Copy-Item $goldenSource $docxPath -Force
+    Write-Step "Copy golden source" "PASS" "$([math]::Round((Get-Item $docxPath).Length/1KB)) KB"
+    
+    # Step 2: Build from MD via pandoc (correct content)
     if ((Test-Path $sourceMd) -and $pandoc) {
-        # Strip YAML frontmatter from content (prevent it from rendering as visible text)
         $mdContent = Get-Content $sourceMd -Raw -Encoding UTF8
         $cleanMd = $mdContent -replace '(?s)^---\s*\n.*?\n---\s*\n', ''
         $tempMd = Join-Path $outDir "temp_build.md"
+        $tempDocx = Join-Path $outDir "temp_pandoc.docx"
         [System.IO.File]::WriteAllText($tempMd, $cleanMd, [System.Text.UTF8Encoding]::new($false))
         
-        # Build with pandoc — golden source as reference-doc for styles/formatting
-        try {
-            & $pandoc $tempMd -o $docxPath --reference-doc=$refDocx -f markdown-yaml_metadata_block 2>&1
-            if ($LASTEXITCODE -ne 0) { throw "Pandoc failed with exit code $LASTEXITCODE" }
-            Remove-Item $tempMd -ErrorAction SilentlyContinue
-            $size = (Get-Item $docxPath).Length
-            Write-Step "Build from Markdown" "PASS" "Size: $([math]::Round($size/1KB)) KB"
-            return $true
-        } catch {
-            Write-Step "Build from Markdown" "FAIL" $_.Exception.Message
-            return $false
+        & $pandoc $tempMd -o $tempDocx --reference-doc=$refDocx -f markdown-yaml_metadata_block 2>&1
+        Remove-Item $tempMd -ErrorAction SilentlyContinue
+        
+        if ($LASTEXITCODE -eq 0) {
+            # Step 3: Sync text from pandoc output into golden source
+            Run-Script "sync_golden_from_md.py — patch body text" "sync_golden_from_md.py" @($docxPath, $tempDocx, "--save")
+            Remove-Item $tempDocx -ErrorAction SilentlyContinue
+        } else {
+            Write-Step "Pandoc build" "WARN" "Pandoc failed, using golden source as-is"
         }
     }
     
-    Write-Step "Source build" "FAIL" "No markdown or pandoc available"
-    return $false
+    return $true
 }
 
 # ── Phase 2: python-docx Fixes (doc.save() happens here) ───────────────────────
