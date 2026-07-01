@@ -47,6 +47,7 @@ $null = New-Item -ItemType Directory -Path $outDir -Force
 $docxPath = Join-Path $outDir "Memoire_DSS_Logistique_ElBayadh.docx"
 $sourceMd = Join-Path $tsDir "Memoire_DSS_Logistique_ElBayadh.md"
 $goldenSource = Join-Path $outDir "Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx"
+$refDocx = Join-Path $styleDir "reference.docx"
 
 # Find pandoc
 $pandoc = Get-Command pandoc -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
@@ -170,30 +171,60 @@ function Invoke-Phase0 {
     return $ok
 }
 
-# ── Phase 1: Source Build (copy golden source) ─────────────────────────────────
+# ── Phase 1: Source Build (from MD via pandoc) ──────────────────────────────────
 function Invoke-Phase1 {
-    Write-Phase 1 "Source Build (golden source)"
+    Write-Phase 1 "Source Build (from Markdown)"
     
     if ($SkipBuild -and (Test-Path $docxPath)) {
         Write-Step "Use existing output DOCX" "SKIP" "SkipBuild active"
         return $true
     }
     
-    # Copy the golden source DOCX (canonical version with cover page, formatting, etc.)
-    if (Test-Path $goldenSource) {
+    if ((Test-Path $sourceMd) -and $pandoc) {
+        # Strip YAML frontmatter from content (prevent it from rendering as visible text)
+        $mdContent = Get-Content $sourceMd -Raw -Encoding UTF8
+        $cleanMd = $mdContent -replace '(?s)^---\s*\n.*?\n---\s*\n', ''
+        $tempMd = Join-Path $outDir "temp_build.md"
+        [System.IO.File]::WriteAllText($tempMd, $cleanMd, [System.Text.UTF8Encoding]::new($false))
+        
+        # Build with pandoc — use minimal reference.docx for style definitions
         try {
-            Copy-Item $goldenSource $docxPath -Force
+            & $pandoc $tempMd -o $docxPath --reference-doc=$refDocx -f markdown-yaml_metadata_block 2>&1
+            if ($LASTEXITCODE -ne 0) { throw "Pandoc failed with exit code $LASTEXITCODE" }
+            Remove-Item $tempMd -ErrorAction SilentlyContinue
             $size = (Get-Item $docxPath).Length
-            Write-Step "Copy golden source" "PASS" "Size: $([math]::Round($size/1KB)) KB"
+            Write-Step "Build from Markdown" "PASS" "Size: $([math]::Round($size/1KB)) KB"
             return $true
         } catch {
-            Write-Step "Copy golden source" "FAIL" $_.Exception.Message
+            Write-Step "Build from Markdown" "FAIL" $_.Exception.Message
             return $false
         }
     }
     
-    Write-Step "Golden source" "FAIL" "Not found at $goldenSource"
+    Write-Step "Source build" "FAIL" "No markdown or pandoc available"
     return $false
+}
+
+# ── Phase 1b: Inject cover page from golden source (via Word COM) ──────────────
+function Invoke-Phase1b {
+    Write-Phase "1b" "Inject cover page from golden source"
+    
+    if (-not (Test-Path $docxPath)) {
+        Write-Step "Cover page" "SKIP" "No DOCX at $docxPath"
+        return $false
+    }
+    
+    if (-not (Test-Path $goldenSource)) {
+        Write-Step "Cover page" "SKIP" "Golden source not found"
+        return $true  # Non-critical
+    }
+    
+    $tempDocx = Join-Path $outDir "temp_pandoc.docx"
+    Copy-Item $docxPath $tempDocx -Force
+    
+    Run-Script "inject_cover_com.py — cover page injection" "inject_cover_com.py" @($tempDocx, $goldenSource, $docxPath)
+    Remove-Item $tempDocx -ErrorAction SilentlyContinue
+    return $true
 }
 
 # ── Phase 2: python-docx Fixes (doc.save() happens here) ───────────────────────
@@ -343,6 +374,7 @@ switch -Wildcard ($Phase) {
     "all" {
         $allOk = Invoke-Phase0 -and $allOk
         $allOk = Invoke-Phase1 -and $allOk
+        $allOk = Invoke-Phase1b -and $allOk
         $allOk = Invoke-Phase2 -and $allOk
         $allOk = Invoke-Phase3 -and $allOk
         $allOk = Invoke-Phase4 -and $allOk
@@ -357,6 +389,7 @@ switch -Wildcard ($Phase) {
     "build" {
         $allOk = Invoke-Phase0 -and $allOk
         $allOk = Invoke-Phase1 -and $allOk
+        $allOk = Invoke-Phase1b -and $allOk
         $allOk = Invoke-Phase2 -and $allOk
         $allOk = Invoke-Phase3 -and $allOk
         $allOk = Invoke-Phase4 -and $allOk
