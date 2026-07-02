@@ -1,0 +1,35 @@
+{
+  "_comment": "UNIFIED MCP CONFIG — Used by Claude Desktop, Claude CLI, and OpenCode",
+  "_project": "Academix v13.4 — Logistics.Public.Sector.Refactor",
+  "_updated": "2026-07-02",
+
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "github_pat_11APRYXRQ0TVeTcHzbdqRG___________________"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\Users\\Admin\\Logistics.Public.Sector.Refactor",
+        "C:\\Users\\Admin"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": ""
+      }
+    }
+  }
+}

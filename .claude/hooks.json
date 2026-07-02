@@ -1,0 +1,45 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "Write-Host \"[hook] $(Get-Date -Format 'HH:mm:ss') Starting...\" -ForegroundColor Gray"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "Write-Host \"[hook] $(Get-Date -Format 'HH:mm:ss') Done.\" -ForegroundColor Gray"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "Write-Host \"[hook] File modified — consider running verify\" -ForegroundColor Yellow"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "Write-Host \"[hook] Notification: task needs attention\" -ForegroundColor Cyan"
+          }
+        ]
+      }
+    ]
+  }
+}

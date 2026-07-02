@@ -1,0 +1,6 @@
+━━━ ACADEMIX v13.4 — RESUMED ━━━
+Last verify: 36/36 PASS
+Word COM:    Opens clean ✅
+Last action: Fixed root cause: pandoc `--toc` creates SDT-wrapped TOC with English heading + Word COM inserts second TOC = duplicate TOCs
+Next:        Open DOCX in Word GUI, Ctrl+A → F9 to refresh TOC
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -1,0 +1,54 @@
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "github_pat_11APRYXRQ0TVeTcHzbdqRG___________________"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\Users\\Admin\\Logistics.Public.Sector.Refactor",
+        "C:\\Users\\Admin"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    }
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(python *)",
+      "Bash(pip *)",
+      "Bash(gh *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(opencode *)",
+      "Bash(fcc-*)",
+      "Bash(ollama *)",
+      "Bash(Invoke-WebRequest *)",
+      "Bash(Invoke-RestMethod *)",
+      "Bash(Get-ChildItem *)",
+      "Bash(Test-Path *)",
+      "Bash(Set-Content *)",
+      "Bash(Copy-Item *)",
+      "Bash(Remove-Item *)",
+      "Bash(New-Item *)",
+      "Bash(powershell *)",
+      "Read",
+      "Write",
+      "Edit"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(del /s /q C:\\*)",
+      "Bash(Format-Volume *)"
+    ]
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "autoupdate": true,
+
+  "agent": {
+    "explore": {
+      "description": "Codebase recon — map files, grep patterns, trace dependencies",
+      "mode": "subagent"
+    },
+    "plan": {
+      "description": "Architecture decisions — impact analysis, task breakdown",
+      "mode": "subagent"
+    },
+    "build": {
+      "description": "Build agent — VBA development, thesis building, code generation",
+      "mode": "subagent"
+    },
+    "debug": {
+      "description": "Debug agent — error diagnosis, root cause analysis",
+      "mode": "subagent"
+    },
+    "thesis-review": {
+      "description": "Thesis content review — accuracy, formatting, academic standards",
+      "mode": "subagent"
+    }
+  },
+
+  "command": {
+    "thesis-build": {
+      "description": "Build thesis DOCX from Markdown via pandoc pipeline",
+      "template": "& \"Thesis_Surgical_Edit\\build-thesis.ps1\" $ARGUMENTS"
+    },
+    "thesis-verify": {
+      "description": "Run thesis verification checks (36 checks)",
+      "template": "python Thesis_Surgical_Edit\\style\\verify_docx_checks.py Thesis_Surgical_Edit\\output\\Memoire_DSS_Logistique_ElBayadh.docx"
+    },
+    "erp-build": {
+      "description": "Build ERP workbook from VBA sources",
+      "template": "& \"Software_Surgical_Edit\\build.ps1\" -ConfigPath \"vbe-auto\\vbe-auto-config.json\""
+    },
+    "erp-verify": {
+      "description": "Run ERP verification checks (114 checks)",
+      "template": "& \"Software_Surgical_Edit\\verify.ps1\" -ConfigPath \"vbe-auto\\vbe-auto-config.json\""
+    },
+    "pipeline": {
+      "description": "Run full thesis pipeline (5 phases: build → fix → audit → verify → report)",
+      "template": "& \"Thesis_Surgical_Edit\\run-thesis-pipeline.ps1\" $ARGUMENTS"
+    },
+    "status": {
+      "description": "Show project status — ERP, thesis, git, workspace",
+      "template": "Write-Output '=== Academix v13.4 Status ==='; git status --short; Get-ChildItem Thesis_Surgical_Edit\\output\\*.docx -ErrorAction SilentlyContinue | Select-Object Name, @{N='Size';E={[math]::Round($_.Length/1KB)+'KB'}}, LastWriteTime"
+    }
+  },
+
+  "mcp": {
+    "context7": {
+      "type": "local",
+      "command": ["npx", "-y", "@upstash/context7-mcp@latest"],
+      "enabled": true
+    }
+  }
+}
