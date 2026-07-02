@@ -6,9 +6,9 @@
     <step order="2">Read `.opencode\skills_spectrum\REGISTRY.md` — activate AI OS Intelligence Layer</step>
     <step order="3">Read `.opencode\erp-context-compact.md` — token-optimized snapshot (covers all XMLs, backends, models)</step>
     <step order="4">Call `skill` tool to load skills matching agent type (see skills-map)</step>
-    <step order="4">Read `C:\Users\Administrator\.opencode\notepad.md` for session memory</step>
+    <step order="4">Read `C:\Users\Admin\.opencode\notepad.md` for session memory</step>
     <step order="5">Run `/memory list` to recall previous session state</step>
-    <step order="6">Check `C:\Users\Administrator\Desktop\handoff*.txt` for pending debug tasks</step>
+    <step order="6">Check `C:\Users\Admin\Desktop\handoff*.txt` for pending debug tasks</step>
     <step order="7">Run harness health check: `pwsh -NoProfile -File scripts/harness.ps1 status` — verify all 5 layers (s06/s07/s08/s09/s12) are operational</step>
     <step order="8">Begin work. Save progress: `/memory save "Done: X | Next: Y"`</step>
   </bootstrap>
@@ -43,7 +43,7 @@
   <!-- ===== AGENT SKILL AUTO-LOAD ===== -->
   <!-- Note: VBA-specific skills (vba-build, vba-debug) exist on disk at
        .opencode/skills/ but aren't in OpenCode's global skill catalog.
-       They can be read manually from: file:///C:/Users/Administrator/.opencode/skills/vba-build/SKILL.md
+       They can be read manually from: file:///C:/Users/Admin/.opencode/skills/vba-build/SKILL.md
        VBA domain knowledge is loaded via instructions.md + XML context files instead. -->
   <skills-map>
     <agent type="build"  skills="naming-cheatsheet,humanizer" />
@@ -58,7 +58,7 @@
   </skills-map>
 
   <!-- ===== CONTEXT FILES (read on demand) ===== -->
-  <context-files project-root="C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor">
+  <context-files project-root="C:\Users\Admin\Dropbox\Logistics.Public.Sector.Refactor">
     <file key="compact" path=".opencode\erp-context-compact.md" priority="always" desc="Token-optimized snapshot of all 4 XMLs + backends + models (9.6KB, ~2.5K tokens)" />
     <file key="spectrum" path=".opencode\skills_spectrum\REGISTRY.md" priority="always" desc="AI OS Spectrum Registry — Global Intelligence Layer (L0-L4)" />
     <file key="project-arch" path="Software_Surgical_Edit\erp-project-context.xml" priority="high" desc="Modules, sheets, call graph, config params (253 lines)" />
@@ -68,27 +68,27 @@
     <file key="rag-context" path="milestone_13_2\rag\lsm-rag-context.xml" priority="low" desc="RAG education for LLM (122 lines)" />
     <file key="engineering" path=".opencode\agents\engineering-harness.md" priority="medium" desc="Full agent harness spectrum s01-s12 (82 lines)" />
     <file key="harness-skill" path=".opencode\skills\engineering-harness\SKILL.md" priority="high" desc="LCC s01-s12 cross-reference + deploy map" />
-    <file key="instructions" path="C:\Users\Administrator\.config\opencode\instructions.md" priority="always" desc="Auto-loaded every session (107 lines)" />
+    <file key="instructions" path="C:\Users\Admin\.config\opencode\instructions.md" priority="always" desc="Auto-loaded every session (107 lines)" />
   </context-files>
 
   <!-- ===== PATH INDEX (compact) ===== -->
-  <paths root="C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor">
+  <paths root="C:\Users\Admin\Dropbox\Logistics.Public.Sector.Refactor">
     <vba-modules>Software_Surgical_Edit\VBA_Modules\</vba-modules>
     <thesis>Thesis_Surgical_Edit\</thesis>
     <scripts>Software_Surgical_Edit\</scripts>
     <build-toolkit>vbe-auto\</build-toolkit>
     <milestone>milestone_13_2\</milestone>
-    <workbook active="C:\Users\Administrator\Dropbox\ERP_v13.4.xlsm" />
+    <workbook active="C:\Users\Admin\Dropbox\ERP_v13.4.xlsm" />
     <workbook compiled="ERP_v13.4.xlsm" />
-    <opencode-config>C:\Users\Administrator\.config\opencode\</opencode-config>
-    <opencode-skills>C:\Users\Administrator\.opencode\skills\</opencode-skills>
-    <memory-notepad>C:\Users\Administrator\.opencode\notepad.md</memory-notepad>
-    <omc-state>C:\Users\Administrator\.omc\state\</omc-state>
+    <opencode-config>C:\Users\Admin\.config\opencode\</opencode-config>
+    <opencode-skills>C:\Users\Admin\.opencode\skills\</opencode-skills>
+    <memory-notepad>C:\Users\Admin\.opencode\notepad.md</memory-notepad>
+    <omc-state>C:\Users\Admin\.omc\state\</omc-state>
     <fcc-proxy>deprecated — replaced by FreeLLM gateway</fcc-proxy>
-    <launcher>C:\Users\Administrator\Desktop\OpenCode.bat</launcher>
-    <freellm-gateway>C:\Users\Administrator\.opencode\plugins\freellm\</freellm-gateway>
+    <launcher>C:\Users\Admin\Desktop\OpenCode.bat</launcher>
+    <freellm-gateway>C:\Users\Admin\.opencode\plugins\freellm\</freellm-gateway>
     <freellm-launcher>scripts\freellm-launcher.ps1</freellm-launcher>
-    <handoff-dir>C:\Users\Administrator\Desktop\</handoff-dir>
+    <handoff-dir>C:\Users\Admin\Desktop\</handoff-dir>
   </paths>
 
   <!-- ===== BUILD & VERIFY PIPELINE ===== -->
@@ -107,13 +107,18 @@
       <cmd>.\milestone_13_2\tests\dss-audit.ps1</cmd>
       <checks>Structure, Security, Data Integrity, Call Graph, Compliance</checks>
     </audit>
-    <thesis desc="Build thesis PDF from MD">
-      <cmd>.\Thesis_Surgical_Edit\build-thesis.ps1</cmd>
+    <thesis desc="Build thesis DOCX from MD — refactored v12 pipeline">
+      <cmd>.\Thesis_Surgical_Edit\pipeline_v12.py</cmd>
+      <approach>Fresh pandoc (NO --toc) + fix_docx_sections + fix_thesis_all + Word COM update_fields + Word COM word_automation (TOC/TOF insert) + post-COM polish + verify</approach>
+      <verify>.\Thesis_Surgical_Edit\style\verify_docx_checks.py — 36 checks</verify>
+      <status>36/36 PASS ✅</status>
+      <note>Pandoc --toc creates SDT TOC with English heading that conflicts with Word COM Arabic TOC insertion. Removed --toc — Word COM now handles all TOC/TOF field insertion.</note>
+      <venv>C:\Users\Admin\AppData\Local\Temp\thesis-venv\Scripts\python.exe</venv>
     </thesis>
   </pipeline>
 
   <!-- ===== LAUNCHER MODES (OpenCode.bat) ===== -->
-  <launcher path="C:\Users\Administrator\Desktop\OpenCode.bat" version="3.6">
+  <launcher path="C:\Users\Admin\Desktop\OpenCode.bat" version="3.6">
     <mode name="cli"     model="opencode/big-pickle" desc="Default CLI" />
     <mode name="gui"     model="gui" desc="Desktop GUI v1.14.42" />
     <mode name="groq"    model="groq/llama-3.1-8b-instant" desc="AI backend primary" />
@@ -141,10 +146,10 @@
     <problem>Every session disconnection causes model to lose context. Model must re-learn project state.</problem>
     <solution>Checkpoint-based recovery: before closing or on context pressure, save state to memory files.</solution>
     <checkpoint-files>
-      <file key="notepad">C:\Users\Administrator\.opencode\notepad.md</file>
-      <file key="memory">C:\Users\Administrator\.opencode\project-memory.json</file>
-      <file key="session-log">C:\Users\Administrator\.opencode\memory\session.log</file>
-      <file key="omc-sessions">C:\Users\Administrator\.omc\state\sessions\</file>
+      <file key="notepad">C:\Users\Admin\.opencode\notepad.md</file>
+      <file key="memory">C:\Users\Admin\.opencode\project-memory.json</file>
+      <file key="session-log">C:\Users\Admin\.opencode\memory\session.log</file>
+      <file key="omc-sessions">C:\Users\Admin\.omc\state\sessions\</file>
     </checkpoint-files>
     <commands>
       <cmd desc="Save current state">/memory save "Done: [task] | Next: [task]"</cmd>
@@ -235,13 +240,13 @@
 
   <!-- ===== CLAUDE DESKTOP INTEGRATION ===== -->
   <claude-desktop>
-    <config-path>C:\Users\Administrator\AppData\Roaming\Claude\claude_desktop_config.json</config-path>
+    <config-path>C:\Users\Admin\AppData\Roaming\Claude\claude_desktop_config.json</config-path>
     <mcp-server name="filesystem">
       <command>node</command>
       <args>
-        <arg>C:\Users\Administrator\AppData\Roaming\Claude\Claude Extensions\ant.dir.ant.anthropic.filesystem\dist\index.js</arg>
-        <arg>C:\Users\Administrator\Dropbox\Logistics.Public.Sector.Refactor</arg>
-        <arg>C:\Users\Administrator\My Drive</arg>
+        <arg>C:\Users\Admin\AppData\Roaming\Claude\Claude Extensions\ant.dir.ant.anthropic.filesystem\dist\index.js</arg>
+        <arg>C:\Users\Admin\Dropbox\Logistics.Public.Sector.Refactor</arg>
+        <arg>C:\Users\Admin\My Drive</arg>
       </args>
     </mcp-server>
     <context-file>CLAUDE.md (project root)</context-file>

@@ -1,35 +1,18 @@
-{
-  "project": "Academix v13.4",
-  "last_session": "2026-06-30T18:00:00",
-  "last_build": "2026-06-30T17:30:00",
-  "last_verify": "36/36 PASS",
-  "last_test": "N/A",
-  "active_workbook": "C:\\Users\\Admin\\Dropbox\\ERP_v13.4.xlsm",
-  "source_modules": 12,
-  "source_lines": 4919,
-  "drive_config": {
-    "primary": "C:\\Users\\Admin\\Dropbox",
-    "ssd_expected": "C:",
-    "usb_expected": ""
-  },
-  "workspace_mode": "idle",
-  "session_count": 1,
-  "jumbo_project": "publicsectorlogistics",
-  "jumbo_goal": "43345631-3a0b-4567-8133-c76210ff9705",
-  "components": {
-    "ERP Workbook": "a69b8792-34ba-401f-8010-6e0393b982ba",
-    "Thesis Pipeline": "f13873a9-69a9-4149-b52f-19fdcd6036b5",
-    "thesis-skills": "cf415d91-7abf-434d-acde-53d902edd630",
-    "jumbo-cli": "29c027c1-f247-496b-a7c8-1d7b8f29baa2"
-  },
-  "invariants": {
-    "Ground Truth": "ea5f855a-09c9-4e22-8665-7e7d74753fb2",
-    "MASTER_PWD": "5b852e98-4f5f-4af8-853f-9d35c2e4686f",
-    "Single-section DOCX": "9f0e1521-b243-4c8b-81b7-5b8748f5a946"
-  },
-  "decisions": {
-    "Pipeline v3": "b1bcc275-dddb-4f1c-962b-b1c66db89837",
-    "thesis-skills": "f3d748bc-4a19-40e9-a6c5-3037f8749188",
-    "Free-tier models": "84434766-c949-4ace-ba9a-be4cd9162363"
-  }
+﻿{
+    "project":  "Academix v13.4",
+    "last_session":  "2026-07-02T01:15:00",
+    "last_build":  "2026-07-02T00:45:00",
+    "last_verify":  "36/36 PASS",
+    "last_verify_details":  "0 FAIL — all checks pass",
+    "last_pipeline_script":  "Thesis_Surgical_Edit/pipeline_v12.py",
+    "venv_path":  "C:\\Users\\Admin\\AppData\\Local\\Temp\\thesis-venv",
+    "golden_source":  "Thesis_Surgical_Edit/output/Latest-thesis-backup-Memoire_DSS_Logistique_ElBayadh.docx",
+    "output_docx":  "Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx",
+    "output_size_kb":  102,
+    "word_com_opens":  true,
+    "pipeline_approach":  "Fresh pandoc (no --toc) + fix_thesis_all + fix_docx_sections + Word COM update_fields + word_automation (TOC/TOF insert) + post-COM polish + verify",
+    "active_workbook":  "C:\\Users\\Admin\\Dropbox\\ERP_v13.4.xlsm",
+    "workspace_mode":  "idle",
+    "session_count":  7,
+    "project_root":  "C:\\Users\\Admin\\Logistics.Public.Sector.Refactor"
 }
