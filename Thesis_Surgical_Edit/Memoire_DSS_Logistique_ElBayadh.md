@@ -11,34 +11,6 @@ lang: ar
 dir: rtl
 ---
 
-# الجمهورية الجزائرية الديمقراطية الشعبية {-}
-
-# وزارة التربية الوطنية والتعليم العالي والبحث العلمي {-}
-
-# المؤسسة الوطنية للتكوين المهني بالبيض {-}
-
-# المعهد الوطني المتخصص في التكوين المهني بن سعيدي عبد العاطي بالبيض {-}
-
-## قسم تسيير المخزونات واللوجستيك {-}
-
----
-
-## مذكرة تخرج لنيل شهادة التقني السامي {-}
-
-# نظام دعم القرار لتسيير المخزونات {-}
-
-### مذكرة تخرج لنيل شهادة التقني السامي في تسيير المخزونات واللوجستيك {-}
-
----
-
-### إعداد: ماحي كمال عبد الغني {-}
-
-### تحت إشراف: الأستاذة المشرفة دهيني ميمونة {-}
-
-### السنة الجامعية: 2025/2026 {-}
-
----
-
 ## إهداء
 
 **أهدي ثمرة هذا الجهد المتواضع إلى والديّ الكريمين اللذين لم يبخلا عليّ يوماً بالدعم والحنان والتشجيع، وإلى كل من أضاء دربي من أساتذة ومشرفين وزملاء طوال مسيرتي التكوينية.**
@@ -51,22 +23,14 @@ dir: rtl
 **وأخص بالذكر السيد مسؤول مصلحة المخازن بمديرية التربية لولاية البيض الذي أتاح لنا فرصة التربص وفتح لنا أبواب المعرفة الميدانية، وقدم لنا كل التسهيلات الضرورية لإنجاز هذا البحث.**
 **وإلى لجنة المناقشة الموقرة على تفضلها بقراءة هذا العمل وتقييمه.**
 
-## فهرس المحتويات
-
-*جدول المحتويات سيتم توليده تلقائياً عند بناء الوثيقة*
-
-## قائمة الجداول
-
-*قائمة الجداول سيتم توليدها تلقائياً عند بناء الوثيقة*
-
 ## الملخص
 
-**تتناول هذه الدراسة بالتحليل والبحث إشكالية التسيير اليدوي للمخزون في مخزن مديرية التربية لولاية البيض، وترمي إلى تصميم وإنجاز نظام دعم قرار متكامل مبني على بيئة Excel/VBA قادر على أتمتة دورة الشراء والتخزين بتكلفة صفرية. اعتمدت الدراسة منهجاً وصفياً تحليلياً في التشخيص الميداني، ومنهجاً تجريبياً تطبيقياً في قياس الأثر، ارتكازاً على بيانات فعلية جُمعت خلال 38 يوم عمل ميداني (شملت 62 معاملة مخزنية). طُبِّقت ثلاثة نماذج كمية على الصنف المرجعي ART-002 (حبر الطابعة Toner G030): نموذج ويلسون الذي أنتج كمية طلب اقتصادية Q* = 15 وحدة، ونقطة إعادة طلب ROP = 200 وحدة، ومخزون أمان SS = 200 وحدة. كشفت نتائج التطبيق أن النظام خفَّض وقت معالجة الطلبية الواحدة من 20--30 دقيقة إلى أقل من 5 ثوانٍ، أي بنسبة تخفيض 99.7%، مع إلغاء جميع حالات النفاد المسجلة للمواد الاستراتيجية. وتأتي هذه النتائج لتؤكد صحة الفرضيتين المُصاغتين في المقدمة وتؤكد جدوى التحول الرقمي في مؤسسات القطاع التربوي الجزائري.**
+**تتناول هذه الدراسة بالتحليل والبحث إشكالية التسيير اليدوي للمخزون في مخزن مديرية التربية لولاية البيض، وترمي إلى تصميم وإنجاز نظام دعم قرار متكامل مبني على بيئة Excel/VBA قادر على أتمتة دورة الشراء والتخزين بتكلفة صفرية. اعتمدت الدراسة منهجاً وصفياً تحليلياً في التشخيص الميداني، ومنهجاً تجريبياً تطبيقياً في قياس الأثر، ارتكازاً على بيانات فعلية جُمعت خلال 38 يوم عمل ميداني (شملت 62 معاملة مخزنية). طُبِّقت ثلاثة نماذج كمية على الصنف المرجعي ART-002 (حبر الطابعة Toner G030): نموذج ويلسون الذي أنتج كمية طلب اقتصادية Q* = 15 وحدة، ونقطة إعادة طلب ROP = 201 وحدة، ومخزون أمان SS = 200 وحدة. كشفت نتائج التطبيق أن النظام خفَّض وقت معالجة الطلبية الواحدة من 20--30 دقيقة إلى أقل من 5 ثوانٍ، أي بنسبة تخفيض 99.7%، مع إلغاء جميع حالات النفاد المسجلة للمواد الاستراتيجية. وتأتي هذه النتائج لتؤكد صحة الفرضيتين المُصاغتين في المقدمة وتؤكد جدوى التحول الرقمي في مؤسسات القطاع التربوي الجزائري.**
 **الكلمات المفتاحية: نظام دعم القرار، تسيير المخزونات، نموذج ويلسون، تحليل ABC، Excel/VBA، القطاع التربوي.**
 
 ## Résumé
 
-**Cette étude porte sur la problématique de la gestion manuelle des stocks dans l'entrepôt de la Direction de l'Éducation de la wilaya d'El Bayadh. L'objectif est de concevoir et de réaliser un système d'aide à la décision intégré, basé sur Excel/VBA, capable d'automatiser le cycle d'achat et de stockage à coût zéro. L'approche adoptée combine une méthode descriptive-analytique pour le diagnostic terrain et une méthode expérimentale pour la mesure d'impact, à partir de données réelles collectées sur 38 jours ouvrables. Trois modèles quantitatifs ont été appliqués sur l'article de référence ART-002 (Toner d'imprimante G030) : le modèle de Wilson, qui a généré une quantité économique Q* = 15 unités, un point de réapprovisionnement ROP = 200 unités, et un stock de sécurité SS = 200 unités. Les résultats montrent une réduction du temps de traitement par transaction de 20--30 minutes à moins de 5 secondes, soit une amélioration de 99,7%, avec élimination totale des ruptures de stock des articles stratégiques. Ces résultats valident les deux hypothèses formulées et confirment la faisabilité de la transition numérique dans les institutions éducatives publiques algériennes.**
+**Cette étude porte sur la problématique de la gestion manuelle des stocks dans l'entrepôt de la Direction de l'Éducation de la wilaya d'El Bayadh. L'objectif est de concevoir et de réaliser un système d'aide à la décision intégré, basé sur Excel/VBA, capable d'automatiser le cycle d'achat et de stockage à coût zéro. L'approche adoptée combine une méthode descriptive-analytique pour le diagnostic terrain et une méthode expérimentale pour la mesure d'impact, à partir de données réelles collectées sur 38 jours ouvrables. Trois modèles quantitatifs ont été appliqués sur l'article de référence ART-002 (Toner d'imprimante G030) : le modèle de Wilson, qui a généré une quantité économique Q* = 15 unités, un point de réapprovisionnement ROP = 201 unités, et un stock de sécurité SS = 200 unités. Les résultats montrent une réduction du temps de traitement par transaction de 20--30 minutes à moins de 5 secondes, soit une amélioration de 99,7%, avec élimination totale des ruptures de stock des articles stratégiques. Ces résultats valident les deux hypothèses formulées et confirment la faisabilité de la transition numérique dans les institutions éducatives publiques algériennes.**
 **Mots-clés : Système d'aide à la décision, gestion des stocks, modèle de Wilson, analyse ABC, Excel/VBA, secteur éducatif**
 
 # المقدمة العامة
@@ -325,7 +289,7 @@ dir: rtl
 
 **من دمج البعدين (ABC × XYZ) تنتج مصفوفة من تسع خانات استراتيجية. الصنف المرجعي ART-002 (Toner G030) يقع في الخانة AX — أعلى قيمة وأكثر استقراراً — مما يلزم برقابة يومية وتطبيق صارم لمعادلة ويلسون [^fn11]. في المقابل، الأصناف من فئة CZ تكتفي بسياسة الاحتياط الظرفي. هذا التصنيف المزدوج هو ما يوجه محرك الذكاء المحلي في النظام الرقمي نحو قرارات تموينية مختلفة حسب كل صنف، بدلاً من معاملة جميع الأصناف بطريقة واحدة [^fn1] [^fn9] [^fn10].**
 
-**خلاصة المبحث الأول: النماذج الثلاثة قادرة على تحويل البيانات الخام إلى معطيات قرارية دقيقة — EOQ = 15، ROP = 200، SS = 200، تصنيف ABC-XYZ. لكن هذه الدقة لا قيمة لها في بيئة التسيير اليدوي السائدة في مديرية التربية، لأن تحديث هذه المعطيات آنياً مع كل حركة مخزنية مستحيل دون نظام رقمي. هذه الفجوة تحديداً هي ما يعالجه الفصل الثالث.**
+**خلاصة المبحث الأول: النماذج الثلاثة قادرة على تحويل البيانات الخام إلى معطيات قرارية دقيقة — EOQ = 15، ROP = 201، SS = 200، تصنيف ABC-XYZ. لكن هذه الدقة لا قيمة لها في بيئة التسيير اليدوي السائدة في مديرية التربية، لأن تحديث هذه المعطيات آنياً مع كل حركة مخزنية مستحيل دون نظام رقمي. هذه الفجوة تحديداً هي ما يعالجه الفصل الثالث.**
 
 ## المبحث الثاني: الإطار الجغرافي والمؤسسي
 
@@ -381,10 +345,10 @@ dir: rtl
 
 | الصنف | الطلب السنوي (D) | تكلفة الطلب (S) | سعر الوحدة (PU) | معدل الاحتفاظ (I) | الكمية الاقتصادية (Q*) | نقطة إعادة الطلب (ROP) | مخزون الأمان (SS) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| ART-002 Toner G030 | 33 | 801.45 | 1,200 | 20% | 15 | 200 | 200 |
-| ART-001 ورق A4 | 2,112 | 50 | 400 | 20% | 50 | 416 | 400 |
-| ART-003 ورق A3 | 645 | 50 | 600 | 20% | 23 | 35 | 30 |
-| ART-004 صندوق أرشيف | 329 | 50 | 150 | 20% | 33 | 23 | 20 |
+| ART-001 ورق A4 | 2,112 | 50 | 400 | 20% | 51 | 459 | 400 |
+| ART-002 Toner G030 | 33 | 801.45 | 1,200 | 20% | 15 | 201 | 200 |
+| ART-003 ورق A3 | 645 | 50 | 600 | 20% | 23 | 48 | 30 |
+| ART-004 صندوق أرشيف | 329 | 50 | 150 | 20% | 33 | 29 | 20 |
 | ART-005 دباسة مكتبية | 13 | 50 | 800 | 20% | 3 | 2 | 2 |
 | ART-006 علامة أزرار | — | — | — | — | — | 7 | — |
 | ART-007 سجل كبير | — | — | — | — | — | 2 | — |
@@ -436,7 +400,7 @@ dir: rtl
 هذا التصنيف هو الذي يمنح النظام "ذكاءً تشغيلياً"، حيث لا يعامل جميع الأصناف بنفس الطريقة، بل يوجه موارد الرقابة نحو الأصناف التي تشكل الخطر الأكبر على سير العمل.
 
 **خلاصة الفصل الثاني**
-كشف هذا الفصل عن الهوَّة القائمة بين ما تستوجبه النماذج الرياضية من دقة كمية (15 وحدة، ROP = 200، CMUP ديناميكي) وبين ما يُنتجه الواقع اليدوي من تقدير ذاتي معرَّض للخطأ. وقد تبيَّن أن المشكلة ليست في غياب الكفاءة البشرية، بل في غياب الأداة التقنية القادرة على ترجمة هذه المعادلات إلى قرارات آنية مُؤتمَتة. ينتقل الفصل الثالث من هذا التشخيص إلى الحل: تصميم نظام دعم القرار v13.4 وإنجازه.
+كشف هذا الفصل عن الهوَّة القائمة بين ما تستوجبه النماذج الرياضية من دقة كمية (15 وحدة، ROP = 201، CMUP ديناميكي) وبين ما يُنتجه الواقع اليدوي من تقدير ذاتي معرَّض للخطأ. وقد تبيَّن أن المشكلة ليست في غياب الكفاءة البشرية، بل في غياب الأداة التقنية القادرة على ترجمة هذه المعادلات إلى قرارات آنية مُؤتمَتة. ينتقل الفصل الثالث من هذا التشخيص إلى الحل: تصميم نظام دعم القرار v13.4 وإنجازه.
 --- نهاية الفصل الثاني ---
 
 # الفصل الثالث: تصميم وإنجاز نظام دعم القرار
@@ -695,7 +659,7 @@ End Function
 - **دراسات مقارنة: إجراء دراسات مقارنة بين مديريات التربية التي اعتمدت الرقمنة وتلك التي لا تزال تعتمد الأنظمة اليدوية، لقياس الفجوة الفعلية في الأداء وتحفيز الانتقال الرقمي على المستوى الوطني. [^fn39]**
 --- نهاية الفصل الرابع ---
 
-**الخاتمة العامة**
+# الخاتمة العامة
 
 **أجابت هذه الدراسة عن التساؤل المحوري المطروح في مقدمتها: كيف يمكن أتمتة دورة الشراء والتخزين وتعزيز الجرد الدائم في مخزن مؤسسة عمومية باستخدام أدوات Microsoft Office المتاحة؟ والجواب الذي أثبتته التجربة الميدانية: إنه ممكن، فعَّال، وقابل للتطبيق الفوري بتكلفة صفرية.**
 
@@ -719,8 +683,8 @@ End Function
 
 - **Chopra, S., & Meindl, P. (2019). Supply Chain Management: Strategy, Planning, and Operation (7th ed.). Pearson.**
 - **Cooper, M. C., Lambert, D. M., & Pagh, J. D. (1997). Supply Chain Management: More Than a New Name for Logistics. The International Journal of Logistics Management, 8(1), 1--14.**
-- **Lambert, D. M., & Stock, J. R. (1993). Strategic Logistics Management (3rd ed.). Irwin.**
 - **Harris, F. W. (1913). How Many Parts to Make at Once. Factory, The Magazine of Management, 10(2), 135--136, 152.**
+- **Lambert, D. M., & Stock, J. R. (1993). Strategic Logistics Management (3rd ed.). Irwin.**
 - **Silver, E. A., Pyke, D. F., & Thomas, D. J. (2017). Inventory and Production Management in Supply Chains (4th ed.). Springer.**
 - **Stock, J. R., & Lambert, D. M. (2001). Strategic Logistics Management (4th ed.). McGraw-Hill.**
 - **Van Weele, A. J. (2010). Purchasing and Supply Chain Management: Analysis, Strategy, Planning and Practice (5th ed.). Cengage Learning.**
@@ -912,10 +876,10 @@ End Function
 
 | الرمز | التسمية | الرصيد | ROP | التصنيف |
 | --- | --- | --- | --- | --- |
-| ART-001 | Ramette A4 80g | 520 | 416 | AX |
-| ART-002 | Toner G030 | 289 | 200 | AX |
-| ART-003 | Rame papier A3 80g/m² | 210 | 35 | BX |
-| ART-004 | Boîte archives carton | 85 | 23 | BY |
+| ART-001 | Ramette A4 80g | 520 | 459 | AX |
+| ART-002 | Toner G030 | 289 | 201 | AX |
+| ART-003 | Rame papier A3 80g/m² | 210 | 48 | BX |
+| ART-004 | Boîte archives carton | 85 | 29 | BY |
 | ART-005 | Agrafeuse de bureau | 12 | 2 | CX |
 | ART-006 | Stylos bille boîte/50 | 95 | 7 | CX |
 | ART-007 | Registre grand format 5m | 60 | 2 | CX |
@@ -991,8 +955,8 @@ End Function
 
 | مفهوم أكاديمي | وحدة VBA المناظرة | الوظيفة |
 | --- | --- | --- |
-| EOQ / Q* | mod_StockEngine | حساب الكمية الاقتصادية بـ 15 وحدة (ART-002) / 50 وحدة (ART-001) |
-| ROP | mod_StockEngine | حساب نقطة إعادة الطلب بـ 200 وحدة (ART-002) / 416 وحدة (ART-001) |
+| EOQ / Q* | mod_StockEngine | حساب الكمية الاقتصادية بـ 15 وحدة (ART-002) / 51 وحدة (ART-001) |
+| ROP | mod_StockEngine | حساب نقطة إعادة الطلب بـ 201 وحدة (ART-002) / 459 وحدة (ART-001) |
 | CMUP | mod_StockEntry_Logic | حساب التكلفة المتوسطة المرجحة آنياً |
 | ABC Classification | mod_Analysis | تصنيف 12 صنفاً في مصفوفة ABC-XYZ |
 | Dual-Guard | mod_StockEngine | منع الأرصدة الوهمية (Phantom Stock) |
@@ -1099,9 +1063,6 @@ DSS ──→ تصدير CSV/Excel ──→ استيراد SIGLE ──→ مح
 
 
 
-
-
-# قائمة المراجع والتعليقات (Footnotes)
 
 [^fn1]: M. C. Cooper, D. M. Lambert & J. D. Pagh, "Supply Chain Management: More Than a New Name for Logistics", The International Journal of Logistics Management, Vol. 8, N° 1, 1997, p. 1.
 [^fn2]: M. C. Cooper, D. M. Lambert & J. D. Pagh, "Supply Chain Management: More Than a New Name for Logistics", The International Journal of Logistics Management, Vol. 8, N° 1, 1997, p. 5.

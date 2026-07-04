@@ -5,16 +5,14 @@
 - **System**: VBA/Excel DSS for inventory management
 - **Organization**: Direction de l'Education El Bayadh
 - **Thesis**: BTS CNEPD — 4 chapters, 17 مباحث, 52 مطالب
-- **Ground Truth**: D=33 (ART-002 Toner), Q*=15, ROP=200, SS=200, LT=2 days, S=801.45 DZD, PU=1200 DZD, I=20%
+- **Ground Truth**: D=33 (ART-002 Toner), Q*=15, ROP=201, SS=200, LT=7 days, S=801.45 DZD (ART-002)/50 DZD (others), PU=1200/400 DZD, I=20%
 - **Master Password**: erp_secure_pwd_2026
 
-## CURRENT STATUS (Session 48 — 2026-06-29)
-- **ERP Workbook**: ERP_v13.4.xlsm (718.2 KB, 114/114 PASS) ✅
-- **Thesis Golden Source**: Thesis_Surgical_Edit/output/Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx (146 KB, 32/32 PASS) ✅
-- **Thesis PDF**: Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.pdf (1,380 KB) ✅
-- **English Paper**: English_Research_Paper_IEEE.pdf (69 KB, 9 pages) ✅
-- **Git**: Synced with remote (94122d2) ✅
-- **Workspace**: Cleaned — 629 MB, 7,885 files ✅
+## CURRENT STATUS (Session 49 — 2026-07-04)
+- **Thesis Output**: Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx (120 KB, 34/36 PASS) ✅
+- **Build Pipeline**: `uv run` (no venv), build-v2.ps1, ~45 sec build time
+- **Google Drive Synced**: 10 high-value files imported, algerian-thesis skill created
+- **Knowledge Base**: 14 files in `.claude/knowledge/` + skill in `.opencode/skills/`
 
 ## PROJECT STRUCTURE (Post-Cleanup)
 ```
@@ -79,8 +77,8 @@ All three tools share the same MCP servers and project context:
 - **Thesis Golden Source**: `Thesis_Surgical_Edit/output/Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx`
 - **Session Memory**: `.opencode/notepad.md`
 - **Thesis Output**: `Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx`
-- **Pipeline Script**: `Thesis_Surgical_Edit/pipeline_v12.py`
-- **Python Venv**: `C:\Users\Admin\AppData\Local\Temp\thesis-venv\Scripts\python.exe`
+- **Pipeline Script**: `Thesis_Surgical_Edit/build-v2.ps1`
+- **Python**: `uv run --with lxml --with python-docx --with pypandoc python`
 - **Persist Script**: `.opencode/memory/persist.ps1`
 
 ## RATE LIMIT AWARENESS
@@ -136,13 +134,12 @@ All three tools share the same MCP servers and project context:
 ```
 Project: Academix v13.4 — VBA/Excel DSS for Direction de l'Education El Bayadh
 Thesis: BTS CNEPD — 4 chapters, 17 مباحث, 52 مطالب
-Ground Truth (LOCKED): D=33 (ART-002 Toner), Q*=15, ROP=200, SS=200, LT=2 days, S=801.45 DZD, PU=1200 DZD, I=20%, MASTER_PWD=erp_secure_pwd_2026
+Ground Truth (LOCKED): D=33 (ART-002 Toner), Q*=15, ROP=201, SS=200, LT=7 days, S=801.45 DZD (ART-002)/50 DZD (others), PU=1200/400 DZD, I=20%
 
-Current State (Session 48):
-- ERP: 114/114 PASS ✅
-- Thesis: 32/32 PASS ✅
-- Git: Synced (94122d2) ✅
-- Workspace: 629 MB, 7885 files, cleaned ✅
+Current State (Session 49):
+- Thesis: 34/36 PASS (2 expected: hyperlinks/PAGEREF via Ctrl+A F9) ✅
+- Build: uv run, build-v2.ps1, ~45 sec ✅
+- Knowledge: 14 files + algerian-thesis skill ✅
 
 Next: Open DOCX in Word, Ctrl+A → F9 to update fields
 ```
@@ -152,19 +149,23 @@ See: `.opencode/resume-prompt.md`
 
 ## THESIS FILE PATHS
 - **Source Markdown**: `Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md`
-- **Golden Source**: `Thesis_Surgical_Edit/output/Latest-thesis-backup-1-Memoire_DSS_Logistique_ElBayadh.docx`
-- **Output PDF**: `Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.pdf`
-- **Build Script**: `Thesis_Surgical_Edit/build-thesis.ps1`
-- **Pipeline**: `Thesis_Surgical_Edit/run-thesis-pipeline.ps1`
-- **Verification**: `Thesis_Surgical_Edit/style/verify_docx_checks.py`
+- **Output DOCX**: `Thesis_Surgical_Edit/output/Memoire_DSS_Logistique_ElBayadh.docx`
+- **Cover Page Shell**: `Thesis_Surgical_Edit/output/cover_page_and_post_chapters_contents_only.docx`
+- **Build Script**: `Thesis_Surgical_Edit/build-v2.ps1`
+- **Python**: `uv run --with lxml --with python-docx --with pypandoc python`
 
 ## KEY SCRIPTS
-- **Pipeline**: `Thesis_Surgical_Edit/run-thesis-pipeline.ps1` (orchestrates build → fixes → verification)
-- **Section Fix**: `Thesis_Surgical_Edit/style/fix_docx_sections.py` (single-section layout)
-- **Comprehensive Fix**: `Thesis_Surgical_Edit/style/fix_thesis_all.py` (tables, RTL, footers, etc.)
-- **Backup**: `scripts/backup-project.ps1` (unified backup)
-- **Cleanup**: `scripts/cleanup-workspace.ps1` (workspace cleanup)
-- **Harness**: `scripts/harness.ps1` (task DAG, background runner, worktree isolation)
+- **Build Pipeline**: `Thesis_Surgical_Edit/build-v2.ps1` (5 phases: Pandoc → Stitch → Format → Word COM → Verify)
+- **Heading Alignment**: `Thesis_Surgical_Edit/style/fix_heading_alignment.py` (H1=center, H2/H3=right, all RTL)
+- **TOC/TOF Injection**: `Thesis_Surgical_Edit/style/inject_toc_tof_fields.py` (dynamic fields)
+- **Table Captions**: `Thesis_Surgical_Edit/style/inject_table_captions.py` (SEQ + titles)
+- **RTL Fixer**: `Thesis_Surgical_Edit/style/fixers/rtl.py` (bidi on all non-skip styles)
+- **Table Width Fix**: `Thesis_Surgical_Edit/style/fixers/tables.py` (dxa units, 100% width)
+- **Verification**: `Thesis_Surgical_Edit/style/verify_docx_checks.py` (36-point check)
+- **Sync Golden**: `Thesis_Surgical_Edit/style/sync_golden_from_md.py` (MD → shell sync)
+- **CNEPD Checker**: `Thesis_Surgical_Edit/style/cnepd-thesis-checker.py` (compliance)
+- **Metrics**: `Thesis_Surgical_Edit/style/measure-thesis.py` (20+ metrics, JSON output)
+- **Comparison**: `Thesis_Surgical_Edit/style/compare-thesis.py` (build diff)
 
 ## PAGE NUMBERING CONFIGURATION
 - **Single section** with `titlePg` (different first page enabled)
@@ -212,5 +213,67 @@ d38baaf  chore: cleanup stale docs, old backups, DELIVERY_v13.4, and .crossflow
 - Verify academic standards
 - Assist with final polish before submission
 
-## ADDITIONAL CONTEXT FILES
-- **THESIS_CONTEXT.md**: Detailed thesis information and verification results
+## KNOWLEDGE BASE
+Read `.claude/knowledge/` for detailed reference:
+- **GROUND_TRUTH.md** — All locked numerical values, formulas, calculations
+- **STRUCTURE.md** — Heading hierarchy (9 H1, 40 H2, 56 H3, 18 H4), chapter map
+- **TABLE_CATALOG.md** — All 23 tables with expected values
+- **BUILD_REFERENCE.md** — Pipeline internals, phase-by-phase explanation
+- **COMMON_ISSUES.md** — 13 known problems and fixes
+- **VERIFICATION_CHECKLIST.md** — 36-point check definitions
+- **ALGERIAN_THESIS_SKILL.md** — CNEPD formatting standard (cover, typography, bibliography)
+- **DEFENSE_CHECKLISTS.md** — Demo flow, talking points, Q&A prep, backup plan
+- **AUDIT_PRIME_PACK.md** — Certification matrix, forbidden terms, architecture map
+- **PROJECT_SYNC.md** — Absolute ground truth, "Deadly Sins", structural hierarchy
+- **MASTER_PROMPT.md** — Thesis final polish system prompt (3-wrapper strategy)
+- **STRUCTURE_GUIDE.md** — Chapter hierarchy with mermaid maps
+- **FORMAT_GUIDE.md** — Fonts, colors, cover integration, table formatting
+- **CONTEXT_INDEX.md** — Navigation hub, loading order, token-saving strategy
+- **SPECTRUM_REGISTRY.md** — AI OS architecture (L0-L4 layers)
+- **CORE_KNOWLEDGE_SYSTEM.md** — Personal knowledge system design
+- **CERTIFICATION_MATRIX.md** — Mathematical proof of thesis-VBA consistency
+- **FORMATTING_HISTORY.md** — Earlier formatting decisions and workflow (383 lines)
+- **POLISH_HANDOFF.md** — Polish scope, known issues, pipeline commands
+- **GLOSSARY_AND_ABBREVIATIONS.md** — 60+ terms, abbreviations, glossary
+- **PROJECT_ASSESSMENT.md** — Agentic project mapping and DSS architecture insights
+- **pdf-mapping.json** — 30 reference PDFs organized by semester
+- **skill-registry.json** — 13 skills categorized by domain
+
+## SKILLS
+- **algerian-thesis**: `.opencode/skills/algerian-thesis.skill` — CNEPD thesis formatting, audit, and reformatting workflow
+- **karpathy-guidelines**: `.claude/plugins/andrej-karpathy-skills/skills/karpathy-guidelines/SKILL.md` — Code quality guidelines (think before coding, simplicity first, surgical changes, goal-driven execution)
+- **path-orchestrator**: `.opencode/skills/path-orchestrator.skill` — File system intelligence, structural integrity, proactive push protocol
+- **workspace-setup**: `.opencode/skills/workspace-setup.skill` — Workspace detection, drive routing, session load
+- **ssd-health-tools**: `.opencode/skills/ssd-health-tools.skill` — Drive health check, benchmark, deployment
+
+## KARPATHY GUIDELINES (Merged)
+**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+
+### 1. Think Before Coding
+**Don't assume. Don't hide confusion. Surface tradeoffs.**
+- State assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them — don't pick silently.
+- If a simpler approach exists, say so. Push back when warranted.
+- If something is unclear, stop. Name what's confusing. Ask.
+
+### 2. Simplicity First
+**Minimum code that solves the problem. Nothing speculative.**
+- No features beyond what was asked.
+- No abstractions for single-use code.
+- No "flexibility" or "configurability" that wasn't requested.
+- No error handling for impossible scenarios.
+- If you write 200 lines and it could be 50, rewrite it.
+
+### 3. Surgical Changes
+**Touch only what you must. Clean up only your own mess.**
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- If you notice unrelated dead code, mention it — don't delete it.
+
+### 4. Goal-Driven Execution
+**Define success criteria. Loop until verified.**
+- "Add validation" → "Write tests for invalid inputs, then make them pass"
+- "Fix the bug" → "Write a test that reproduces it, then make it pass"
+- "Refactor X" → "Ensure tests pass before and after"
+- For multi-step tasks, state a brief plan with verification checks.

@@ -38,8 +38,8 @@ DEFAULT_MD = os.path.join(PROJECT_ROOT, 'Thesis_Surgical_Edit', 'Memoire_DSS_Log
 GROUND_TRUTH_SETS = {
     'ART-001 (Papier A4)': {
         'D': '2112',
-        'Q*': '50',
-        'ROP': '417',
+        'Q*': '51',
+        'ROP': '459',
         'SS': '400',
         'LT': '7',
         'S': '50',

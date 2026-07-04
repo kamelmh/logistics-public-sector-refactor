@@ -27,3 +27,30 @@
 - Checkpoint: C:\Users\Admin\.omc\state\sessions\memory-checkpoint-latest.md
 - Pipeline: Thesis_Surgical_Edit/pipeline_v12.py
 - Python venv: C:\Users\Admin\AppData\Local\Temp\thesis-venv\Scripts\python.exe
+## SECRET PROJECT — Long-Term Goal (DO NOT SHARE PUBLICLY)
+**Date**: 2026-07-02
+**Status**: Foundation phase — building thesis DSS for personal use
+
+### Vision
+Build a **thesis-writing SaaS/platform** for Algerian CNEPD/تكوين مهني تقني سامي students.
+Target: Students who need help writing mémoires/theses but lack technical skills.
+
+### Strategy
+1. **Phase 1 (NOW)**: Perfect the thesis DOCX pipeline for personal use
+2. **Phase 2 (LATER)**: Package as reusable skill/template system
+3. **Phase 3 (FUTURE)**: Launch as platform on social media for Algerian students
+
+### Value Proposition
+- Arabic RTL thesis formatting (hard to find in tools)
+- CNEPD-specific structure (4 chapters, 17 مباحث, 52 مطالب)
+- Wilson model / inventory management templates
+- Auto-verification of numerical consistency
+- Professional DOCX output without Word expertise
+
+### Monetization Angle
+- Free tier: Basic thesis template
+- Premium: Full DSS pipeline + verification
+- Social media marketing: TikTok/YouTube tutorials in Arabic
+
+---
+

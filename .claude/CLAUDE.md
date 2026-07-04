@@ -21,13 +21,13 @@ opencode -m ollama/phi4-mini:latest
 ## Ground Truth (LOCKED — Never Modify)
 | Param | Value | Description |
 |-------|-------|-------------|
-| D | 33 units/yr | Annual demand |
-| Q* | 15 units | Wilson EOQ |
-| ROP | 200 units | Reorder Point |
+| D | 33 units/yr | Annual demand (ART-002) |
+| Q* | 15 units | Wilson EOQ (ART-002) |
+| ROP | 201 units | Reorder Point (LT=7) |
 | SS | 200 units | Safety Stock |
-| LT | 2 days | Lead Time |
-| S | 801.45 DZD | Order Cost |
-| PU | 1,200 DZD | Unit Price |
+| LT | 7 days | Lead Time |
+| S | 801.45 DZD | Order Cost (ART-002) / 50 DZD (others) |
+| PU | 1,200 DZD | Unit Price (ART-002) / 400 DZD (ART-001) |
 | I | 20% | Holding Rate |
 
 ## Current Status (Session 48)
