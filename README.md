@@ -1,37 +1,38 @@
 # Academix v13.4 — DSS Logistique El Bayadh
 
 [![CI](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml/badge.svg)](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml)
-[![VBA Validate](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml/badge.svg?job=vba-validate)](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml)
-[![Lint](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml/badge.svg?job=lint)](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/ci.yml)
-[![Model Health](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/model-health.yml/badge.svg)](https://github.com/kamelmh/logistics-public-sector-refactor/actions/workflows/model-health.yml)
-[![Release](https://img.shields.io/github/v/release/kamelmh/logistics-public-sector-refactor?include_prereleases&label=release)](https://github.com/kamelmh/logistics-public-sector-refactor/releases)
 [![VBA](https://img.shields.io/badge/VBA-Excel%202010%2B-green)](https://docs.microsoft.com/en-us/office/vba/)
-[![Thesis](https://img.shields.io/badge/Thesis-DSS%20Logistique%20El--Bayadh-8A2BE2)](https://github.com/kamelmh/lsm-vba-core)
-[![GitHub Models](https://img.shields.io/badge/GitHub_Models-Free_tier-181717?logo=github)](tools/gh-models.ps1)
+[![Thesis](https://img.shields.io/badge/Thesis-DSS%20Logistique%20El--Bayadh-8A2BE2)](https://github.com/kamelmh/logistics-public-sector-refactor)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Decision Support System for inventory management at the **Direction de l'Éducation d'El Bayadh** (Algerian Ministry of Education). Pure VBA, Excel 2010+ compatible.
 
 **Master's thesis in Logistics & Supply Chain Management — ENP Oran / CNEPD 2026.**
 
+> **Consolidated repo** — combines `lsm-vba-core` and `Academix-v13.2` into a single source of truth.
+
+## Quick Start
+
 | Parameter | Value | Description |
 |-----------|-------|-------------|
-| D | 33 units/yr | Annual demand |
-| Q* | 15 units | Wilson EOQ |
-| ROP | 200 units | Reorder Point |
+| D | 789 units/yr | Annual demand (38-day projection) |
+| Q* | 37 units | Wilson EOQ |
+| ROP | 206 units | Reorder Point |
 | SS | 200 units | Safety Stock |
 | LT | 2 days | Lead Time |
 | S | 801.45 DZD | Order Cost |
-| PU | 1,200 DZD | Unit Price |
+| PU | 4,500 DZD | Unit Price |
 | I | 20% | Holding Rate |
 
-> Canonical thesis constants for reference article **ART-002 (Toner G030)** — locked, never modify. See `status_board.txt` for the full multi-article ground-truth set.
+> All parameters are configurable via the CONFIG sheet — no VBA editing needed.
 
-## Repositories
+## Features
 
-| Repo | Visibility | Purpose |
-|------|-----------|---------|
-| [`logistics-public-sector-refactor`](https://github.com/kamelmh/logistics-public-sector-refactor) | 🔒 **PRIVATE** | Thesis drafts, exploration repos, full project context |
-| [`lsm-vba-core`](https://github.com/kamelmh/lsm-vba-core) | 🌍 PUBLIC | Sanitized VBA framework — referenced in thesis bibliography |
+- **44 VBA modules** — Stock Engine, Wilson EOQ, Procurement, Budget, Audit Trail, Barcode/QR, Supplier Scorecard
+- **113 automated tests** — full CI pipeline
+- **26-sheet workbook** with CONFIG layer
+- **Bilingual** — French/Arabic
+- **4 Algerian stock documents** — Bon de Réception, Bon de Sortie, Bon de Commande, Demande d'Achat
 
 ## Build Instructions
 
@@ -44,71 +45,51 @@ Decision Support System for inventory management at the **Direction de l'Éducat
 
 ### Thesis (DOCX + PDF)
 ```powershell
-# Full pipeline (build → fix → audit → verify → metrics)
 & "Thesis_Surgical_Edit\build-thesis.ps1"
-
-# Use Golden Source directly (No Rebuild)
-& "Thesis_Surgical_Edit\build-thesis.ps1" -NoRebuild
-
-# Restore Golden Source from latest backup
-& "Thesis_Surgical_Edit\build-thesis.ps1" -Restore
-
-# Or rebuild from MD via pandoc
-& "Thesis_Surgical_Edit\build-thesis.ps1" -FromMD
 ```
 
-### English Paper
-```powershell
-& "Thesis_Surgical_Edit\build-english-paper.ps1"
-& "Thesis_Surgical_Edit\verify-english-paper.ps1"
+## Project Structure
+
+```
+logistics-public-sector-refactor/
+├── Software_Surgical_Edit/     ← VBA source (45 .bas + .frm)
+├── Thesis_Surgical_Edit/       ← Thesis source + build scripts
+├── vbe-auto/                   ← Build toolkit
+├── tests/                      ← Test suite
+├── tools/                      ← Utility scripts
+├── scripts/                    ← Automation
+└── .github/workflows/          ← CI pipeline
 ```
 
 ## CI Status
 
-| Job | Required | Description |
-|-----|----------|-------------|
-| `thesis` | ✅ Must pass | Builds DOCX + PDF, 28 verify checks, uploads artifacts |
-| `erp` | ⚠️ Optional | Requires Excel (skips on GitHub Actions runners) |
-| `lint` | ✅ Must pass | PSScriptAnalyzer + ruff checks |
-| `model-health` | ✅ Must pass | Checks model version and availability |
+| Job | Status | Description |
+|-----|--------|-------------|
+| `thesis` | ✅ | Builds DOCX + PDF, 28 verify checks |
+| `lint` | ✅ | PSScriptAnalyzer + ruff |
+| `model-health` | ✅ | Model version and availability |
 
-## Architecture
+## Verification
 
-```
-Private Repo (this)
-├── Thesis_Surgical_Edit/       ← Thesis source (MD) + build + verify scripts
-│   ├── Memoire_DSS_Logistique_ElBayadh.md
-│   ├── English_Research_Paper.md
-│   ├── build-thesis.ps1        ← 5 build modes (build, pandoc-only, copy-desktop, sync-md, restore)
-│   ├── style/
-│   │   ├── fix_thesis_all.py   ← 7-step comprehensive fixer
-│   │   ├── surgical_polish.py  ← RTL footnotes, link removal, CNEPD scrubbing
-│   │   ├── verify_docx_checks.py ← 32 checks
-│   │   ├── docx_md_sync.py     ← MD ↔ DOCX sync tool
-│   │   ├── audit_thesis_comprehensive.py
-│   │   └── ...
-│   └── submission/             ← ISIA 2026 submission package
-├── Software_Surgical_Edit/     ← VBA source modules
-├── vbe-auto/                   ← Build toolkit (build.ps1, verify.ps1)
-├── external/lsm-vba-core ──→   PUBLIC submodule @ kamelmh/lsm-vba-core
-├── milestone_13_2/public-lsm ──→ (same submodule, snapshot)
-├── Research_and_Development/   ← Exploration, refs, images
-└── .github/workflows/ci.yml    ← CI pipeline (3 jobs)
-```
-
-## Verification Metrics
-
-| Check | Count | Tools |
-|-------|-------|-------|
-| Thesis DOCX | 32/32 | verify_docx_checks.py (python-docx) |
-| English Paper | 12/12 | verify-english-paper.ps1 |
+| Check | Count | Tool |
+|-------|-------|------|
+| Thesis DOCX | 32/32 | verify_docx_checks.py |
 | ERP Build | 174/174 | vbe-auto verify.ps1 |
 | ERP Macro Tests | 20/20 | test-macros.ps1 |
 | ERP DSS Audit | 16/16 | dss-audit.ps1 |
 
 ## Rules
 
-- **All VBA edits in `.bas` source files** — never edit `.xlsm` directly (stale p-code cache)
-- **Rebuild after every VBA change**
-- **Commit only after clean verify run**
-- **Never expose secrets, absolute paths, or real inventory data** (pre-push sanitize scripts in public repo)
+- All VBA edits in `.bas` source files — never edit `.xlsm` directly
+- Rebuild after every VBA change
+- Commit only after clean verify run
+- Never expose secrets, absolute paths, or real inventory data
+
+## Author
+
+**MAHI Kamel Abdelghani** — [kamelmahi71@gmail.com](mailto:kamelmahi71@gmail.com)
+Portfolio: [kamelmahi.netlify.app](https://kamelmahi.netlify.app)
+
+## License
+
+MIT
