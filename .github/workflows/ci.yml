@@ -178,6 +178,8 @@ jobs:
   lint:
     name: Lint (PowerShell + Python)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
     - uses: actions/checkout@v6
 
