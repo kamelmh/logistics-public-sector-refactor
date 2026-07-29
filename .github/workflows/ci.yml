@@ -22,7 +22,7 @@ jobs:
     name: VBA source validation (12 checks)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Setup Python
       uses: actions/setup-python@v7
       with:
@@ -37,7 +37,7 @@ jobs:
     name: Thesis build & verify
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       # NOTE: submodules NOT fetched — some submodules have filename lengths
       # exceeding Windows MAX_PATH (260 chars), causing checkout failures.
       # CI only needs main repo files (MD sources + Python scripts + build tools).
@@ -116,7 +116,7 @@ jobs:
     runs-on: windows-latest
     continue-on-error: true
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Check for Excel
       id: check-excel
@@ -179,7 +179,7 @@ jobs:
     name: Lint (PowerShell + Python)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Install PSScriptAnalyzer
       run: |
