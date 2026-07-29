@@ -7,6 +7,9 @@ on:
     branches: [ master ]
   workflow_dispatch:       # allow manual trigger from Actions tab
 
+permissions:
+  contents: read
+
 env:
   PYTHON_VERSION: '3.x'
   PYTHONIOENCODING: utf-8          # Fix Unicode box-drawing chars in GA runner (Python 3.14+)
