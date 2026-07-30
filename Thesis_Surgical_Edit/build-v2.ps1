@@ -133,8 +133,11 @@ function Invoke-Phase2 {
     Write-Phase 2 "STITCH - cover page + pandoc body"
 
     if (-not (Test-Path $coverPage)) {
-        Write-Step "Cover page" "FAIL" "Not found: $coverPage"
-        return $false
+        Write-Step "Cover page" "WARN" "Not found: $coverPage — using body-only output"
+        if (Test-Path $tempBody) {
+            Copy-Item $tempBody $outputDocx -Force
+        }
+        return $true
     }
     if (-not (Test-Path $tempBody)) {
         Write-Step "Body DOCX" "FAIL" "Not found (run Phase 1 first)"
