@@ -50,8 +50,8 @@ jobs:
       with:
         python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: Install python-docx
-      run: pip install python-docx lxml
+    - name: Install python-docx and uv
+      run: pip install python-docx lxml uv
 
     - name: Setup Pandoc
       run: choco install pandoc --no-progress -y
