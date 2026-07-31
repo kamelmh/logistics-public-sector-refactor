@@ -35,7 +35,7 @@ Public Sub RunStockOutPrediction()
     wsOut.Cells.Clear
 
     With wsOut
-        .Range("A1:H1").Merge
+        .Range("A1:I1").Merge
         .Cells(1, 1).Value = "PREVISION DES RUPTURES DE STOCK"
         .Cells(1, 1).Font.Bold = True
         .Cells(1, 1).Font.Size = 14
@@ -50,9 +50,10 @@ Public Sub RunStockOutPrediction()
         .Cells(4, 6).Value = "DATE_PREVISION_RUPTURE"
         .Cells(4, 7).Value = "STATUT"
         .Cells(4, 8).Value = "VALEUR_STOCK (DZD)"
-        .Range("A4:H4").Font.Bold = True
-        .Range("A4:H4").Interior.Color = RGB(0, 70, 127)
-        .Range("A4:H4").Font.Color = RGB(255, 255, 255)
+        .Cells(4, 9).Value = "DSI (jours)"
+        .Range("A4:I4").Font.Bold = True
+        .Range("A4:I4").Interior.Color = RGB(0, 70, 127)
+        .Range("A4:I4").Font.Color = RGB(255, 255, 255)
     End With
 
     outRow = 5
@@ -104,16 +105,18 @@ Public Sub RunStockOutPrediction()
             .Cells(outRow, 7).Value = status
             .Cells(outRow, 8).Value = currentStock * pu
             .Cells(outRow, 8).NumberFormat = "#,##0.00"
+            .Cells(outRow, 9).Value = Round(mod_StockEngine.CalculateDSI(artCode), 0)
+            .Cells(outRow, 9).NumberFormat = "0"
 
             Select Case status
                 Case "EN_RUPTURE"
-                    .Range(.Cells(outRow, 3), .Cells(outRow, 8)).Interior.Color = RGB(255, 180, 180)
+                    .Range(.Cells(outRow, 3), .Cells(outRow, 9)).Interior.Color = RGB(255, 180, 180)
                 Case "CRITIQUE"
-                    .Range(.Cells(outRow, 3), .Cells(outRow, 8)).Interior.Color = RGB(255, 220, 220)
+                    .Range(.Cells(outRow, 3), .Cells(outRow, 9)).Interior.Color = RGB(255, 220, 220)
                 Case "ALERTE"
-                    .Range(.Cells(outRow, 3), .Cells(outRow, 8)).Interior.Color = RGB(255, 243, 224)
+                    .Range(.Cells(outRow, 3), .Cells(outRow, 9)).Interior.Color = RGB(255, 243, 224)
                 Case "ATTENTION"
-                    .Range(.Cells(outRow, 3), .Cells(outRow, 8)).Interior.Color = RGB(255, 255, 210)
+                    .Range(.Cells(outRow, 3), .Cells(outRow, 9)).Interior.Color = RGB(255, 255, 210)
             End Select
         End With
 

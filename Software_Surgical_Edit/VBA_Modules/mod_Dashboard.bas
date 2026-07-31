@@ -67,24 +67,27 @@ Private Sub UpdateKPIs(ws As Worksheet)
     Dim countRupture As Long
     Dim countAlert As Long
     Dim totalValue As Double
+    Dim i As Long
+    Dim stock As Long, pu As Double, sku As String
+    Dim ss As Double, AnnualDemand As Double, rop As Double
+    Dim totalTurnover As Double, artCount As Long
+    Dim tr As Double, skuITR As String
+    Dim totalDSI As Double, dsiCount As Long
+    Dim dsi As Double, skuDSI As String
     
     totalSKUs = wsArt.Cells(wsArt.Rows.count, COL_ART_CODE).End(xlUp).Row - 1
     If totalSKUs < 0 Then totalSKUs = 0
     
-    ' Iterate through ARTICLES to find status and total value
-    Dim i As Long
     On Error Resume Next
     For i = 2 To totalSKUs + 1
-        Dim stock As Long: stock = Val(wsArt.Cells(i, COL_ART_STOCK).Value) ' Col C: Stock
-        Dim pu As Double: pu = Val(wsArt.Cells(i, COL_ART_PU).Value)     ' Col H: PU
-        
+        stock = Val(wsArt.Cells(i, COL_ART_STOCK).Value)
+        pu = Val(wsArt.Cells(i, COL_ART_PU).Value)
         totalValue = totalValue + (stock * pu)
         
-        ' Simple status check based on ROP/SS from mod_StockEngine
-        Dim sku As String: sku = Trim(wsArt.Cells(i, COL_ART_CODE).Value)
-        Dim ss As Double: ss = mod_StockEngine.GetSafetyStock(sku)
-        Dim AnnualDemand As Double: AnnualDemand = mod_StockEngine.GetAnnualDemandFromHistory(sku)
-        Dim rop As Double: rop = mod_StockEngine.ComputeROP(AnnualDemand / mod_Config.WORKING_DAYS_PER_YEAR, sku)
+        sku = Trim(wsArt.Cells(i, COL_ART_CODE).Value)
+        ss = mod_StockEngine.GetSafetyStock(sku)
+        AnnualDemand = mod_StockEngine.GetAnnualDemandFromHistory(sku)
+        rop = mod_StockEngine.ComputeROP(AnnualDemand / mod_Config.WORKING_DAYS_PER_YEAR, sku)
         
         If stock <= 0 Then
             countRupture = countRupture + 1
@@ -110,16 +113,50 @@ Private Sub UpdateKPIs(ws As Worksheet)
     ws.Range("C5").Value = totalValue
     ws.Range("C5").NumberFormat = "#,##0.00 ""DZD"""
     
+    ' ITR: Average turnover ratio across all articles
+    totalTurnover = 0: artCount = 0
+    For i = 2 To totalSKUs + 1
+        skuITR = Trim(wsArt.Cells(i, COL_ART_CODE).Value)
+        If skuITR <> "" Then
+            tr = mod_StockEngine.CalculateTurnoverRatio(skuITR)
+            If tr > 0 Then
+                totalTurnover = totalTurnover + tr
+                artCount = artCount + 1
+            End If
+        End If
+    Next i
     ws.Range("B6").Value = "Rotation Moyenne (ITR)"
-    ' Simplified ITR for Dashboard
-    ws.Range("C6").Value = "Calcul Local"
+    If artCount > 0 Then
+        ws.Range("C6").Value = Round(totalTurnover / artCount, 2) & "x"
+    Else
+        ws.Range("C6").Value = "N/A"
+    End If
+    
+    ' DSI: Average days sales of inventory
+    totalDSI = 0: dsiCount = 0
+    For i = 2 To totalSKUs + 1
+        skuDSI = Trim(wsArt.Cells(i, COL_ART_CODE).Value)
+        If skuDSI <> "" Then
+            dsi = mod_StockEngine.CalculateDSI(skuDSI)
+            If dsi < 999 Then
+                totalDSI = totalDSI + dsi
+                dsiCount = dsiCount + 1
+            End If
+        End If
+    Next i
+    ws.Range("B7").Value = "Jours de Stock Moyens (DSI)"
+    If dsiCount > 0 Then
+        ws.Range("C7").Value = Round(totalDSI / dsiCount, 0) & " jours"
+    Else
+        ws.Range("C7").Value = "N/A"
+    End If
     
     ' Formatting
-    With ws.Range("B2:B6")
+    With ws.Range("B2:B7")
         .Font.Bold = True
         .HorizontalAlignment = xlRight
     End With
-    With ws.Range("C2:C5")
+    With ws.Range("C2:C7")
         .Font.Size = 12
         .Font.Bold = True
         .HorizontalAlignment = xlLeft
