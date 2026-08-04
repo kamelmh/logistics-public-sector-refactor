@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistics Public Sector Refactor — Documentation</title>
+    <style>
+        :root {
+            --primary: #1a365d;
+            --accent: #d4a574;
+            --bg: #0a0a0f;
+            --card-bg: #12121a;
+            --text: #e0d5c1;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .hero {
+            text-align: center;
+            padding: 80px 20px 60px;
+            background: linear-gradient(135deg, #1a1a25 0%, #0a0a0f 100%);
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        .hero .subtitle {
+            color: #888;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        .hero .badge {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--bg);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .section {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .section h2 {
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .docs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+        .doc-item {
+            background: var(--card-bg);
+            border: 1px solid #222;
+            border-radius: 8px;
+            padding: 20px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+        .doc-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        .doc-icon {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+        }
+        .doc-item h3 {
+            color: var(--accent);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        .doc-item p {
+            color: #888;
+            font-size: 0.85rem;
+        }
+        .cta {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .cta a {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--bg);
+            padding: 12px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 8px;
+            transition: all 0.3s ease;
+        }
+        .cta a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(212, 165, 116, 0.3);
+        }
+        footer {
+            text-align: center;
+            color: #555;
+            font-size: 0.85rem;
+            padding: 40px 20px;
+            border-top: 1px solid #222;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>Logistics Public Sector Refactor</h1>
+        <p class="subtitle">VBA Decision Support System for Algerian Public Sector Logistics</p>
+        <span class="badge">Thesis Project</span>
+    </div>
+
+    <div class="section">
+        <h2>Documentation</h2>
+        <div class="docs">
+            <a href="README.md" class="doc-item">
+                <div class="doc-icon">📖</div>
+                <h3>README</h3>
+                <p>Project overview, installation, and usage instructions</p>
+            </a>
+            <a href="THESIS_CONTEXT.md" class="doc-item">
+                <div class="doc-icon">🎓</div>
+                <h3>Thesis Context</h3>
+                <p>Academic context and research background</p>
+            </a>
+            <a href="ROADMAP_v13.4+.md" class="doc-item">
+                <div class="doc-icon">🗺️</div>
+                <h3>Roadmap v13.4+</h3>
+                <p>Future development plans and features</p>
+            </a>
+            <a href="CONTRIBUTING.md" class="doc-item">
+                <div class="doc-icon">🤝</div>
+                <h3>Contributing</h3>
+                <p> guidelines for contributors</p>
+            </a>
+            <a href="CLASSIFICATION.md" class="doc-item">
+                <div class="doc-icon">📊</div>
+                <h3>Classification</h3>
+                <p>Module classification and architecture</p>
+            </a>
+            <a href="MANIFEST.md" class="doc-item">
+                <div class="doc-icon">📋</div>
+                <h3>Manifest</h3>
+                <p>Complete file inventory and dependencies</p>
+            </a>
+            <a href="SECURITY.md" class="doc-item">
+                <div class="doc-icon">🔒</div>
+                <h3>Security</h3>
+                <p>Security policies and procedures</p>
+            </a>
+            <a href="HANDOFF.md" class="doc-item">
+                <div class="doc-icon">👋</div>
+                <h3>Handoff</h3>
+                <p>Project handoff documentation</p>
+            </a>
+        </div>
+    </div>
+
+    <div class="cta">
+        <a href="https://github.com/kamelmh/logistics-public-sector-refactor">⭐ GitHub</a>
+        <a href="https://github.com/kamelmh/logistics-public-sector-refactor/issues">🐛 Issues</a>
+    </div>
+
+    <footer>
+        <p>© 2026 Mahi Kamel Abdelghani — Logistics Public Sector Refactor</p>
+    </footer>
+</body>
+</html>
