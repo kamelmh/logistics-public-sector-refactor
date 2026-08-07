@@ -1,0 +1,9 @@
+{
+  "master_workbook": "GOLDEN_ERP_v13.4.xlsm",
+  "vba_source_dir": "Software_Surgical_Edit\\VBA_Modules",
+  "output_workbook": "ERP_v13.4.xlsm",
+  "thisworkbook_source": "Software_Surgical_Edit\\VBA_Modules\\ThisWorkbook.cls",
+  "data_persist": "Software_Surgical_Edit\\data-persist.json",
+  "project_name": "Academix v13.4 ERP",
+  "version": "13.4"
+}

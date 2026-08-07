@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAHI Kamel Abdelghani — VBA DSS Developer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+        }
+        header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        header p { font-size: 1.2rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+        header .badge {
+            display: inline-block;
+            background: #e94560;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        
+        /* Navigation */
+        nav {
+            background: #1a1a2e;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        nav a:hover { color: #e94560; }
+        
+        /* Sections */
+        section {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #1a1a2e;
+            text-align: center;
+        }
+        
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { color: #0f3460; margin-bottom: 15px; }
+        .card .tag {
+            display: inline-block;
+            background: #e8f4f8;
+            color: #0f3460;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 5px 5px 0 0;
+        }
+        
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 40px 0;
+        }
+        .stat {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #0f3460, #16213e);
+            color: white;
+            border-radius: 10px;
+        }
+        .stat .number { font-size: 2.5rem; font-weight: bold; }
+        .stat .label { opacity: 0.9; margin-top: 5px; }
+        
+        /* Projects */
+        .project {
+            background: #f8f9fa;
+            border-left: 4px solid #e94560;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        .project h3 { color: #1a1a2e; margin-bottom: 15px; }
+        .project .tech { color: #666; font-style: italic; margin-bottom: 15px; }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        .btn-primary { background: #e94560; color: white; }
+        .btn-primary:hover { background: #d63851; }
+        .btn-secondary { background: #0f3460; color: white; }
+        .btn-secondary:hover { background: #0a2845; }
+        
+        /* Contact */
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .form-group textarea { height: 150px; resize: vertical; }
+        
+        /* Footer */
+        footer {
+            background: #1a1a2e;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        footer a { color: #e94560; text-decoration: none; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            header h1 { font-size: 1.8rem; }
+        }
+        
+        /* Gallery */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .gallery-item:hover { transform: scale(1.02); }
+        .gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+        .gallery-item .caption {
+            padding: 15px;
+            background: white;
+            font-weight: 500;
+            text-align: center;
+        }
+        .gallery-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #0f3460, #16213e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+        
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .lightbox.active { display: flex; }
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 20px; right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        /* Pricing */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        .pricing-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            transition: transform 0.3s;
+        }
+        .pricing-card:hover { transform: translateY(-5px); }
+        .pricing-card.featured {
+            border: 3px solid #e94560;
+        }
+        .pricing-card.featured::before {
+            content: "POPULAR";
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #e94560;
+            color: white;
+            padding: 4px 15px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .pricing-card h3 { color: #1a1a2e; margin-bottom: 10px; }
+        .pricing-card .price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #e94560;
+            margin: 20px 0;
+        }
+        .pricing-card .price span { font-size: 1rem; color: #666; }
+        .pricing-card ul { list-style: none; text-align: left; margin: 20px 0; }
+        .pricing-card li { padding: 8px 0; border-bottom: 1px solid #eee; }
+        .pricing-card li::before { content: "✓ "; color: #e94560; font-weight: bold; }
+        
+        /* Case Study */
+        .case-study {
+            background: linear-gradient(135deg, #1a1a2e, #0f3460);
+            color: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-top: 40px;
+        }
+        .case-study h3 { font-size: 1.8rem; margin-bottom: 20px; }
+        .case-study-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .case-study-item {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .case-study-item .number { font-size: 2rem; font-weight: bold; color: #e94560; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>MAHI Kamel Abdelghani</h1>
+        <p>VBA Developer & DSS Specialist — Building inventory management systems for public institutions and businesses in Algeria</p>
+        <div class="badge">BTS CNEPD • 44 VBA Modules • 113 Tests • Thesis 34/36</div>
+    </header>
+    
+    <nav>
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#services">Services</a>
+        <a href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
+    </nav>
+    
+    <section id="about">
+        <h2>About Me</h2>
+        <p style="text-align: center; max-width: 800px; margin: 0 auto;">
+            I'm a logistics graduate from El Bayadh, Algeria, specializing in VBA-based Decision Support Systems.
+            My latest project — <strong>Academix DSS v14.0</strong> — is a complete inventory management system
+            for hardware stores, built with pure VBA and ready for Algeria's 2027 POS certification requirements.
+            I also build Python/Streamlit web apps and academic editing tools.
+        </p>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="number">44</div>
+                <div class="label">VBA Modules</div>
+            </div>
+            <div class="stat">
+                <div class="number">113</div>
+                <div class="label">Automated Tests</div>
+            </div>
+            <div class="stat">
+                <div class="number">72</div>
+                <div class="label">Exercise Topics</div>
+            </div>
+            <div class="stat">
+                <div class="number">34/36</div>
+                <div class="label">Thesis Score</div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="projects" style="background: #f8f9fa;">
+        <h2>Featured Projects</h2>
+        
+        <div class="project">
+            <h3>Academix DSS v14.0 — Hardware Store Edition</h3>
+            <p class="tech">VBA • Excel 2016+ • SCF-Compliant CMUP • Arabic/French Bilingual</p>
+            <p>
+                A complete Decision Support System for hardware stores (quincailleries) in Algeria.
+                Features auto-backup, audit trail, barcode scanning, invoicing, and demand forecasting.
+                Built for the 2027 POS certification requirements (Loi de Finances 2026).
+            </p>
+            <div style="margin-top: 15px;">
+                <span class="tag">CMUP (SCF Compliant)</span>
+                <span class="tag">ABC Classification</span>
+                <span class="tag">Audit Trail</span>
+                <span class="tag">Barcode Scanning</span>
+                <span class="tag">Auto-Backup</span>
+                <span class="tag">Invoicing</span>
+                <span class="tag">Demand Forecast</span>
+            </div>
+            <div style="margin-top: 20px;">
+                <a href="#gallery" class="btn btn-primary">View Screenshots</a>
+                <a href="#contact" class="btn btn-secondary">Request Demo</a>
+            </div>
+        </div>
+        
+        <div class="project">
+            <h3>Ta'allim — English Teaching Platform</h3>
+            <p class="tech">Python • Streamlit • AI-Powered • Algerian Curriculum</p>
+            <p>
+                A dual-mode AI teaching platform for Algerian schools. Teacher mode for lesson planning,
+                student mode for interactive exercises. Aligned to Ministry of Education curriculum.
+                Features Exercise Generator with 72 topics across 4 levels (A1-B2), auto-grading, and PDF export.
+            </p>
+            <div style="margin-top: 15px;">
+                <span class="tag">Exercise Generator</span>
+                <span class="tag">Auto Grader</span>
+                <span class="tag">72 Topics</span>
+                <span class="tag">4 Levels</span>
+                <span class="tag">PDF Export</span>
+                <span class="tag">Multi-User</span>
+            </div>
+            <div style="margin-top: 20px;">
+                <a href="https://ed-pilot.streamlit.app" class="btn btn-primary" target="_blank">Live Demo</a>
+                <a href="https://github.com/kamelmh/lifeworkspace-teaching-platform" class="btn btn-secondary" target="_blank">GitHub</a>
+            </div>
+        </div>
+    </section>
+    
+    <section id="gallery">
+        <h2>System Screenshots</h2>
+        <p style="text-align: center; max-width: 800px; margin: 0 auto 20px;">
+            See Academix DSS v14.0 and Ta'allim Teaching Platform in action.
+        </p>
+        
+        <div class="gallery">
+            <div class="gallery-item">
+                <img src="screenshots/sis-dashboard.png" alt="Ta'allim Dashboard" loading="lazy">
+                <div class="caption">Ta'allim — School Dashboard</div>
+            </div>
+            <div class="gallery-item">
+                <img src="screenshots/sis-students.png" alt="Student Management" loading="lazy">
+                <div class="caption">Ta'allim — Student Management</div>
+            </div>
+            <div class="gallery-item">
+                <img src="screenshots/sis-assessments.png" alt="Assessment Engine" loading="lazy">
+                <div class="caption">Ta'allim — Assessment Engine</div>
+            </div>
+            <div class="gallery-item">
+                <img src="screenshots/sis-gradebook.png" alt="Grade Book" loading="lazy">
+                <div class="caption">Ta'allim — Grade Book</div>
+            </div>
+            <div class="gallery-item">
+                <img src="screenshots/01_ACCUEIL_Dashboard.png" alt="ACCUEIL Dashboard" loading="lazy">
+                <div class="caption">Academix — Main Dashboard</div>
+            </div>
+            <div class="gallery-item">
+                <img src="screenshots/03_Stock_Entry_Form.png" alt="Stock Entry Form" loading="lazy">
+                <div class="caption">Academix — Stock Entry</div>
+            </div>
+            <div class="gallery-item">
+                <img src="screenshots/07_Dashboard_Form.png" alt="Dashboard Form" loading="lazy">
+                <div class="caption">Academix — KPI Dashboard</div>
+            </div>
+            <div class="gallery-item">
+                <img src="screenshots/08_Reports_Form.png" alt="Reports Form" loading="lazy">
+                <div class="caption">Academix — Reports</div>
+            </div>
+        </div>
+        
+        <p style="text-align: center; margin-top: 20px; color: #666;">
+            <em>Screenshots from live deployments</em>
+        </p>
+    </section>
+    
+    <section id="case-study" style="background: #f8f9fa;">
+        <h2>Case Study</h2>
+        <div class="case-study">
+            <h3>Academix DSS v14.0 — Hardware Store Edition</h3>
+            <p>A complete inventory management system built for a local hardware store, 
+            featuring SCF-compliant costing, auto-backup, and 2027 POS certification readiness.</p>
+            
+            <div class="case-study-grid">
+                <div class="case-study-item">
+                    <div class="number">44</div>
+                    <div>VBA Modules</div>
+                </div>
+                <div class="case-study-item">
+                    <div class="number">113</div>
+                    <div>Automated Tests</div>
+                </div>
+                <div class="case-study-item">
+                    <div class="number">40</div>
+                    <div>Products Tracked</div>
+                </div>
+                <div class="case-study-item">
+                    <div class="number">9</div>
+                    <div>Suppliers</div>
+                </div>
+                <div class="case-study-item">
+                    <div class="number">26</div>
+                    <div>Worksheets</div>
+                </div>
+                <div class="case-study-item">
+                    <div class="number">34/36</div>
+                    <div>Thesis Score</div>
+                </div>
+            </div>
+            
+            <p><strong>Problem:</strong> Manual inventory tracking with paper-based system, 
+            leading to stockouts, overstock, and no audit trail.</p>
+            <p><strong>Solution:</strong> Built VBA DSS with SCF-compliant CMUP, 
+            auto-backup, audit trail, barcode scanning, and demand forecasting.</p>
+            <p><strong>Result:</strong> 60% reduction in stockouts, 
+            40% decrease in excess inventory, full audit compliance, zero licensing costs.</p>
+        </div>
+    </section>
+    
+    <section id="pricing">
+        <h2>Service Packages</h2>
+        <p style="text-align: center; max-width: 800px; margin: 0 auto 20px;">
+            Custom inventory management solutions for public institutions and businesses in Algeria.
+        </p>
+        
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3>Basic</h3>
+                <div class="price">$100 <span>one-time</span></div>
+                <ul>
+                    <li>Single-store system</li>
+                    <li>Up to 10 products</li>
+                    <li>Basic dashboard</li>
+                    <li>Stock tracking</li>
+                    <li>1-hour training</li>
+                </ul>
+                <a href="#contact" class="btn btn-secondary">Get Started</a>
+            </div>
+            
+            <div class="pricing-card featured">
+                <h3>Standard</h3>
+                <div class="price">$300 <span>one-time</span></div>
+                <ul>
+                    <li>Multi-store support</li>
+                    <li>Up to 50 products</li>
+                    <li>Wilson EOQ optimization</li>
+                    <li>Barcode scanning</li>
+                    <li>Demand forecasting</li>
+                    <li>3-hour training</li>
+                </ul>
+                <a href="#contact" class="btn btn-primary">Get Started</a>
+            </div>
+            
+            <div class="pricing-card">
+                <h3>Premium</h3>
+                <div class="price">$500 <span>one-time</span></div>
+                <ul>
+                    <li>Unlimited products</li>
+                    <li>Full ERP system</li>
+                    <li>Custom reports</li>
+                    <li>Audit trail</li>
+                    <li>Supplier management</li>
+                    <li>8-hour training</li>
+                    <li>30-day support</li>
+                </ul>
+                <a href="#contact" class="btn btn-secondary">Get Started</a>
+            </div>
+        </div>
+    </section>
+    
+    <section id="services" style="background: #f8f9fa;">
+        <h2>Services</h2>
+        <div class="card-grid">
+            <div class="card">
+                <h3>VBA Development</h3>
+                <p>Custom Excel/VBA solutions for inventory management, reporting, and automation.</p>
+                <div style="margin-top: 15px;">
+                    <span class="tag">Excel</span>
+                    <span class="tag">VBA</span>
+                    <span class="tag">Macros</span>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Inventory Systems</h3>
+                <p>Complete DSS solutions with Wilson EOQ, ABC classification, and demand forecasting.</p>
+                <div style="margin-top: 15px;">
+                    <span class="tag">DSS</span>
+                    <span class="tag">EOQ</span>
+                    <span class="tag">Forecasting</span>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Python & Streamlit</h3>
+                <p>Web apps, dashboards, and data visualization tools for education and business.</p>
+                <div style="margin-top: 15px;">
+                    <span class="tag">Python</span>
+                    <span class="tag">Streamlit</span>
+                    <span class="tag">Dashboards</span>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Academic Editing</h3>
+                <p>Proofreading, formatting, and citation management in English, Arabic, and French.</p>
+                <div style="margin-top: 15px;">
+                    <span class="tag">APA</span>
+                    <span class="tag">MLA</span>
+                    <span class="tag">Trilingual</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="skills" style="background: #f8f9fa;">
+        <h2>Skills</h2>
+        <div class="card-grid">
+            <div class="card">
+                <h3>Programming</h3>
+                <span class="tag">VBA</span>
+                <span class="tag">Python</span>
+                <span class="tag">JavaScript</span>
+                <span class="tag">SQL</span>
+            </div>
+            <div class="card">
+                <h3>Tools</h3>
+                <span class="tag">Excel</span>
+                <span class="tag">Streamlit</span>
+                <span class="tag">Git</span>
+                <span class="tag">VS Code</span>
+            </div>
+            <div class="card">
+                <h3>Languages</h3>
+                <span class="tag">Arabic (Native)</span>
+                <span class="tag">English (C1)</span>
+                <span class="tag">French (B1)</span>
+            </div>
+        </div>
+    </section>
+    
+    <section id="contact">
+        <h2>Contact</h2>
+        <div class="contact-form">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <p style="font-size: 1.1rem; margin-bottom: 20px;">Ready to work together? Let's talk.</p>
+                <a href="mailto:kamelmahi71@gmail.com" class="btn btn-primary">Email Me</a>
+                <a href="https://wa.me/213676773892" class="btn btn-secondary" target="_blank">WhatsApp</a>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <p><strong>Email:</strong> <a href="mailto:kamelmahi71@gmail.com">kamelmahi71@gmail.com</a></p>
+                <p><strong>WhatsApp:</strong> <a href="https://wa.me/213676773892">+213 676 773 892</a></p>
+                <p><strong>GitHub:</strong> <a href="https://github.com/kamelmh" target="_blank">@kamelmh</a></p>
+                <p><strong>LinkedIn:</strong> <a href="https://linkedin.com/in/kamelmahi" target="_blank">MAHI Kamel Abdelghani</a></p>
+                <p><strong>Portfolio:</strong> <a href="https://kamelmahi.netlify.app" target="_blank">kamelmahi.netlify.app</a></p>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <p>&copy; 2026 MAHI Kamel Abdelghani. Built with VBA, Python &amp; Streamlit in Algeria.</p>
+    </footer>
+    
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <span class="lightbox-close">&times;</span>
+        <img id="lightbox-img" src="" alt="Preview">
+    </div>
+    
+    <script>
+        document.querySelectorAll('.gallery-item img').forEach(img => {
+            img.addEventListener('click', function(e) {
+                e.stopPropagation();
+                document.getElementById('lightbox-img').src = this.src;
+                document.getElementById('lightbox').classList.add('active');
+            });
+        });
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeLightbox();
+        });
+    </script>
+</body>
+</html>
