@@ -25,9 +25,9 @@ jobs:
     name: VBA source validation (12 checks)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@v4
     - name: Setup Python
-      uses: actions/setup-python@v7
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ env.PYTHON_VERSION }}
     - name: Run vba-check.py (12 static checks, 44 .bas/.frm files)
@@ -40,13 +40,13 @@ jobs:
     name: Thesis build & verify
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@v4
       # NOTE: submodules NOT fetched — some submodules have filename lengths
       # exceeding Windows MAX_PATH (260 chars), causing checkout failures.
       # CI only needs main repo files (MD sources + Python scripts + build tools).
 
     - name: Setup Python
-      uses: actions/setup-python@v7
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ env.PYTHON_VERSION }}
 
@@ -87,7 +87,7 @@ jobs:
     runs-on: windows-latest
     continue-on-error: true
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@v4
 
     - name: Check for Excel
       id: check-excel
@@ -150,7 +150,7 @@ jobs:
     name: Lint (PowerShell + Python)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@v4
 
     - name: Install PSScriptAnalyzer
       run: |
