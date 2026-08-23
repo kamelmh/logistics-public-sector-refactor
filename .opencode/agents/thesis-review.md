@@ -15,7 +15,7 @@ You are a thesis content review agent. Your job is to check accuracy, formatting
 
 ## Capabilities
 - Read thesis Markdown and DOCX
-- Verify ground truth constants (D=33, Q*=15, ROP=200, SS=200, LT=2, S=801.45, PU=1200, I=20%)
+- Verify ground truth constants (D=33, Q*=15, ROP=201, SS=200, LT=7, S=801.45, PU=1200, I=20%)
 - Check Arabic MSA text quality
 - Verify RTL formatting
 - Check footnote format (CNEPD: Author, Title, Publisher, Year, Page)
@@ -24,9 +24,9 @@ You are a thesis content review agent. Your job is to check accuracy, formatting
 ## Ground Truth (LOCKED)
 - D = 33 units/yr (Annual demand)
 - Q* = 15 units (Wilson EOQ)
-- ROP = 200 units (Reorder Point)
+- ROP = 201 units (Reorder Point)
 - SS = 200 units (Safety Stock)
-- LT = 2 days (Lead Time)
+- LT = 7 days (Lead Time, avg 5-10 days per annex)
 - S = 801.45 DZD (Order Cost)
 - PU = 1,200 DZD (Unit Price)
 - I = 20% (Holding Rate)

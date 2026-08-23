@@ -62,7 +62,7 @@ Last updated: $($session.timestamp)
 - `project-status` — Show all status
 
 ## Ground Truth (LOCKED)
-- D=33, Q*=15, ROP=200, SS=200, LT=2, S=801.45, PU=1200, I=20%
+- D=33, Q*=15, ROP=201, SS=200, LT=7, S=801.45, PU=1200, I=20%
 
 ## Key Files
 - Thesis source: Thesis_Surgical_Edit/Memoire_DSS_Logistique_ElBayadh.md
